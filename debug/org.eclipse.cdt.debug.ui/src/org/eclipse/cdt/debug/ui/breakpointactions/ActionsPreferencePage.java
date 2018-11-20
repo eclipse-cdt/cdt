@@ -55,7 +55,7 @@ public class ActionsPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 		});
 
-		String helpContextID = CDebugUIPlugin.PLUGIN_ID + "." + contextHelpID; //$NON-NLS-1$	
+		String helpContextID = CDebugUIPlugin.PLUGIN_ID + "." + contextHelpID; //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(super.getControl(), helpContextID);
 
 		return container;

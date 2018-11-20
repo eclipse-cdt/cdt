@@ -27,7 +27,7 @@ public interface IChangeReverseMethodHandler extends IReverseToggleHandler, IDeb
 	 */
 	enum ReverseDebugMethod {
 		OFF, SOFTWARE, HARDWARE, BRANCH_TRACE, PROCESSOR_TRACE, GDB_TRACE
-	};
+	}
 
 	/**
 	 * Sets the value for the reverse debugging method to be used when the button is toggled.
@@ -36,7 +36,7 @@ public interface IChangeReverseMethodHandler extends IReverseToggleHandler, IDeb
 
 	/**
 	* Return the reverse debugging method currently selected.
-	* 
+	*
 	* @param context is the currently active context in the debug view
 	*/
 	ReverseDebugMethod getReverseDebugMethod(Object context);
@@ -44,7 +44,7 @@ public interface IChangeReverseMethodHandler extends IReverseToggleHandler, IDeb
 	/**
 	 * Return the reverse debugging method that was selected before the
 	 * currently selected one.
-	 * 
+	 *
 	 * @param context is the currently active context in the debug view
 	 */
 	ReverseDebugMethod getPreviousReverseDebugMethod(Object context);

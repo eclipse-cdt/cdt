@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Nokia - create and use backend service. 
+ *     Nokia - create and use backend service.
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -28,7 +28,7 @@ public interface IMIBackend extends IDsfService {
 
 	public enum State {
 		NOT_INITIALIZED, STARTED, TERMINATED
-	};
+	}
 
 	/**
 	 * Event indicating that the back end process has started or terminated.
@@ -59,9 +59,9 @@ public interface IMIBackend extends IDsfService {
 	}
 
 	/**
-	 * Returns the identifier of this backend service.  It can be used 
-	 * to distinguish between multiple instances of this service in a 
-	 * single session.   
+	 * Returns the identifier of this backend service.  It can be used
+	 * to distinguish between multiple instances of this service in a
+	 * single session.
 	 */
 	public String getId();
 
@@ -77,14 +77,14 @@ public interface IMIBackend extends IDsfService {
 	public State getState();
 
 	/**
-	 * Returns the exit code of the backend.  Returns <code>-1</code> if 
+	 * Returns the exit code of the backend.  Returns <code>-1</code> if
 	 * the backend exit code is not available.
 	 * @return
 	 */
 	public int getExitCode();
 
 	/**
-	 * Returns the backend command stream. 
+	 * Returns the backend command stream.
 	 */
 	public InputStream getMIInputStream();
 

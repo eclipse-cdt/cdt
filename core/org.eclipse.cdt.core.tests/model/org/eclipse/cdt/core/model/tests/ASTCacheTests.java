@@ -14,9 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
@@ -38,6 +35,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests for the {@link ASTCache}.

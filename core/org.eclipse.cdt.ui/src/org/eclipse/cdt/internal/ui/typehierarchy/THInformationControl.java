@@ -16,6 +16,12 @@ package org.eclipse.cdt.internal.ui.typehierarchy;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.text.AbstractInformationControl;
+import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.bindings.Trigger;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyStroke;
@@ -39,14 +45,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-import org.eclipse.cdt.internal.ui.text.AbstractInformationControl;
-import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
 
 public class THInformationControl extends AbstractInformationControl implements ITHModelPresenter {
 	private THHierarchyModel fModel;

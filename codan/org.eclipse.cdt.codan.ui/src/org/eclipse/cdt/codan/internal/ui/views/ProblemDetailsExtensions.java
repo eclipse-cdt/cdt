@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2011 Alena Laskavaia 
+ * Copyright (c) 2010, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,7 +32,7 @@ public class ProblemDetailsExtensions {
 	public static final String ALL = "*";//$NON-NLS-1$
 	private static final String EXTENSION_POINT_NAME = "codanProblemDetails"; //$NON-NLS-1$
 	private static boolean extensionsLoaded;
-	private static HashMap<String, Collection<?>> map = new HashMap<String, Collection<?>>();
+	private static HashMap<String, Collection<?>> map = new HashMap<>();
 
 	private static synchronized void readExtensions() {
 		if (extensionsLoaded)
@@ -85,7 +85,7 @@ public class ProblemDetailsExtensions {
 
 	/**
 	 * Remove provider from the list
-	 * 
+	 *
 	 * @param id - codan problem id or ALL
 	 * @param el - details provider (class extending
 	 *        AbstractCodanProblemDetailsProvider) or ElementConfiguration (user
@@ -109,7 +109,7 @@ public class ProblemDetailsExtensions {
 
 	public static Collection<AbstractCodanProblemDetailsProvider> getProviders(String id) {
 		readExtensions();
-		Collection<AbstractCodanProblemDetailsProvider> providers = new ArrayList<AbstractCodanProblemDetailsProvider>();
+		Collection<AbstractCodanProblemDetailsProvider> providers = new ArrayList<>();
 		Collection<?> collection1 = getCollection(id);
 		Collection<?> collection2 = getCollection(ALL);
 		providers.addAll(resolveProviders(collection1));
@@ -135,7 +135,7 @@ public class ProblemDetailsExtensions {
 
 	/**
 	 * Add extension (details provider) using API
-	 * 
+	 *
 	 * @param id - codan problem id or ALL
 	 * @param provider - class extending AbstractCodanProblemDetailsProvider
 	 */

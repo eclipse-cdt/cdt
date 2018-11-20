@@ -28,8 +28,8 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.CCommandDSC;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
 final class TestScannerInfoCollector implements IScannerInfoCollector {
-	private HashMap<ScannerInfoTypes, List> fInfoMap = new HashMap<ScannerInfoTypes, List>();
-	private HashMap<Object, Map<ScannerInfoTypes, List>> fResourceToInfoMap = new HashMap<Object, Map<ScannerInfoTypes, List>>();
+	private HashMap<ScannerInfoTypes, List> fInfoMap = new HashMap<>();
+	private HashMap<Object, Map<ScannerInfoTypes, List>> fResourceToInfoMap = new HashMap<>();
 
 	@Override
 	public void contributeToScannerConfig(Object resource, Map scannerInfo0) {
@@ -57,7 +57,7 @@ final class TestScannerInfoCollector implements IScannerInfoCollector {
 	private void addTo(ScannerInfoTypes type, List<String> col) {
 		List<String> target = fInfoMap.get(type);
 		if (target == null) {
-			target = new ArrayList<String>();
+			target = new ArrayList<>();
 			fInfoMap.put(type, target);
 		}
 		target.addAll(col);

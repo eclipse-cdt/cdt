@@ -16,14 +16,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.jface.viewers.StyledString;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructure;
-
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
-
 import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.jface.viewers.StyledString;
 
 public class CSearchTreeLabelProvider extends CSearchLabelProvider {
 

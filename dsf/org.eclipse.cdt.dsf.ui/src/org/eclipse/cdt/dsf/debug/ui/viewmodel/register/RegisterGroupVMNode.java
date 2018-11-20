@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -148,8 +148,8 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 
 	/**
 	 * The label provider delegate.  This VM node will delegate label updates to this provider
-	 * which can be created by sub-classes. 
-	 *  
+	 * which can be created by sub-classes.
+	 *
 	 * @since 2.0
 	 */
 	private IElementLabelProvider fLabelProvider;
@@ -210,17 +210,17 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 	}
 
 	/**
-	 * Creates the label provider delegate.  This VM node will delegate label 
-	 * updates to this provider which can be created by sub-classes.   
-	 *  
-	 * @return Returns the label provider for this node. 
-	 *  
+	 * Creates the label provider delegate.  This VM node will delegate label
+	 * updates to this provider which can be created by sub-classes.
+	 *
+	 * @return Returns the label provider for this node.
+	 *
 	 * @since 2.0
 	 */
 	protected IElementLabelProvider createLabelProvider() {
 		PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
 
-		// The name column consists of the group name.  
+		// The name column consists of the group name.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__NAME,
 				new LabelColumnInfo(new LabelAttribute[] {
 						new LabelText(MessagesForRegisterVM.RegisterGroupVMNode_Name_column__text_format,
@@ -228,14 +228,14 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 						new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_REGISTER_GROUP)),
 						new StaleDataLabelForeground(), new VariableLabelFont(), }));
 
-		// The description column contains a brief description of the register group. 
+		// The description column contains a brief description of the register group.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__DESCRIPTION,
 				new LabelColumnInfo(new LabelAttribute[] {
 						new LabelText(MessagesForRegisterVM.RegisterGroupVMNode_Description_column__text_format,
 								new String[] { PROP_REGISTER_GROUP_DESCRIPTION }),
 						new StaleDataLabelForeground(), new VariableLabelFont(), }));
 
-		// Expression column is visible only in the expressions view.  It shows the expression string that the user 
+		// Expression column is visible only in the expressions view.  It shows the expression string that the user
 		// entered.  Expression column images are the same as for the name column.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__EXPRESSION,
 				new LabelColumnInfo(new LabelAttribute[] {
@@ -261,7 +261,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 
 	/**
 	 * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	@Override
@@ -346,7 +346,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 
 	@Override
 	public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
-		// Although the register groups themselves are not affected by the 
+		// Although the register groups themselves are not affected by the
 		// suspended event, typically all the registers are.  Add a CONTENT changed
 		// flag to the parent to repaint all the groups and their registers.
 		if (e instanceof ISuspendedDMEvent) {
@@ -418,8 +418,8 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 		}
 
 		// If the group definitions have changed, refresh the whole expressions
-		// view contents since previously invalid expressions may now evaluate 
-		// to valid groups 
+		// view contents since previously invalid expressions may now evaluate
+		// to valid groups
 		if (event instanceof IGroupsChangedDMEvent) {
 			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);
 		}
@@ -479,7 +479,7 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 								});
 					} else {
 						rm.setStatus(new Status(IStatus.WARNING, DsfUIPlugin.PLUGIN_ID,
-								IDsfStatusConstants.INVALID_STATE, "Register service not available", null)); //$NON-NLS-1$                        
+								IDsfStatusConstants.INVALID_STATE, "Register service not available", null)); //$NON-NLS-1$
 						rm.done();
 					}
 				}

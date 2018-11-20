@@ -18,7 +18,7 @@ import org.eclipse.cdt.managedbuilder.internal.macros.IMacroContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.ICdtVariableSupplier;
 
 /**
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -26,7 +26,7 @@ import org.eclipse.cdt.utils.cdtvariables.ICdtVariableSupplier;
 public interface IBuildMacroSupplier extends ICdtVariableSupplier {
 
 	/**
-	 * 
+	 *
 	 * @param macroName macro name
 	 * @param contextType context type
 	 * @param contextData context data
@@ -35,7 +35,7 @@ public interface IBuildMacroSupplier extends ICdtVariableSupplier {
 	public IBuildMacro getMacro(String macroName, int contextType, Object contextData);
 
 	/**
-	 * 
+	 *
 	 * @param contextType context type
 	 * @param contextData context data
 	 * @return IBuildMacro[]

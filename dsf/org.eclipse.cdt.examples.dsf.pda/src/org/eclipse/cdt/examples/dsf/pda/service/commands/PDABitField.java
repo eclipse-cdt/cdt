@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,8 +21,8 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 
 /**
  * Object representing a bit field in the stack command results.
- * 
- * @see PDARegistersCommand 
+ *
+ * @see PDARegistersCommand
  */
 @Immutable
 public class PDABitField {
@@ -39,7 +39,7 @@ public class PDABitField {
 		fOffset = Integer.parseInt(st.nextToken());
 		fCount = Integer.parseInt(st.nextToken());
 
-		fMnemonics = new LinkedHashMap<String, String>(0);
+		fMnemonics = new LinkedHashMap<>(0);
 		while (st.hasMoreTokens()) {
 			fMnemonics.put(st.nextToken(), st.nextToken());
 		}

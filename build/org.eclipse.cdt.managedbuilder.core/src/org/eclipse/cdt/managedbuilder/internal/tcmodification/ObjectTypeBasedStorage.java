@@ -17,7 +17,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.IRealBuildObjectAssociation;
 
 /**
  * The class implements the storage organized by types extending
- * {@link IRealBuildObjectAssociation}. 
+ * {@link IRealBuildObjectAssociation}.
  *
  * @param <T> - the type of object being stored.
  */

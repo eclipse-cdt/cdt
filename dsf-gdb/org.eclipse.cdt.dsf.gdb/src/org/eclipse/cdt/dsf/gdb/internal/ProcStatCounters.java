@@ -18,11 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A class that holds one set of /proc/stat counters.  
+ * A class that holds one set of /proc/stat counters.
  * TODO: extend to more than the tick counters.
  */
 public class ProcStatCounters {
-	private Map<String, OneCoreTickCounters> fTickCounters = new HashMap<String, OneCoreTickCounters>();
+	private Map<String, OneCoreTickCounters> fTickCounters = new HashMap<>();
 
 	/**
 	 * An object of this class holds one set of core/CPU tick counter values, for a single CPU core
@@ -70,7 +70,7 @@ public class ProcStatCounters {
 	 *
 	 */
 	public ProcStatCounters() {
-		fTickCounters = new HashMap<String, OneCoreTickCounters>();
+		fTickCounters = new HashMap<>();
 	}
 
 	/**
@@ -84,14 +84,14 @@ public class ProcStatCounters {
 
 	/**
 	 * Note: It was discovered during testing that sometimes, the counters in
-	 * /proc/stat are not updated for a given core, between two measurements. 
+	 * /proc/stat are not updated for a given core, between two measurements.
 	 * The cause seems to be that with CPUs such as the i5 and i7, some power-
 	 * saving modes can put a core to sleep for a short time.  When all counters
 	 * for a core are the same for 2 measurements, it can cause a division by
-	 * zero below, in the load computing code.   Given that this can legitimately 
-	 * happen, we handle the case and assign a load of zero, when it does. 
-	 *  
-	 * @param old: another ProcStatCounters object.  If null, will compute the 
+	 * zero below, in the load computing code.   Given that this can legitimately
+	 * happen, we handle the case and assign a load of zero, when it does.
+	 *
+	 * @param old: another ProcStatCounters object.  If null, will compute the
 	 * average load from boot time (i.e. historical load).
 	 * @return the load, for each CPU core, computed from the two
 	 * sets of counters.

@@ -20,7 +20,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPNodeFactory;
 
 /**
  * Provides access to the node factories.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 5.2

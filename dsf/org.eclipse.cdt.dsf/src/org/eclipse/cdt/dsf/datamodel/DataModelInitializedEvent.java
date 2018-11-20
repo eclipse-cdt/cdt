@@ -23,11 +23,11 @@ public class DataModelInitializedEvent extends AbstractDMEvent<IDMContext> {
 	/**
 	 * Create an event for the given data model context.
 	 * The context should represent the root of the data model hierarchy.
-	 * 
+	 *
 	 * <p>
 	 * Clients may instantiate and subclass.
 	 * </p>
-	 * 
+	 *
 	 * @param context  the data model context
 	 */
 	public DataModelInitializedEvent(IDMContext context) {

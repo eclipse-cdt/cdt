@@ -18,9 +18,9 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
  * unset substitute-path
- * 
+ *
  * Deletes all the path substitutions.
- * 
+ *
  * @since 5.0
  */
 public class CLIUnsetSubstitutePath extends MIInterpreterExecConsole<MIInfo> {

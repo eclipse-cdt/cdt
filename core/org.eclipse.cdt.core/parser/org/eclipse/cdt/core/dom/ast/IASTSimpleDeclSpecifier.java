@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IBasicType.Kind;
 
 /**
  * This represents a declaration specifier for a built-in type.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -192,7 +192,7 @@ public interface IASTSimpleDeclSpecifier extends IASTDeclSpecifier {
 	public boolean isImaginary();
 
 	/**
-	 * Returns the expression for simple declaration specifiers of type 
+	 * Returns the expression for simple declaration specifiers of type
 	 * {@link IASTSimpleDeclSpecifier#t_decltype} or {@link IASTSimpleDeclSpecifier#t_typeof}.
 	 * Other simple declaration specifiers will return <code>null</code>.
 	 * @since 5.2

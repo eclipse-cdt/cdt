@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson 		  - Modified for multi threaded functionality	
+ *     Ericsson 		  - Modified for multi threaded functionality
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.pda.ui.viewmodel.launch;
 
@@ -33,7 +33,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRe
 import org.eclipse.ui.IMemento;
 
 /**
- * View model node supplying the PDA thread elements.  It extends 
+ * View model node supplying the PDA thread elements.  It extends
  * the base threads node and adds label and memento generation.
  */
 @SuppressWarnings("restriction")
@@ -71,6 +71,7 @@ public class PDAThreadsVMNode extends AbstractThreadVMNode implements IElementLa
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
 	 */
+	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
 		for (IElementCompareRequest request : requests) {
 			Object element = request.getElement();
@@ -93,6 +94,7 @@ public class PDAThreadsVMNode extends AbstractThreadVMNode implements IElementLa
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
 	 */
+	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 		for (IElementMementoRequest request : requests) {
 			Object element = request.getElement();

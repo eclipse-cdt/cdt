@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.cdt.core.templateengine.TemplateCore;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.w3c.dom.Element;
@@ -80,7 +81,7 @@ public class ProcessArgument {
 				complexValue[i] = new ProcessArgument(template, children.get(i));
 				Set<String> subMacros = complexValue[i].getMacros();
 				if (macros == null) {
-					macros = new HashSet<String>();
+					macros = new HashSet<>();
 				}
 				if (subMacros != null) {
 					macros.addAll(subMacros);
@@ -99,7 +100,7 @@ public class ProcessArgument {
 					Set<String> subMacros = complexValueArray[i][j].getMacros();
 					if (subMacros != null) {
 						if (macros == null) {
-							macros = new HashSet<String>();
+							macros = new HashSet<>();
 						}
 						macros.addAll(subMacros);
 					}
@@ -109,14 +110,14 @@ public class ProcessArgument {
 	}
 
 	/**
-	 * Creates an <i>external</i> argument. This is not read from the template descriptor. 
-	 * @param param The ProcessParameter whose replacement this argument is in the Process call 
+	 * Creates an <i>external</i> argument. This is not read from the template descriptor.
+	 * @param param The ProcessParameter whose replacement this argument is in the Process call
 	 */
 	public ProcessArgument(TemplateCore template, ProcessParameter param) {
 		this.template = template;
 		name = param.getName();
 		type = param.getType();
-		macros = new HashSet<String>();
+		macros = new HashSet<>();
 		macros.add(name);
 		simpleValue = ProcessHelper.getReplaceMarker(name);
 		this.externalParam = param;
@@ -131,7 +132,7 @@ public class ProcessArgument {
 			return;
 		}
 		if (macros == null) {
-			macros = new HashSet<String>();
+			macros = new HashSet<>();
 		}
 		macros.addAll(ProcessHelper.getReplaceKeys(value));
 	}

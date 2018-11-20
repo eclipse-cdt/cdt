@@ -21,29 +21,29 @@ import java.util.Set;
 import java.util.TreeMap;
 
 /**
- * Provides functionality similar to a Map, with the feature that char arrays 
+ * Provides functionality similar to a Map, with the feature that char arrays
  * and sections of char arrays (known as slices) may be used as keys.
- * 
+ *
  * This class is useful because small pieces of an existing large char[] buffer
- * can be directly used as map keys. This avoids the need to create many String 
+ * can be directly used as map keys. This avoids the need to create many String
  * objects as would normally be needed as keys in a standard java.util.Map.
  * Thus performance is improved in the CDT core.
  *
  * Most methods are overloaded with two versions, one that uses a
  * section of a char[] as the key (a slice), and one that uses
  * the entire char[] as the key.
- * 
+ *
  * This class is intended as a replacement for CharArrayObjectMap.
- * 
+ *
  * ex:
  * char[] key = "one two three".toCharArray();
  * map.put(key, 4, 3, Integer.valueOf(99));
  * map.get(key, 4, 3); // returns 99
  * map.get("two".toCharArray()); // returns 99
- * 
+ *
  * @author Mike Kucera
  *
- * @param <V>  
+ * @param <V>
  */
 public final class CharArrayMap<V> {
 
@@ -51,7 +51,7 @@ public final class CharArrayMap<V> {
 	 * Wrapper class used as keys in the map. The purpose
 	 * of this class is to provide implementations of
 	 * equals() and hashCode() that operate on array slices.
-	 * 
+	 *
 	 * This class is private so it is assumed that the arguments
 	 * passed to the constructor are legal.
 	 */
@@ -123,9 +123,9 @@ public final class CharArrayMap<V> {
 	}
 
 	/**
-	 * Used to enforce preconditions. 
+	 * Used to enforce preconditions.
 	 * Note that the NPE thrown by mutator methods is thrown from the Key constructor.
-	 * 
+	 *
 	 * @throws IndexOutOfBoundsException if boundaries are wrong in any way
 	 */
 	private static void checkBoundaries(char[] chars, int start, int length) {
@@ -141,18 +141,18 @@ public final class CharArrayMap<V> {
 	 * Constructs an empty CharArrayMap with default initial capacity.
 	 */
 	public CharArrayMap() {
-		map = new HashMap<Key, V>();
+		map = new HashMap<>();
 	}
 
 	/**
 	 * Static factory method that constructs an empty CharArrayMap with default initial capacity,
 	 * and the map will be kept in ascending key order.
-	 * 
+	 *
 	 * Characters are compared using a strictly numerical comparison; it is not locale-dependent.
 	 */
 	public static <V> CharArrayMap<V> createOrderedMap() {
 		// TreeMap does not have a constructor that takes an initial capacity
-		return new CharArrayMap<V>(new TreeMap<Key, V>());
+		return new CharArrayMap<>(new TreeMap<Key, V>());
 	}
 
 	private CharArrayMap(Map<Key, V> map) {
@@ -165,7 +165,7 @@ public final class CharArrayMap<V> {
 	 * @throws IllegalArgumentException if the initial capacity is negative
 	 */
 	public CharArrayMap(int initialCapacity) {
-		map = new HashMap<Key, V>(initialCapacity);
+		map = new HashMap<>(initialCapacity);
 	}
 
 	/**
@@ -189,8 +189,8 @@ public final class CharArrayMap<V> {
 	}
 
 	/**
-	 * Returns the value to which the specified array slice is mapped in this map, 
-	 * or null if the map contains no mapping for this key. 
+	 * Returns the value to which the specified array slice is mapped in this map,
+	 * or null if the map contains no mapping for this key.
 	 * @throws NullPointerException if chars is null
 	 * @throws IndexOutOfBoundsException if the boundaries specified by start and length are out of range
 	 */
@@ -200,8 +200,8 @@ public final class CharArrayMap<V> {
 	}
 
 	/**
-	 * Returns the value to which the specified array is mapped in this map, 
-	 * or null if the map contains no mapping for this key. 
+	 * Returns the value to which the specified array is mapped in this map,
+	 * or null if the map contains no mapping for this key.
 	 * @throws NullPointerException if chars is null
 	 */
 	public V get(char[] chars) {
@@ -255,7 +255,7 @@ public final class CharArrayMap<V> {
 		return map.containsValue(value);
 	}
 
-	/** 
+	/**
 	 * Use this in a foreach loop.
 	 */
 	public Collection<V> values() {
@@ -267,7 +267,7 @@ public final class CharArrayMap<V> {
 	 */
 	public Collection<char[]> keys() {
 		Set<Key> keys = map.keySet();
-		ArrayList<char[]> r = new ArrayList<char[]>(keys.size());
+		ArrayList<char[]> r = new ArrayList<>(keys.size());
 		for (Key key : keys) {
 			r.add(CharArrayUtils.extract(key.buffer, key.start, key.length));
 		}

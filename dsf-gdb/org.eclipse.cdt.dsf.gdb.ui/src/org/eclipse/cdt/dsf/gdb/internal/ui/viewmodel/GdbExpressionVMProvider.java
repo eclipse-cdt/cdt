@@ -90,8 +90,8 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
 
 	/**
 	 * The only difference between this and our super implementation is that we
-	 * create a GdbVariableVMNode instead of a VariableVMNode. 
-	 * 
+	 * create a GdbVariableVMNode instead of a VariableVMNode.
+	 *
 	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.ExpressionVMProvider#configureLayout()
 	 */
 	@Override
@@ -213,7 +213,7 @@ public class GdbExpressionVMProvider extends ExpressionVMProvider {
 	/**
 	 * @param store
 	 * @param event
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected void handlePropertyChanged(final IPreferenceStore store, final PropertyChangeEvent event) {

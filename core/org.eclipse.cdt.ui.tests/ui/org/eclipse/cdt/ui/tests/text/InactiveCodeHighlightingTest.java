@@ -16,25 +16,23 @@ package org.eclipse.cdt.ui.tests.text;
 
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewerDecorationSupport;
+import org.eclipse.cdt.internal.ui.editor.InactiveCodeHighlighting;
+import org.eclipse.cdt.ui.testplugin.Accessor;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditor;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.testplugin.Accessor;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.CSourceViewerDecorationSupport;
-import org.eclipse.cdt.internal.ui.editor.InactiveCodeHighlighting;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * Tests for inactive code highlighting.

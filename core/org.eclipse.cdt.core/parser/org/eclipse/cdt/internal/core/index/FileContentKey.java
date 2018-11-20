@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.parser.ISignificantMacros;
 
 /**
- * A key that uniquely determines the preprocessed contents of a file. 
+ * A key that uniquely determines the preprocessed contents of a file.
  */
 public class FileContentKey {
 	private final int linkageID;

@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.lrparser.ISecondaryParser;
  * Some ambiguities are resolved by spawning a secondary parser
  * to re-parse a sequence of tokens using a modified grammar.
  * This factory is used to create these secondary parsers.
- * 
+ *
  * @author Mike Kucera
  */
 public interface ISecondaryParserFactory {
@@ -34,7 +34,7 @@ public interface ISecondaryParserFactory {
 
 	/**
 	 * Expression parser that does not recognize cast expressions,
-	 * used to disambiguate casts. 
+	 * used to disambiguate casts.
 	 */
 	ISecondaryParser<IASTExpression> getNoCastExpressionParser(ITokenStream stream, Map<String, String> properties);
 

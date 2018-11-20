@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -17,6 +17,24 @@ package org.eclipse.cdt.internal.ui.editor.asm;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.editor.AbstractCModelOutlinePage;
+import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
+import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -50,26 +68,6 @@ import org.eclipse.ui.navigator.ICommonMenuConstants;
 import org.eclipse.ui.part.EditorActionBarContributor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CDTUITools;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICModelBasedEditor;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.cdt.ui.text.AsmSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.editor.AbstractCModelOutlinePage;
-import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
-import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
 
 /**
  * Assembly text editor.
@@ -286,7 +284,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 
 	/**
 	 * Returns the annotation overlapping with the given range or <code>null</code>.
-	 * 
+	 *
 	 * @param offset the region offset
 	 * @param length the region length
 	 * @return the found annotation or <code>null</code>
@@ -429,7 +427,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	}
 
 	/**
-	 * Checks is the editor active part. 
+	 * Checks is the editor active part.
 	 * @return <code>true</code> if editor is the active part of the workbench.
 	 */
 	private boolean isActivePart() {
@@ -439,7 +437,7 @@ public class AsmTextEditor extends TextEditor implements ISelectionChangedListen
 	}
 
 	/**
-	 * Sets selection for C element. 
+	 * Sets selection for C element.
 	 * @param element Element to select.
 	 */
 	public void setSelection(ICElement element) {

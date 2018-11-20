@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Anton Gorenkov - Need to use a process factory (Bug 210366)
@@ -91,7 +91,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 
 	// A map of pid to names.  It is filled when we get all the
 	// processes that are running
-	private Map<Integer, String> fProcessNames = new HashMap<Integer, String>();
+	private Map<Integer, String> fProcessNames = new HashMap<>();
 
 	// Id of our process.  Currently, we only know it for an attach session.
 	private String fProcId;
@@ -116,7 +116,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The call-back object to notify when this service's
 	 *            initialization is done.
@@ -176,7 +176,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 			// In our context hierarchy we don't actually use the pid in this version, because in this version,
 			// we only debug a single process.  This means we will not have a proper pid in all cases
 			// inside the context, so must find it another way.  Note that this method is also called to find the name
-			// of processes to attach to, and in this case, we do have the proper pid. 
+			// of processes to attach to, and in this case, we do have the proper pid.
 			if (pidStr == null || pidStr.length() == 0) {
 				pidStr = fProcId;
 			}
@@ -194,7 +194,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 				}
 			}
 			if (name == null) {
-				// This could happen if a process has terminated but the 
+				// This could happen if a process has terminated but the
 				// debug session is not terminated because the preference
 				// to keep GDB running has been selected.
 				name = "Unknown name"; //$NON-NLS-1$
@@ -492,7 +492,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	 * inferior process, by either preparing the PTY to be used, to simply leaving
 	 * the PTY null, which indicates that the input/output streams of the CLI should
 	 * be used instead; this decision is based on the type of session.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	protected void initializeInputOutput(IContainerDMContext containerDmc, final RequestMonitor rm) {
@@ -569,11 +569,11 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 						}
 
 						// Add the inferior
-						// Need to go through DebugPlugin.newProcess so that we can use 
+						// Need to go through DebugPlugin.newProcess so that we can use
 						// the overrideable process factory to allow others to override.
 						// First set attribute to specify we want to create an inferior process.
 						// Bug 210366
-						Map<String, String> attributes = new HashMap<String, String>();
+						Map<String, String> attributes = new HashMap<>();
 						attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 								IGdbDebugConstants.INFERIOR_PROCESS_CREATION_VALUE);
 						IProcess runtimeInferior = DebugPlugin.newProcess(launch, inferior, label, attributes);
@@ -591,7 +591,7 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 	/**
 	 * Insert breakpoint at entry if set, and start or restart the program.
 	 *
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	protected void startOrRestart(final IContainerDMContext containerDmc, final Map<String, Object> attributes,
 			boolean restart, final DataRequestMonitor<IContainerDMContext> requestMonitor) {
@@ -701,9 +701,9 @@ public class GDBProcesses extends MIProcesses implements IGDBProcesses {
 		// Postponed because 'info program' yields different result on different platforms.
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=305385#c20
 		//
-		//    	// Get the PID of the inferior through gdb (if we don't have it already) 
-		//    	
-		//    	
+		//    	// Get the PID of the inferior through gdb (if we don't have it already)
+		//
+		//
 		//    	fGdb.getInferiorProcess().update();
 	}
 }

@@ -14,12 +14,12 @@
 
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.internal.core.pdom.indexer.TodoTaskParser;
 import org.eclipse.cdt.internal.core.pdom.indexer.TodoTaskParser.Task;
+
+import junit.framework.TestSuite;
 
 public class TaskParserTest extends AST2TestBase {
 

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IAR Systems - initial API and implementation
  *     Red Hat Inc. - modified for use in Meson build
@@ -57,9 +57,9 @@ import org.eclipse.ui.dialogs.PropertyPage;
  * Property page for Meson projects.  For unconfigured projects, we use the meson command and parse
  * the output of the --help option.  Otherwise, we use the meson configure command to find current
  * options and what may be changed via a meson configure call.
- * 
+ *
  * We assume that the build directory is in project/build/configname, which is where
- * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's 
+ * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's
  * PATH.
  */
 public class MesonPropertyPage extends PropertyPage {
@@ -239,7 +239,7 @@ public class MesonPropertyPage extends PropertyPage {
 
 	public enum ParseState {
 		INIT, GROUP, OPTION, OPTION_WITH_VALUES, ARGS
-	};
+	}
 
 	@Override
 	public boolean performOk() {
@@ -248,7 +248,7 @@ public class MesonPropertyPage extends PropertyPage {
 			args.add("configure"); //$NON-NLS-1$
 			for (IMesonPropertyPageControl control : componentList) {
 				if (control.isValueChanged()) {
-					args.add(control.getConfiguredString()); //$NON-NLS-1$ //$NON-NLS-2$
+					args.add(control.getConfiguredString());
 				}
 			}
 			if (args.size() == 2) {
@@ -267,7 +267,7 @@ public class MesonPropertyPage extends PropertyPage {
 				}
 				args.add(buildDir);
 				Process p = launcher.execute(new Path("meson"), args.toArray(new String[0]), new String[0], sourceDir, //$NON-NLS-1$
-						new NullProgressMonitor()); //$NON-NLS-2$
+						new NullProgressMonitor());
 				int rc = -1;
 				IConsole console = CCorePlugin.getDefault().getConsole();
 				console.start(project);

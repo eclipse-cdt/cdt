@@ -18,9 +18,9 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Typedef as a possible returned type.
- * Bug#52948 
+ * Bug#52948
  *
  */
 public class CompletionTest_TypeDef_NoPrefix extends CompletionProposalsBaseTest {

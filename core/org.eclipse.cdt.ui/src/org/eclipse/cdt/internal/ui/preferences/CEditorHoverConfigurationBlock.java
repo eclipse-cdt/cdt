@@ -21,6 +21,14 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
@@ -57,16 +65,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.internal.ui.util.TableLayoutComposite;
 
 /**
  * Configures C/C++ Editor hover preferences.
@@ -188,7 +186,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
 
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_ANNOTATION_ROLL_OVER));
@@ -471,7 +469,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 
 		StringTokenizer tokenizer = new StringTokenizer(compiledTextHoverModifiers,
 				CEditorTextHoverDescriptor.VALUE_SEPARATOR);
-		HashMap<String, String> idToModifier = new HashMap<String, String>(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifier = new HashMap<>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id = tokenizer.nextToken();
@@ -483,7 +481,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 				.getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS);
 
 		tokenizer = new StringTokenizer(compiledTextHoverModifierMasks, CEditorTextHoverDescriptor.VALUE_SEPARATOR);
-		HashMap<String, String> idToModifierMask = new HashMap<String, String>(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifierMask = new HashMap<>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id = tokenizer.nextToken();
@@ -571,7 +569,7 @@ public class CEditorHoverConfigurationBlock implements IPreferenceConfigurationB
 			fStatus = new StatusInfo();
 
 		int i = 0;
-		HashMap<Integer, String> stateMasks = new HashMap<Integer, String>(fHoverConfigs.length);
+		HashMap<Integer, String> stateMasks = new HashMap<>(fHoverConfigs.length);
 		while (fStatus.isOK() && i < fHoverConfigs.length) {
 			if (fHoverConfigs[i].fIsEnabled) {
 				String label = getContributedHovers()[i].getLabel();

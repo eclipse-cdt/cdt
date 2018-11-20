@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,12 +19,12 @@ public class ViewModelUpdateMessages extends NLS {
 	public static String AutomaticUpdatePolicy_name;
 	public static String ManualUpdatePolicy_InitialDataElement__label;
 	public static String ManualUpdatePolicy_name;
-	/** 
-	 * @since 1.1 
+	/**
+	 * @since 1.1
 	 */
 	public static String AllUpdateScope_name;
-	/** 
-	 * @since 1.1 
+	/**
+	 * @since 1.1
 	 */
 	public static String VisibleUpdateScope_name;
 

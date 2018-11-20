@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
@@ -40,19 +40,19 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * Static utility methods for use with View Model related 
+ * Static utility methods for use with View Model related
  * commands and handlers.
- * 
+ *
  * @since 1.1
  */
 public class VMHandlerUtils {
 
 	/**
 	 * Retrieves the active VM provider based on the currently active
-	 * selection and part.  
-	 * @param serviceLocator Service locator for access to active selection 
+	 * selection and part.
+	 * @param serviceLocator Service locator for access to active selection
 	 * and part.
-	 * 
+	 *
 	 * @return The active VM provder.
 	 */
 	static public IVMProvider getActiveVMProvider(IServiceLocator serviceLocator) {
@@ -78,9 +78,9 @@ public class VMHandlerUtils {
 
 	/**
 	 * Retrieves the active VM provider based on the given execution event.
-	 * @param event The execution event which is usually given as an argument 
+	 * @param event The execution event which is usually given as an argument
 	 * to the command handler execution call.
-	 * 
+	 *
 	 * @return The active VM provder.
 	 */
 	static public IVMProvider getActiveVMProvider(ExecutionEvent event) {
@@ -95,9 +95,9 @@ public class VMHandlerUtils {
 
 	/**
 	 * Retrieves the selection from a given service locator's selection service.
-	 * @param serviceLocator Service locator for access to active selection 
+	 * @param serviceLocator Service locator for access to active selection
 	 * and part.
-	 * 
+	 *
 	 * @return The selection if available; return null otherwise.
 	 * @since 2.2
 	 */
@@ -156,8 +156,8 @@ public class VMHandlerUtils {
 	}
 
 	/**
-	 * Returns the viewer input element for the viewer in the given 
-	 * presentation context.  The input element is retrieved only if the 
+	 * Returns the viewer input element for the viewer in the given
+	 * presentation context.  The input element is retrieved only if the
 	 * presentation context's view is based on the {@link AbstractDebugView}.
 	 * Returns <code>null</code> if not found.
 	 * @since 2.5
@@ -173,9 +173,9 @@ public class VMHandlerUtils {
 	}
 
 	/**
-	 * Returns the {@link IVMNode} associated with the element in the 
+	 * Returns the {@link IVMNode} associated with the element in the
 	 * given path.  Returns <code>null</code> if not found.
-	 * 
+	 *
 	 * @since 2.5
 	 */
 	public static IVMNode getVMNode(Object viewerInput, TreePath path) {

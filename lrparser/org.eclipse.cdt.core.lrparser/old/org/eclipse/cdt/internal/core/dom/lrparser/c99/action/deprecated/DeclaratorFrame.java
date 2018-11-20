@@ -16,18 +16,18 @@ package org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated;
 import java.util.LinkedList;
 import java.util.List;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99PointerType;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
+import lpg.lpgjavaruntime.IToken;
+
 /**
  * Represents a frame on the declaration stack used by the resolver actions.
- * 
+ *
  * TODO: document this class better
- * 
+ *
  * @author Mike Kucera
  */
 @SuppressWarnings("restriction")
@@ -39,12 +39,12 @@ public class DeclaratorFrame {
 	private boolean isFunctionDeclarator = false;
 
 	// temporary storage for pointer modifiers
-	private LinkedList<LinkedList<C99PointerType>> pointerModifiers = new LinkedList<LinkedList<C99PointerType>>();
+	private LinkedList<LinkedList<C99PointerType>> pointerModifiers = new LinkedList<>();
 
 	// stores pointer and array modifiers that are applied to the declarator
-	private LinkedList<ITypeContainer> typeModifiers = new LinkedList<ITypeContainer>();
+	private LinkedList<ITypeContainer> typeModifiers = new LinkedList<>();
 
-	private LinkedList<IBinding> nestedDeclarations = new LinkedList<IBinding>();
+	private LinkedList<IBinding> nestedDeclarations = new LinkedList<>();
 
 	public DeclaratorFrame() {
 	}

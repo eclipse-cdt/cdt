@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
@@ -30,12 +30,12 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * Manual update policy with extensions specific for the debugger views.  It 
- * properly handles the changes in active number format values in debug view. 
+ * Manual update policy with extensions specific for the debugger views.  It
+ * properly handles the changes in active number format values in debug view.
  * This requires clearing of cached properties related to the active format
  * preference, but not clearing the formatted value data retrieved from the
- * service. 
- * 
+ * service.
+ *
  * @since 2.1
  */
 public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUpdatePolicyExtension {
@@ -44,20 +44,20 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
 	private final Set<String> fElementFormatPropertiesWithPrefixes;
 
 	/**
-	 * Creates a manual update policy for debug views. 
+	 * Creates a manual update policy for debug views.
 	 */
 	public DebugManualUpdatePolicy() {
 		this(new String[0]);
 	}
 
 	/**
-	 * Creates a manual update policy for debug views for models that retrieve 
-	 * multiple formatted values for each view entry.  The given prefixes 
+	 * Creates a manual update policy for debug views for models that retrieve
+	 * multiple formatted values for each view entry.  The given prefixes
 	 * distinguish the formatted values properties from each other.
-	 * 
+	 *
 	 * @see FormattedValueRetriever
 	 * @see FormattedValueVMUtil#getPropertyForFormatId(String, String)
-	 * 
+	 *
 	 * @param prefixes Prefixes to use when flushing the active formatted value
 	 * from VM cache.
 	 */
@@ -66,8 +66,8 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
 			fActiveNumberFormatPropertiesWithPrefixes = ACTIVE_NUMBER_FORMAT_PROPERTIES;
 			fElementFormatPropertiesWithPrefixes = ELEMENT_FORMAT_PROPERTIES;
 		} else {
-			fActiveNumberFormatPropertiesWithPrefixes = new TreeSet<String>(ACTIVE_NUMBER_FORMAT_PROPERTIES);
-			fElementFormatPropertiesWithPrefixes = new TreeSet<String>(ELEMENT_FORMAT_PROPERTIES);
+			fActiveNumberFormatPropertiesWithPrefixes = new TreeSet<>(ACTIVE_NUMBER_FORMAT_PROPERTIES);
+			fElementFormatPropertiesWithPrefixes = new TreeSet<>(ELEMENT_FORMAT_PROPERTIES);
 			for (String prefix : prefixes) {
 				fActiveNumberFormatPropertiesWithPrefixes
 						.add((prefix + IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT).intern());
@@ -82,23 +82,23 @@ public class DebugManualUpdatePolicy extends ManualUpdatePolicy implements IVMUp
 
 	}
 
-	private static final Set<String> ACTIVE_NUMBER_FORMAT_PROPERTIES = new TreeSet<String>();
+	private static final Set<String> ACTIVE_NUMBER_FORMAT_PROPERTIES = new TreeSet<>();
 	static {
 		ACTIVE_NUMBER_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
 		ACTIVE_NUMBER_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE);
 		ACTIVE_NUMBER_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE);
 	}
 
-	private static final Set<String> ELEMENT_FORMAT_PROPERTIES = new TreeSet<String>();
+	private static final Set<String> ELEMENT_FORMAT_PROPERTIES = new TreeSet<>();
 	static {
 		ELEMENT_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT);
 		ELEMENT_FORMAT_PROPERTIES.add(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE);
 	}
 
 	/**
-	 * This specialized element update tester flushes the active number format 
+	 * This specialized element update tester flushes the active number format
 	 * property of the elemetn under consideration.  The partial property flush
-	 * is performed only if the cache entry is not yet dirty. 
+	 * is performed only if the cache entry is not yet dirty.
 	 */
 	private IElementUpdateTester fNumberFormatPropertyEventUpdateTester = new IElementUpdateTesterExtension() {
 

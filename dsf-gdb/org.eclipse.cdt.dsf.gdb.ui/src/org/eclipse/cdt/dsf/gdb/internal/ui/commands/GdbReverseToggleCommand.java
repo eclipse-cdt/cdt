@@ -58,7 +58,7 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Command that toggles the Reverse Debugging feature
- * 
+ *
  * @since 2.1
  */
 public class GdbReverseToggleCommand extends AbstractDebugCommand implements IChangeReverseMethodHandler {
@@ -216,7 +216,7 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
 
 				// Only allow to toggle reverse if the program is suspended.
 				// When the program is running, GDB will not answer our command
-				// in toggleReverse() and since it is blocking, it will hang the entire UI! 
+				// in toggleReverse() and since it is blocking, it will hang the entire UI!
 				if (runControl != null && runControl instanceof IRunControl
 						&& ((IRunControl) runControl).isSuspended(execDmc)) {
 					runControl.canEnableReverseMode(controlDmc, rm);
@@ -309,13 +309,13 @@ public class GdbReverseToggleCommand extends AbstractDebugCommand implements ICh
 		new WorkbenchJob("") { //$NON-NLS-1$
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				// Request re-evaluation of property "org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled" to update 
+				// Request re-evaluation of property "org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled" to update
 				// visibility of reverse stepping commands.
 				IEvaluationService exprService = PlatformUI.getWorkbench().getService(IEvaluationService.class);
 				if (exprService != null) {
 					exprService.requestEvaluation("org.eclipse.cdt.debug.ui.isReverseDebuggingEnabled"); //$NON-NLS-1$
 				}
-				// Refresh reverse toggle commands with the new state of reverse enabled. 
+				// Refresh reverse toggle commands with the new state of reverse enabled.
 				// This is in order to keep multiple toggle actions in UI in sync.
 				ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 				if (commandService != null) {

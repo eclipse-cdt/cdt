@@ -21,13 +21,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 
 /**
  * A set of header file substitution rules.
@@ -61,7 +59,7 @@ public class HeaderSubstitutionMap {
 
 	/**
 	 * Indicates that the header file {@code to} should be used instead of {@code from}.
-	 * 
+	 *
 	 * @param from The header file to be replaced.
 	 * @param to The header file to be used instead.
 	 * @param unconditionalSubstitution {@code true} if the header substitution is mandatory.
@@ -75,7 +73,7 @@ public class HeaderSubstitutionMap {
 
 	/**
 	 * Indicates that the header file {@code to} should be used instead of {@code from}.
-	
+
 	 * @param from The header file to be replaced. The header is represented by an include name
 	 *     optionally surrounded by double quotes or angle brackets. Angle brackets indicate
 	 *     a system include.
@@ -167,7 +165,7 @@ public class HeaderSubstitutionMap {
 			return Collections.emptyList();
 		}
 
-		List<HeaderSubstitutionMap> maps = new ArrayList<HeaderSubstitutionMap>();
+		List<HeaderSubstitutionMap> maps = new ArrayList<>();
 		for (IMemento element : memento.getChildren(TAG_HEADER_SUBSTITUTION_MAP)) {
 			maps.add(fromMemento(element));
 		}

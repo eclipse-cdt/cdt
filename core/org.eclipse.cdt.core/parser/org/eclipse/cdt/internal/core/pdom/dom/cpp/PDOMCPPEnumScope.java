@@ -88,7 +88,7 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 		try {
 			CharArrayObjectMap<IPDOMCPPEnumerator> map = getBindingMap(fBinding);
 			if (lookup.isPrefixLookup()) {
-				final List<IBinding> result = new ArrayList<IBinding>();
+				final List<IBinding> result = new ArrayList<>();
 				final char[] nc = lookup.getLookupKey();
 				IContentAssistMatcher matcher = ContentAssistMatcherFactory.getInstance().createMatcher(nc);
 				for (char[] key : map.keys()) {
@@ -187,7 +187,7 @@ class PDOMCPPEnumScope implements ICPPEnumScope, IIndexScope {
 			// loses the order.
 			List<IPDOMCPPEnumerator> enumerators = new ArrayList<>();
 			enumType.loadEnumerators(enumerators);
-			List<IEnumerator> result = new ArrayList<IEnumerator>();
+			List<IEnumerator> result = new ArrayList<>();
 			for (IEnumerator value : enumerators) {
 				if (IndexFilter.ALL_DECLARED.acceptBinding(value)) {
 					result.add(value);

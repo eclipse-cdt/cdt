@@ -17,21 +17,21 @@ package org.eclipse.cdt.internal.ui.navigator;
 import java.net.URL;
 
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionGroup;
 
 /**
- * A basic abstract action group implementation similar to 
+ * A basic abstract action group implementation similar to
  * {@link org.eclipse.cdt.internal.ui.cview.CViewActionGroup}, avoiding
  * the explicit dependency on {@link org.eclipse.cdt.internal.ui.cview.CView} to
  * allow reuse in the Common Navigator.
- * 
+ *
  * @see org.eclipse.cdt.internal.ui.cview.CViewActionGroup
  */
 public abstract class AbstractCNavigatorActionGroup extends ActionGroup {
@@ -43,7 +43,7 @@ public abstract class AbstractCNavigatorActionGroup extends ActionGroup {
 
 	/**
 	 * Create a new action group associated  with given view part.
-	 * 
+	 *
 	 * @param viewPart
 	 *            the view part this action group is associated with, may not be
 	 *            <code>null</code>.
@@ -56,7 +56,7 @@ public abstract class AbstractCNavigatorActionGroup extends ActionGroup {
 
 	/**
 	 * Provide access to the view part this action group has been registered with.
-	 * 
+	 *
 	 * @return the view part
 	 */
 	protected IViewPart getViewPart() {

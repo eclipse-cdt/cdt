@@ -13,12 +13,11 @@ package org.eclipse.cdt.ui.tests.text.contentassist2;
 import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType.CONTEXT;
 import static org.eclipse.cdt.ui.tests.text.contentassist2.AbstractContentAssistTest.CompareType.REPLACEMENT;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 public class CompletionTestBase extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "CompletionTest.h";

@@ -14,10 +14,9 @@
 
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdapterFactory;
-
-import org.eclipse.cdt.core.model.ICProject;
 
 /**
  * Adapter factory to adapt <code>ICProject</code> to <code>IProject</code>.

@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.parser.ISignificantMacros;
 
 /**
  * This interface represents a preprocessor #include statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -70,8 +70,8 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	public boolean isResolvedByHeuristics();
 
 	/**
-	 * Returns the list of versions of the target file, each of which is 
-	 * identified by its significant macros, that had been included 
+	 * Returns the list of versions of the target file, each of which is
+	 * identified by its significant macros, that had been included
 	 * in this translation-unit prior to this statement.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -97,7 +97,7 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 	public long getIncludedFileContentsHash();
 
 	/**
-	 * Returns time when the included file was read. Corresponds to the start of reading.    
+	 * Returns time when the included file was read. Corresponds to the start of reading.
 	 * @return time before reading started in milliseconds since epoch
 	 * @since 5.4
 	 */
@@ -111,7 +111,7 @@ public interface IASTPreprocessorIncludeStatement extends IASTPreprocessorStatem
 
 	/**
 	 * Returns {@code true} if the included file is exported by the including header.
-	 * 
+	 *
 	 * @see "https://github.com/include-what-you-use/include-what-you-use/blob/master/docs/IWYUPragmas.md"
 	 * @since 5.5
 	 */

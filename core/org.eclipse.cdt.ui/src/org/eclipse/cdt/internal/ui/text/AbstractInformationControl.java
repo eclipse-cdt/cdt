@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -18,6 +18,14 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.parser.Keywords;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.StringMatcher;
+import org.eclipse.cdt.ui.CElementGrouping;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
@@ -65,16 +73,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.keys.IBindingService;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.parser.Keywords;
-import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.StringMatcher;
 
 /**
  * Abstract class for "quick" views in light-weight controls.
@@ -174,7 +172,7 @@ public abstract class AbstractInformationControl extends PopupDialog
 			}
 		}
 		fTreeStyle = treeStyle;
-		// Title and status text must be set to get the title label created, so force empty values here. 
+		// Title and status text must be set to get the title label created, so force empty values here.
 		if (hasHeader())
 			setTitleText(""); //$NON-NLS-1$
 		setInfoText(""); //  //$NON-NLS-1$
@@ -188,10 +186,10 @@ public abstract class AbstractInformationControl extends PopupDialog
 
 	/**
 	 * Create the main content for this information control.
-	 * 
+	 *
 	 * @param parent The parent composite
 	 * @return The control representing the main content.
-	 * 
+	 *
 	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
@@ -313,7 +311,7 @@ public abstract class AbstractInformationControl extends PopupDialog
 	 * <p>
 	 * The default is to return <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if the control has a header
 	 */
 	protected boolean hasHeader() {
@@ -511,9 +509,9 @@ public abstract class AbstractInformationControl extends PopupDialog
 
 	/*
 	 * Overridden to call the old framework method.
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.PopupDialog#fillDialogMenu(IMenuManager)
-	 * 
+	 *
 	 */
 	@Override
 	protected void fillDialogMenu(IMenuManager dialogMenu) {
@@ -599,7 +597,7 @@ public abstract class AbstractInformationControl extends PopupDialog
 		 * computed in Window#getInitialLocation, which will center it in the parent shell / main
 		 * monitor, which is wrong for two reasons:
 		 * - we want to center over the editor / subject control, not the parent shell
-		 * - the center is computed via the initalSize, which may be also wrong since the size may 
+		 * - the center is computed via the initalSize, which may be also wrong since the size may
 		 *   have been updated since via min/max sizing of AbstractInformationControlManager.
 		 * In that case, override the location with the one computed by the manager. Note that
 		 * the call to constrainShellSize in PopupDialog.open will still ensure that the shell is
@@ -724,7 +722,7 @@ public abstract class AbstractInformationControl extends PopupDialog
 	/*
 	 * Overridden to insert the filter text into the title control
 	 * if there is no header specified.
-	 * 
+	 *
 	 */
 	@Override
 	protected Control createTitleControl(Composite parent) {

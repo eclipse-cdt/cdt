@@ -25,11 +25,11 @@ import org.eclipse.cdt.managedbuilder.internal.core.OptionCategory;
 /**
  * This class represent the elements in the TreeViewer that displays the tools
  * and categories in the tool options property pages.  The reason for these
- * elements is illustrated by bugzilla #123461.  We used to use the ToolChain, 
+ * elements is illustrated by bugzilla #123461.  We used to use the ToolChain,
  * Tool and OptionCategory objects themselves as the elements in the TreeViewer,
  * but the same OptionCategory can appear more than once in the list of Tree
  * Viewer items, and this caused problems.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -126,7 +126,7 @@ public class ToolListElement {
 
 	public void addChildElement(ToolListElement element) {
 		if (childElements == null)
-			childElements = new ArrayList<ToolListElement>();
+			childElements = new ArrayList<>();
 		childElements.add(element);
 	}
 }

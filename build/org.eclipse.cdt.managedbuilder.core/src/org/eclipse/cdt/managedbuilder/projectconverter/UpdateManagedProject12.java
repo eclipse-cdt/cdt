@@ -88,7 +88,7 @@ class UpdateManagedProject12 {
 	private static final String TOOL_LANG_BOTH = "both"; //$NON-NLS-1$
 	private static final String TOOL_LANG_C = "c"; //$NON-NLS-1$
 	private static final String TOOL_LANG_CPP = "cpp"; //$NON-NLS-1$
-	private static final String TOOL_NAME_AR = "ar"; //$NON-NLS-1$	
+	private static final String TOOL_NAME_AR = "ar"; //$NON-NLS-1$
 	private static final String TOOL_NAME_ARCHIVER = "archiver"; //$NON-NLS-1$
 	private static final String TOOL_NAME_COMPILER = "compiler"; //$NON-NLS-1$
 	private static final String TOOL_NAME_LIB = "lib"; //$NON-NLS-1$
@@ -108,7 +108,7 @@ class UpdateManagedProject12 {
 	 * configuration. Old built-in configurations had the format
 	 * 	cygin.[exec|so|exp|lib].[debug|release]
 	 * 	[linux|solaris].gnu.[exec|so|lib].[release|debug]
-	 * 
+	 *
 	 * @param oldId
 	 * @return
 	 */
@@ -118,7 +118,7 @@ class UpdateManagedProject12 {
 		boolean debug = false;
 		int type = -1;
 
-		Vector<String> idTokens = new Vector<String>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+		Vector<String> idTokens = new Vector<>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
 		try {
 			String platform = idTokens.get(0);
 			if (platform.equalsIgnoreCase(ID_CYGWIN)) {
@@ -164,7 +164,7 @@ class UpdateManagedProject12 {
 			defId += ID_STATIC;
 			break;
 		}
-		defId += ID_SEPARATOR + (debug ? "debug" : "release"); //$NON-NLS-1$ //$NON-NLS-2$		
+		defId += ID_SEPARATOR + (debug ? "debug" : "release"); //$NON-NLS-1$ //$NON-NLS-2$
 		return defId;
 	}
 
@@ -240,11 +240,11 @@ class UpdateManagedProject12 {
 
 		String optId = null;
 		String[] idTokens = oldId.split(REGEXP_SEPARATOR);
-		Vector<String> oldIdVector = new Vector<String>(Arrays.asList(idTokens));
+		Vector<String> oldIdVector = new Vector<>(Arrays.asList(idTokens));
 		if (isBuiltInOption(oldIdVector)) {
 
 			// New ID will be in form gnu.[c|c++|both].[compiler|link|lib].option.{1.2_component}
-			Vector<String> newIdVector = new Vector<String>(idTokens.length + 2);
+			Vector<String> newIdVector = new Vector<>(idTokens.length + 2);
 
 			// We can ignore the first element of the old IDs since it is just [cygwin|linux|solaris]
 			for (int index = 1; index < idTokens.length; ++index) {
@@ -309,7 +309,7 @@ class UpdateManagedProject12 {
 			}
 
 			// Another boundary condition to check is the case where the linker option
-			// has gnu.[c|cpp].link.option.libs.paths or gnu.[c|cpp].link.option.libs.paths 
+			// has gnu.[c|cpp].link.option.libs.paths or gnu.[c|cpp].link.option.libs.paths
 			// because the new option format does away with the libs in the second last element
 			try {
 				if ((newIdVector.lastElement().equals(ID_PATHS) || newIdVector.lastElement().equals(ID_LIBS))
@@ -388,7 +388,7 @@ class UpdateManagedProject12 {
 					String idValue = newOpt.getEnumeratedId(name);
 					if (idValue == null) {
 						// If the name does not match one of the enumerations values, probably because
-						// the list of enumerands has changed, set the name to be the name used for the 
+						// the list of enumerands has changed, set the name to be the name used for the
 						// enumeration's default value
 						name = (String) newOpt.getDefaultValue();
 					}
@@ -412,7 +412,7 @@ class UpdateManagedProject12 {
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.LIBRARIES:
 				case IOption.OBJECTS:
-					Vector<String> values = new Vector<String>();
+					Vector<String> values = new Vector<>();
 					NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
 					for (int i = 0; i < nodes.getLength(); ++i) {
 						Node node = nodes.item(i);
@@ -435,7 +435,7 @@ class UpdateManagedProject12 {
 	}
 
 	/* (non-Javadoc)
-	 * Converts an old built-in target ID from 1.2 format to 
+	 * Converts an old built-in target ID from 1.2 format to
 	 * 2.1 format. A 1.2 target will have the format :
 	 * 	cygyin.[exec|so|lib]
 	 * 	[linux|solaris].gnu.[exec|so|lib]
@@ -450,7 +450,7 @@ class UpdateManagedProject12 {
 		// Is this a built-in target or one we cannot convert
 		boolean builtIn = false;
 
-		Vector<String> idTokens = new Vector<String>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+		Vector<String> idTokens = new Vector<>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
 		try {
 			String platform = idTokens.get(0);
 			if (platform.equalsIgnoreCase(ID_CYGWIN)) {
@@ -495,11 +495,11 @@ class UpdateManagedProject12 {
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * @param project the project being upgraded
 	 * @param oldTarget a document element contain the old target information
-	 * @param monitor 
-	 * @return new 2.1 managed project 
+	 * @param monitor
+	 * @return new 2.1 managed project
 	 * @throws CoreException if the target is unknown
 	 */
 	protected static IManagedProject convertTarget(IProject project, Element oldTarget, IProgressMonitor monitor)
@@ -558,7 +558,7 @@ class UpdateManagedProject12 {
 			int toolType = -1;
 
 			// Figure out what kind of tool the ref pointed to
-			Vector<String> idTokens = new Vector<String>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
+			Vector<String> idTokens = new Vector<>(Arrays.asList(oldId.split(REGEXP_SEPARATOR)));
 
 			for (String token : idTokens) {
 				if (token.equals(TOOL_LANG_C)) {
@@ -638,7 +638,7 @@ class UpdateManagedProject12 {
 			throw new CoreException(new Status(IStatus.ERROR, ManagedBuilderCorePlugin.getUniqueIdentifier(), -1,
 					ConverterMessages.getFormattedString("UpdateManagedProject12.11", toolId), null)); //$NON-NLS-1$
 
-		//		 Check for migration support 
+		//		 Check for migration support
 		((Tool) newTool).checkForMigrationSupport();
 
 		// The ref may or may not contain overridden options
@@ -650,11 +650,11 @@ class UpdateManagedProject12 {
 	}
 
 	/* (non-Javadoc)
-	 * Answers true if the target is one supplied by the CDT which will have the 
+	 * Answers true if the target is one supplied by the CDT which will have the
 	 * format :
 	 * 	cygyin.[exec|so|lib]
 	 * 	[linux|solaris].gnu.[exec|so|lib]
-	 * 
+	 *
 	 * @param id id to test
 	 * @return true if the target is recognized as built-in
 	 */
@@ -666,15 +666,15 @@ class UpdateManagedProject12 {
 	//		try {
 	//			String platform = idTokens[0];
 	//			if (platform.equals(ID_CYGWIN)) {
-	//				return (idTokens[1].equals(ID_EXEC) 
+	//				return (idTokens[1].equals(ID_EXEC)
 	//						|| idTokens[1].equals(ID_SHARED)
 	//						|| idTokens[1].equals(ID_STATIC));
-	//			} else if (platform.equals(ID_LINUX) 
+	//			} else if (platform.equals(ID_LINUX)
 	//					|| platform.equals(ID_SOLARIS)) {
 	//				if (idTokens[1].equals(ID_GNU)) {
-	//					return (idTokens[2].equals(ID_EXEC) 
+	//					return (idTokens[2].equals(ID_EXEC)
 	//							|| idTokens[2].equals(ID_SHARED)
-	//							|| idTokens[2].equals(ID_STATIC));					
+	//							|| idTokens[2].equals(ID_STATIC));
 	//				}
 	//			}
 	//		} catch (ArrayIndexOutOfBoundsException e) {
@@ -789,7 +789,7 @@ class UpdateManagedProject12 {
 	 */
 	protected static Map<String, IConfiguration> getConfigIdMap() {
 		if (configIdMap == null) {
-			configIdMap = new HashMap<String, IConfiguration>();
+			configIdMap = new HashMap<>();
 		}
 		return configIdMap;
 	}
@@ -801,7 +801,7 @@ class UpdateManagedProject12 {
 			if (platform.equals(ID_CYGWIN)) {
 				// bit of a mess since was done first
 				// but valid second tokens are 'compiler',
-				// 'preprocessor', 'c', 'gnu', 'link', 
+				// 'preprocessor', 'c', 'gnu', 'link',
 				// 'solink', or 'ar'
 				if (secondToken.equals(TOOL_NAME_COMPILER) || secondToken.equals(ID_PREPROC)
 						|| secondToken.equals(TOOL_LANG_C) || secondToken.equals(ID_GNU)

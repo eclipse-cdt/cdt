@@ -14,9 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class BuildModelMessages {
 	private static final String BUNDLE_NAME = "org.eclipse.cdt.managedbuilder.internal.buildmodel.BuildModelMessages"; //$NON-NLS-1$

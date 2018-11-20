@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -70,12 +70,12 @@ public class TestsHierarchyViewer {
 		/**
 		 * Utility class: recursively collects all the test cases of the
 		 * specified test item.
-		 * 
+		 *
 		 * It is used for flat view of tests hierarchy.
 		 */
 		private class TestCasesCollector implements IModelVisitor {
 
-			public List<ITestCase> testCases = new ArrayList<ITestCase>();
+			public List<ITestCase> testCases = new ArrayList<>();
 
 			@Override
 			public void visit(ITestCase testCase) {
@@ -144,7 +144,7 @@ public class TestsHierarchyViewer {
 	private class TestLabelProvider extends LabelProvider implements IStyledLabelProvider {
 
 		/** Images for the test cases with the different statuses. */
-		private Map<ITestItem.Status, Image> testCaseImages = new HashMap<ITestItem.Status, Image>();
+		private Map<ITestItem.Status, Image> testCaseImages = new HashMap<>();
 		{
 			testCaseImages.put(ITestItem.Status.NotRun, TestsRunnerPlugin.createAutoImage("obj16/test_notrun.gif")); //$NON-NLS-1$
 			testCaseImages.put(ITestItem.Status.Skipped, TestsRunnerPlugin.createAutoImage("obj16/test_skipped.gif")); //$NON-NLS-1$
@@ -157,7 +157,7 @@ public class TestsHierarchyViewer {
 		private Image testCaseRunImage = TestsRunnerPlugin.createAutoImage("obj16/test_run.gif"); //$NON-NLS-1$
 
 		/** Images for the test suites with the different statuses. */
-		private Map<ITestItem.Status, Image> testSuiteImages = new HashMap<ITestItem.Status, Image>();
+		private Map<ITestItem.Status, Image> testSuiteImages = new HashMap<>();
 		{
 			// NOTE: There is no skipped-icon for test suite, but it seems it is not a problem
 			testSuiteImages.put(ITestItem.Status.NotRun, TestsRunnerPlugin.createAutoImage("obj16/tsuite_notrun.gif")); //$NON-NLS-1$
@@ -238,7 +238,7 @@ public class TestsHierarchyViewer {
 		 * Appends path to the parent of the specified test item. Also
 		 * implements caching of the last path (cause the test item parent is
 		 * often the same).
-		 * 
+		 *
 		 * @param sb string builder to append test item path to
 		 * @param testItem specified test item
 		 */
@@ -254,7 +254,7 @@ public class TestsHierarchyViewer {
 
 		/**
 		 * Returns the execution time suffix for the test item.
-		 * 
+		 *
 		 * @param element test item
 		 * @return execution time suffix
 		 */
@@ -312,8 +312,8 @@ public class TestsHierarchyViewer {
 	}
 
 	/**
-	 * Initializes the viewer context menu. 
-	 * 
+	 * Initializes the viewer context menu.
+	 *
 	 * @param viewSite view
 	 */
 	private void initContextMenu(IViewSite viewSite) {
@@ -349,7 +349,7 @@ public class TestsHierarchyViewer {
 
 	/**
 	 * Handles the context menu showing.
-	 * 
+	 *
 	 * @param manager context menu manager
 	 */
 	private void handleMenuAboutToShow(IMenuManager manager) {
@@ -370,7 +370,7 @@ public class TestsHierarchyViewer {
 
 	/**
 	 * Sets the testing session to show.
-	 * 
+	 *
 	 * @param testingSession testing session or null to set default empty
 	 * session
 	 */
@@ -381,7 +381,7 @@ public class TestsHierarchyViewer {
 
 	/**
 	 * Provides access to the main widget of the tests hierarchy viewer.
-	 * 
+	 *
 	 * @return main widget of the tests hierarchy viewer
 	 */
 	public TreeViewer getTreeViewer() {
@@ -405,7 +405,7 @@ public class TestsHierarchyViewer {
 	/**
 	 * Common implementation for movement the selection to the next or previous
 	 * failed test case.
-	 * 
+	 *
 	 * @param next true if the next failed test case should be selected and false otherwise
 	 */
 	private void showFailure(boolean next) {
@@ -431,7 +431,7 @@ public class TestsHierarchyViewer {
 	 * <code>currItem</code> that should be a child of <code>parentItem</code>.
 	 * If the such item was not found through the children, it steps up to the
 	 * parent and continues search.
-	 * 
+	 *
 	 * @param parentItem parent test item to the current one
 	 * @param currItem current item search should be started from or null if
 	 * there is no any
@@ -460,7 +460,7 @@ public class TestsHierarchyViewer {
 	 * <code>currItem</code> that should be a child of <code>parentItem</code>.
 	 * Note that unlike <code>findFailedImpl()</code> this method search only
 	 * through the children items.
-	 * 
+	 *
 	 * @param parentItem parent test item to the current one
 	 * @param currItem current item search should be started from or null if
 	 * there is no any
@@ -507,7 +507,7 @@ public class TestsHierarchyViewer {
 	/**
 	 * Returns whether test items execution time should be shown in tests
 	 * hierarchy.
-	 * 
+	 *
 	 * @return true if time should be shown and false otherwise
 	 */
 	public boolean showTime() {
@@ -517,7 +517,7 @@ public class TestsHierarchyViewer {
 	/**
 	 * Sets whether test items execution time should be shown in tests
 	 * hierarchy. Updates tests hierarchy viewer if the view is changed.
-	 * 
+	 *
 	 * @param showTime true if time is shown and false otherwise
 	 */
 	public void setShowTime(boolean showTime) {
@@ -529,7 +529,7 @@ public class TestsHierarchyViewer {
 
 	/**
 	 * Sets whether only failed tests should be shown.
-	 * 
+	 *
 	 * @param showFailedOnly new filter state
 	 */
 	public void setShowFailedOnly(boolean showFailedOnly) {
@@ -547,7 +547,7 @@ public class TestsHierarchyViewer {
 	/**
 	 * Returns whether tests hierarchy should be shown in flat or hierarchical
 	 * mode.
-	 * 
+	 *
 	 * @return tests hierarchy view mode
 	 */
 	public boolean showTestsHierarchy() {
@@ -557,7 +557,7 @@ public class TestsHierarchyViewer {
 	/**
 	 * Sets whether tests hierarchy should be shown in flat or hierarchical
 	 * mode. Updates tests hierarchy viewer if the view is changed.
-	 * 
+	 *
 	 * @param showTestsHierarchy true if tests hierarchy is shown in
 	 * hierarchical mode and false otherwise
 	 */

@@ -14,12 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction;
 
+import org.eclipse.cdt.internal.ui.editor.ConstructedCEditorMessages;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.source.IVerticalRulerInfo;
 import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.internal.ui.editor.ConstructedCEditorMessages;
 
 public class CSelectRulerAction extends AbstractRulerActionDelegate {
 

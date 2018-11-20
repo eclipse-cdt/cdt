@@ -49,7 +49,7 @@ public class ManagedMakeProject implements ICOwner {
 		/*		if (extensionID.equals(CCorePlugin.BINARY_PARSER_UNIQ_ID)) {
 					updateBinaryParsers(cproject);
 				}
-		
+
 				if (extensionID.equals(CCorePlugin.INDEXER_UNIQ_ID)) {
 					updateIndexers(cproject);
 				}

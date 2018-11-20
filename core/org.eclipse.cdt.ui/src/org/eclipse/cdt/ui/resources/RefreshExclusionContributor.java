@@ -7,24 +7,23 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.resources;
 
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.cdt.core.resources.RefreshExclusion;
+import org.eclipse.swt.widgets.Composite;
 
 /**
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
  * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
- * 
+ *
  * @author crecoskie
  * @since 5.3
- * 
+ *
  */
 public abstract class RefreshExclusionContributor {
 
@@ -36,7 +35,7 @@ public abstract class RefreshExclusionContributor {
 
 	/**
 	 * Creates the UI that allows user to modify the given RefreshExclusion
-	 * 
+	 *
 	 * @param parent
 	 *            - the parent composite to contain the UI
 	 * @param exclusion
@@ -50,7 +49,7 @@ public abstract class RefreshExclusionContributor {
 
 	/**
 	 * Returns the human-readable name of this exclusion type.
-	 * 
+	 *
 	 * @return String.
 	 */
 	public String getName() {

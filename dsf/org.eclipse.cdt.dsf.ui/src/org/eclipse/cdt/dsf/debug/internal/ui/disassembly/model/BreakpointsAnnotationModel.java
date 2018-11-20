@@ -183,10 +183,10 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel
 					/* Otherwise, create an address position */
 				} else {
 					// See bug 300053 comment 5:
-					// Since there can only be one annotation per marker and in order to support multiple 
+					// Since there can only be one annotation per marker and in order to support multiple
 					// annotations per breakpoint, we need a specialized annotation type.
 					//
-					// So for now, we only create an annotation for the first valid address. We can add 
+					// So for now, we only create an annotation for the first valid address. We can add
 					// support for multiple annotations per breakpoint when it's needed.
 					IAddress[] addresses = locationProvider.getAddresses(breakpoint, fDebugContext);
 					for (int i = 0; addresses != null && i < addresses.length; ++i) {
@@ -233,7 +233,7 @@ public class BreakpointsAnnotationModel extends DisassemblyAnnotationModel
 	/**
 	 * Decode given string representation of a non-negative integer. A
 	 * hexadecimal encoded integer is expected to start with <code>0x</code>.
-	 * 
+	 *
 	 * @param string
 	 *            decimal or hexadecimal representation of an non-negative integer
 	 * @return address value as <code>BigInteger</code> or <code>null</code> in case of a <code>NumberFormatException</code>

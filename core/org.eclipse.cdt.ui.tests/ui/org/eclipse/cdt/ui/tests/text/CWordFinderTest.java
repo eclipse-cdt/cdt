@@ -15,16 +15,14 @@
 
 package org.eclipse.cdt.ui.tests.text;
 
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import junit.framework.TestSuite;
 
 /**
  * Tests for CWordFinder.

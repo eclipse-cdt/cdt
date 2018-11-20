@@ -16,6 +16,16 @@ package org.eclipse.cdt.internal.ui.language;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -28,19 +38,6 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.language.WorkspaceLanguageConfiguration;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.language.LanguageMappingStore;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class WorkspaceLanguageMappingPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 

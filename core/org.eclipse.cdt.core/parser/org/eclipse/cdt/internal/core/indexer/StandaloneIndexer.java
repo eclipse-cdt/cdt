@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * The base class for stand-alone index population tools.
- * 
+ *
  * <p>
  * This class is not thread safe.
  * </p>
@@ -429,13 +429,13 @@ public abstract class StandaloneIndexer {
 	}
 
 	/**
-	 * Returns files that are being added to the index, skipping over files that 
+	 * Returns files that are being added to the index, skipping over files that
 	 * should not be excluded.
 	 * @param tus
 	 * @return
 	 */
 	private List<String> getFilesAdded(List<String> tus) {
-		List<String> added = new ArrayList<String>();
+		List<String> added = new ArrayList<>();
 
 		FilenameFilter filter = getExclusionFilter();
 		if (filter == null) {
@@ -488,7 +488,7 @@ public abstract class StandaloneIndexer {
 	}
 
 	/**
-	 * Sets the exclusion filter that tells the indexer to skip over 
+	 * Sets the exclusion filter that tells the indexer to skip over
 	 * files that should not be indexed.
 	 * @param exclusionFilter
 	 */

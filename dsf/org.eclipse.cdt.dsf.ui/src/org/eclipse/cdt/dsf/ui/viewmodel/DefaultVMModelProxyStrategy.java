@@ -7,11 +7,11 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - adapted to use with DSF
- *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 240208)   
+ *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 240208)
  *     Marc Dumais (Ericsson) - bug 485170
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel;
@@ -46,15 +46,15 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 
 /**
- * This is the default implementation of {@link IModelProxy} interface for 
+ * This is the default implementation of {@link IModelProxy} interface for
  * use by a view model provider.  It implements an algorithm to walk the
  * tree hierarchy of nodes configured with a provider in order to compose
  * an {@link IModelDelta} for a given data model event.
  * <p/>
  * This class is closely linked with a view model provider which is required
  * for the constructor.  The view model provider is used to access the correct
- * executor and the node hierarchy. 
- * 
+ * executor and the node hierarchy.
+ *
  * @since 1.0
  */
 @ConfinedToDsfExecutor("#getProvider()#getExecutor()")
@@ -71,7 +71,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	private boolean fAllowRecursiveVMNodes = false;
 
 	/**
-	 * Creates this model proxy strategy for the given provider. 
+	 * Creates this model proxy strategy for the given provider.
 	 */
 	public DefaultVMModelProxyStrategy(AbstractVMProvider provider, Object rootElement) {
 		fProvider = provider;
@@ -133,7 +133,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
 	/**
 	 * Notifies registered listeners of the given delta.
-	 * 
+	 *
 	 * @param delta model delta to broadcast
 	 */
 	@Override
@@ -160,7 +160,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
 	/**
 	 * Convenience method that returns the root node of the given delta.
-	 * 
+	 *
 	 * @param delta delta node
 	 * @return returns the root of the given delta
 	 */
@@ -196,7 +196,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
 	/**
 	 * Returns the context this model proxy is installed in.
-	 * 
+	 *
 	 * @return presentation context, or <code>null</code> if this
 	 *  model proxy has been disposed
 	 */
@@ -205,9 +205,9 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * Subclasses should override as required.
-	 * 
+	 *
 	 * @see org.eclipse.debug.internal.ui.viewers.provisional.IModelProxy#installed(org.eclipse.jface.viewers.Viewer)
 	 */
 	@Override
@@ -232,9 +232,9 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
 	/**
 	 * Handle viewer double click.
-	 * 
+	 *
 	 * @param e  the event
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	protected void handleDoubleClick(final DoubleClickEvent e) {
@@ -265,9 +265,9 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
 	/**
 	 * Returns the viewer this proxy is installed in.
-	 * 
+	 *
 	 * @return viewer or <code>null</code> if not installed
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	@Override
@@ -287,20 +287,20 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	 * Recursively calls the VM nodes in the hierarchy of the given node to
 	 * determine how elements of those types may be (or are) affected by
 	 * [event], the answer being a collection of IModelDelta flags.
-	 * 
+	 *
 	 * A response of IModeDelta.CONTENT has a special meaning. If we return that
 	 * flag for an IVMNode, it means the <i>collection</i> of elements of that
 	 * type are affected. It is not a statement on the elements themselves.
-	 * 
+	 *
 	 * Optimization 1: If the first-level child node does not have
 	 * <code>IModelDelta.CONTENT</code> but one of its descendants does, then
 	 * for optimization reasons we return <code>IModelDelta.STATE</code>
 	 * instead. See {@link DefaultVMModelProxyStrategy#buildChildDeltasForAllContexts(IVMNode, Object, VMDelta, int, RequestMonitor)}
-	 * 
+	 *
 	 * Optimization 2: If the parent delta contains
 	 * <code>IModelDelta.CONTENT</code>, we do not need to specify it for its
 	 * children. This can shorten delta processing considerably.
-	 * 
+	 *
 	 * @param node
 	 *            the IVMNode whose delta flags (and those of its descendants)
 	 *            are being queried
@@ -342,7 +342,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
 	/**
 	 * Default implementation creates a delta assuming that the root node
-	 * is the input object into the view.  
+	 * is the input object into the view.
 	 */
 	@Override
 	public void createDelta(final Object event, final DataRequestMonitor<IModelDelta> rm) {
@@ -359,11 +359,11 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 						// the delta for the root element of the entire viewer.
 						final IModelDelta viewRootDelta = getRootDelta(getData());
 
-						// Find the child nodes that (may) have deltas for the given event. 
+						// Find the child nodes that (may) have deltas for the given event.
 						final Map<IVMNode, Integer> childNodesWithDeltaFlags = getChildNodesWithDeltaFlags(rootNode,
 								getData(), event);
 
-						// If no child nodes have deltas we can stop here. 
+						// If no child nodes have deltas we can stop here.
 						if (childNodesWithDeltaFlags.size() == 0) {
 							rm.setData(viewRootDelta);
 							rm.done();
@@ -374,7 +374,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 								new RequestMonitor(getVMProvider().getExecutor(), rm) {
 									@Override
 									protected void handleSuccess() {
-										// Get rid of redundant CONTENT and STATE flags in delta and prune 
+										// Get rid of redundant CONTENT and STATE flags in delta and prune
 										// nodes without flags
 										rm.setData(pruneDelta((VMDelta) viewRootDelta));
 										rm.done();
@@ -405,11 +405,11 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 		return delta;
 	}
 
-	/** 
-	 * Base implementation that handles calling child nodes to build 
+	/**
+	 * Base implementation that handles calling child nodes to build
 	 * the model delta.  This method delegates to two other methods:
-	 * {@link #buildChildDeltasForEventContext(IVMContext[], IVMNode, Object, VMDelta, int, RequestMonitor)} 
-	 * and {@link #buildChildDeltasForAllContexts(IVMNode, Object, VMDelta, int, RequestMonitor)}, 
+	 * {@link #buildChildDeltasForEventContext(IVMContext[], IVMNode, Object, VMDelta, int, RequestMonitor)}
+	 * and {@link #buildChildDeltasForAllContexts(IVMNode, Object, VMDelta, int, RequestMonitor)},
 	 * depending on the result of calling{@link IVMNode#getContextsForEvent(VMDelta, Object, DataRequestMonitor)}.
 	 * @see IVMNode#buildDelta(Object, ModelDelta, int, RequestMonitor)
 	 */
@@ -423,8 +423,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 							assert getData() != null;
 							buildChildDeltasForEventContext(getData(), node, event, parentDelta, nodeOffset, rm);
 						} else if (getStatus().getCode() == IDsfStatusConstants.NOT_SUPPORTED) {
-							// The DMC for this node was not found in the event.  Call the 
-							// super-class to resort to the default behavior which will add a 
+							// The DMC for this node was not found in the event.  Call the
+							// super-class to resort to the default behavior which will add a
 							// delta for every element in this node.
 							buildChildDeltasForAllContexts(node, event, parentDelta, nodeOffset, rm);
 						} else {
@@ -434,9 +434,9 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 				});
 	}
 
-	/** 
-	 * Base implementation that handles calling child nodes to build 
-	 * the model delta.  This method is called with the context obtained  
+	/**
+	 * Base implementation that handles calling child nodes to build
+	 * the model delta.  This method is called with the context obtained
 	 * by calling{@link IVMNode#getContextsForEvent(VMDelta, Object, DataRequestMonitor)}.
 	 * @see IVMNode#buildDelta(Object, ModelDelta, int, RequestMonitor)
 	 */
@@ -449,8 +449,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 			return;
 		}
 
-		// Check if any of the child nodes are will generate IModelDelta.SELECT  or 
-		// IModelDelta.EXPAND flags.  If so, we must calculate the index for this 
+		// Check if any of the child nodes are will generate IModelDelta.SELECT  or
+		// IModelDelta.EXPAND flags.  If so, we must calculate the index for this
 		// VMC.
 		boolean calculateIndex = false;
 		if (nodeOffset >= 0) {
@@ -463,13 +463,13 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 		}
 
 		if (calculateIndex) {
-			// Calculate the index of this node by retrieving all the 
-			// elements and then finding the DMC that the event is for.  
+			// Calculate the index of this node by retrieving all the
+			// elements and then finding the DMC that the event is for.
 			getVMProvider().updateNode(node, new VMChildrenUpdate(parentDelta, getVMProvider().getPresentationContext(),
 					-1, -1, new DataRequestMonitor<List<Object>>(getVMProvider().getExecutor(), rm) {
 						@Override
 						protected void handleSuccess() {
-							// Check for an empty list of elements.  If it's empty then we 
+							// Check for an empty list of elements.  If it's empty then we
 							// don't have to call the children nodes, so return here.
 							// No need to propagate error, there's no means or need to display it.
 							if (getData().isEmpty()) {
@@ -493,7 +493,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 									continue;
 								}
 
-								// Optimization: Try to find a delta with a matching element, if found use it.  
+								// Optimization: Try to find a delta with a matching element, if found use it.
 								// Otherwise create a new delta for the event element.
 								int elementIndex = nodeOffset + i;
 								VMDelta delta = parentDelta.getChildDelta(vmc);
@@ -511,8 +511,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 			CountingRequestMonitor countingRm = new CountingRequestMonitor(getVMProvider().getExecutor(), rm);
 			int count = 0;
 			for (IVMContext vmc : vmcs) {
-				// Optimization: Try to find a delta with a matching element, if found use it.  
-				// Otherwise create a new delta for the event element.    
+				// Optimization: Try to find a delta with a matching element, if found use it.
+				// Otherwise create a new delta for the event element.
 				VMDelta delta = parentDelta.getChildDelta(vmc);
 				if (delta == null) {
 					delta = parentDelta.addNode(vmc, IModelDelta.NO_CHANGE);
@@ -524,10 +524,10 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 		}
 	}
 
-	/** 
-	 * Base implementation that handles calling child nodes to build 
-	 * the model delta.  The child nodes are called with all the elements 
-	 * in this node, which could be very inefficient.  This method is only 
+	/**
+	 * Base implementation that handles calling child nodes to build
+	 * the model delta.  The child nodes are called with all the elements
+	 * in this node, which could be very inefficient.  This method is only
 	 * called if {@link IVMNode#getContextsForEvent(VMDelta, Object, DataRequestMonitor)}
 	 * is not supported by the node for the given element.
 	 * @see IVMNode#buildDelta(Object, ModelDelta, int, RequestMonitor)
@@ -551,8 +551,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 		// is have the CONTENT flag applied to the first ancestor delta that has
 		// something other than IModelDelta.STATE.
 		//
-		// The main benefit of this optimization is that the viewer is left 
-		// to retrieve the elements that need to be refreshed, rather 
+		// The main benefit of this optimization is that the viewer is left
+		// to retrieve the elements that need to be refreshed, rather
 		// than having this proxy do it.  Since the viewer is lazy loading
 		// it may not need to retrieve as many elements in the hierarchy.
 		//
@@ -626,7 +626,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
 							// Check for an empty list of elements.  If the list of elements is empty
 							// still call the child nodes using the parent delta only.  Do this only if
-							// an optimization was used to build the delta, so that the child node can  
+							// an optimization was used to build the delta, so that the child node can
 							// adds the optimized delta flags without the full delta (bug 280770).
 							if (childElements == null || childElements.size() == 0) {
 								if (updateFlagsOnly) {
@@ -640,8 +640,8 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 										getVMProvider().getExecutor(), rm);
 								int rmCount = 0;
 
-								// For each element from this node, create a new delta, 
-								// and then call all the child nodes to build their delta. 
+								// For each element from this node, create a new delta,
+								// and then call all the child nodes to build their delta.
 								for (int i = 0; i < childElements.size(); i++) {
 									int elementIndex = nodeOffset >= 0 ? nodeOffset + i : -1;
 									VMDelta delta = parentDelta.getChildDelta(childElements.get(i));
@@ -663,7 +663,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	/**
 	 * Calls the specified child nodes (of [node]) to build the delta for the
 	 * given event.
-	 * 
+	 *
 	 * @param childNodes
 	 *            Map of nodes to be invoked, and the corresponding delta flags
 	 *            that they may (or will) generate. This map is generated with a
@@ -708,14 +708,14 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 							if (node.equals(childNode)) {
 
 								// Avoid descending into recursive node hierarchy's when calculating the delta.
-								// if recursive nodes are not allowed. 
+								// if recursive nodes are not allowed.
 								if (!allowRecursiveVMNodes())
 									continue;
 
 								// get into recursion to build the delta only if the recursive context is added.
-								// 
-								// We user current assumption that recursive container can be added as first children 
-								// if the list of VMNodes. If we decide to make the patch more generic ( allow recursive 
+								//
+								// We user current assumption that recursive container can be added as first children
+								// if the list of VMNodes. If we decide to make the patch more generic ( allow recursive
 								// node to be at different index) we need to remove this simplification.
 								//
 								if (isDeltaElementOfType(delta, childNode)) {
@@ -750,21 +750,21 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	}
 
 	/**
-	 * Calculates the indexes at which the elements of each of the child 
-	 * nodes begin.  These indexes are necessary to correctly 
+	 * Calculates the indexes at which the elements of each of the child
+	 * nodes begin.  These indexes are necessary to correctly
 	 * calculate the deltas for elements in the child nodes.
-	 * @param delta The delta object to build on.  This delta should have been 
+	 * @param delta The delta object to build on.  This delta should have been
 	 * generated by this node, unless the full delta path is not being calculated
 	 * due to an optimization.
 	 * @param doCalculdateOffsets If true, the method calls each node to get its
 	 * element count. If false, it causes this method to fill the return data
 	 * structure with dummy values.  The dummy values indicate that the indexes
-	 * are not known and are acceptable in the delta if the delta flags being 
-	 * generated do not require full index information. 
-	 * @param rm Return token containing the results.  The result data is a 
-	 * mapping between the child nodes and the indexes at which the child nodes' 
+	 * are not known and are acceptable in the delta if the delta flags being
+	 * generated do not require full index information.
+	 * @param rm Return token containing the results.  The result data is a
+	 * mapping between the child nodes and the indexes at which the child nodes'
 	 * elements begin.  There is a special value in the map with a <code>null</code>
-	 * key, which contains the full element count for all the nodes. 
+	 * key, which contains the full element count for all the nodes.
 	 */
 	private void getChildNodesElementOffsets(IVMNode node, IModelDelta delta, boolean calculdateOffsets,
 			final DataRequestMonitor<Map<IVMNode, Integer>> rm) {
@@ -776,7 +776,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 			final CountingRequestMonitor crm = new CountingRequestMonitor(getVMProvider().getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
-					Map<IVMNode, Integer> data = new HashMap<IVMNode, Integer>();
+					Map<IVMNode, Integer> data = new HashMap<>();
 					int offset = 0;
 					for (int i = 0; i < childNodes.length; i++) {
 						data.put(childNodes[i], offset);
@@ -805,7 +805,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 			}
 			crm.setDoneCount(countRM);
 		} else {
-			Map<IVMNode, Integer> data = new HashMap<IVMNode, Integer>();
+			Map<IVMNode, Integer> data = new HashMap<>();
 			for (int i = 0; i < childNodes.length; i++) {
 				data.put(childNodes[i], -1);
 			}
@@ -821,7 +821,7 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 	 * IModelDelta.NO_CHANGE are omitted.
 	 */
 	protected Map<IVMNode, Integer> getChildNodesWithDeltaFlags(IVMNode node, ModelDelta parentDelta, Object e) {
-		Map<IVMNode, Integer> nodes = new HashMap<IVMNode, Integer>();
+		Map<IVMNode, Integer> nodes = new HashMap<>();
 		for (final IVMNode childNode : getVMProvider().getChildVMNodes(node)) {
 			if (!childNode.equals(node) || allowRecursiveVMNodes()) {
 				int delta = getDeltaFlags(childNode, parentDelta, e);
@@ -835,9 +835,9 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
 	/**
 	 * Returns whether DefaultVMModelProxyStrategy allows to handle recursive VMNodes hierarchy.
-	 *  
+	 *
 	 * @see setAllowRecursiveVMNodes()
-	 * @return true if this DefaultVMModelProxyStrategy allows recursive containers.  
+	 * @return true if this DefaultVMModelProxyStrategy allows recursive containers.
 	 */
 	public boolean allowRecursiveVMNodes() {
 		return fAllowRecursiveVMNodes;
@@ -845,37 +845,37 @@ public class DefaultVMModelProxyStrategy implements IVMModelProxy {
 
 	/**
 	 * Allow DefaultVMModelProxyStrategy to handle recursive VMNodes hierarchy.
-	 * 	
-	 * For example if the client wants the debug view to display container nodes that  
-	 * have containers this flag has to be set.  
-	 * 
-	 * 	Launch1 
+	 *
+	 * For example if the client wants the debug view to display container nodes that
+	 * have containers this flag has to be set.
+	 *
+	 * 	Launch1
 	 * 		Container-1
 	 *			Container-1.1
-	 *			Thread-1	
+	 *			Thread-1
 	 *				Container-1.1.1
 	 *				Thread-2
 	 *				Thread-2
-	 * 
-	 * This will allow the client to setup a VMNode to be in the list of its children. 
+	 *
+	 * This will allow the client to setup a VMNode to be in the list of its children.
 	 * 		addChildNodes(containerNode, new IVMNode[] { containerNode, threadsNode });
-	 * 
-	 * The client also needs to make sure the recursive VMNodes and their immediate children: 
-	 * 1. Handle buildDelta() by building one level at a time by examining the delta passed as parameter.   
-	 * 2. Return the correct level container inside getContextsForEvent() based on the delta passed. 
-	 * 
-	 * See org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch.ContainerVMNode for sample implementation. 
-	 * 
-	 * @param allow - whether to allow or not recursive containment of VMNodes. 
+	 *
+	 * The client also needs to make sure the recursive VMNodes and their immediate children:
+	 * 1. Handle buildDelta() by building one level at a time by examining the delta passed as parameter.
+	 * 2. Return the correct level container inside getContextsForEvent() based on the delta passed.
+	 *
+	 * See org.eclipse.cdt.dsf.gdb.internal.ui.viewmodel.launch.ContainerVMNode for sample implementation.
+	 *
+	 * @param allow - whether to allow or not recursive containment of VMNodes.
 	 */
 	public void setAllowRecursiveVMNodes(boolean allow) {
 		fAllowRecursiveVMNodes = allow;
 	}
 
 	/**
-	 * Compares if the VMNode of element of the provided delta is the same as the provided IVMNode.  
-	 * 		
-	 * @param delta - delta for which to compare the IDMVMContext 
+	 * Compares if the VMNode of element of the provided delta is the same as the provided IVMNode.
+	 *
+	 * @param delta - delta for which to compare the IDMVMContext
 	 * @param node - the IVMNode we want to compare to.
 	 * @return if the VMNode of element of the provided delta is the same as the provided IVMNode.
 	 */

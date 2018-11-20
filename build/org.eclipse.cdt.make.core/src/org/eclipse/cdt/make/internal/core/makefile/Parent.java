@@ -26,7 +26,7 @@ import org.eclipse.cdt.make.core.makefile.IParent;
 
 public abstract class Parent extends Directive implements IParent {
 
-	ArrayList<Directive> children = new ArrayList<Directive>();
+	ArrayList<Directive> children = new ArrayList<>();
 
 	public Parent(Directive parent) {
 		super(parent);
@@ -34,7 +34,7 @@ public abstract class Parent extends Directive implements IParent {
 
 	public IDirective[] getDirectives(boolean expand) {
 		if (expand) {
-			List<IDirective> directives = new ArrayList<IDirective>();
+			List<IDirective> directives = new ArrayList<>();
 			getDirectives(); // populates children for class Include
 			for (IDirective directive : children) {
 				directives.add(directive);

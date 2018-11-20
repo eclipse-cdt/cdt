@@ -7,13 +7,11 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.upc.tests;
-
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
@@ -46,6 +44,8 @@ import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTTypeIdSizeofExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTUnarySizeofExpression;
 import org.eclipse.cdt.core.lrparser.tests.ParseHelper;
+
+import junit.framework.TestCase;
 
 @SuppressWarnings("nls")
 public class UPCLanguageExtensionTests extends TestCase {

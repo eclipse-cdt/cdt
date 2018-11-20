@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Represents a #elif preprocessor statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -24,14 +24,14 @@ public interface IASTPreprocessorElifStatement extends IASTPreprocessorStatement
 
 	/**
 	 * Was this #elif branch taken?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean taken();
 
 	/**
 	 * The condition of the elif.
-	 * 
+	 *
 	 * @return the Condition
 	 */
 	public char[] getCondition();

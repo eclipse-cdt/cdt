@@ -15,6 +15,9 @@
 
 package org.eclipse.cdt.internal.ui.navigator;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -29,11 +32,6 @@ import org.eclipse.ui.actions.OpenInNewWindowAction;
 import org.eclipse.ui.actions.OpenWithMenu;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
 
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
-
 /**
  * This is basically a clone of {@link org.eclipse.cdt.internal.ui.cview.OpenFileGroup},
  * but without explicit dependency on CView. This opens it up for use in the
@@ -43,7 +41,7 @@ import org.eclipse.cdt.internal.ui.cview.CViewMessages;
  * for all applicable editors if one or more files are selected.
  * For all container selections, an "Open In New Window" action is contributed.
  * </p>
- * 
+ *
  * @see org.eclipse.cdt.internal.ui.cview.OpenFileGroup
  * @see org.eclipse.ui.actions.OpenFileAction
  * @see org.eclipse.ui.actions.OpenWithMenu
@@ -56,7 +54,7 @@ public class CNavigatorOpenEditorActionGroup extends AbstractCNavigatorActionGro
 
 	/**
 	 * Create an action group for the given view part.
-	 * 
+	 *
 	 * @param viewPart
 	 */
 	public CNavigatorOpenEditorActionGroup(IViewPart viewPart) {
@@ -84,7 +82,7 @@ public class CNavigatorOpenEditorActionGroup extends AbstractCNavigatorActionGro
 
 	/**
 	 * Adds the OpenWith submenu to the context menu.
-	 * 
+	 *
 	 * @param menu
 	 *            the context menu
 	 * @param selection
@@ -107,7 +105,7 @@ public class CNavigatorOpenEditorActionGroup extends AbstractCNavigatorActionGro
 
 	/**
 	 * Adds the Open in New Window action to the context menu.
-	 * 
+	 *
 	 * @param menu
 	 *            the context menu
 	 * @param selection
@@ -151,7 +149,7 @@ public class CNavigatorOpenEditorActionGroup extends AbstractCNavigatorActionGro
 	}
 
 	/**
-	 * Returns the open action managed by this action group. 
+	 * Returns the open action managed by this action group.
 	 *
 	 * @return the open action
 	 */

@@ -16,7 +16,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * Parsing of GDB/MI "target-download"
- * 
+ *
  * Example:
  * -target-download
  * +download,{section=".text",section-size="6668",total-size="9880"}
@@ -63,7 +63,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * total-sent="9796",total-size="9880"}
  * ^done,address="0x10004",load-size="9880",transfer-rate="6586",
  * write-rate="429"
- * 
+ *
  * @since 3.0
  */
 public class MITargetDownloadInfo extends MIInfo {

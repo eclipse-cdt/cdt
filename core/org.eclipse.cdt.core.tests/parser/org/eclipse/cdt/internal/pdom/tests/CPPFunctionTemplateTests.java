@@ -17,14 +17,14 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.ast.IBinding;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionTemplate;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPInstanceCache;
 import org.eclipse.cdt.internal.core.index.IIndexFragment;
+
+import junit.framework.Test;
 
 public class CPPFunctionTemplateTests extends PDOMInlineCodeTestBase {
 

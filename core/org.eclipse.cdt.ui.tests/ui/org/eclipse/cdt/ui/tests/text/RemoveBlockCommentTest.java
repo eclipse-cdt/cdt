@@ -14,23 +14,20 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text;
 
-import junit.framework.TestSuite;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.core.model.ext.SourceRange;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
 import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
 import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.cdt.ui.tests.text.AddBlockCommentTest.LinePosition;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.cdt.internal.core.model.ext.SourceRange;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
+import junit.framework.TestSuite;
 
 /**
  * Tests for the RemoveBlockCommentAction.
@@ -77,7 +74,7 @@ public class RemoveBlockCommentTest extends BaseUITestCase {
 	 * Run an action to comment block defined by line positions
 	 * and assert that the result matches the expected result.
 	 * "Before" and "After" are taken from test comments.
-	 * 
+	 *
 	 * @param startLinePosition
 	 * @param endLinePosition
 	 * @throws Exception
@@ -107,7 +104,7 @@ public class RemoveBlockCommentTest extends BaseUITestCase {
 	 * Run an action to comment block defined by line positions
 	 * and assert that the result matches the expected result.
 	 * "Before" and "After" are taken from test comments.
-	 * 
+	 *
 	 * @param startLinePosition
 	 * @param endLinePosition
 	 * @param before editor contents before the operation

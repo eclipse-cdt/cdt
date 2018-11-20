@@ -16,16 +16,15 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.ArrayList;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ILibraryReference;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementGrouping;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * VirtualGrouping
@@ -36,7 +35,7 @@ public class LibraryRefContainer extends CElementGrouping {
 	private ICProject fCProject;
 
 	/**
-	 * 
+	 *
 	 */
 	public LibraryRefContainer(ICProject cproject) {
 		super(LIBRARY_REF_CONTAINER);
@@ -62,7 +61,7 @@ public class LibraryRefContainer extends CElementGrouping {
 	public Object[] getChildren(Object o) {
 		try {
 			ILibraryReference[] references = fCProject.getLibraryReferences();
-			ArrayList<ILibraryReference> list = new ArrayList<ILibraryReference>(references.length);
+			ArrayList<ILibraryReference> list = new ArrayList<>(references.length);
 			for (ILibraryReference reference : references) {
 				IPath path = reference.getPath();
 				IFile file = reference.getCModel().getWorkspace().getRoot().getFileForLocation(path);

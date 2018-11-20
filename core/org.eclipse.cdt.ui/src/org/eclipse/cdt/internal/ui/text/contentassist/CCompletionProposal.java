@@ -7,13 +7,17 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Rational Software - Initial API and implementation
  *     Jens Elmenthaler - http://bugs.eclipse.org/173458 (camel case completion)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -50,13 +54,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.texteditor.link.EditorLinkedModeUI;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
-
-import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 public class CCompletionProposal implements ICCompletionProposal, ICompletionProposalExtension,
 		ICompletionProposalExtension2, ICompletionProposalExtension3 {
@@ -248,7 +245,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 	}
 
 	/**
-	 * A class to simplify tracking a reference position in a document. 
+	 * A class to simplify tracking a reference position in a document.
 	 */
 	private static final class ReferenceTracker {
 		/** The reference position category name. */
@@ -260,7 +257,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 
 		/**
 		 * Called before document changes occur. It must be followed by a call to postReplace().
-		 * 
+		 *
 		 * @param document the document on which to track the reference position.
 		 */
 		public void preReplace(IDocument document, int offset) throws BadLocationException {
@@ -277,7 +274,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 
 		/**
 		 * Called after the document changed occured. It must be preceded by a call to preReplace().
-		 * 
+		 *
 		 * @param document the document on which to track the reference position.
 		 */
 		public int postReplace(IDocument document) {
@@ -355,7 +352,7 @@ public class CCompletionProposal implements ICCompletionProposal, ICompletionPro
 
 	/**
 	 * This method is used by the comparator to compare proposals. It ignores the return type of a function.
-	 * 
+	 *
 	 * @return the string representing the display name without the return type (if any).
 	 */
 	@Override

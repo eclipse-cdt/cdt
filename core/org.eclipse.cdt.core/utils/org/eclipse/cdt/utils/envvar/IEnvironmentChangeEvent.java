@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 /**
  * A class to describe changes to environment variables defined by user
  * on CDT Environment page in Preferences.
- * 
+ *
  * @since 5.5
  */
 public interface IEnvironmentChangeEvent {

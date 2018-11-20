@@ -16,11 +16,10 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
-
-import org.eclipse.cdt.core.model.IPathEntry;
 
 /**
  * @deprecated as of CDT 4.0. This class was used for property pages
@@ -73,9 +72,9 @@ public class CPElementSorter extends ViewerSorter {
 	@Override
 	public void sort(Viewer viewer, Object[] elements) {
 		// include paths and symbol definitions must not be sorted
-		List<Object> sort = new ArrayList<Object>(elements.length);
-		List<CPElement> includes = new ArrayList<CPElement>(elements.length);
-		List<CPElement> syms = new ArrayList<CPElement>(elements.length);
+		List<Object> sort = new ArrayList<>(elements.length);
+		List<CPElement> includes = new ArrayList<>(elements.length);
+		List<CPElement> syms = new ArrayList<>(elements.length);
 		for (Object element : elements) {
 			if (element instanceof CPElement) {
 				CPElement cpelement = (CPElement) element;

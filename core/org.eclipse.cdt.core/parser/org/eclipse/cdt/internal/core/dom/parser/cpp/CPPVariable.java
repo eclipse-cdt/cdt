@@ -59,7 +59,7 @@ import org.eclipse.core.runtime.PlatformObject;
 
 public class CPPVariable extends PlatformObject implements ICPPInternalDeclaredVariable {
 	private IASTName fDefinition;
-	private IASTName fDeclarations[]; // Allowed to have trailing nulls. Users must check or trim! 
+	private IASTName fDeclarations[]; // Allowed to have trailing nulls. Users must check or trim!
 	private IType fType;
 	private IValue fInitialValue = IntegralValue.NOT_INITIALIZED;
 	private boolean fAllResolved;

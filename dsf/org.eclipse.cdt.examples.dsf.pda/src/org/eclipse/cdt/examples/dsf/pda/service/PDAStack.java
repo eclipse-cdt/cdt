@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -25,11 +25,11 @@ import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IResumedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.StateChangeReason;
+import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
@@ -47,17 +47,17 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
- * Service for retrieving PDA debugger stack data. 
+ * Service for retrieving PDA debugger stack data.
  * <p>
- * This service depends on the {@link PDACommandControl} service and the 
- * {@link IRunControl} service.  These services must be initialized before 
+ * This service depends on the {@link PDACommandControl} service and the
+ * {@link IRunControl} service.  These services must be initialized before
  * this service is initialized.
  * </p>
  */
 public class PDAStack extends AbstractDsfService implements IStack, ICachingService {
 
 	/**
-	 * PDA stack frame contains only the stack frame level.  It is only 
+	 * PDA stack frame contains only the stack frame level.  It is only
 	 * used as an index into the frame data returned by the PDA debugger.
 	 */
 	@Immutable
@@ -194,7 +194,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
 	private PDACommandControl fCommandControl;
 	private IRunControl fRunControl;
 
-	// Command cache 
+	// Command cache
 	private CommandCache fCommandCache;
 
 	public PDAStack(DsfSession session) {
@@ -261,7 +261,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
 		getStackDepth(threadCtx, -1, new DataRequestMonitor<Integer>(getExecutor(), rm) {
 			@Override
 			protected void handleSuccess() {
-				// PDAFrame array is ordered highest to lowest.  We need to 
+				// PDAFrame array is ordered highest to lowest.  We need to
 				// calculate the index based on frame level.
 				int frameNum = getData() - frameCtx.getLevel() - 1;
 				if (frameNum < 0) {
@@ -285,9 +285,9 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
 
 	@Override
 	public void getFrames(IDMContext context, final DataRequestMonitor<IFrameDMContext[]> rm) {
-		// Can only create stack frames for an execution context as a parent, 
-		// however the argument context is a generic context type, so it could 
-		// be an execution context, a frame, a variable, etc. Search the 
+		// Can only create stack frames for an execution context as a parent,
+		// however the argument context is a generic context type, so it could
+		// be an execution context, a frame, a variable, etc. Search the
 		// hierarchy of the argument context to find the execution one.
 		final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
 
@@ -416,9 +416,9 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
 
 	@Override
 	public void getTopFrame(IDMContext context, final DataRequestMonitor<IFrameDMContext> rm) {
-		// Can only create stack frames for an execution context as a parent, 
-		// however the argument context is a generic context type, so it could 
-		// be an execution context, a frame, a variable, etc. Search the 
+		// Can only create stack frames for an execution context as a parent,
+		// however the argument context is a generic context type, so it could
+		// be an execution context, a frame, a variable, etc. Search the
 		// hierarchy of the argument context to find the execution one.
 		final PDAThreadDMContext execCtx = DMContexts.getAncestorOfType(context, PDAThreadDMContext.class);
 		if (execCtx == null) {
@@ -426,8 +426,8 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
 			return;
 		}
 
-		// Since the frame context only contain the level, there's no need to 
-		// call the PDA debugger.  Simply create a context for level 0. 
+		// Since the frame context only contain the level, there's no need to
+		// call the PDA debugger.  Simply create a context for level 0.
 		rm.setData(new FrameDMContext(getSession().getId(), execCtx, 0));
 		rm.done();
 	}
@@ -439,7 +439,7 @@ public class PDAStack extends AbstractDsfService implements IStack, ICachingServ
 			return;
 		}
 
-		// The variable data doen't contain a value.  So there's no need to 
+		// The variable data doen't contain a value.  So there's no need to
 		// go to the back end to retrieve it.
 		String variable = ((VariableDMContext) variableCtx).getVariable();
 

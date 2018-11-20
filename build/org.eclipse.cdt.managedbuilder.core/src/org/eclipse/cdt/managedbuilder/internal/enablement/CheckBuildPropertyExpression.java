@@ -70,7 +70,7 @@ public class CheckBuildPropertyExpression implements IBooleanExpression {
 				return getBuildProperty((IToolChain)ho, id);
 			return null;
 		}
-	
+
 		public static IBuildProperty getBuildProperty(ITool tool, String id){
 			IBuildProperty prop = tool.getBuildProperties().getProperty(id);
 			if(prop == null){
@@ -83,20 +83,20 @@ public class CheckBuildPropertyExpression implements IBooleanExpression {
 			}
 			return prop;
 		}
-	
+
 		public static IBuildProperty getBuildProperty(IFileInfo info, String id){
 			return getBuildProperty(info.getParent(), id);
 		}
-	
+
 		public static IBuildProperty getBuildProperty(IFolderInfo info, String id){
 			return getBuildProperty(info.getParent(), id);
 		}
-	
+
 		public static IBuildProperty getBuildProperty(IToolChain toolChain, String id){
 			IBuildProperty prop = null;
 			if(toolChain.getParentFolderInfo() == toolChain.getParent().getRootFolderInfo())
 				prop = toolChain.getBuildProperties().getProperty(id);
-	
+
 			if(prop == null){
 				prop = getBuildProperty(toolChain.getParentFolderInfo(), id);
 			}

@@ -17,17 +17,17 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * -data-write-memory result
- * 
+ *
  * (gdb)
  * nn-data-write-memory [command parameters]
  * nn^done
- * 
+ *
  */
 public class MIDataWriteMemoryInfo extends MIInfo {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param output
 	 */
 	public MIDataWriteMemoryInfo(MIOutput output) {

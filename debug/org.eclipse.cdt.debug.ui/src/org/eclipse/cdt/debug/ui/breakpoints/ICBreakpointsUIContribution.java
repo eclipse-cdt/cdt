@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2012 QNX Software Systems and others.
- * 
+ *
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,9 +22,9 @@ import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Interface representing a contributed UI element for breakpoint properties 
+ * Interface representing a contributed UI element for breakpoint properties
  * dialogs.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */

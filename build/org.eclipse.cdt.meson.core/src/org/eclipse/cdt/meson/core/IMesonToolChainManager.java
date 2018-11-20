@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Red Hat Inc. - modified for use with Meson builder
  *******************************************************************************/
 package org.eclipse.cdt.meson.core;
@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.build.IToolChain;
 
 /**
  * Manages toolchain files for Meson.
- * 
+ *
  * @noimplement
  * @noextend
  */

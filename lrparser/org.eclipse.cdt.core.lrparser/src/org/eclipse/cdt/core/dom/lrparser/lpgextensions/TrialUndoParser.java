@@ -223,7 +223,7 @@ public class TrialUndoParser {
 		// Allocate configuration stack.
 		//
 		state.configurationStack = new ConfigurationStack(prs);
-		state.trialActionStack = new LinkedList<Integer>();
+		state.trialActionStack = new LinkedList<>();
 		state.trialActionStack.add(Integer.valueOf(state.trialActionCount));
 
 		//
@@ -329,7 +329,7 @@ public class TrialUndoParser {
 		// Allocate configuration stack.
 		//
 		state.configurationStack = new ConfigurationStack(prs);
-		state.trialActionStack = new LinkedList<Integer>();
+		state.trialActionStack = new LinkedList<>();
 		state.trialActionStack.add(Integer.valueOf(state.trialActionCount));
 
 		//

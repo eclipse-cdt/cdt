@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 public final class MacroContainerPatternCollector implements IBTreeVisitor {
 	private final PDOMLinkage fLinkage;
 
-	private final List<PDOMMacroContainer> macros = new ArrayList<PDOMMacroContainer>();
+	private final List<PDOMMacroContainer> macros = new ArrayList<>();
 	private final Pattern fPattern;
 	private final IProgressMonitor fMonitor;
 	private int fMonitorCheckCounter = 0;

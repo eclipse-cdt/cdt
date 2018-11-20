@@ -101,8 +101,8 @@ public class ProcessPrompter implements IStatusHandler {
 
 					name = name.split("\\s", 2)[0]; //$NON-NLS-1$
 
-					// on windows host, paths of style "sendmail:", "udisk-daemon:" 
-					// would be treated as device id with no path segments 
+					// on windows host, paths of style "sendmail:", "udisk-daemon:"
+					// would be treated as device id with no path segments
 					IPath path = new Path(name);
 					StringBuilder text = new StringBuilder();
 					if (path.lastSegment() == null) {

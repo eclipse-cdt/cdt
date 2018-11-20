@@ -19,7 +19,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * Top-level class in the version hierarchy of the JTag implementations of {@link ICommandControlService}.
- * <br> 
+ * <br>
  * Extenders should subclass this class for their special needs, which will allow
  * them to always extend the most recent version of the service.
  * For example, if GDB<Service>_7_9 is added, this GDB<Service>_HEAD class
@@ -31,14 +31,14 @@ import org.eclipse.debug.core.ILaunchConfiguration;
  *       not be desirable.  Extenders should update how they extend
  *       GdbDebugServicesFactory to properly choose the version of the
  *       service that should be used for older GDBs.
- *       
+ *
  *       On the contrary, not using GDB<Service>_HEAD requires the
  *       extender to update how they extend GdbDebugServicesFactory
  *       whenever a new GDB<Service> version is added.
- *       
+ *
  *       Extenders that prefer to focus on the latest GDB version are
  *       encouraged to extend GDB<Service>_HEAD.
- * 
+ *
  * @since 8.5
  */
 public class GDBJtagControl_HEAD extends GDBJtagControl_7_12 {

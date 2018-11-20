@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Disable button when no trace record is selected
@@ -43,7 +43,7 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * Command to select the previous trace record
- * 
+ *
  * @since 2.1
  */
 public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implements ISelectPrevTraceRecordHandler {
@@ -93,7 +93,7 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
 											rm.done();
 										}
 									});
-								};
+								}
 							});
 				} else {
 					rm.done();
@@ -151,9 +151,9 @@ public class GdbSelectPrevTraceRecordCommand extends AbstractDebugCommand implem
 								protected void handleSuccess() {
 									// Can do visualization if we are tracing.
 									rm.done(!getData());
-								};
+								}
 							});
-						};
+						}
 					});
 				} else {
 					rm.done(false);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - Initial Implementation
  *     Marc Khouzam (Ericsson) - Tests for Pattern Matching for variables (Bug 394408)
@@ -148,7 +148,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 											@Override
 											protected void handleSuccess() {
 												rm.done(getData().getFormattedValue());
-											};
+											}
 										});
 								return;
 							}
@@ -1342,7 +1342,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 
 	// Cannot use comma separator because of templates (bug 393474)
 	//	/**
-	//	 * Test that group-expression can use a comma and a semi-colon as a 
+	//	 * Test that group-expression can use a comma and a semi-colon as a
 	//	 * separator at the same time
 	//	 */
 	//	@Test
@@ -1500,7 +1500,7 @@ public class GDBPatternMatchingExpressionsTest extends BaseParametrizedTestCase 
 	@Test
 	public void testGroupGetSubExpressions() throws Throwable {
 		final String exprString = "$eax;*";
-		List<String> list = new LinkedList<String>();
+		List<String> list = new LinkedList<>();
 		list.add("$eax");
 		list.addAll(Arrays.asList(fAllVariables));
 		final String[] children = list.toArray(new String[list.size()]);

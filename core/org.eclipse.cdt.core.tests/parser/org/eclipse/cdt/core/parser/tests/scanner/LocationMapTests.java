@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.parser.tests.scanner;
 
 import java.io.IOException;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
@@ -55,6 +53,8 @@ import org.eclipse.cdt.internal.core.parser.scanner.ILocationCtx;
 import org.eclipse.cdt.internal.core.parser.scanner.ImageLocationInfo;
 import org.eclipse.cdt.internal.core.parser.scanner.Lexer.LexerOptions;
 import org.eclipse.cdt.internal.core.parser.scanner.LocationMap;
+
+import junit.framework.TestSuite;
 
 public class LocationMapTests extends BaseTestCase {
 	public class Loc implements IASTFileLocation, IName {

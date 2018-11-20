@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  */
 public class GenerateMakefileWithBuildDescription extends ProcessRunner {
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void process(TemplateCore template, ProcessArgument[] args, String processId, IProgressMonitor monitor)

@@ -87,7 +87,7 @@ public class GUIUtils {
 		gc.drawText(text, x, y, SWT.DRAW_TRANSPARENT);
 	}
 
-	/** Draws transparent text, with the default alignment (top/left). 
+	/** Draws transparent text, with the default alignment (top/left).
 	 * @since 1.1*/
 	static public void drawText(GC gc, String text, Rectangle clip, int x, int y) {
 		Rectangle oldClip = gc.getClipping();
@@ -108,7 +108,7 @@ public class GUIUtils {
 		}
 	}
 
-	/** Draws transparent text, with the specified alignments. 
+	/** Draws transparent text, with the specified alignments.
 	 * @since 1.1*/
 	static public void drawTextAligned(GC gc, String text, Rectangle clip, int x, int y, boolean left, boolean top) {
 		Rectangle oldClip = gc.getClipping();
@@ -124,7 +124,7 @@ public class GUIUtils {
 		gc.drawText(text, x - (int) Math.round(te.x / 2.0), y - (int) Math.round(te.y / 2.0), SWT.DRAW_TRANSPARENT);
 	}
 
-	/** Draws transparent text, centered on the specified point. 
+	/** Draws transparent text, centered on the specified point.
 	 * @since 1.1*/
 	static public void drawTextCentered(GC gc, String text, Rectangle clip, int x, int y) {
 		Rectangle oldClip = gc.getClipping();

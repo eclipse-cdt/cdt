@@ -75,7 +75,7 @@ public class GCCBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector
 	 * Create a list from one item.
 	 */
 	private List<String> makeList(String line) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		list.add(line);
 		return list;
 	}

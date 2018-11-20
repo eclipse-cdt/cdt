@@ -16,8 +16,8 @@ package org.eclipse.cdt.debug.internal.core.breakpoints;
 import java.util.Map;
 
 import org.eclipse.cdt.debug.core.CDebugUtils;
-import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.cdt.debug.core.model.ICDynamicPrintf;
+import org.eclipse.cdt.debug.core.model.ICFunctionBreakpoint;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
@@ -40,6 +40,7 @@ public class CFunctionDynamicPrintf extends AbstractDynamicPrintf implements ICF
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
+	@Override
 	public String getMarkerType() {
 		return C_FUNCTION_DYNAMICPRINTF_MARKER;
 	}
@@ -47,6 +48,7 @@ public class CFunctionDynamicPrintf extends AbstractDynamicPrintf implements ICF
 	/*(non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.breakpoints.CBreakpoint#getMarkerMessage()
 	 */
+	@Override
 	protected String getMarkerMessage() throws CoreException {
 		return MessageFormat.format(BreakpointMessages.getString("CFunctionDynamicPrintf.0"), //$NON-NLS-1$
 				(Object[]) new String[] { CDebugUtils.getBreakpointText(this, false) });

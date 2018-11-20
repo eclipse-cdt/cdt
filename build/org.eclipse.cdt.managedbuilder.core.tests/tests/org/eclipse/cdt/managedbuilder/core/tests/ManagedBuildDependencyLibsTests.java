@@ -16,9 +16,6 @@ package org.eclipse.cdt.managedbuilder.core.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
@@ -43,6 +40,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	private static final String PROJ_PATH = "depLibsProjects";
@@ -72,7 +72,7 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 			for (int i = 0; i < referencedProjects.length; ++i)
 				buildProject(referencedProjects[i]);
 
-			// Build the project in order to generate the makefiles 
+			// Build the project in order to generate the makefiles
 			curProject.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new NullProgressMonitor());
 		} catch (CoreException e) {
 			fail(e.getStatus().getMessage());
@@ -177,8 +177,8 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	}
 
 	private void rebuildArtefact(IProject project) {
-		//		deleteFiles(getProjectFolder(project), 
-		//				getArtefactFullName(project),  
+		//		deleteFiles(getProjectFolder(project),
+		//				getArtefactFullName(project),
 		//				new NullProgressMonitor());
 		try {
 			project.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
@@ -190,7 +190,7 @@ public class ManagedBuildDependencyLibsTests extends AbstractBuilderTest {
 	}
 
 	private long getArtifactTimeStamp(IProject project) {
-		List<IFile> files = new ArrayList<IFile>();
+		List<IFile> files = new ArrayList<>();
 		findFiles(project, getArtefactFullName(project), files);
 		if (files.size() == 0) // File not exists
 			return 0;

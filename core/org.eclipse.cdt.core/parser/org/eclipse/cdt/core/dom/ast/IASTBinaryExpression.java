@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represents a binary expression.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -39,14 +39,14 @@ public interface IASTBinaryExpression extends IASTExpression {
 
 	/**
 	 * Sets the operator.
-	 * 
+	 *
 	 * @param op value to set.
 	 */
 	public void setOperator(int op);
 
 	/**
 	 * Returns the operator.
-	 * 
+	 *
 	 * @return int value as operator
 	 */
 	public int getOperator();
@@ -228,14 +228,14 @@ public interface IASTBinaryExpression extends IASTExpression {
 
 	/**
 	 * Get the first operand.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code> representing operand 1.
 	 */
 	public IASTExpression getOperand1();
 
 	/**
 	 * Set the first operand.
-	 * 
+	 *
 	 * @param expression
 	 *            <code>IASTExpression</code> value.
 	 */
@@ -243,7 +243,7 @@ public interface IASTBinaryExpression extends IASTExpression {
 
 	/**
 	 * Get the second operand.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code> representing operand 2.
 	 */
 	public IASTExpression getOperand2();

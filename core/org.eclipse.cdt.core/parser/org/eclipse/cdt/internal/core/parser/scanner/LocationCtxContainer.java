@@ -26,7 +26,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.IntArray;
 
 /**
- * Base class for all location contexts that can contain children. 
+ * Base class for all location contexts that can contain children.
  *
  * @since 5.0
  */
@@ -123,7 +123,7 @@ class LocationCtxContainer extends LocationCtx {
 		if (child != null)
 			sequenceNumber = child.convertToSequenceEndNumber(sequenceNumber);
 
-		// if the potentially converted sequence number is the beginning of this context, 
+		// if the potentially converted sequence number is the beginning of this context,
 		// skip the denotation of this context in the parent.
 		if (sequenceNumber == fSequenceNumber)
 			return sequenceNumber - fEndOffsetInParent + fOffsetInParent;
@@ -260,7 +260,7 @@ class LocationCtxContainer extends LocationCtx {
 
 	private int[] computeLineOffsets() {
 		final int len = fSource.getLength();
-		IntArray offsets = new IntArray(len / 10); // Assuming 10 characters per line on average. 
+		IntArray offsets = new IntArray(len / 10); // Assuming 10 characters per line on average.
 		for (int i = 0; i < len; i++) {
 			if (fSource.get(i) == '\n')
 				offsets.add(i);

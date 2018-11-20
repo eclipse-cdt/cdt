@@ -22,9 +22,9 @@ import java.util.List;
 
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.AR;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr32Factory;
@@ -90,7 +90,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
 	@Override
@@ -167,7 +167,7 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadSymbols(PE pe) throws IOException {
-		ArrayList<Symbol> list = new ArrayList<Symbol>();
+		ArrayList<Symbol> list = new ArrayList<>();
 		loadSymbols(pe, list);
 		symbols = list.toArray(NO_SYMBOLS);
 		Arrays.sort(symbols);

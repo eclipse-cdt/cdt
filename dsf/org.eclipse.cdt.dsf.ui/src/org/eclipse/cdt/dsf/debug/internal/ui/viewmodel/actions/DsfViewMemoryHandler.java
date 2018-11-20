@@ -101,7 +101,7 @@ public class DsfViewMemoryHandler extends AbstractHandler {
 	}
 
 	private VariableExpressionVMC[] getMemoryViewables(Object evaluationContext) {
-		List<VariableExpressionVMC> viewableMemoryItems = new ArrayList<VariableExpressionVMC>();
+		List<VariableExpressionVMC> viewableMemoryItems = new ArrayList<>();
 		if (evaluationContext instanceof IEvaluationContext) {
 			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
 			if (s instanceof IStructuredSelection) {

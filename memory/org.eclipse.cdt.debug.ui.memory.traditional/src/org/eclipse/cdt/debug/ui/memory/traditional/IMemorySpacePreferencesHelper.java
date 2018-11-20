@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Initial API
  *******************************************************************************/
@@ -23,14 +23,14 @@ public interface IMemorySpacePreferencesHelper {
 
 	/**
 	   * Updates the list of known memory space ids. For each new memory space,
-	   * a preference is set, assigning it a distinct background color, from 
+	   * a preference is set, assigning it a distinct background color, from
 	   * a pool. Ids that are already known will be ignored.
 	   * @param ids an array of memory spaces ids, for the current platform.
 	   */
 	void updateMemorySpaces(String[] ids);
 
 	/**
-	   * @return the preference store key used to lookup the default color for a 
+	   * @return the preference store key used to lookup the default color for a
 	   * given memory space id
 	   */
 	String getMemorySpaceKey(String id);

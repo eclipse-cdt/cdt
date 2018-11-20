@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - added support for IToggleBreakpointsTargetFactory
@@ -43,11 +43,11 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.IUpdate;
 
 /**
- * Action to interactively create a dynamic printf from the vertical ruler of a 
- * workbench part containing a document. The part must provide an 
+ * Action to interactively create a dynamic printf from the vertical ruler of a
+ * workbench part containing a document. The part must provide an
  * <code>IToggleBreakpointsTargetExtension2</code> adapter.
  * <p>
- * Clients may instantiate this class. 
+ * Clients may instantiate this class.
  * </p>
  * @since 7.4
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
@@ -63,7 +63,7 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 	/**
 	 * Constructs a new action to toggle a dynamic printf in the given
 	 * part containing the given document and ruler.
-	 * 
+	 *
 	 * @param part the part in which to toggle the dynamic printf - provides
 	 *  an <code>IToggleBreakpointsTarget</code> adapter
 	 * @param document the document breakpoints are being set in or
@@ -82,6 +82,7 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 	 *  (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		IDocument document = getDocument();
 		if (document == null) {
@@ -110,7 +111,7 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 
 	/**
 	 * Report an error to the user.
-	 * 
+	 *
 	 * @param e underlying exception
 	 */
 	private void reportException(Exception e) {
@@ -134,7 +135,7 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 
 	/**
 	 * Returns the document on which this action operates.
-	 * 
+	 *
 	 * @return the document or <code>null</code> if none
 	 */
 	private IDocument getDocument() {
@@ -159,6 +160,7 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.IUpdate#update()
 	 */
+	@Override
 	public void update() {
 		IDocument document = getDocument();
 		if (document != null) {
@@ -189,9 +191,9 @@ public class CAddDynamicPrintfInteractiveRulerAction extends Action implements I
 
 	/**
 	 * Determines the text selection for the breakpoint action.  If clicking on the ruler inside
-	 * the highlighted text, return the text selection for the highlighted text.  Otherwise, 
+	 * the highlighted text, return the text selection for the highlighted text.  Otherwise,
 	 * return a text selection representing the start of the line.
-	 * 
+	 *
 	 * @param document	The IDocument backing the Editor.
 	 * @param line	The line clicked on in the ruler.
 	 * @return	An ITextSelection as described.

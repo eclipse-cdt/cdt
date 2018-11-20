@@ -35,7 +35,7 @@ public class ProcessPrompter implements IStatusHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus,
 	 *      java.lang.Object)
 	 */
@@ -53,7 +53,7 @@ public class ProcessPrompter implements IStatusHandler {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
 			@Override
@@ -65,7 +65,7 @@ public class ProcessPrompter implements IStatusHandler {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 			 */
 			@Override
@@ -83,7 +83,7 @@ public class ProcessPrompter implements IStatusHandler {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 			 */
 			@Override

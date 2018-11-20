@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Allow user to edit the register groups (Bug 235747)
@@ -133,7 +133,7 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
@@ -142,8 +142,8 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
-	 * @param t throwable to log 
+	 *
+	 * @param t throwable to log
 	 */
 	public static void log(Throwable t) {
 		log(newErrorStatus(IDsfStatusConstants.INTERNAL_ERROR, "Error logged from Debug UI: ", t)); //$NON-NLS-1$
@@ -151,7 +151,7 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
@@ -163,12 +163,12 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns a new error status for this plug-in with the given message
-	 * 
+	 *
 	 * @param message the message to be included in the status
 	 * @param error code
 	 * @param exception the exception to be included in the status or <code>null</code> if none
 	 * @return a new error status
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public static IStatus newErrorStatus(int code, String message, Throwable exception) {
@@ -177,7 +177,7 @@ public class DsfUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the active workbench shell or <code>null</code> if none
-	 * 
+	 *
 	 * @return the active workbench shell or <code>null</code> if none
 	 */
 	public static Shell getActiveWorkbenchShell() {

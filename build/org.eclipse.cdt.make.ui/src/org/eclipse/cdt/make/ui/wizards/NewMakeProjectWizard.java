@@ -29,9 +29,9 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * This abstract wizard was used for 3.X style projects. It is left here for compatibility
  * reasons only. The wizards are superseded by MBS C++ Project Wizards.
- * 
+ *
  * @deprecated as of CDT 4.0.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 @Deprecated

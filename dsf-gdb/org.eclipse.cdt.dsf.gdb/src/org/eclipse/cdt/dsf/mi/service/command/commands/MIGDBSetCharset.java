@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Mathias Kunter       - Initial API and implementation
 *******************************************************************************/
@@ -17,13 +17,13 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
- * 
+ *
  * -gdb-set charset CHARSET
- * 
+ *
  * Sets both the current host and target charset to CHARSET. The host charset is the
  * charset used by gdb. The target charset is the charset used by the char type of the
  * inferior program.
- * 
+ *
  * @since 4.1
  */
 public class MIGDBSetCharset extends MIGDBSet {

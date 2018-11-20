@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Field_Type completion kind , with a prefix
  *
  */

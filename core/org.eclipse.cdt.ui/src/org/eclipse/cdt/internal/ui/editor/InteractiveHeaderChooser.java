@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
@@ -26,8 +27,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
-
-import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 
 /**
  * Dialog-based header chooser.
@@ -40,7 +39,7 @@ public class InteractiveHeaderChooser implements IHeaderChooser {
 	public InteractiveHeaderChooser(String title, Shell shell) {
 		this.title = title;
 		this.shell = shell;
-		userChoiceCache = new HashMap<Collection<IPath>, IPath>();
+		userChoiceCache = new HashMap<>();
 	}
 
 	@Override
@@ -50,7 +49,7 @@ public class InteractiveHeaderChooser implements IHeaderChooser {
 		if (headers.size() == 1)
 			return headers.iterator().next();
 
-		Set<IPath> cacheKey = new HashSet<IPath>(headers);
+		Set<IPath> cacheKey = new HashSet<>(headers);
 		// Check the decision cache. If the cache doesn't help, ask the user.
 		// Query the cache.
 		if (userChoiceCache.containsKey(cacheKey)) {

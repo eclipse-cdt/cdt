@@ -97,7 +97,7 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 		public Document[] getDocuments() {
 			return documents;
 		}
-	};
+	}
 
 	private static Map<String, Document> acHoverDocs;
 	private static Map<String, Document> amHoverDocs;
@@ -109,13 +109,13 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	private static IBindingService fBindingService = PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 
 	public static String getAutoconfMacrosDocName(String version) {
-		return AUTOCONF_MACROS_DOC_NAME + "-" //$NON-NLS-1$ 
-				+ version + ".xml"; //$NON-NLS-1$	
+		return AUTOCONF_MACROS_DOC_NAME + "-" //$NON-NLS-1$
+				+ version + ".xml"; //$NON-NLS-1$
 	}
 
 	public static String getLocalAutoconfMacrosDocName(String version) {
-		return LOCAL_AUTOCONF_MACROS_DOC_NAME + "-" //$NON-NLS-1$ 
-				+ version + ".xml"; //$NON-NLS-1$	
+		return LOCAL_AUTOCONF_MACROS_DOC_NAME + "-" //$NON-NLS-1$
+				+ version + ".xml"; //$NON-NLS-1$
 	}
 
 	/* Get the preferences default for the autoconf macros document name.  */
@@ -125,13 +125,13 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 	}
 
 	public static String getAutomakeMacrosDocName(String version) {
-		return AUTOMAKE_MACROS_DOC_NAME + "-" //$NON-NLS-1$ 
-				+ version + ".xml"; //$NON-NLS-1$	
+		return AUTOMAKE_MACROS_DOC_NAME + "-" //$NON-NLS-1$
+				+ version + ".xml"; //$NON-NLS-1$
 	}
 
 	public static String getLocalAutomakeMacrosDocName(String version) {
-		return LOCAL_AUTOMAKE_MACROS_DOC_NAME + "-" //$NON-NLS-1$ 
-				+ version + ".xml"; //$NON-NLS-1$	
+		return LOCAL_AUTOMAKE_MACROS_DOC_NAME + "-" //$NON-NLS-1$
+				+ version + ".xml"; //$NON-NLS-1$
 	}
 
 	/* Get the preferences default for the autoconf macros document name.  */
@@ -307,9 +307,9 @@ public class AutoconfTextHover implements ITextHover, ITextHoverExtension {
 						if (prototypeCount == 1) {
 							buffer.append(" (");
 						} else {
-							buffer.append("    <B>or</B> "); //$NON-NLS-2$
+							buffer.append("    <B>or</B> ");
 							buffer.append(name);
-							buffer.append(" (<I>"); //$NON-NLS-2$
+							buffer.append(" (<I>");
 						}
 						NodeList varList = n.getChildNodes();
 						for (int j = 0; j < varList.getLength(); ++j) {

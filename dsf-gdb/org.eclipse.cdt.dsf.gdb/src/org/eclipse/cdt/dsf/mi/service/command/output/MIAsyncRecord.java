@@ -16,7 +16,7 @@
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
- * base Abstract class for the OOB stream MI responses. 
+ * base Abstract class for the OOB stream MI responses.
  */
 public abstract class MIAsyncRecord extends MIOOBRecord {
 

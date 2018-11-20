@@ -45,7 +45,7 @@ public class AutoconfCodeScanner extends RuleBasedScanner {
 
 	/**
 	 * Preference keys for boolean preferences which are <code>true</code>,
-	 * iff the corresponding token should be rendered bold. 
+	 * iff the corresponding token should be rendered bold.
 	 */
 	private String[] fPropertyNamesBold;
 	/**
@@ -54,7 +54,7 @@ public class AutoconfCodeScanner extends RuleBasedScanner {
 	 */
 	private String[] fPropertyNamesItalic;
 
-	private static String[] keywords = { "case", "do", "done", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+	private static String[] keywords = { "case", "do", "done", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			"esac", "if", "elif", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			"else", "fi", "for", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			"in", "then" }; //$NON-NLS-1$ //$NON-NLS-2$

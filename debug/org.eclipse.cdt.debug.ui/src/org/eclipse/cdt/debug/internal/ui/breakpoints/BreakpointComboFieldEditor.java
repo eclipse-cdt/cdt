@@ -16,6 +16,7 @@ package org.eclipse.cdt.debug.internal.ui.breakpoints;
 import org.eclipse.cdt.debug.internal.ui.preferences.ComboFieldEditor;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContribution;
 import org.eclipse.cdt.debug.ui.breakpoints.ICBreakpointsUIContributionUser;
+import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -26,8 +27,8 @@ public class BreakpointComboFieldEditor extends ComboFieldEditor implements ICBr
 	private ICBreakpointsUIContribution fContribution;
 
 	/**
-	 * Create combo field editor that would load choice values from {@link ICBreakpointsUIContribution} 
-	 * @param name - property name, must be the same as breakpoint attribute 
+	 * Create combo field editor that would load choice values from {@link ICBreakpointsUIContribution}
+	 * @param name - property name, must be the same as breakpoint attribute
 	 * @param labelText - text in front of field
 	 * @param parent
 	 */
@@ -81,7 +82,7 @@ public class BreakpointComboFieldEditor extends ComboFieldEditor implements ICBr
 	}
 
 	/**
-	 * load field value from preference store and return as combo widget value 
+	 * load field value from preference store and return as combo widget value
 	 * @return - "String" value of the attribute
 	 */
 	protected String storeToComboValue() {
@@ -101,7 +102,7 @@ public class BreakpointComboFieldEditor extends ComboFieldEditor implements ICBr
 	}
 
 	/**
-	 * Save to preference store the selected combo value 
+	 * Save to preference store the selected combo value
 	 * @param val - value to be stored.
 	 */
 	protected void comboValueToStore(String val) {

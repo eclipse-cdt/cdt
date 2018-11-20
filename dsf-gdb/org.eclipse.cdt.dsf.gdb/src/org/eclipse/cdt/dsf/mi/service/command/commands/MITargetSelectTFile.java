@@ -17,7 +17,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 
 /**
  * This command sets up a connection with a trace data  file.
- * 
+ *
  * Available with GDB 7.1
  *
  * @since 3.0

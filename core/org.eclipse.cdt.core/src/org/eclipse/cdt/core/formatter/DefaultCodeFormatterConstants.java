@@ -23,7 +23,7 @@ import org.eclipse.cdt.internal.formatter.align.Alignment;
 
 /**
  * Constants used to set up the options of the code formatter.
- * 
+ *
  * @since 4.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -33,7 +33,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for the language
 	 *     - option id:         "org.eclipse.cdt.core.formatter.language"
-	 *     - possible values:   object of class {@code ILanguage} or {@code null} 
+	 *     - possible values:   object of class {@code ILanguage} or {@code null}
 	 *     - default:           null
 	 * </pre>
 	 */
@@ -43,7 +43,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for the current file
 	 *     - option id:         "org.eclipse.cdt.core.formatter.current_file"
-	 *     - possible values:   object of class {@code IFile} or {@code null} 
+	 *     - possible values:   object of class {@code IFile} or {@code null}
 	 *     - default:           null
 	 * </pre>
 	 */
@@ -53,7 +53,7 @@ public class DefaultCodeFormatterConstants {
 	 * <pre>
 	 * FORMATTER / Option for the translation unit
 	 *     - option id:         "org.eclipse.cdt.core.formatter.current_translation_unit"
-	 *     - possible values:   object of class {@code ITranslationUnit} or {@code null} 
+	 *     - possible values:   object of class {@code ITranslationUnit} or {@code null}
 	 *     - default:           null
 	 * </pre>
 	 */
@@ -65,7 +65,7 @@ public class DefaultCodeFormatterConstants {
 	 * FORMATTER / Option that tells the formatter that the formatting region should be
 	 * extended to the enclosing statement boundaries.
 	 *     - option id:         "org.eclipse.cdt.core.formatter.statement_scope"
-	 *     - possible values:   object of class {@link Boolean} or {@code null} 
+	 *     - possible values:   object of class {@link Boolean} or {@code null}
 	 *     - default:           null
 	 * </pre>
 	 * @since 5.9
@@ -192,7 +192,7 @@ public class DefaultCodeFormatterConstants {
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_DECLARATOR_LIST = CCorePlugin.PLUGIN_ID
-			+ ".formatter.alignment_for_declarator_list"; //$NON-NLS-1$	
+			+ ".formatter.alignment_for_declarator_list"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of a enumerator list
@@ -203,7 +203,7 @@ public class DefaultCodeFormatterConstants {
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_ENUMERATOR_LIST = CCorePlugin.PLUGIN_ID
-			+ ".formatter.alignment_for_enumerator_list"; //$NON-NLS-1$	
+			+ ".formatter.alignment_for_enumerator_list"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of a expression list (except arguments in a method invocation)
@@ -214,7 +214,7 @@ public class DefaultCodeFormatterConstants {
 	 * @see #createAlignmentValue(boolean, int, int)
 	 */
 	public static final String FORMATTER_ALIGNMENT_FOR_EXPRESSION_LIST = CCorePlugin.PLUGIN_ID
-			+ ".formatter.alignment_for_expression_list"; //$NON-NLS-1$	
+			+ ".formatter.alignment_for_expression_list"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option for alignment of expressions in initializer list
@@ -509,9 +509,9 @@ public class DefaultCodeFormatterConstants {
 	//	 * </pre>
 	//	 * @see #TRUE
 	//	 * @see #FALSE
-	//	 */	
+	//	 */
 	//	public final static String FORMATTER_COMMENT_CLEAR_BLANK_LINES = CCorePlugin.PLUGIN_ID + ".formatter.comment.clear_blank_lines"; //$NON-NLS-1$
-	//	
+	//
 	//	/**
 	//	 * <pre>
 	//	 * FORMATTER / Option to control whether comments are formatted
@@ -521,7 +521,7 @@ public class DefaultCodeFormatterConstants {
 	//	 * </pre>
 	//	 * @see #TRUE
 	//	 * @see #FALSE
-	//	 */	
+	//	 */
 	//	public final static String FORMATTER_COMMENT_FORMAT = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_comments"; //$NON-NLS-1$
 	//
 	//	/**
@@ -533,7 +533,7 @@ public class DefaultCodeFormatterConstants {
 	//	 * </pre>
 	//	 * @see #TRUE
 	//	 * @see #FALSE
-	//	 */	
+	//	 */
 	//	public final static String FORMATTER_COMMENT_FORMAT_HEADER = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_header"; //$NON-NLS-1$
 	//
 	//	/**
@@ -545,9 +545,9 @@ public class DefaultCodeFormatterConstants {
 	//	 * </pre>
 	//	 * @see #TRUE
 	//	 * @see #FALSE
-	//	 */	
+	//	 */
 	//	public final static String FORMATTER_COMMENT_FORMAT_SOURCE = CCorePlugin.PLUGIN_ID + ".formatter.comment.format_source_code"; //$NON-NLS-1$
-	//	
+	//
 	//	/**
 	//	 * <pre>
 	//	 * FORMATTER / Option to specify the line length for comments.
@@ -555,7 +555,7 @@ public class DefaultCodeFormatterConstants {
 	//	 *     - possible values:   "&lt;n&gt;", where n is zero or a positive integer
 	//	 *     - default:           "80"
 	//	 * </pre>
-	//	 */	
+	//	 */
 	//	public final static String FORMATTER_COMMENT_LINE_LENGTH = CCorePlugin.PLUGIN_ID + ".formatter.comment.line_length"; //$NON-NLS-1$
 	/**
 	 * <pre>
@@ -599,7 +599,7 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * <pre>
-	 * FORMATTER / Option to control whether comments starting from the beginning of line should stay that way and never be indented. 
+	 * FORMATTER / Option to control whether comments starting from the beginning of line should stay that way and never be indented.
 	 *     - option id:         "org.eclipse.cdt.core.formatter.comment.never_indent_line_comments_on_first_column"
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           TRUE
@@ -725,7 +725,7 @@ public class DefaultCodeFormatterConstants {
 	 * @see #TRUE
 	 * @see #FALSE
 	 */
-	public static final String FORMATTER_INDENT_EMPTY_LINES = CCorePlugin.PLUGIN_ID + ".formatter.indent_empty_lines"; //$NON-NLS-1$	
+	public static final String FORMATTER_INDENT_EMPTY_LINES = CCorePlugin.PLUGIN_ID + ".formatter.indent_empty_lines"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to indent inside line comments at column 0
@@ -737,7 +737,7 @@ public class DefaultCodeFormatterConstants {
 	 * @see #FALSE
 	 */
 	public static final String FORMATTER_INDENT_INSIDE_LINE_COMMENTS = CCorePlugin.PLUGIN_ID
-			+ ".formatter.indent_inside_line_comments"; //$NON-NLS-1$	
+			+ ".formatter.indent_inside_line_comments"; //$NON-NLS-1$
 	/**
 	 * <pre>
 	 * FORMATTER / Option to indent statements inside a block
@@ -788,7 +788,7 @@ public class DefaultCodeFormatterConstants {
 			+ ".formatter.indent_switchstatements_compare_to_switch"; //$NON-NLS-1$
 	/**
 	 * <pre>
-	 * FORMATTER / Option to specify the equivalent number of spaces that represents one indentation 
+	 * FORMATTER / Option to specify the equivalent number of spaces that represents one indentation
 	 *     - option id:         "org.eclipse.cdt.core.formatter.indentation.size"
 	 *     - possible values:   "&lt;n&gt;", where n is zero or a positive integer
 	 *     - default:           "4"
@@ -2095,7 +2095,7 @@ public class DefaultCodeFormatterConstants {
 	//	 *     - possible values:   { INSERT, DO_NOT_INSERT }
 	//	 *     - default:           INSERT
 	//	 * </pre>
-	//	 * 
+	//	 *
 	//	 * @see CCorePlugin#INSERT
 	//	 * @see CCorePlugin#DO_NOT_INSERT
 	//	 */
@@ -2343,7 +2343,7 @@ public class DefaultCodeFormatterConstants {
 	 *     - default:           TAB
 	 * </pre>
 	 * More values may be added in the future.
-	 * 
+	 *
 	 * @see CCorePlugin#TAB
 	 * @see CCorePlugin#SPACE
 	 * @see #MIXED
@@ -2351,7 +2351,7 @@ public class DefaultCodeFormatterConstants {
 	public static final String FORMATTER_TAB_CHAR = CCorePlugin.PLUGIN_ID + ".formatter.tabulation.char"; //$NON-NLS-1$
 	/**
 	 * <pre>
-	 * FORMATTER / Option to specify the equivalent number of spaces that represents one tabulation 
+	 * FORMATTER / Option to specify the equivalent number of spaces that represents one tabulation
 	 *     - option id:         "org.eclipse.cdt.core.formatter.tabulation.size"
 	 *     - possible values:   "&lt;n&gt;", where n is zero or a positive integer
 	 *     - default:           "4"
@@ -2361,7 +2361,7 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * <pre>
-	 * FORMATTER / Option to use tabulations only for leading indentations 
+	 * FORMATTER / Option to use tabulations only for leading indentations
 	 *     - option id:         "org.eclipse.cdt.core.formatter.use_tabs_only_for_leading_indentations"
 	 *     - possible values:   { TRUE, FALSE }
 	 *     - default:           FALSE
@@ -2492,11 +2492,11 @@ public class DefaultCodeFormatterConstants {
 	/**
 	 * Create a new alignment value according to the given values. This must be used to set up
 	 * the alignment options.
-	 * 
+	 *
 	 * @param forceSplit the given force value
 	 * @param wrapStyle the given wrapping style
 	 * @param indentStyle the given indent style
-	 * 
+	 *
 	 * @return the new alignment value
 	 */
 	public static String createAlignmentValue(boolean forceSplit, int wrapStyle, int indentStyle) {
@@ -2533,7 +2533,7 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * Returns the default formatter settings
-	 * 
+	 *
 	 * @return the default settings
 	 */
 	public static Map<String, String> getDefaultSettings() {
@@ -2542,7 +2542,7 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * Returns the K&R formatter settings
-	 * 
+	 *
 	 * @return the K&R settings
 	 */
 	public static Map<String, String> getKandRSettings() {
@@ -2551,7 +2551,7 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * Returns the Allman formatter settings
-	 * 
+	 *
 	 * @return the Allman settings
 	 */
 	public static Map<String, String> getAllmanSettings() {
@@ -2560,7 +2560,7 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * Returns the GNU formatter settings
-	 * 
+	 *
 	 * @return the GNU settings
 	 */
 	public static Map<String, String> getGNUSettings() {
@@ -2569,7 +2569,7 @@ public class DefaultCodeFormatterConstants {
 
 	/**
 	 * Returns the Whitesmiths formatter settings
-	 * 
+	 *
 	 * @return the Whitesmiths settings
 	 */
 	public static Map<String, String> getWhitesmithsSettings() {
@@ -2585,7 +2585,7 @@ public class DefaultCodeFormatterConstants {
 	 * @param value the given alignment value
 	 * @return the force value of the given alignment value
 	 * @see #createAlignmentValue(boolean, int, int)
-	 * @exception IllegalArgumentException if the given alignment value is null, or if it 
+	 * @exception IllegalArgumentException if the given alignment value is null, or if it
 	 * doesn't have a valid format.
 	 */
 	public static boolean getForceWrapping(String value) {
@@ -2609,7 +2609,7 @@ public class DefaultCodeFormatterConstants {
 	 * @param value the given alignment value
 	 * @return the indentation style of the given alignment value
 	 * @see #createAlignmentValue(boolean, int, int)
-	 * @exception IllegalArgumentException if the given alignment value is null, or if it 
+	 * @exception IllegalArgumentException if the given alignment value is null, or if it
 	 * doesn't have a valid format.
 	 */
 	public static int getIndentStyle(String value) {
@@ -2639,7 +2639,7 @@ public class DefaultCodeFormatterConstants {
 	 * @param value the given alignment value
 	 * @return the wrapping style of the given alignment value
 	 * @see #createAlignmentValue(boolean, int, int)
-	 * @exception IllegalArgumentException if the given alignment value is null, or if it 
+	 * @exception IllegalArgumentException if the given alignment value is null, or if it
 	 * doesn't have a valid format.
 	 */
 	public static int getWrappingStyle(String value) {
@@ -2677,7 +2677,7 @@ public class DefaultCodeFormatterConstants {
 	 * @param force the given force value
 	 * @return the new alignment value
 	 * @see #createAlignmentValue(boolean, int, int)
-	 * @exception IllegalArgumentException if the given alignment value is null, or if it 
+	 * @exception IllegalArgumentException if the given alignment value is null, or if it
 	 * doesn't have a valid format.
 	 */
 	public static String setForceWrapping(String value, boolean force) {

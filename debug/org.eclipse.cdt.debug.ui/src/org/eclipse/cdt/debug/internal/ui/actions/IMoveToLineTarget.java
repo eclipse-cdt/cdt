@@ -23,24 +23,24 @@ import org.eclipse.ui.IWorkbenchPart;
  */
 public interface IMoveToLineTarget {
 	/**
-	 * Perform a move to line operation on the given element that is 
+	 * Perform a move to line operation on the given element that is
 	 * currently selected and suspended in the Debug view.
-	 *  
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
 	 * @param target suspended element to perform the "resume at line" action on
-	 * @throws CoreException if unable to perform the action 
+	 * @throws CoreException if unable to perform the action
 	 */
 	public void moveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target) throws CoreException;
 
 	/**
 	 * Returns whether a move to line operation can be performed on the given
 	 * element that is currently selected and suspended in the Debug view.
-	 * 
+	 *
 	 * @param part the part on which the action has been invoked
 	 * @param selection the selection on which the action has been invoked
 	 * @param target suspended element to perform the "resume at line" action on
-	 * @throws CoreException if unable to perform the action 
+	 * @throws CoreException if unable to perform the action
 	 */
 	public boolean canMoveToLine(IWorkbenchPart part, ISelection selection, ISuspendResume target);
 }

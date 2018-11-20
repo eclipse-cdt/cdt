@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
- *     Marc Khouzam (Ericsson)                 - Added knowledge about execution 
+ *     Marc Khouzam (Ericsson)                 - Added knowledge about execution
  *                                               state and os/gdb thread ids
  *     Marc Dumais (Ericsson) -  Bug 405390
  *     Marc Dumais (Ericsson) -  Bug 409965
@@ -197,7 +197,7 @@ public class VisualizerThread implements Comparable<VisualizerThread>, IVisualiz
 	/**
 	 * Sets the location info of this thread, based on given
 	 * {@link IFrameDMData}
-	 * 
+	 *
 	 * @param dmData
 	 *            a {@link IFrameDMData} (can be <code>null</code>)
 	 */
@@ -245,7 +245,7 @@ public class VisualizerThread implements Comparable<VisualizerThread>, IVisualiz
 
 	/**
 	 * Gets the location of this thread or <code>null</code> if none.
-	 * 
+	 *
 	 * @return a String, or <code>null</code>
 	 * @since 3.0
 	 */

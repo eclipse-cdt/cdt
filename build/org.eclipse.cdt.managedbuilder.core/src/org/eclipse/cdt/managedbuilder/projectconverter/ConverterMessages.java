@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.projectconverter;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

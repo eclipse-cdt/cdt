@@ -14,17 +14,17 @@
 
 package org.eclipse.cdt.errorparsers.xlc.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.IMarkerGenerator;
+
+import junit.framework.TestCase;
 
 public class TestInformationalMessage_1 extends TestCase {
 	String err_msg;
 
 	/**
 	 * This function tests parseLine function of the
-	 * XlcErrorParser class. Informative message generated 
-	 * by the xlc compiler is given as input for testing.  
+	 * XlcErrorParser class. Informative message generated
+	 * by the xlc compiler is given as input for testing.
 	 */
 	public void testparseLine() {
 		XlcErrorParserTester aix = new XlcErrorParserTester();

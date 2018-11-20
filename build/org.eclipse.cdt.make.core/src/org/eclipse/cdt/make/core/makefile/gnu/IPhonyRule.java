@@ -20,7 +20,7 @@ import org.eclipse.cdt.make.core.makefile.ISpecialRule;
  *     The prerequisites of the special target `.PHONY' are considered to be phony targets.
  *     When it is time to consider such a target, `make' will run its commands unconditionally, regardless of
  *     whether a file with that name exists or what its last-modification time is.
- *     
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

@@ -20,6 +20,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.internal.ui.wizards.indexwizards.StringVariableSelectionDialog;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -50,16 +58,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.dialogs.EncodingFieldEditor;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.text.spelling.SpellCheckEngine;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
-import org.eclipse.cdt.internal.ui.wizards.indexwizards.StringVariableSelectionDialog;
 
 /**
  * Options configuration block for spell check related settings.
@@ -102,7 +100,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 	/**
 	 * Creates a selection dependency between a master and a slave control.
-	 * 
+	 *
 	 * @param master     The master button that controls the state of the slave
 	 * @param slave      The slave control that is enabled only if the master is
 	 *                   selected
@@ -124,7 +122,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 	/**
 	 * Returns the locale codes for the locale list.
-	 * 
+	 *
 	 * @param locales
 	 *                   The list of locales
 	 * @return Array of locale codes for the list
@@ -142,7 +140,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 	/**
 	 * Returns the display labels for the locale list.
-	 * 
+	 *
 	 * @param locales    The list of locales
 	 * @return Array of display labels for the list
 	 */
@@ -160,7 +158,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 	/**
 	 * Validates that the file with the specified absolute path exists and can
 	 * be opened.
-	 * 
+	 *
 	 * @param path       The path of the file to validate
 	 * @return a status without error if the path is valid
 	 */
@@ -185,7 +183,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 	/**
 	 * Validates that the specified locale is available.
-	 * 
+	 *
 	 * @param localeString the locale to validate
 	 * @return The status of the validation
 	 */
@@ -203,7 +201,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 	/**
 	 * Validates that the specified number is positive.
-	 * 
+	 *
 	 * @param number the number to validate
 	 * @return The status of the validation
 	 */
@@ -253,7 +251,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 	/**
 	 * Creates a new spelling configuration block.
-	 * 
+	 *
 	 * @param context the status change listener
 	 * @param project the Java project
 	 * @param container the preference container
@@ -314,7 +312,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout());
 
-		List<Control> allControls = new ArrayList<Control>();
+		List<Control> allControls = new ArrayList<>();
 		final PixelConverter converter = new PixelConverter(parent);
 
 		final String[] trueFalse = new String[] { IPreferenceStore.TRUE, IPreferenceStore.FALSE };
@@ -465,7 +463,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 	/**
 	 * Creates the encoding field editor.
-	 * 
+	 *
 	 * @param composite the parent composite
 	 * @param allControls list with all controls
 	 */
@@ -501,7 +499,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 		fEncodingEditor.setPreferenceStore(store);
 
-		// Redirect status messages from the field editor to the status change listener  
+		// Redirect status messages from the field editor to the status change listener
 		DialogPage fakePage = new DialogPage() {
 			@Override
 			public void createControl(Composite c) {
@@ -647,7 +645,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 
 	/**
 	 * Sets the enabled state.
-	 * 
+	 *
 	 * @param enabled the new state
 	 */
 	protected void setEnabled(boolean enabled) {
@@ -659,7 +657,7 @@ public class SpellingConfigurationBlock extends OptionsConfigurationBlock {
 			fEnabledControls = null;
 		}
 		if (!enabled && fEnabledControls == null) {
-			List<Control> enabledControls = new ArrayList<Control>();
+			List<Control> enabledControls = new ArrayList<>();
 			for (int i = fAllControls.length - 1; i >= 0; i--) {
 				Control control = fAllControls[i];
 				if (control.isEnabled()) {

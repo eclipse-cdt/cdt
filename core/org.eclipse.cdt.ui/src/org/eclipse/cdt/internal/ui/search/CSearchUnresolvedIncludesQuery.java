@@ -14,19 +14,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexInclude;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.IProblem;
-
 import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.util.NLS;
 
 /**
  * Query for searching unresolved includes in projects.

@@ -22,9 +22,9 @@ import java.math.BigInteger;
 import org.eclipse.debug.core.model.MemoryByte;
 
 /**
- * 
+ *
  * -data-read-memory result
- * 
+ *
  * (gdb)
  * nn-data-read-memory [command parameters]
  * nn^done,addr="ADDRESS",nr-bytes="NR_BYTES",total-bytes="TOTAL_BYTES",
@@ -35,12 +35,12 @@ import org.eclipse.debug.core.model.MemoryByte;
  * {addr="addr3",data=["0x04","0x05", ...]},
  * ...]
  * (gdb)
- * 
+ *
  * where:
- * 
+ *
  * 'ADDRESS'
  *      Address (in hex) of the first byte fetched.
- *  
+ *
  * 'NR_BYTES'
  * 		Number of bytes read.
  *
@@ -61,7 +61,7 @@ import org.eclipse.debug.core.model.MemoryByte;
  *
  * 'MEMORY'
  * 		Memory bytes retrieved, nr-rows of nr-columns words.
- * 
+ *
  */
 public class MIDataReadMemoryInfo extends MIInfo {
 
@@ -73,7 +73,7 @@ public class MIDataReadMemoryInfo extends MIInfo {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param output
 	 */
 	public MIDataReadMemoryInfo(MIOutput output) {
@@ -88,7 +88,7 @@ public class MIDataReadMemoryInfo extends MIInfo {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param output
 	 */
 	public MIDataReadMemoryInfo(MIOutput output, int word_size) {
@@ -103,7 +103,7 @@ public class MIDataReadMemoryInfo extends MIInfo {
 
 	/**
 	 *  Parse the back-end-result. The result is an array of the following form:
-	 *  
+	 *
 	 *  [0] addr="address"
 	 *  [1] nr-bytes="x"
 	 *  [2] total-bytes="y"
@@ -112,7 +112,7 @@ public class MIDataReadMemoryInfo extends MIInfo {
 	 *  [5] next-page="address4"
 	 *  [6] prev-page="address5"
 	 *  [7] memory=[{addr="addr1",data=["0x00","0x01",...]}]
-	 *  
+	 *
 	 *  At this point, we only have interest in "memory".
 	 */
 	private void parseResult(int word_size) {
@@ -177,15 +177,15 @@ public class MIDataReadMemoryInfo extends MIInfo {
 
 	/**
 	 *  Parse the actual memory lines of the general form:
-	 *  
+	 *
 	 *  [{addr="addr1",data=["0x00","0x01",...]}]
 	 *  [{addr="addr2",data=["0x00","0x01",...]}]
-	 *  
+	 *
 	 *  Since we haven't implemented coalescing yet, we conveniently simplify
 	 *  the processing by assuming that the memory block address matches the
 	 *  one of the request. Therefore, we only have to fill the memoryBlock[]
 	 *  with the incoming bytes.
-	 *  
+	 *
 	 *  This will have to be revisited as soon as we start considering
 	 *  multiple (and possibly canceled) requests.
 	 */

@@ -24,7 +24,7 @@ public interface ICSignal extends ICDebugElement {
 
 	/**
 	 * Returns the name of this signal
-	 * 
+	 *
 	 * @return this signal's name
 	 * @throws DebugException if this method fails.
 	 */
@@ -32,7 +32,7 @@ public interface ICSignal extends ICDebugElement {
 
 	/**
 	 * Returns the description of this signal.
-	 * 
+	 *
 	 * @return this signal's description
 	 * @throws DebugException if this method fails.
 	 */
@@ -40,7 +40,7 @@ public interface ICSignal extends ICDebugElement {
 
 	/**
 	 * Returns whether "pass" is in effect for this signal.
-	 * 
+	 *
 	 * @return whether "pass" is in effect for this signal
 	 * @throws DebugException if this method fails.
 	 */
@@ -48,7 +48,7 @@ public interface ICSignal extends ICDebugElement {
 
 	/**
 	 * Returns whether "stop" is in effect for this signal.
-	 * 
+	 *
 	 * @return whether "stop" is in effect for this signal
 	 * @throws DebugException if this method fails.
 	 */
@@ -56,7 +56,7 @@ public interface ICSignal extends ICDebugElement {
 
 	/**
 	 * Enables/disables the "pass" flag of this signal.
-	 * 
+	 *
 	 * @param enable the flag value to set
 	 * @throws DebugException if this method fails.
 	 */
@@ -64,7 +64,7 @@ public interface ICSignal extends ICDebugElement {
 
 	/**
 	 * Enables/disables the "stop" flag of this signal.
-	 * 
+	 *
 	 * @param enable the flag value to set
 	 * @throws DebugException if this method fails.
 	 */
@@ -72,14 +72,14 @@ public interface ICSignal extends ICDebugElement {
 
 	/**
 	 * Resumes execution, but immediately gives the target this signal.
-	 * 
+	 *
 	 * @throws DebugException if this method fails.
 	 */
 	public void signal() throws DebugException;
 
 	/**
 	 * Returns whether modification is allowed for this signal's parameters.
-	 * 
+	 *
 	 * @return whether modification is allowed for this signal's parameters
 	 */
 	public boolean canModify();

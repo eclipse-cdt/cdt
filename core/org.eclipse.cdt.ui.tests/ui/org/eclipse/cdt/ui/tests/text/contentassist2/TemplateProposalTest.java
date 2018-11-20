@@ -7,24 +7,22 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Marc-Andre Laperle - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import junit.framework.Test;
 
 public class TemplateProposalTest extends AbstractContentAssistTest {
 
@@ -113,7 +111,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		assertContentAssistResults(fSelectionOffset, fSelectionLength, expected, DEFAULT_FLAGS, CompareType.ID);
 	}
 
-	//void func() { 
+	//void func() {
 	///*sel-start*/test foo bar/*sel-end*/
 	//}
 	public void testFullLineSelection() throws Exception {
@@ -123,7 +121,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
-	//void func() { 
+	//void func() {
 	///*sel-start*/test foo bar
 	//test foo bar/*sel-end*/
 	//}
@@ -134,7 +132,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
-	//void func() { 
+	//void func() {
 	//foo /*sel-start*/test/*sel-end*/
 	//}
 	public void testWordSelection() throws Exception {
@@ -144,7 +142,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
-	//void func() { 
+	//void func() {
 	//foo/*sel-start*/test/*sel-end*/
 	//}
 	public void testPartialLineWordSelection() throws Exception {
@@ -154,7 +152,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
-	//void func() { 
+	//void func() {
 	//test foo/*sel-start*/bar
 	//test foo /*sel-end*/bar
 	//}
@@ -165,7 +163,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
-	//void func() { 
+	//void func() {
 	//  /*sel-start*/test/*sel-end*/
 	//}
 	public void testBug298554_lineSelectedWithoutWhitespaces() throws Exception {
@@ -174,9 +172,9 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
-	//void func() { 
+	//void func() {
 	//  /*sel-start*/test foo bar
-	//test foo bar/*sel-end*/  
+	//test foo bar/*sel-end*/
 	//}
 	public void testBug298554_multiLineSelectedWithoutWhitespaces() throws Exception {
 		addWordSelectionTemplate();
@@ -185,7 +183,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
-	//void func() { 
+	//void func() {
 	//  /*sel-start*/test/*sel-end*/
 	//}
 	public void testBug304482_onlyWordOnLine() throws Exception {
@@ -195,7 +193,7 @@ public class TemplateProposalTest extends AbstractContentAssistTest {
 		assertCompletionResults(expected);
 	}
 
-	//void func() { 
+	//void func() {
 	///*sel-start*/test/*sel-end*/
 	//}
 	public void testBug304482_onlyWordOnLineStartOfLine() throws Exception {

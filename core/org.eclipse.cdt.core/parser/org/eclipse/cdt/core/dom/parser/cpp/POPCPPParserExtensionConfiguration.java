@@ -14,7 +14,7 @@
 package org.eclipse.cdt.core.dom.parser.cpp;
 
 /**
- * Configures the parser to accept POP C++, 
+ * Configures the parser to accept POP C++,
  * see <a href=http://gridgroup.tic.hefr.ch/popc/index.php/Documentation>Documentation</a>
  * @since 5.1
  */

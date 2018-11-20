@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
@@ -36,7 +36,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTParameterDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
-
 import org.eclipse.cdt.internal.ui.refactoring.extractfunction.TrailNodeEqualityChecker;
 
 public class ASTHelper {
@@ -109,7 +108,7 @@ public class ASTHelper {
 	}
 
 	public static Collection<IASTDeclSpecifier> getCompositeTypeSpecifiers(IASTNode baseNode) {
-		final Collection<IASTDeclSpecifier> specifiers = new ArrayList<IASTDeclSpecifier>();
+		final Collection<IASTDeclSpecifier> specifiers = new ArrayList<>();
 		ASTVisitor visitor = new ASTVisitor() {
 			@Override
 			public int visit(IASTDeclSpecifier declSpec) {
@@ -124,7 +123,7 @@ public class ASTHelper {
 
 	public static Collection<IASTPreprocessorStatement> getAllInFilePreprocessorStatements(IASTTranslationUnit unit,
 			String aktFileName) {
-		Collection<IASTPreprocessorStatement> statements = new ArrayList<IASTPreprocessorStatement>();
+		Collection<IASTPreprocessorStatement> statements = new ArrayList<>();
 		for (IASTPreprocessorStatement aktStatement : unit.getAllPreprocessorStatements()) {
 			if (aktStatement.getFileLocation() != null
 					&& aktStatement.getFileLocation().getFileName().equals(aktFileName)) {
@@ -135,7 +134,7 @@ public class ASTHelper {
 	}
 
 	public static Collection<IASTDeclaration> getAllInFileDeclarations(IASTTranslationUnit unit, String aktFileName) {
-		Collection<IASTDeclaration> decls = new ArrayList<IASTDeclaration>();
+		Collection<IASTDeclaration> decls = new ArrayList<>();
 		for (IASTDeclaration aktDecl : unit.getDeclarations()) {
 			if (aktDecl.getFileLocation() != null && aktDecl.getFileLocation().getFileName().equals(aktFileName)) {
 				decls.add(aktDecl);
@@ -158,7 +157,7 @@ public class ASTHelper {
 	}
 
 	public static Collection<ICPPASTUsingDeclaration> getUsingDeclarations(IASTTranslationUnit unit) {
-		Collection<ICPPASTUsingDeclaration> usingDecls = new ArrayList<ICPPASTUsingDeclaration>();
+		Collection<ICPPASTUsingDeclaration> usingDecls = new ArrayList<>();
 		for (IASTDeclaration aktDecl : unit.getDeclarations()) {
 			if (aktDecl instanceof ICPPASTUsingDeclaration) {
 				usingDecls.add((ICPPASTUsingDeclaration) aktDecl);
@@ -178,7 +177,7 @@ public class ASTHelper {
 	}
 
 	public static Collection<IASTFunctionDeclarator> getFunctionDeclaratorsForClass(IASTCompositeTypeSpecifier klass) {
-		Collection<IASTFunctionDeclarator> declarators = new ArrayList<IASTFunctionDeclarator>();
+		Collection<IASTFunctionDeclarator> declarators = new ArrayList<>();
 		for (IASTDeclaration aktDeclaration : klass.getMembers()) {
 			if (aktDeclaration instanceof IASTSimpleDeclaration) {
 				for (IASTDeclarator aktDeclarator : ((IASTSimpleDeclaration) aktDeclaration).getDeclarators()) {
@@ -192,7 +191,7 @@ public class ASTHelper {
 	}
 
 	public static Collection<IASTFunctionDefinition> getFunctionDefinitionsForClass(IASTCompositeTypeSpecifier klass) {
-		Collection<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
+		Collection<IASTFunctionDefinition> definitions = new ArrayList<>();
 		for (IASTFunctionDeclarator aktDeclarator : getFunctionDeclaratorsForClass(klass)) {
 			IBinding binding = aktDeclarator.getName().resolveBinding();
 			for (IASTName aktName : aktDeclarator.getTranslationUnit().getDefinitionsInAST(binding)) {

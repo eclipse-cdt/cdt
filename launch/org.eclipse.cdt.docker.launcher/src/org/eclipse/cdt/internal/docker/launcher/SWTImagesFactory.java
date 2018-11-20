@@ -84,7 +84,7 @@ public class SWTImagesFactory {
 
 	/**
 	 * Sets all available image descriptors for the given action.
-	 * 
+	 *
 	 * @param action
 	 *            to set descriptor for
 	 * @param type

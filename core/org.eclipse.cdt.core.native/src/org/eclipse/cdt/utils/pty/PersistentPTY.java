@@ -17,12 +17,12 @@ import org.eclipse.core.runtime.Platform;
 /**
  * A type of PTY that is persistent.  This means that closing
  * its streams (e.g., once the connection to the process is lost)
- * will not close the PTY or the streams; instead, they will 
+ * will not close the PTY or the streams; instead, they will
  * remain open to be used again by reconnecting to the streams.
  * {@link PersistentPTY#closeStreams()} must be called to properly
  * cleanup the streams once the PersistentPTY is known not be needed
  * anymore.
- * 
+ *
  * @since 5.10
  */
 public class PersistentPTY extends PTY {
@@ -98,7 +98,7 @@ public class PersistentPTY extends PTY {
 
 	/**
 	 * This method must be called once the PersistentPTY is
-	 * no longer needed, so that its streams can be closed. 
+	 * no longer needed, so that its streams can be closed.
 	 */
 	public void closeStreams() throws IOException {
 		in2.realClose();

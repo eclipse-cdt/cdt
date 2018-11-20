@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,7 @@ package org.eclipse.cdt.testsrunner.model;
 /**
  * The interface to easily build or update testing model.
  * It is intended to use from the Tests Runner provider plug-in.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -24,7 +24,7 @@ public interface ITestModelUpdater {
 
 	/**
 	 * Specifies that a new test suite has been started.
-	 * 
+	 *
 	 * @param name the name of the started test suite
 	 */
 	public void enterTestSuite(String name);
@@ -37,7 +37,7 @@ public interface ITestModelUpdater {
 
 	/**
 	 * Specifies that a new test case has been started.
-	 * 
+	 *
 	 * @param name the name of the started test case
 	 */
 	public void enterTestCase(String name);
@@ -45,7 +45,7 @@ public interface ITestModelUpdater {
 	/**
 	 * Sets the status of the currently running test case.
 	 * The exception is thrown if no test case is running.
-	 * 
+	 *
 	 * @param status new test status
 	 */
 	public void setTestStatus(ITestItem.Status status);
@@ -54,26 +54,26 @@ public interface ITestModelUpdater {
 	 * Sets the execution time of the currently running test case.
 	 * If the execution time has already been set, it will be overridden.
 	 * The exception is thrown if no test case is running.
-	 * 
+	 *
 	 * @param testingTime test execution time
 	 */
 	public void setTestingTime(int testingTime);
 
 	/**
 	 * Specifies that the currently running test case has been finished.
-	 * The test execution time is set if Tests Runner provider plug-in 
+	 * The test execution time is set if Tests Runner provider plug-in
 	 * requires time measurement.
 	 */
 	public void exitTestCase();
 
 	/**
 	 * Add a new testing message connected to the currently running test case.
-	 * 
+	 *
 	 * @param file message file name
 	 * @param line message line number
 	 * @param level message level
 	 * @param text message text
-	 * 
+	 *
 	 * @note If file name is <code>null</code> or empty or if line number is
 	 * negative or 0 then message location will not be set.
 	 */
@@ -81,14 +81,14 @@ public interface ITestModelUpdater {
 
 	/**
 	 * Access the top most currently running test suite object.
-	 * 
+	 *
 	 * @return top most test suite
 	 */
 	public ITestSuite currentTestSuite();
 
 	/**
 	 * Access the currently running test case object.
-	 * 
+	 *
 	 * @return top most test case
 	 */
 	public ITestCase currentTestCase();

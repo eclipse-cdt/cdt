@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.cpp;
 
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTName;
-
 /**
  * This interface represents template names which use the template disambiguator
  * keyword.

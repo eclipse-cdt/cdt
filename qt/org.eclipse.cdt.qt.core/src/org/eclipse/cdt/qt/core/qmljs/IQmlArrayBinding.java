@@ -19,7 +19,7 @@ public interface IQmlArrayBinding extends IQmlBinding {
 	@Override
 	default public String getType() {
 		return "QMLArrayBinding"; //$NON-NLS-1$
-	};
+	}
 
 	public List<IQmlObjectDefinition> getElements();
 }

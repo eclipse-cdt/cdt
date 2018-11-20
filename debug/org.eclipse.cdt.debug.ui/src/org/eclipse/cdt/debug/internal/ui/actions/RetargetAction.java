@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *  IBM Corporation - initial API and implementation   
+ *  IBM Corporation - initial API and implementation
  * 	Anton Leherbauer (Wind River Systems) - bug 183291
  *  Ericsson        - Updated to the latest platform version of this file
  *******************************************************************************/
@@ -63,7 +63,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/**
 	 * Returns the current selection in the active part, possibly
 	 * and empty selection, but never <code>null</code>.
-	 * 
+	 *
 	 * @return the selection in the active part, possibly empty
 	 */
 	protected ISelection getTargetSelection() {
@@ -131,15 +131,15 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	 * Returns a message to display when we find that the operation is not enabled
 	 * when invoked in an editor (we check enabled state before running in this case,
 	 * rather than updating on each selection change - see bug 180441).
-	 * 
+	 *
 	 * @return information message when unavailable
 	 */
 	protected abstract String getOperationUnavailableMessage();
 
 	/**
 	 * Performs the specific breakpoint toggling.
-	 * 
-	 * @param selection selection in the active part 
+	 *
+	 * @param selection selection in the active part
 	 * @param part active part
 	 * @throws CoreException if an exception occurs
 	 */
@@ -202,7 +202,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 
 	/**
 	 * Returns the type of adapter (target) this action works on.
-	 * 
+	 *
 	 * @return the type of adapter this action works on
 	 */
 	protected abstract Class<?> getAdapterClass();
@@ -225,7 +225,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 	/**
 	 * Clears reference to active part and adapter when a relevant part
 	 * is closed or no longer active.
-	 * 
+	 *
 	 * @param part workbench part that has been closed or no longer active
 	 */
 	protected void clearPart(IWorkbenchPart part) {
@@ -252,7 +252,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 
 	/**
 	 * Returns whether the target adapter is enabled
-	 * 
+	 *
 	 * @return whether target adapter is enabled
 	 */
 	protected boolean isTargetEnabled() {
@@ -266,8 +266,8 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 
 	/**
 	 * Returns whether the specific operation is supported.
-	 * 
-	 * @param target the target adapter 
+	 *
+	 * @param target the target adapter
 	 * @param selection the selection to verify the operation on
 	 * @param part the part the operation has been requested on
 	 * @return whether the operation can be performed
@@ -292,7 +292,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 
 	/**
 	 * Returns the proxy to this action delegate or <code>null</code>
-	 * 
+	 *
 	 * @return action proxy or <code>null</code>
 	 */
 	protected IAction getAction() {
@@ -301,7 +301,7 @@ public abstract class RetargetAction implements IWorkbenchWindowActionDelegate, 
 
 	/**
 	 * Returns whether there is currently a target adapter for this action.
-	 * 
+	 *
 	 * @return whether the action has a target adapter.
 	 */
 	protected boolean hasTargetAdapter() {

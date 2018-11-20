@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * copied from:
  * org.eclipse.ui.externaltools.internal.launchConfigurations.GenericMainTab
  *******************************************************************************/
@@ -118,7 +118,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.
 	 * widgets.Composite)
@@ -317,7 +317,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.
 	 * core.ILaunchConfigurationWorkingCopy)
@@ -329,7 +329,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug
 	 * .core.ILaunchConfiguration)
@@ -388,7 +388,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.
 	 * core.ILaunchConfigurationWorkingCopy)
@@ -423,7 +423,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	@Override
@@ -433,7 +433,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.
 	 * ILaunchConfiguration)
@@ -615,7 +615,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Returns a new variable expression with the given variable and the given
 	 * argument.
-	 * 
+	 *
 	 * @see IStringVariableManager#generateVariableExpression(String, String)
 	 */
 	protected String newVariableExpression(String varName, String arg) {
@@ -658,7 +658,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	@Override
@@ -668,7 +668,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.
 	 * core.ILaunchConfigurationWorkingCopy)
@@ -679,7 +679,7 @@ public class GenericMainTab extends AbstractLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core
 	 * .ILaunchConfigurationWorkingCopy)

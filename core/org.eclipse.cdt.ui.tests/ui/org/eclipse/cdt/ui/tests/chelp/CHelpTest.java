@@ -16,32 +16,30 @@ package org.eclipse.cdt.ui.tests.chelp;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
+import org.eclipse.cdt.internal.ui.text.CHelpSettings;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICHelpBook;
+import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
+import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.junit.Assert;
 
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICHelpBook;
-import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
-import org.eclipse.cdt.ui.IFunctionSummary;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.internal.ui.text.CHelpSettings;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * 
+ *
  * CHelpProvider tests
  */
 public class CHelpTest extends TestCase {
@@ -149,9 +147,8 @@ public class CHelpTest extends TestCase {
 					numExts++;
 			}
 
-			assertTrue(
-					"number of provider instances created (" + CHelpTestInfoProvider.getNumProviders() //$NON-NLS-1$
-							+ ") is not equal to number of extensions (" + numExts + ")", //$NON-NLS-1$//$NON-NLS-2$
+			assertTrue("number of provider instances created (" + CHelpTestInfoProvider.getNumProviders() //$NON-NLS-1$
+					+ ") is not equal to number of extensions (" + numExts + ")", //$NON-NLS-1$//$NON-NLS-2$
 					numExts == CHelpTestInfoProvider.getNumProviders());
 		} catch (CoreException e) {
 			fail(e);
@@ -227,17 +224,15 @@ public class CHelpTest extends TestCase {
 			CHelpBookDescriptor ccBookDescriptors[] = mngr.getCHelpBookDescriptors(getDefaultCCHelpContext());
 			CHelpBookDescriptor cBookDescriptors[] = mngr.getCHelpBookDescriptors(getDefaultCHelpContext());
 
-			assertTrue(
-					"CC book descriptors length (" + ccBookDescriptors.length //$NON-NLS-1$
-							+ ") is less than C book descriptors length (" + cBookDescriptors.length + ")", //$NON-NLS-1$ //$NON-NLS-2$
+			assertTrue("CC book descriptors length (" + ccBookDescriptors.length //$NON-NLS-1$
+					+ ") is less than C book descriptors length (" + cBookDescriptors.length + ")", //$NON-NLS-1$ //$NON-NLS-2$
 					ccBookDescriptors.length >= cBookDescriptors.length);
 
 			for (int i = 0; i < cBookDescriptors.length; i++) {
 				CHelpBookDescriptor curBookDes = cBookDescriptors[i];
-				assertTrue(
-						"book \"" + curBookDes.getCHelpBook().getTitle() //$NON-NLS-1$
-								+ "\" of type HELP_TYPE_CPP in book descriptors for C project \"" //$NON-NLS-1$
-								+ getDefaultCHelpContext().getProject().getName() + "\"", //$NON-NLS-1$
+				assertTrue("book \"" + curBookDes.getCHelpBook().getTitle() //$NON-NLS-1$
+						+ "\" of type HELP_TYPE_CPP in book descriptors for C project \"" //$NON-NLS-1$
+						+ getDefaultCHelpContext().getProject().getName() + "\"", //$NON-NLS-1$
 						curBookDes.getCHelpBook().getCHelpType() != ICHelpBook.HELP_TYPE_CPP);
 				int j = 0;
 				for (; j < ccBookDescriptors.length; j++) {
@@ -255,9 +250,8 @@ public class CHelpTest extends TestCase {
 					if (cBookDescriptors[j].getCHelpBook().getTitle().equals(curBookDes.getCHelpBook().getTitle()))
 						break;
 				}
-				assertTrue(
-						"book \"" + curBookDes.getCHelpBook().getTitle() //$NON-NLS-1$
-								+ "\" of type HELP_TYPE_C was not found in C books", //$NON-NLS-1$
+				assertTrue("book \"" + curBookDes.getCHelpBook().getTitle() //$NON-NLS-1$
+						+ "\" of type HELP_TYPE_C was not found in C books", //$NON-NLS-1$
 						j < cBookDescriptors.length
 								|| curBookDes.getCHelpBook().getCHelpType() == ICHelpBook.HELP_TYPE_CPP);
 			}

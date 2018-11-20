@@ -138,9 +138,9 @@ public class GCCPerFileBOPConsoleParser extends AbstractGCCBOPConsoleParser {
 			}
 			if (file != null) {
 				CCommandDSC cmd = fUtil.getNewCCommandDSC(tokens, compilerInvocationIndex, extensionsIndex > 0);
-				List<CCommandDSC> cmdList = new CopyOnWriteArrayList<CCommandDSC>();
+				List<CCommandDSC> cmdList = new CopyOnWriteArrayList<>();
 				cmdList.add(cmd);
-				Map<ScannerInfoTypes, List<CCommandDSC>> sc = new HashMap<ScannerInfoTypes, List<CCommandDSC>>(1);
+				Map<ScannerInfoTypes, List<CCommandDSC>> sc = new HashMap<>(1);
 				sc.put(ScannerInfoTypes.COMPILER_COMMAND, cmdList);
 				getCollector().contributeToScannerConfig(file, sc);
 			} else

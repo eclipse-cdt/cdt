@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,22 +17,21 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
  * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
- * 
+ *
  * @author crecoskie
  * @since 5.3
- * 
+ *
  */
 public class RefreshExclusionContributionManager {
 
@@ -51,7 +50,7 @@ public class RefreshExclusionContributionManager {
 	private LinkedHashMap<String, RefreshExclusionContributor> fIDtoContributorsMap;
 
 	private RefreshExclusionContributionManager() {
-		fIDtoContributorsMap = new LinkedHashMap<String, RefreshExclusionContributor>();
+		fIDtoContributorsMap = new LinkedHashMap<>();
 		loadExtensions();
 	}
 
@@ -64,7 +63,7 @@ public class RefreshExclusionContributionManager {
 	}
 
 	public List<RefreshExclusionContributor> getContributors(boolean returnTestContributors) {
-		List<RefreshExclusionContributor> retVal = new LinkedList<RefreshExclusionContributor>();
+		List<RefreshExclusionContributor> retVal = new LinkedList<>();
 
 		if (!returnTestContributors) {
 			for (RefreshExclusionContributor contributor : fIDtoContributorsMap.values()) {
@@ -77,7 +76,7 @@ public class RefreshExclusionContributionManager {
 		}
 
 		else {
-			return new LinkedList<RefreshExclusionContributor>(fIDtoContributorsMap.values());
+			return new LinkedList<>(fIDtoContributorsMap.values());
 		}
 	}
 

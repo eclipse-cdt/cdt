@@ -15,10 +15,9 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.cdt.internal.ui.search.CSearchQuery;
-
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;

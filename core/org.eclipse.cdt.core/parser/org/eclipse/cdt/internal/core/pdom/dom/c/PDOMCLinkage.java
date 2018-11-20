@@ -231,7 +231,7 @@ class PDOMCLinkage extends PDOMLinkage implements IIndexCBindingConstants {
 	}
 
 	/**
-	 * Adapts the parent of the given binding to an object contained in this linkage. May return 
+	 * Adapts the parent of the given binding to an object contained in this linkage. May return
 	 * <code>null</code> if the binding cannot be adapted or the binding does not exist and addParent
 	 * is set to <code>false</code>.
 	 * @param binding the binding to adapt

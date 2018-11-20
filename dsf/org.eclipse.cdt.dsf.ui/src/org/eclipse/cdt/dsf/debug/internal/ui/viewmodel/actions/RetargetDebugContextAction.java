@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems, Inc. - initial implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 /**
  * Base class for actions which delegate functionality to an adapter retrieved
  * from the current debug context.
- * 
+ *
  * @since 1.1
  */
 abstract public class RetargetDebugContextAction
@@ -85,8 +85,8 @@ abstract public class RetargetDebugContextAction
 
 	/**
 	 * Returns whether the specific operation is supported.
-	 * 
-	 * @param target the target adapter 
+	 *
+	 * @param target the target adapter
 	 * @param selection the selection to verify the operation on
 	 * @param part the part the operation has been requested on
 	 * @return whether the operation can be performed
@@ -95,8 +95,8 @@ abstract public class RetargetDebugContextAction
 
 	/**
 	 * Performs the specific breakpoint toggling.
-	 * 
-	 * @param selection selection in the active part 
+	 *
+	 * @param selection selection in the active part
 	 * @param part active part
 	 * @throws CoreException if an exception occurrs
 	 */
@@ -104,7 +104,7 @@ abstract public class RetargetDebugContextAction
 
 	/**
 	 * Returns the type of adapter (target) this action works on.
-	 * 
+	 *
 	 * @return the type of adapter this action works on
 	 */
 	protected abstract Class<?> getAdapterClass();

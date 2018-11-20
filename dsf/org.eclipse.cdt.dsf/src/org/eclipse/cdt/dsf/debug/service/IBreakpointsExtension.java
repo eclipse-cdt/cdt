@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.ISuspendedDMEvent;
 
 /**
- * Extension to the Breakpoints service which adds support for correlating 
+ * Extension to the Breakpoints service which adds support for correlating
  * breakpoints and execution contexts.
  * @since 2.1
  */
@@ -37,14 +37,14 @@ public interface IBreakpointsExtension extends IBreakpoints {
 	}
 
 	/**
-	 * If a given execution context was suspended due to hitting a breakpoint, 
-	 * this method should return the breakpoints which caused the thread or 
+	 * If a given execution context was suspended due to hitting a breakpoint,
+	 * this method should return the breakpoints which caused the thread or
 	 * container to suspend.
 	 * <p>
-	 * If the given thread is not suspended or is not suspended at a 
-	 * breakpoint, an empty array or an error with an INVALID_STATE code 
-	 * will be returned. 
-	 * 
+	 * If the given thread is not suspended or is not suspended at a
+	 * breakpoint, an empty array or an error with an INVALID_STATE code
+	 * will be returned.
+	 *
 	 * @param ctx Thread or container to get breakpoints for.
 	 * @param rm Breakpoints that the thread or container is suspended on.
 	 */

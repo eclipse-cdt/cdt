@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -20,21 +20,19 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
 
 public class GetterSetterContext implements ITreeContentProvider {
-	final List<IASTDeclarator> existingFields = new ArrayList<IASTDeclarator>();
-	final List<IASTFunctionDefinition> existingFunctionDefinitions = new ArrayList<IASTFunctionDefinition>();
-	final List<IASTSimpleDeclaration> existingFunctionDeclarations = new ArrayList<IASTSimpleDeclaration>();
-	final SortedSet<AccessorDescriptor> selectedAccessors = new TreeSet<AccessorDescriptor>();
+	final List<IASTDeclarator> existingFields = new ArrayList<>();
+	final List<IASTFunctionDefinition> existingFunctionDefinitions = new ArrayList<>();
+	final List<IASTSimpleDeclaration> existingFunctionDeclarations = new ArrayList<>();
+	final SortedSet<AccessorDescriptor> selectedAccessors = new TreeSet<>();
 	IASTName selectedName;
 	private List<FieldDescriptor> fieldDescriptors;
 	private boolean definitionSeparate;
@@ -77,7 +75,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 	public void recreateFieldDescriptors() {
 		// Delete field descriptors so that they are recreated by the next getFieldDescriptors call.
 		fieldDescriptors = null;
-		SortedSet<AccessorDescriptor> oldSelected = new TreeSet<AccessorDescriptor>(selectedAccessors);
+		SortedSet<AccessorDescriptor> oldSelected = new TreeSet<>(selectedAccessors);
 		selectedAccessors.clear();
 		for (FieldDescriptor descriptor : getFieldDescriptors()) {
 			for (AccessorDescriptor accessor : descriptor.getChildNodes()) {
@@ -112,7 +110,7 @@ public class GetterSetterContext implements ITreeContentProvider {
 
 	private List<FieldDescriptor> getFieldDescriptors() {
 		if (fieldDescriptors == null) {
-			fieldDescriptors = new ArrayList<FieldDescriptor>();
+			fieldDescriptors = new ArrayList<>();
 			for (IASTDeclarator field : existingFields) {
 				FieldDescriptor descriptor = new FieldDescriptor(field, this);
 				if (descriptor.missingGetterOrSetter()) {

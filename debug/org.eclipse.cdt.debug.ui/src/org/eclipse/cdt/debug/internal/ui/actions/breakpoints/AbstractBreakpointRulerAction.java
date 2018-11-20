@@ -26,8 +26,8 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Abstract base implementation of the breakpoint ruler actions.
- * 
- * @see {@link RulerBreakpointAction} 
+ *
+ * @see {@link RulerBreakpointAction}
  */
 public abstract class AbstractBreakpointRulerAction extends Action implements IUpdate {
 
@@ -37,7 +37,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	/**
 	 * Constructs an action to work on breakpoints in the specified
 	 * part with the specified vertical ruler information.
-	 * 
+	 *
 	 * @param part  a text editor or DisassemblyView
 	 * @param info  vertical ruler information
 	 */
@@ -50,7 +50,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 	/**
 	 * Returns the breakpoint at the last line of mouse activity in the ruler
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return breakpoint associated with activity in the ruler or <code>null</code>
 	 */
 	protected IBreakpoint getBreakpoint() {
@@ -63,7 +63,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 
 	/**
 	 * Returns the workbench part this action was created for.
-	 * 
+	 *
 	 * @return workbench part, a text editor or a DisassemblyView
 	 */
 	protected IWorkbenchPart getTargetPart() {
@@ -72,7 +72,7 @@ public abstract class AbstractBreakpointRulerAction extends Action implements IU
 
 	/**
 	 * Returns the vertical ruler information this action was created for.
-	 * 
+	 *
 	 * @return vertical ruler information
 	 */
 	protected IVerticalRulerInfo getVerticalRulerInfo() {

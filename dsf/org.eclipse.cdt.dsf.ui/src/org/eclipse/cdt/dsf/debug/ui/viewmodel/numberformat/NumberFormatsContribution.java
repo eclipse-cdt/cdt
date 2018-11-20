@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
@@ -35,14 +35,14 @@ import org.eclipse.ui.menus.IWorkbenchContribution;
 import org.eclipse.ui.services.IServiceLocator;
 
 /**
- * Dynamic menu contribution that shows available number formats 
+ * Dynamic menu contribution that shows available number formats
  * in the current view.
- * 
+ *
  * @since 1.1
  */
 public class NumberFormatsContribution extends CompoundContributionItem implements IWorkbenchContribution {
 
-	protected static final List<String> FORMATS = new LinkedList<String>();
+	protected static final List<String> FORMATS = new LinkedList<>();
 	static {
 		FORMATS.add(IFormattedValues.NATURAL_FORMAT);
 		FORMATS.add(IFormattedValues.HEX_FORMAT);
@@ -101,7 +101,7 @@ public class NumberFormatsContribution extends CompoundContributionItem implemen
 			activeId = IFormattedValues.NATURAL_FORMAT;
 		}
 
-		List<Action> actions = new ArrayList<Action>(FORMATS.size());
+		List<Action> actions = new ArrayList<>(FORMATS.size());
 		for (String formatId : FORMATS) {
 			Action action = new SelectNumberFormatAction(context, formatId);
 			if (formatId.equals(activeId)) {

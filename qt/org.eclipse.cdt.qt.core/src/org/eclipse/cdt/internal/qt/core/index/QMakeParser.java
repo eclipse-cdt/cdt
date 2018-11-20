@@ -51,7 +51,7 @@ public final class QMakeParser {
 	 * @throws IOException when io error happens
 	 */
 	public static Map<String, String> parse(Pattern regex, BufferedReader reader) throws IOException {
-		Map<String, String> result = new LinkedHashMap<String, String>();
+		Map<String, String> result = new LinkedHashMap<>();
 
 		String line;
 		while ((line = reader.readLine()) != null) {
@@ -95,7 +95,7 @@ public final class QMakeParser {
 			return Collections.emptyList();
 		}
 
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (String item : qmake3SplitValueList(value)) {
 			result.add(qmake3DecodeValue(item));
 		}
@@ -161,7 +161,7 @@ public final class QMakeParser {
 	 * @return the modifiable list of values
 	 */
 	private static List<String> qmake3SplitValueList(String value) {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
 		char quote = 0;
 		boolean hadWord = false;

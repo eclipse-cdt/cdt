@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 
 /**
  * This class contains several convenience methods mainly for debugging purposes.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -43,7 +43,7 @@ public class DebugUtil {
 	/**
 	 * Prints a trace message to stdout that gives info
 	 * about the method that calls this method.
-	 * 
+	 *
 	 * The output is in a format that will show up as a hyperlink in the eclipse console.
 	 */
 	public static void printMethodTrace(String extraMessage) {
@@ -77,9 +77,9 @@ public class DebugUtil {
 	/**
 	 * Prints the values of javabean properties to the console.
 	 * This method is not recursive, it does not print nested properties.
-	 * 
-	 * Example of usage: 
-	 * 
+	 *
+	 * Example of usage:
+	 *
 	 * IResource resource = ...;
 	 * DebugUtil.printObjectProperties(resource);
 	 * DebugUtil.printObjectProperties(resource.getResourceAttributes());

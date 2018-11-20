@@ -33,7 +33,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Opens a custom properties dialog to configure the attibutes of a C/C++ breakpoint 
+ * Opens a custom properties dialog to configure the attibutes of a C/C++ breakpoint
  * from the ruler popup menu.
  */
 public class CBreakpointPropertiesRulerAction extends AbstractBreakpointRulerAction {

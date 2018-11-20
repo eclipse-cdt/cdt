@@ -16,16 +16,15 @@ package org.eclipse.cdt.ui.actions;
 import java.util.HashSet;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.action.Action;
-
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.cdt.ui.newui.CDTPropertyManager;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.action.Action;
 
 /**
- * Action which changes active build configuration of the current project to 
+ * Action which changes active build configuration of the current project to
  * the given one.
  */
 public class ChangeConfigAction extends Action {
@@ -35,7 +34,7 @@ public class ChangeConfigAction extends Action {
 
 	/**
 	 * Constructs the action.
-	 * @param projects List of selected managed-built projects 
+	 * @param projects List of selected managed-built projects
 	 * @param configName Build configuration name
 	 * @param accel Number to be used as accelerator
 	 */

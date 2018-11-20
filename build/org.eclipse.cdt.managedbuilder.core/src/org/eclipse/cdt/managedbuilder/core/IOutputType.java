@@ -17,9 +17,9 @@ import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * This interface represents an outputType instance in the managed build system.
- * It describes one category of output files created by a Tool.  A tool can 
+ * It describes one category of output files created by a Tool.  A tool can
  * have multiple outputType children.
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -40,7 +40,7 @@ public interface IOutputType extends IBuildObject {
 
 	/**
 	 * Returns the tool defining this OutputType.
-	 * 
+	 *
 	 * @return ITool
 	 */
 	public ITool getParent();
@@ -48,25 +48,25 @@ public interface IOutputType extends IBuildObject {
 	/**
 	 * Returns the <code>IOutputType</code> that is the superclass of this
 	 * OutputType, or <code>null</code> if the attribute was not specified.
-	 * 
+	 *
 	 * @return IInputType
 	 */
 	public IOutputType getSuperClass();
 
 	/**
 	 * Returns the Eclipse <code>IContentType</code> that describes this
-	 * output type. If both the outputs attribute and the outputContentType 
-	 * attribute are specified, the outputContentType will be used if it 
-	 * is defined in Eclipse. 
-	 * 
+	 * output type. If both the outputs attribute and the outputContentType
+	 * attribute are specified, the outputContentType will be used if it
+	 * is defined in Eclipse.
+	 *
 	 * @return IContentType
 	 */
 	public IContentType getOutputContentType();
 
 	/**
 	 * Sets the Eclipse <code>IContentType</code> that describes this
-	 * output type. 
-	 * 
+	 * output type.
+	 *
 	 * @param contentType  The Eclipse content type
 	 */
 	public void setOutputContentType(IContentType contentType);
@@ -75,16 +75,16 @@ public interface IOutputType extends IBuildObject {
 	 * Returns the list of valid output extensions from the
 	 * outputs attribute. Note that this value is not used
 	 * if output content type is specified and registered with Eclipse.
-	 * Also, the user will not be able to modify the set of file 
+	 * Also, the user will not be able to modify the set of file
 	 * extensions as they can when outputContentType is specified.
-	 * 
+	 *
 	 * @return <code>String[]</code> of extensions
 	 */
 	public String[] getOutputExtensionsAttribute();
 
 	/**
 	 * Sets all of the output extensions that the receiver can build.
-	 * NOTE: The value of this attribute will NOT be used if a 
+	 * NOTE: The value of this attribute will NOT be used if a
 	 *       output content type is specified and is registered with
 	 *       Eclipse.
 	 */
@@ -92,19 +92,19 @@ public interface IOutputType extends IBuildObject {
 
 	/**
 	 * Returns the list of the output extensions that the receiver can build.
-	 * Note that the list will come from the outputContentType if it 
-	 * is specified and registered with Eclipse.  Otherwise the  
+	 * Note that the list will come from the outputContentType if it
+	 * is specified and registered with Eclipse.  Otherwise the
 	 * outputs attribute will be used.
-	 * 
+	 *
 	 * @param tool  the tool that contains the output-type
 	 * @return String[]
 	 */
 	public String[] getOutputExtensions(ITool tool);
 
 	/**
-	 * Answers <code>true</code> if the output type considers the file extension to be 
+	 * Answers <code>true</code> if the output type considers the file extension to be
 	 * one associated with an output file.
-	 * 
+	 *
 	 * @param tool  the tool that contains the output-type
 	 * @param ext  file extension
 	 * @return boolean
@@ -113,27 +113,27 @@ public interface IOutputType extends IBuildObject {
 
 	/**
 	 * Returns the id of the option that is associated with this
-	 * output type on the command line. The default is to use the Tool 
-	 * "outputFlag" attribute if primaryOutput is True.  If option is not 
-	 * specified, and primaryOutput is False, then the output file(s) of 
-	 * this outputType are not added to the command line.  
+	 * output type on the command line. The default is to use the Tool
+	 * "outputFlag" attribute if primaryOutput is True.  If option is not
+	 * specified, and primaryOutput is False, then the output file(s) of
+	 * this outputType are not added to the command line.
 	 * When specified, the namePattern, nameProvider and outputNames are ignored.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getOptionId();
 
 	/**
 	 * Sets the id of the option that is associated with this
-	 * output type on the command line. 
+	 * output type on the command line.
 	 */
 	public void setOptionId(String optionId);
 
 	/**
 	 * Returns <code>true</code> if this outputType creates multiple output
 	 * resources in one invocation of the tool, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean getMultipleOfType();
 
@@ -145,8 +145,8 @@ public interface IOutputType extends IBuildObject {
 
 	/**
 	 * Returns the input type that is used in determining the default
-	 * names of this output type. 
-	 * 
+	 * names of this output type.
+	 *
 	 * @return IInputType
 	 */
 	public IInputType getPrimaryInputType();
@@ -160,8 +160,8 @@ public interface IOutputType extends IBuildObject {
 	/**
 	 * Returns <code>true</code> if this is considered the primary output
 	 * of the tool, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean getPrimaryOutput();
 
@@ -184,70 +184,70 @@ public interface IOutputType extends IBuildObject {
 	public void setOutputPrefix(String prefix);
 
 	/**
-	 * Returns the file names of the complete set of output files for this outputType 
-	 * 
+	 * Returns the file names of the complete set of output files for this outputType
+	 *
 	 * @return String[]
 	 */
 	public String[] getOutputNames();
 
 	/**
-	 * Sets the complete set of output file names for this outputType 
+	 * Sets the complete set of output file names for this outputType
 	 */
 	public void setOutputNames(String names);
 
 	/**
-	 * Returns the pattern, using the Gnu pattern rule syntax, for deriving the 
-	 * output resource name from the input resource name.  The default is to use 
-	 * the input file base filename with the output extension. 
-	 * 
+	 * Returns the pattern, using the Gnu pattern rule syntax, for deriving the
+	 * output resource name from the input resource name.  The default is to use
+	 * the input file base filename with the output extension.
+	 *
 	 * @return String
 	 */
 	public String getNamePattern();
 
 	/**
-	 * Sets the pattern, using the Gnu pattern rule syntax, for deriving the 
+	 * Sets the pattern, using the Gnu pattern rule syntax, for deriving the
 	 * output resource name from the input resource name.
-	 * 
+	 *
 	 */
 	public void setNamePattern(String pattern);
 
 	/**
 	 * Returns the IManagedOutputNameProvider interface as specified by the nameProvider attribute.
-	 * 
+	 *
 	 * @return IManagedOutputNameProvider
 	 */
 	public IManagedOutputNameProvider getNameProvider();
 
 	/**
 	 * Returns the name of the build variable associated this this output type's resources
-	 * The variable is used in the build file to represent the list of output files.  
-	 * The same variable name can be used by an inputType to identify a set of output 
-	 * files that contribute to the tool's input (i.e., those using the same buildVariable 
+	 * The variable is used in the build file to represent the list of output files.
+	 * The same variable name can be used by an inputType to identify a set of output
+	 * files that contribute to the tool's input (i.e., those using the same buildVariable
 	 * name).  The default name is chosen by MBS.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getBuildVariable();
 
 	/**
 	 * Sets the name of the build variable associated this this output type's resources.
-	 * 
+	 *
 	 */
 	public void setBuildVariable(String variableName);
 
 	/**
-	 * Returns <code>true</code> if this element has changes that need to 
+	 * Returns <code>true</code> if this element has changes that need to
 	 * be saved in the project file, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isDirty();
 
 	/**
 	 * Returns <code>true</code> if this OutputType was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isExtensionElement();
 

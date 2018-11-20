@@ -111,7 +111,7 @@ public class ProblemTreeViewer extends TreeViewer {
 		}
 		Object[] changed = event.getElements();
 		if (changed != null && !fResourceToItemsMapper.isEmpty()) {
-			ArrayList<Object> others = new ArrayList<Object>(changed.length);
+			ArrayList<Object> others = new ArrayList<>(changed.length);
 			for (int i = 0; i < changed.length; i++) {
 				Object curr = changed[i];
 				if (curr instanceof IResource) {
@@ -150,8 +150,8 @@ public class ProblemTreeViewer extends TreeViewer {
 		ITreeContentProvider cp = (ITreeContentProvider) getContentProvider();
 		if (cp == null)
 			return false;
-		// since AbstractTreeViewer will run filteres here on element children this will cause binary search threads and TU parsering 
-		// to be started for each project/file tested for expandablity, this can be expensive if lots of project exists in workspace 
+		// since AbstractTreeViewer will run filteres here on element children this will cause binary search threads and TU parsering
+		// to be started for each project/file tested for expandablity, this can be expensive if lots of project exists in workspace
 		// or lots of TUs exist in one folder so lets skip it....
 		return cp.hasChildren(element);
 	}

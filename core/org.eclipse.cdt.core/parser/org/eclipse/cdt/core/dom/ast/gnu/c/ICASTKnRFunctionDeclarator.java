@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 
 /**
  * This is the declarator for a K&R C Function.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -42,7 +42,7 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
 
 	/**
 	 * Sets the parameter names. TODO - this should change to add
-	 * 
+	 *
 	 * @param names
 	 *            <code>IASTName []</code>
 	 */
@@ -50,14 +50,14 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
 
 	/**
 	 * Returns parameter names.
-	 * 
+	 *
 	 * @return <code>IASTName []</code>
 	 */
 	public IASTName[] getParameterNames();
 
 	/**
 	 * Sets the parameter lists.
-	 * 
+	 *
 	 * @param decls
 	 *            TODO - replace w/zadd
 	 */
@@ -65,14 +65,14 @@ public interface ICASTKnRFunctionDeclarator extends IASTFunctionDeclarator {
 
 	/**
 	 * Get parameters declarations.
-	 * 
+	 *
 	 * @return <code>IASTDeclaration []</code>
 	 */
 	public IASTDeclaration[] getParameterDeclarations();
 
 	/**
 	 * Map declarator to IASTName.
-	 * 
+	 *
 	 * @param name <code>IASTName</code>
 	 */
 	public IASTDeclarator getDeclaratorForParameterName(IASTName name);

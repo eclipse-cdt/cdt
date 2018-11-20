@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,20 +23,20 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Property tester for update policy information available through the given 
- * object.  The object being tested should be either an {@link IVMContext}, 
+ * Property tester for update policy information available through the given
+ * object.  The object being tested should be either an {@link IVMContext},
  * through which an instance of {@link ICachingVMProvider} could be obtained.
  * Or it could be an {@link IWorkbenchPart}, which is tested to see if it
- * is a debug view through which a caching VM provider can be obtained.  
+ * is a debug view through which a caching VM provider can be obtained.
  * The Caching View Model provider is used to test the given property.
  * <p>
  * Three properties are supported:
  * <ul>
- * <li> "areUpdatePoliciesSupported" - Checks whether update policies are 
+ * <li> "areUpdatePoliciesSupported" - Checks whether update policies are
  * available at all given the receiver.</li>
- * <li> "isUpdatePolicyAvailable" - Checks whether the update policy in the 
+ * <li> "isUpdatePolicyAvailable" - Checks whether the update policy in the
  * expected value is available for the given receiver.</li>
- * <li> "isUpdatePolicyActive" - Checks whether the policy given in the expected 
+ * <li> "isUpdatePolicyActive" - Checks whether the policy given in the expected
  * value is the currently active policy for the given receiver.</li>
  * </ul>
  * </p>

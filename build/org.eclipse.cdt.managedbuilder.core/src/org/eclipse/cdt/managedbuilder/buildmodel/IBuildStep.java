@@ -28,7 +28,7 @@ public interface IBuildStep {
 	/**
 	 * Returns an array of input types for this step
 	 * @see IBuildIOType
-	 * 
+	 *
 	 * @return IBuildIOType[]
 	 */
 	IBuildIOType[] getInputIOTypes();
@@ -36,43 +36,43 @@ public interface IBuildStep {
 	/**
 	 * Returns an array of output types for this step
 	 * @see IBuildIOType
-	 * 
+	 *
 	 * @return IBuildIOType[]
 	 */
 	IBuildIOType[] getOutputIOTypes();
 
 	/**
 	 * Returns true if the step needs rebuild, false - otherwise
-	 * 
+	 *
 	 * @return boolean
 	 */
 	boolean needsRebuild();
 
 	/**
 	 * Returns the complete set of input resources for this step
-	 * 
+	 *
 	 * @return IBuildResource[]
 	 */
 	IBuildResource[] getInputResources();
 
 	/**
 	 * Returns the complete set of output resources for this step
-	 * 
+	 *
 	 * @return IBuildResource[]
 	 */
 	IBuildResource[] getOutputResources();
 
 	/**
-	 * Returns true if the step is removed (due to removal 
+	 * Returns true if the step is removed (due to removal
 	 * of the project resources that were ised in thie action)
-	 * 
+	 *
 	 * @return boolean
 	 */
 	boolean isRemoved();
 
 	/**
 	 * returns a build description that holds this step
-	 * 
+	 *
 	 * @return IBuildDescription
 	 */
 	IBuildDescription getBuildDescription();

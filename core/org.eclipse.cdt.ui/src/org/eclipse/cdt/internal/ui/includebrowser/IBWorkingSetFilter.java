@@ -14,11 +14,10 @@
 
 package org.eclipse.cdt.internal.ui.includebrowser;
 
+import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IWorkingSet;
-
-import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
 
 public class IBWorkingSetFilter extends ViewerFilter {
 

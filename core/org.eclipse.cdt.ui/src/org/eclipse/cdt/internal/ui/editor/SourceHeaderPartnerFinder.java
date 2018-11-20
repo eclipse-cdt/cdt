@@ -20,6 +20,24 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.IProblemBinding;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -36,27 +54,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.IProblemBinding;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 
 /**
  * A collection of static methods for finding the source file corresponding to a header
@@ -100,13 +97,13 @@ public final class SourceHeaderPartnerFinder {
 	}
 
 	private static class PartnerFileVisitor extends ASTVisitor {
-		/** 
-		 * When this many times the same partner file is hit, 
+		/**
+		 * When this many times the same partner file is hit,
 		 * we are confident enough to take it.
 		 */
 		private static final int CONFIDENCE_LIMIT = 15;
-		/** 
-		 * When this many times no match was found in the index, 
+		/**
+		 * When this many times no match was found in the index,
 		 * we suspect that we won't get a good partner.
 		 */
 		private static final int SUSPECT_LIMIT = 15;
@@ -127,7 +124,7 @@ public final class SourceHeaderPartnerFinder {
 		}
 
 		public PartnerFileVisitor() {
-			fMap = new HashMap<IPath, Counter>();
+			fMap = new HashMap<>();
 		}
 
 		@Override
@@ -210,7 +207,7 @@ public final class SourceHeaderPartnerFinder {
 
 	/**
 	 * Finds a file in the given resource container for the given basename.
-	 * 
+	 *
 	 * @param container
 	 * @param basename
 	 * @return a matching {@link IFile} or <code>null</code>, if no matching file was found
@@ -269,7 +266,7 @@ public final class SourceHeaderPartnerFinder {
 
 	/**
 	 * Finds a partner translation unit based on filename/extension matching.
-	 * 
+	 *
 	 * @param a partner translation unit or <code>null</code>
 	 */
 	private static ITranslationUnit getPartnerFileFromFilename(ITranslationUnit tu) {

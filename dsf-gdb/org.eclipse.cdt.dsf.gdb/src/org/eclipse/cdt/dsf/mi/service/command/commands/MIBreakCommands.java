@@ -18,15 +18,15 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  * -break-commands NUMBER [ COMMAND-1 ... COMMAND-N ]
- *    
+ *
  * Specifies the CLI commands that should be executed when breakpoint NUMBER is hit.
  * The parameters COMMAND-1 to COMMAND-N are the commands. If no command is specified,
  * any previously-set commands are cleared.
- * 
+ *
  * Available since GDB 7.0
- * 
+ *
  * @since 3.0
  */
 

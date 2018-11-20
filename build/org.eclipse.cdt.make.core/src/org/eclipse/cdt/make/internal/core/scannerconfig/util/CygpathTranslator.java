@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Platform;
 /**
  * Use binary parser's 'cygpath' command to translate cygpaths to absolute paths.
  * Note that this class does not support build configurations.
- * 
+ *
  * @author vhirsl
  */
 public class CygpathTranslator {
@@ -111,7 +111,7 @@ public class CygpathTranslator {
 			useCygwinFromPath = Cygwin.isAvailable(envPath);
 		}
 
-		List<String> translatedIncludePaths = new ArrayList<String>();
+		List<String> translatedIncludePaths = new ArrayList<>();
 		for (Iterator<String> i = sumIncludes.iterator(); i.hasNext();) {
 			String includePath = i.next();
 			IPath realPath = new Path(includePath);

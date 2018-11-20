@@ -15,8 +15,11 @@ package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -36,7 +39,7 @@ public class SourceContainerViewer extends TreeViewer {
 	/**
 	 * The source container entries displayed in this viewer
 	 */
-	protected List<ISourceContainer> fEntries = new ArrayList<ISourceContainer>();
+	protected List<ISourceContainer> fEntries = new ArrayList<>();
 
 	class ContentProvider implements ITreeContentProvider {
 		/**
@@ -61,7 +64,7 @@ public class SourceContainerViewer extends TreeViewer {
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
 
-		/** 
+		/**
 		 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
 		 */
 		@Override
@@ -104,8 +107,8 @@ public class SourceContainerViewer extends TreeViewer {
 	}
 
 	/**
-	 * Sets the entries in this viewer 
-	 * 
+	 * Sets the entries in this viewer
+	 *
 	 * @param entries source container entries
 	 */
 	public void setEntries(ISourceContainer[] entries) {
@@ -126,7 +129,7 @@ public class SourceContainerViewer extends TreeViewer {
 
 	/**
 	 * Returns the entries in this viewer
-	 * 
+	 *
 	 * @return the entries in this viewer
 	 */
 	public ISourceContainer[] getEntries() {
@@ -135,10 +138,10 @@ public class SourceContainerViewer extends TreeViewer {
 
 	/**
 	 * Adds the given entries to the list. If there is no selection
-	 * in the list, the entries are added at the end of the list, 
+	 * in the list, the entries are added at the end of the list,
 	 * otherwise the new entries are added before the (first) selected
 	 * entry. The new entries are selected.
-	 * 
+	 *
 	 * @param entries additions
 	 */
 	public void addEntries(ISourceContainer[] entries) {
@@ -184,7 +187,7 @@ public class SourceContainerViewer extends TreeViewer {
 
 	/**
 	 * Returns the index of an equivalent entry, or -1 if none.
-	 * 
+	 *
 	 * @return the index of an equivalent entry, or -1 if none
 	 */
 	public int indexOf(ISourceContainer entry) {

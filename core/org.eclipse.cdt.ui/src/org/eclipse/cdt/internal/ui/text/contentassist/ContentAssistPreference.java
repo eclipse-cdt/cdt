@@ -17,6 +17,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.contentassist;
 
+import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.text.IDocument;
@@ -26,14 +31,6 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
-
-import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 public class ContentAssistPreference {
 	//	/** Preference key for content assist auto activation (unused) */

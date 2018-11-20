@@ -24,6 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleEvent;
+import org.eclipse.cdt.ui.IBuildConsoleListener;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -86,16 +94,6 @@ import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.IUpdate;
-
-import org.eclipse.cdt.core.ProblemMarkerInfo;
-import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsoleEvent;
-import org.eclipse.cdt.ui.IBuildConsoleListener;
-import org.eclipse.cdt.ui.IBuildConsoleManager;
-
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
 
 public class BuildConsolePage extends Page
 		implements ISelectionListener, IPropertyChangeListener, IBuildConsoleListener, ITextListener, IAdaptable {

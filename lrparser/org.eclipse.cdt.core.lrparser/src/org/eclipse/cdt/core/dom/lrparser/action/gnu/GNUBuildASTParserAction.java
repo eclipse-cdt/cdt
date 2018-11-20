@@ -53,15 +53,15 @@ public class GNUBuildASTParserAction extends AbstractParserAction {
 
 	/**
 	 * Add support for GCC extended ASM declaration syntax.
-	 * 
-	 * 
+	 *
+	 *
 	 * asm_definition -- same as in C++ but its not in C99 spec so we put it here
 	 *     ::= 'asm' '(' 'stringlit' ')' ';'
-	 * 
+	 *
 	 * extended_asm_declaration
 	 *     ::= 'asm' 'volatile' '(' extended_asm_param_seq ')' ';'
 	 *       | 'asm' '(' extended_asm_param_seq ')' ';'
-	 *       
+	 *
 	 */
 	public void consumeDeclarationASM() {
 		List<IToken> tokens = stream.getRuleTokens();

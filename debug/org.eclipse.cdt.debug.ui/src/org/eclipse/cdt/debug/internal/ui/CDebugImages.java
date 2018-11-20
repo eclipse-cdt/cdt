@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Bundle of most images used by the C/C++ debug plug-in.
- * 
+ *
  * @since Aug 30, 2002
  */
 public class CDebugImages {
@@ -270,7 +270,7 @@ public class CDebugImages {
 
 	/**
 	 * Returns the image managed under the given key in this registry.
-	 * 
+	 *
 	 * @param key the image's key
 	 * @return the image managed under the given key
 	 */

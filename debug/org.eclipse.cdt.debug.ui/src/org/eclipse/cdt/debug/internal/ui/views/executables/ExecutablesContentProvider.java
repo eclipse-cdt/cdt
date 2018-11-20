@@ -148,8 +148,8 @@ class ExecutablesContentProvider extends ColumnLabelProvider
 	 */
 	@Override
 	public void executablesChanged(List<Executable> executables) {
-		// Our concern is only if the list of executables changed. The 
-		// content provider for the source files viewer will care about 
+		// Our concern is only if the list of executables changed. The
+		// content provider for the source files viewer will care about
 		// whether the Executables themselves change
 	}
 }

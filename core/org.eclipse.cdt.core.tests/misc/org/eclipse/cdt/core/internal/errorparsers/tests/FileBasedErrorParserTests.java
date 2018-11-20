@@ -18,11 +18,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class FileBasedErrorParserTests extends GenericErrorParserTests {
 

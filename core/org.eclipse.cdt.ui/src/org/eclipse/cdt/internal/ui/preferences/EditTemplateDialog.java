@@ -22,6 +22,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.GroupMarker;
@@ -84,17 +93,6 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.IUpdate;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
-
 /**
  * Dialog to edit a template.
  * @since 5.2
@@ -107,7 +105,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 		/**
 		 * Creates a new action.
-		 * 
+		 *
 		 * @param viewer the viewer
 		 * @param operationCode the opcode
 		 */
@@ -120,7 +118,7 @@ public class EditTemplateDialog extends StatusDialog {
 		/**
 		 * Updates the enabled state of the action.
 		 * Fires a property change if the enabled state changes.
-		 * 
+		 *
 		 * @see Action#firePropertyChange(String, Object, Object)
 		 */
 		@Override
@@ -163,8 +161,8 @@ public class EditTemplateDialog extends StatusDialog {
 
 	private StatusInfo fValidationStatus;
 	private boolean fSuppressError = true; // https://bugs.eclipse.org/bugs/show_bug.cgi?id=4354
-	private final Map<String, TextViewerAction> fGlobalActions = new HashMap<String, TextViewerAction>(10);
-	private final List<String> fSelectionActions = new ArrayList<String>(3);
+	private final Map<String, TextViewerAction> fGlobalActions = new HashMap<>(10);
+	private final List<String> fSelectionActions = new ArrayList<>(3);
 	private String[][] fContextTypes;
 
 	private ContextTypeRegistry fContextTypeRegistry;
@@ -173,7 +171,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 	/**
 	 * Creates a new dialog.
-	 * 
+	 *
 	 * @param parent the shell parent of the dialog
 	 * @param template the template to edit
 	 * @param edit whether this is a new template or an existing being edited
@@ -195,7 +193,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 		//		String delim= new Document().getLegalLineDelimiters()[0];
 
-		List<String[]> contexts = new ArrayList<String[]>();
+		List<String[]> contexts = new ArrayList<>();
 		for (Iterator<?> it = registry.contextTypes(); it.hasNext();) {
 			TemplateContextType type = (TemplateContextType) it.next();
 			// TODO cppdoc? doxygen?
@@ -405,7 +403,7 @@ public class EditTemplateDialog extends StatusDialog {
 	//		Button button= new Button(parent, SWT.CHECK);
 	//		button.setText(name);
 	//		button.setLayoutData(new GridData());
-	//		
+	//
 	//		return button;
 	//	}
 
@@ -487,7 +485,7 @@ public class EditTemplateDialog extends StatusDialog {
 	}
 
 	private void initializeActions() {
-		final ArrayList<IHandlerActivation> handlerActivations = new ArrayList<IHandlerActivation>(3);
+		final ArrayList<IHandlerActivation> handlerActivations = new ArrayList<>(3);
 		final IHandlerService handlerService = PlatformUI.getWorkbench().getAdapter(IHandlerService.class);
 		getShell().addDisposeListener(new DisposeListener() {
 			@Override
@@ -615,7 +613,7 @@ public class EditTemplateDialog extends StatusDialog {
 	/**
 	 * Checks whether the given string is a valid
 	 * template name.
-	 * 
+	 *
 	 * @param name the string to test
 	 * @return <code>true</code> if the name is valid
 	 */
@@ -634,7 +632,7 @@ public class EditTemplateDialog extends StatusDialog {
 
 	/**
 	 * Returns the created template.
-	 * 
+	 *
 	 * @return the created template
 	 */
 	public Template getTemplate() {

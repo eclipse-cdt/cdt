@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector2;
@@ -27,12 +28,9 @@ import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.util.TraceUtil;
 import org.eclipse.cdt.make.xlc.core.activator.Activator;
-import org.eclipse.cdt.managedbuilder.scannerconfig.IManagedScannerInfoCollector;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
 
 /**
  * Parses output of ppuxlc -E -v specs.c or ppuxlc -E -v specs.cpp command
@@ -66,11 +64,11 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 
 	protected IScannerInfoCollector fCollector = null;
 
-	protected List<String> symbols = new ArrayList<String>();
+	protected List<String> symbols = new ArrayList<>();
 
-	protected List<String> includes = new ArrayList<String>();
-	protected List<String> c_includes = new ArrayList<String>();
-	protected List<String> cpp_includes = new ArrayList<String>();
+	protected List<String> includes = new ArrayList<>();
+	protected List<String> c_includes = new ArrayList<>();
+	protected List<String> cpp_includes = new ArrayList<>();
 
 	boolean c_lang; // if language is C only search for the C include paths from the XL Compiler, otherwise get the C++ ones.
 
@@ -175,7 +173,7 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	@Override
 	public void shutdown() {
-		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<>();
 
 		// insert compiler constants, work around buggy xlC option for dumping symbols (it misses a few)
 		for (String constant : compilerConstants) {

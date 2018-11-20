@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Nokia			  - added StepWithProgress. Oct, 2008
@@ -32,16 +32,16 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
- * Convenience class for implementing a series of commands that need to be 
- * executed asynchronously.  
+ * Convenience class for implementing a series of commands that need to be
+ * executed asynchronously.
  * <p>
- * Certain complex tasks require multiple commands to be executed in a chain, 
- * because for example result of one command is used as input into another 
+ * Certain complex tasks require multiple commands to be executed in a chain,
+ * because for example result of one command is used as input into another
  * command.  The typical DSF pattern of solving this problem is the following:
- * <li> 
+ * <li>
  * <br> 1. original caller passes a RequestMonitor callback to a method and invokes it
  * <br> 2. the method is executed by a subsystem
- * <br> 3. when the method is finished it calls another method and passes 
+ * <br> 3. when the method is finished it calls another method and passes
  * the original callback to it
  * <br> 4. steps 2-3 are repeated a number of times
  * <br> 5. when the last method in a chain is executed, it submits the original
@@ -52,23 +52,23 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * because the methods can be scattered across many classes and systems.  Also
  * if progress reporting, cancellability, and roll-back ability is required, it
  * has to be re-implemented every time.  The Sequence class tries to address
- * this problem by containing this pattern in a single class. 
- * 
+ * this problem by containing this pattern in a single class.
+ *
  * @since 1.0
  */
 @ThreadSafe
 abstract public class Sequence extends DsfRunnable implements Future<Object> {
 
 	/**
-	 * The abstract class that each step has to implement.  
+	 * The abstract class that each step has to implement.
 	 */
 	abstract public static class Step {
 		private Sequence fSequence;
 
 		/**
-		 * Sets the sequence that this step belongs to.  It is only accessible 
+		 * Sets the sequence that this step belongs to.  It is only accessible
 		 * by the sequence itself, and is not meant to be called by sequence
-		 * sub-classes. 
+		 * sub-classes.
 		 */
 		void setSequence(Sequence sequence) {
 			fSequence = sequence;
@@ -79,8 +79,8 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 			return fSequence;
 		}
 
-		/** 
-		 * Executes the step.  Overriding classes should perform the 
+		/**
+		 * Executes the step.  Overriding classes should perform the
 		 * work in this method.
 		 * @param rm Result token to submit to executor when step is finished.
 		 */
@@ -88,12 +88,12 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 			rm.done();
 		}
 
-		/** 
-		 * Roll back gives the step implementation a chance to undo the 
+		/**
+		 * Roll back gives the step implementation a chance to undo the
 		 * operation that was performed by execute().
 		 * <br>
-		 * Note if the {@link #execute(RequestMonitor)} call completes with a 
-		 * non-OK status, then rollBack will not be called for that step.  
+		 * Note if the {@link #execute(RequestMonitor)} call completes with a
+		 * non-OK status, then rollBack will not be called for that step.
 		 * Instead it will be called for the previous step.
 		 * @param rm Result token to submit to executor when rolling back the step is finished.
 		 */
@@ -101,8 +101,8 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 			rm.done();
 		}
 
-		/** 
-		 * Returns the number of progress monitor ticks corresponding to this 
+		/**
+		 * Returns the number of progress monitor ticks corresponding to this
 		 * step.
 		 */
 		public int getTicks() {
@@ -112,10 +112,10 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 		/**
 		 * Task name for this step. This will be displayed in the label of the
 		 * progress monitor of the owner sequence.
-		 * 
-		 * @return name of the task carried out by the step, can be 
+		 *
+		 * @return name of the task carried out by the step, can be
 		 * <code>null</code>, in which case the overall task name will be used.
-		 * 
+		 *
 		 * @since 1.1
 		 */
 		public String getTaskName() {
@@ -127,9 +127,9 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 	 * A step that will report execution progress by itself on the progress
 	 * monitor of the owner sequence.<br>
 	 * <br>
-	 * Note we don't offer a rollBack(RequestMonitor, IProgressMonitor) as we 
+	 * Note we don't offer a rollBack(RequestMonitor, IProgressMonitor) as we
 	 * don't want end user to be able to cancel the rollback.
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	abstract public static class StepWithProgress extends Step {
@@ -145,7 +145,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 		 * monitor is a sub progress monitor of the owner sequence which is
 		 * supposed to be fully controlled by the step. Namely the step should
 		 * call beginTask() and done() of the monitor.
-		 * 
+		 *
 		 * @param rm
 		 * @param pm
 		 */
@@ -158,17 +158,17 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 	/** The synchronization object for this future */
 	final Sync fSync = new Sync();
 
-	/** 
+	/**
 	 * Executor that this sequence is running in.  It is used by the sequence
 	 * to submit the runnables for steps, and for submitting the result.
 	 */
 	final private DsfExecutor fExecutor;
 
-	/** 
-	 * Result callback to invoke when the sequence is finished.  Intended to 
-	 * be used when the sequence is created and invoked from the executor 
+	/**
+	 * Result callback to invoke when the sequence is finished.  Intended to
+	 * be used when the sequence is created and invoked from the executor
 	 * thread.  Otherwise, the {@link Future#get()} method is the appropriate
-	 * method of retrieving the result. 
+	 * method of retrieving the result.
 	 */
 	final private RequestMonitor fRequestMonitor;
 
@@ -192,14 +192,14 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 		this(executor, new NullProgressMonitor(), "", "", null); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/** 
-	 * Creates a sequence with a request monitor.  If the client cancels the 
-	 * request monitor, then the request monitors in the 
+	/**
+	 * Creates a sequence with a request monitor.  If the client cancels the
+	 * request monitor, then the request monitors in the
 	 * {@link Step#execute(RequestMonitor)}
 	 * implementations will immediately call the cancel listeners to notify.
-	 * 
-	 * @param executor The DSF executor which will be used to invoke all 
-	 * steps. 
+	 *
+	 * @param executor The DSF executor which will be used to invoke all
+	 * steps.
 	 * @param rm The request monitor which will be invoked when the sequence
 	 * is completed.
 	 */
@@ -209,19 +209,19 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 
 	/**
 	 * Creates a sequence with a progress monitor.  If the progress monitor is
-	 * canceled, then request monitors in the 
-	 * {@link Step#execute(RequestMonitor)} implementations will need to call 
+	 * canceled, then request monitors in the
+	 * {@link Step#execute(RequestMonitor)} implementations will need to call
 	 * rm.isCanceled() to discover the cancellation.
-	 * @param executor The DSF executor which will be used to invoke all 
-	 * steps. 
-	 * @param pm Progress monitor for monitoring this sequence.  
-	 * @param taskName Name that will be used in call to 
-	 * {@link IProgressMonitor#beginTask(String, int)},when the task is 
+	 * @param executor The DSF executor which will be used to invoke all
+	 * steps.
+	 * @param pm Progress monitor for monitoring this sequence.
+	 * @param taskName Name that will be used in call to
+	 * {@link IProgressMonitor#beginTask(String, int)},when the task is
 	 * started.
-	 * @param rollbackTaskName Name that will be used in call to 
-	 * {@link IProgressMonitor#subTask(String)} if the task is canceled or 
-	 * aborted. 
-	 * 
+	 * @param rollbackTaskName Name that will be used in call to
+	 * {@link IProgressMonitor#subTask(String)} if the task is canceled or
+	 * aborted.
+	 *
 	 * @since 1.1
 	 */
 	public Sequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName) {
@@ -230,18 +230,18 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 	}
 
 	/**
-	 * Creates a sequence with a request monitor that includes a progress 
-	 * monitor.  
-	 * @param executor The DSF executor which will be used to invoke all 
-	 * steps. 
+	 * Creates a sequence with a request monitor that includes a progress
+	 * monitor.
+	 * @param executor The DSF executor which will be used to invoke all
+	 * steps.
 	 * @param rm The request monitor containing the progress monitor
-	 * @param taskName Name that will be used in call to 
-	 * {@link IProgressMonitor#beginTask(String, int)},when the task is 
+	 * @param taskName Name that will be used in call to
+	 * {@link IProgressMonitor#beginTask(String, int)},when the task is
 	 * started.
-	 * @param rollbackTaskName Name that will be used in call to 
-	 * {@link IProgressMonitor#subTask(String)} if the task is canceled or 
-	 * aborted. 
-	 * 
+	 * @param rollbackTaskName Name that will be used in call to
+	 * {@link IProgressMonitor#subTask(String)} if the task is canceled or
+	 * aborted.
+	 *
 	 * @since 1.1
 	 */
 	public Sequence(DsfExecutor executor, RequestMonitorWithProgress rm, String taskName, String rollbackTaskName) {
@@ -250,21 +250,21 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 
 	/**
 	 * Constructor that initialized the steps and the result callback.
-	 * <p>Note: This constructor should not be used because it creates a 
+	 * <p>Note: This constructor should not be used because it creates a
 	 * potential ambiguity when one of the two monitors is canceled.</p>
-	 * 
-	 * @param executor The DSF executor which will be used to invoke all 
-	 * steps. 
-	 * @param pm Progress monitor for monitoring this sequence.  This 
+	 *
+	 * @param executor The DSF executor which will be used to invoke all
+	 * steps.
+	 * @param pm Progress monitor for monitoring this sequence.  This
 	 * parameter cannot be null.
-	 * @param taskName Name that will be used in call to 
-	 * {@link IProgressMonitor#beginTask(String, int)},when the task is 
+	 * @param taskName Name that will be used in call to
+	 * {@link IProgressMonitor#beginTask(String, int)},when the task is
 	 * started.
-	 * @param rollbackTaskName Name that will be used in call to 
-	 * {@link IProgressMonitor#subTask(String)} if the task is canceled or 
-	 * aborted. 
-	 * @param Result that will be submitted to executor when sequence is 
-	 * finished.  Can be null if calling from non-executor thread and using 
+	 * @param rollbackTaskName Name that will be used in call to
+	 * {@link IProgressMonitor#subTask(String)} if the task is canceled or
+	 * aborted.
+	 * @param Result that will be submitted to executor when sequence is
+	 * finished.  Can be null if calling from non-executor thread and using
 	 * {@link Future#get()} method to wait for the sequence result.
 	 */
 	private Sequence(DsfExecutor executor, IProgressMonitor pm, String taskName, String rollbackTaskName,
@@ -285,15 +285,15 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 		}
 	}
 
-	/** 
+	/**
 	 * Returns the steps to be executed.  It is up to the deriving class to
 	 * supply the steps and to ensure that the list of steps will not be
 	 * modified after the sequence is constructed.
 	 * <p>
-	 * Steps are purposely not accepted as part of the DsfConstructor, in 
-	 * order to allow deriving classes to create the steps as a field.  And a 
+	 * Steps are purposely not accepted as part of the DsfConstructor, in
+	 * order to allow deriving classes to create the steps as a field.  And a
 	 * setSteps() method is not provided, to guarantee that the steps will not
-	 * be modified once set (perhaps this is a bit paranoid, but oh well).  
+	 * be modified once set (perhaps this is a bit paranoid, but oh well).
 	 */
 	abstract public Step[] getSteps();
 
@@ -320,7 +320,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 	}
 
 	/**
-	 * The get method blocks until sequence is complete or until timeout is 
+	 * The get method blocks until sequence is complete or until timeout is
 	 * reached, but always returns null.
 	 * @see java.concurrent.Future#get
 	 */
@@ -331,12 +331,12 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 	}
 
 	/**
-	 * Don't try to interrupt the DSF executor thread, just ignore the request 
+	 * Don't try to interrupt the DSF executor thread, just ignore the request
 	 * if set.
-	 * <p>If a request monitor was specified when creating a sequence, that 
-	 * request monitor will be canceled by this method as well.  The client 
+	 * <p>If a request monitor was specified when creating a sequence, that
+	 * request monitor will be canceled by this method as well.  The client
 	 * can also use the request monitor's cancel method to cancel the sequence.
-	 * 
+	 *
 	 * @see RequestMonitor#cancel()
 	 */
 	@Override
@@ -384,13 +384,13 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 	}
 
 	/**
-	 * To be called only by the step implementation, Tells the sequence to 
-	 * submit the next step. 
+	 * To be called only by the step implementation, Tells the sequence to
+	 * submit the next step.
 	 */
 	private void executeStep(int nextStepIndex) {
 		/*
 		 * At end of each step check progress monitor to see if it's cancelled.
-		 * If progress monitor is cancelled, mark the whole sequence as 
+		 * If progress monitor is cancelled, mark the whole sequence as
 		 * cancelled.
 		 */
 		if (fProgressMonitor.isCanceled()) {
@@ -398,8 +398,8 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 		}
 
 		/*
-		 * If sequence was cancelled during last step (or before the sequence 
-		 * was ever executed), start rolling back the execution. 
+		 * If sequence was cancelled during last step (or before the sequence
+		 * was ever executed), start rolling back the execution.
 		 */
 		if (isCancelled()) {
 			cancelExecution();
@@ -408,9 +408,9 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 
 		/*
 		 *  Check if we've reached the last step.  Note that if execution was
-		 *  cancelled during the last step (and thus the sequence is 
-		 *  technically finished, since it was cancelled it will be rolled 
-		 *  back. 
+		 *  cancelled during the last step (and thus the sequence is
+		 *  technically finished, since it was cancelled it will be rolled
+		 *  back.
 		 */
 		if (nextStepIndex >= getSteps().length) {
 			finish();
@@ -441,12 +441,12 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 				protected void handleCancel() {
 					Sequence.this.cancel(false);
 					cancelExecution();
-				};
+				}
 
 				@Override
 				protected void handleErrorOrWarning() {
 					abortExecution(getStatus(), true);
-				};
+				}
 
 				@Override
 				protected void handleRejectedExecutionException() {
@@ -477,8 +477,8 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 
 		} catch (Throwable t) {
 			/*
-			 * Catching the exception here will only work if the exception 
-			 * happens within the execute method.  It will not work in cases 
+			 * Catching the exception here will only work if the exception
+			 * happens within the execute method.  It will not work in cases
 			 * when the execute submits other runnables, and the other runnables
 			 * encounter the exception.
 			 */
@@ -487,7 +487,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 					t), true);
 
 			/*
-			 * Since we caught the exception, it will not be logged by 
+			 * Since we caught the exception, it will not be logged by
 			 * DefaultDsfExecutable.afterExecution().  So log it here.
 			 */
 			DefaultDsfExecutor.logException(t);
@@ -495,11 +495,11 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 	}
 
 	/**
-	 * To be called only by the step implementation. Tells the sequence to 
-	 * roll back next step. 
+	 * To be called only by the step implementation. Tells the sequence to
+	 * roll back next step.
 	 */
 	private void rollBackStep(int stepIdx) {
-		// If we reach before step 0, finish roll back. 
+		// If we reach before step 0, finish roll back.
 		if (stepIdx < 0) {
 			finish();
 			return;
@@ -537,8 +537,8 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 			});
 		} catch (Throwable t) {
 			/*
-			 * Catching the exception here will only work if the exception 
-			 * happens within the execute method.  It will not work in cases 
+			 * Catching the exception here will only work if the exception
+			 * happens within the execute method.  It will not work in cases
 			 * when the execute submits other runnables, and the other runnables
 			 * encounter the exception.
 			 */
@@ -547,7 +547,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 					t));
 
 			/*
-			 * Since we caught the exception, it will not be logged by 
+			 * Since we caught the exception, it will not be logged by
 			 * DefaultDsfExecutable.afterExecution().  So log it here.
 			 */
 			DefaultDsfExecutor.logException(t);
@@ -555,8 +555,8 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 	}
 
 	/**
-	 * Tells the sequence that its execution is to be aborted and it 
-	 * should start rolling back the sequence as if it was cancelled by user.  
+	 * Tells the sequence that its execution is to be aborted and it
+	 * should start rolling back the sequence as if it was cancelled by user.
 	 */
 	private void cancelExecution() {
 		if (fRollbackTaskName != null) {
@@ -568,11 +568,11 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 			fRequestMonitor.setStatus(fStatus);
 		}
 
-		/* 
-		 * No need to call fSync, it should have been taken care of by 
-		 * Future#cancel method. 
-		 * 
-		 * Note that we're rolling back starting with the current step, 
+		/*
+		 * No need to call fSync, it should have been taken care of by
+		 * Future#cancel method.
+		 *
+		 * Note that we're rolling back starting with the current step,
 		 * because the current step was fully executed.  This is unlike
 		 * abortExecution() where the current step caused the roll-back.
 		 */
@@ -580,13 +580,13 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 	}
 
 	/**
-	 * Tells the sequence that its execution is to be aborted and it 
-	 * should start rolling back the sequence as if it was cancelled by user.  
-	 * 
+	 * Tells the sequence that its execution is to be aborted and it
+	 * should start rolling back the sequence as if it was cancelled by user.
+	 *
 	 * @param status Status to use for reporting the error.
 	 * @param rollBack Whether to start rolling back the sequence after abort.
-	 * If this parameter is <code>false</code> then the sequence will also 
-	 * finish. 
+	 * If this parameter is <code>false</code> then the sequence will also
+	 * finish.
 	 */
 	private void abortExecution(final IStatus error, boolean rollBack) {
 		if (fRollbackTaskName != null) {
@@ -608,7 +608,7 @@ abstract public class Sequence extends DsfRunnable implements Future<Object> {
 
 	/**
 	 * Tells the sequence that that is rolling back, to abort roll back, and
-	 * notify the clients.  
+	 * notify the clients.
 	 */
 	private void abortRollBack(final IStatus error) {
 		if (fRollbackTaskName != null) {

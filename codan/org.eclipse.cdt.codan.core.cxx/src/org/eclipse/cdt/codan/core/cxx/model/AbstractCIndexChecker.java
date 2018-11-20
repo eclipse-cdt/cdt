@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Alena Laskavaia 
+ * Copyright (c) 2009, 2015 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Implementation of IChecker that works with C-Index of a file (but not AST)
- * 
+ *
  * Clients may extend this class.
  */
 public abstract class AbstractCIndexChecker extends AbstractCElementChecker implements ICIndexChecker {

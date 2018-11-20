@@ -68,8 +68,8 @@ public class EvalBinding extends CPPDependentEvaluation {
 	private int fParameterPosition;
 	/**
 	 * The binding represented by this evaluation. For a function parameter binding may be computed
-	 * lazily to avoid infinite recursion during unmarshalling of the evaluation. If 
-	 * {@link #fBinding} is {@code null}, {@link #fParameterOwner} is guaranteed to be not {@code null} 
+	 * lazily to avoid infinite recursion during unmarshalling of the evaluation. If
+	 * {@link #fBinding} is {@code null}, {@link #fParameterOwner} is guaranteed to be not {@code null}
 	 * and vice versa.
 	 */
 	private IBinding fBinding;

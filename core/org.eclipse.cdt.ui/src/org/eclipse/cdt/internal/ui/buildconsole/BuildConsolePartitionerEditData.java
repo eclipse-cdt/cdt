@@ -20,10 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.ITypedRegion;
-
-import org.eclipse.cdt.core.ProblemMarkerInfo;
 
 public class BuildConsolePartitionerEditData {
 
@@ -137,7 +136,7 @@ public class BuildConsolePartitionerEditData {
 	}
 
 	/**
-	 * 
+	 *
 	 * Adds the new text to the document.
 	 *
 	 * @param text
@@ -147,7 +146,7 @@ public class BuildConsolePartitionerEditData {
 	 * @param marker
 	 *            the marker associated with this line of console output, can be
 	 *            <code>null</code>
-	 * 
+	 *
 	 */
 	public void append(String text, IBuildConsoleStreamDecorator stream, ProblemMarkerInfo marker) {
 		int newlines = (int) text.chars().filter(ch -> ch == '\n').count();
@@ -309,7 +308,7 @@ public class BuildConsolePartitionerEditData {
 	 * Obtain the next snapshot of data. This update must be processed by the
 	 * UI. i.e. don't call this method unless you are going to handle the update
 	 * now.
-	 * 
+	 *
 	 * @return see {@link UpdateUIData} for details on individual values
 	 *         returned.
 	 */

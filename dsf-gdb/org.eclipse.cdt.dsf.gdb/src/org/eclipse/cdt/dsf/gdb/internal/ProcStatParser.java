@@ -58,7 +58,7 @@ public class ProcStatParser {
 			reader = new BufferedReader(r);
 			String line;
 			// ex: "cpu0 2048635 3195 385292 66149962 895977 22 36130 0 0 0"
-			// note: we intentionally do not catch the "cpu" (without a core number) line.  
+			// note: we intentionally do not catch the "cpu" (without a core number) line.
 			Pattern patternCpu = Pattern.compile("^(cpu[0-9]+)(.*)$"); //$NON-NLS-1$
 
 			while ((line = reader.readLine()) != null) {
@@ -67,7 +67,7 @@ public class ProcStatParser {
 				// catch "cpu" lines from /proc/stat
 				Matcher matcherCpu = patternCpu.matcher(line);
 				if (matcherCpu.find()) {
-					Vector<Integer> ticks = new Vector<Integer>();
+					Vector<Integer> ticks = new Vector<>();
 					coreId = matcherCpu.group(1);
 					// extract the counters for current cpu line
 					for (String tick : matcherCpu.group(2).trim().split("\\s+")) { //$NON-NLS-1$
@@ -93,9 +93,9 @@ public class ProcStatParser {
 
 	/**
 	 * @return a Map of the computed CPU/core loads.  The load of individual
-	 * CPUs/cores can be found with keys "cpuN", where N is the CPU/core 
-	 * number, starting with 0, as found in /proc/stat .   
-	 * 
+	 * CPUs/cores can be found with keys "cpuN", where N is the CPU/core
+	 * number, starting with 0, as found in /proc/stat .
+	 *
 	 */
 	public ProcStatCoreLoads getCpuLoad() {
 		return cpuCoreCounters.computeLoads(cpuCoreCountersOld);

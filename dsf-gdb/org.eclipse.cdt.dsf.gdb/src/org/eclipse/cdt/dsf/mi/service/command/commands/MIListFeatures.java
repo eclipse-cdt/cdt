@@ -20,16 +20,16 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
  * -list-features
- * 
+ *
  * Returns a list of particular features of the MI protocol that this
  * version of gdb implements.  A feature can be a command, or a new field
  * in an output of some command, or even an important bugfix.  While a
  * frontend can sometimes detect presence of a feature at runtime, it is
  * easier to perform detection at debugger startup.
- * 
+ *
  * The command returns a list of strings, with each string naming an
  * available feature.  Each returned string is just a name, it does not
- * have any internal structure.  
+ * have any internal structure.
  * @since 4.0
  */
 public class MIListFeatures extends MICommand<MIListFeaturesInfo> {

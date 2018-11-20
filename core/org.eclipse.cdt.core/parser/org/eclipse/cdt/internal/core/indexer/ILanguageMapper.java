@@ -18,16 +18,16 @@ import org.eclipse.cdt.core.model.ILanguage;
 
 /**
  * This mapper can be used for determining the ILanguage for a particular file.
- * 
+ *
  * A mapper is needed for standalone indexing when the ILanguage for a file is unknown.
- * 
+ *
  * <p>
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as
  * part of a work in progress. There is no guarantee that this API will work or
  * that it will remain the same. Please do not use this API without consulting
  * with the CDT team.
  * </p>
- * 
+ *
  * @since 4.0
  */
 public interface ILanguageMapper {

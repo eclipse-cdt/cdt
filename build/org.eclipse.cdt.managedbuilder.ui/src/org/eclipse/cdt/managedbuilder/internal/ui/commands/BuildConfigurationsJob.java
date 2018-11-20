@@ -49,7 +49,7 @@ public class BuildConfigurationsJob extends Job {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param cfgDescriptions - a list of configurations to build, possibly from different projects
 	 * @param cleanKind - pass {@link IncrementalProjectBuilder#CLEAN_BUILD} to clean before building
 	 * @param buildKind - kind of build. Can be

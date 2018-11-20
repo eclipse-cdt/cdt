@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
  * Init capture for a lambda expression, introduced in C++14.
- * 
+ *
  * @since 6.5
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.

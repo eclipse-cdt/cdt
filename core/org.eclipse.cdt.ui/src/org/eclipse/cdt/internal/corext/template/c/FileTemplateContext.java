@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.corext.template.c;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IPath;
@@ -29,8 +30,6 @@ import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateTranslator;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A template context for plain file resources.

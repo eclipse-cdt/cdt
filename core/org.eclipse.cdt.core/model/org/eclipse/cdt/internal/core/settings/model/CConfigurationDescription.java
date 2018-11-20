@@ -299,7 +299,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 			@Override
 			public CDataObject[] getChildren() {
 				CConfigurationData data = getConfigurationData(false);
-				List<CDataObject> list = new ArrayList<CDataObject>();
+				List<CDataObject> list = new ArrayList<>();
 				CResourceData rcDatas[] = data.getResourceDatas();
 				for (int i = 0; i < rcDatas.length; i++) {
 					list.add(rcDatas[i]);
@@ -610,7 +610,7 @@ public class CConfigurationDescription extends CDataProxyContainer
 			return specs.getReferenceInfo();
 		} catch (CoreException e) {
 		}
-		return new HashMap<String, String>(0);
+		return new HashMap<>(0);
 	}
 
 	@Override

@@ -23,11 +23,11 @@ import org.eclipse.core.resources.IProject;
 
 /**
  * Working set project configuration factory for MBS projects.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public class MBSProjectConfigurationFactory extends IWorkingSetProjectConfigurationFactory.Registry.Default {
 

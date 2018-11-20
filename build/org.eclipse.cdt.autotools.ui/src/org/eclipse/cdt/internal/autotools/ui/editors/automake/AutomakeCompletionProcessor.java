@@ -1,7 +1,7 @@
 /*******************************************************************************
  * Mostly copied from makefileCompletionProcessor which has the following
  * copyright notice:
- * 
+ *
  * Copyright (c) 2000, 2015 QNX Software Systems and others.
  *
  * This program and the accompanying materials

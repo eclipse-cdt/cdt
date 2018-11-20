@@ -248,7 +248,7 @@ public class StoredBuildPathEnvironmentContainer extends StorableEnvironmentLoad
 
 	private String[] getBuildPathVarNames(IConfiguration configuration, int buildPathType) {
 		ITool tools[] = configuration.getFilteredTools();
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		for (int i = 0; i < tools.length; i++) {
 			IEnvVarBuildPath pathDescriptors[] = tools[i].getEnvVarBuildPaths();

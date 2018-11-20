@@ -34,7 +34,7 @@ public class CFoldingStructureProviderRegistry {
 	private Map<String, CFoldingStructureProviderDescriptor> fDescriptors;
 
 	/**
-	 * Creates a new instance. 
+	 * Creates a new instance.
 	 */
 	public CFoldingStructureProviderRegistry() {
 	}
@@ -42,7 +42,7 @@ public class CFoldingStructureProviderRegistry {
 	/**
 	 * Returns an array of <code>ICFoldingProviderDescriptor</code> describing
 	 * all extension to the <code>foldingProviders</code> extension point.
-	 * 
+	 *
 	 * @return the list of extensions to the
 	 *         <code>quickDiffReferenceProvider</code> extension point.
 	 */
@@ -56,7 +56,7 @@ public class CFoldingStructureProviderRegistry {
 	/**
 	 * Returns the folding provider with identifier <code>id</code> or
 	 * <code>null</code> if no such provider is registered.
-	 * 
+	 *
 	 * @param id the identifier for which a provider is wanted
 	 * @return the corresponding provider, or <code>null</code> if none can be
 	 *         found
@@ -71,7 +71,7 @@ public class CFoldingStructureProviderRegistry {
 	/**
 	 * Instantiates and returns the provider that is currently configured in the
 	 * preferences.
-	 * 
+	 *
 	 * @return the current provider according to the preferences
 	 */
 	public ICFoldingStructureProvider getCurrentFoldingProvider() {
@@ -105,7 +105,7 @@ public class CFoldingStructureProviderRegistry {
 	 */
 	public void reloadExtensions() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		Map<String, CFoldingStructureProviderDescriptor> map = new HashMap<String, CFoldingStructureProviderDescriptor>();
+		Map<String, CFoldingStructureProviderDescriptor> map = new HashMap<>();
 
 		IConfigurationElement[] elements = registry.getConfigurationElementsFor(CUIPlugin.getPluginId(),
 				EXTENSION_POINT);

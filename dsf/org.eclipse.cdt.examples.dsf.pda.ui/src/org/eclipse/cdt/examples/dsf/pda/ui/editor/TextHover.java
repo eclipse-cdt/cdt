@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -27,6 +27,7 @@ public class TextHover implements ITextHover {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
 	 */
+	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion hoverRegion) {
 		/*String varName = null;
 		try {
@@ -37,7 +38,7 @@ public class TextHover implements ITextHover {
 		if (varName.startsWith("$") && varName.length() > 1) {
 		    varName = varName.substring(1);
 		}
-		
+
 		PDAStackFrame frame = null;
 		IAdaptable debugContext = DebugUITools.getDebugContext();
 		if (debugContext instanceof PDAStackFrame) {
@@ -66,7 +67,7 @@ public class TextHover implements ITextHover {
 		        for (int i = 0; i < variables.length; i++) {
 		            IVariable variable = variables[i];
 		            if (variable.getName().equals(varName)) {
-		                return varName + " = " + variable.getValue().getValueString(); 
+		                return varName + " = " + variable.getValue().getValueString();
 		            }
 		        }
 		    } catch (DebugException e) {
@@ -78,6 +79,7 @@ public class TextHover implements ITextHover {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
 	 */
+	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		return WordFinder.findWord(textViewer.getDocument(), offset);
 	}

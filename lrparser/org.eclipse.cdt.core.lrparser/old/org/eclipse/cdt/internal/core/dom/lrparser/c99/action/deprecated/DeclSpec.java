@@ -13,7 +13,26 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.lrparser.c99.action.deprecated;
 
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Bool;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Complex;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Imaginary;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_auto;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_char;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_const;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_double;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_extern;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_float;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_inline;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_int;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_long;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_register;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_restrict;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_short;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_signed;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_static;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_unsigned;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_void;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_volatile;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,13 +49,13 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.C99Variable;
 /**
  * Keeps track of declaration specifiers during the parse.
  * Used to compute types and determine if a declarator is a typedef.
- * 
+ *
  * @author Mike Kucera
  */
 class DeclSpec {
 
 	// maps token kinds to the number of occurrences of that kind
-	private Map<Integer, Integer> tokenKindMap = new HashMap<Integer, Integer>();
+	private Map<Integer, Integer> tokenKindMap = new HashMap<>();
 
 	private IType type = null;
 

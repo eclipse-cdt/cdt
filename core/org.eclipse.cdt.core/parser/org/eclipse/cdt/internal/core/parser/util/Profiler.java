@@ -32,7 +32,7 @@ import java.util.Map.Entry;
  *       Profiler.printStats();
  *   }
  *   Profiler.deactivate();
- *   
+ *
  *   void someMethod() {
  *       try {
  *           Profiler.startTimer("MyClass.someMethod");
@@ -41,17 +41,17 @@ import java.util.Map.Entry;
  *           Profiler.stopTimer("MyClass.someMethod");
  *       }
  *   }
- *   
+ *
  *   void someOtherMethod() {
  *       ...
  *       Profiler.incrementCounter("Interesting thing happened");
  *       ...
  *   }
- * </pre>   
+ * </pre>
  */
 public class Profiler {
 	private static class Timer {
-		long elapsedTime; // In nanoseconds 
+		long elapsedTime; // In nanoseconds
 		long counter;
 		long startTime; // Time in nanoseconds when the timer was started.
 		int recursionDepth;
@@ -82,14 +82,14 @@ public class Profiler {
 	private Map<String, int[]> counters;
 
 	private Profiler() {
-		timers = new HashMap<String, Timer>();
-		counters = new HashMap<String, int[]>();
+		timers = new HashMap<>();
+		counters = new HashMap<>();
 	}
 
-	private static ThreadLocal<Profiler> threadProfiler = new ThreadLocal<Profiler>();
+	private static ThreadLocal<Profiler> threadProfiler = new ThreadLocal<>();
 
 	/**
-	 * 
+	 *
 	 * @param name
 	 */
 	public static void startTimer(String name) {
@@ -136,7 +136,7 @@ public class Profiler {
 	public static void printStats() {
 		Profiler profiler = threadProfiler.get();
 		if (profiler != null) {
-			List<Map.Entry<String, Timer>> list = new ArrayList<Map.Entry<String, Timer>>(profiler.timers.entrySet());
+			List<Map.Entry<String, Timer>> list = new ArrayList<>(profiler.timers.entrySet());
 			Comparator<Map.Entry<String, Timer>> c = new Comparator<Map.Entry<String, Timer>>() {
 				@Override
 				public int compare(Entry<String, Timer> o1, Entry<String, Timer> o2) {
@@ -152,7 +152,7 @@ public class Profiler {
 			}
 
 			if (!profiler.counters.isEmpty()) {
-				List<Map.Entry<String, int[]>> keyList = new ArrayList<Map.Entry<String, int[]>>(
+				List<Map.Entry<String, int[]>> keyList = new ArrayList<>(
 						profiler.counters.entrySet());
 				Comparator<Map.Entry<String, int[]>> c2 = new Comparator<Map.Entry<String, int[]>>() {
 					@Override

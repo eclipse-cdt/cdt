@@ -26,14 +26,14 @@ public interface ICoreVariableContextInfo extends IVariableContextInfo {
 
 	/**
 	 * returns the context type
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getContextType();
 
 	/**
 	 * returns the context data
-	 * 
+	 *
 	 * @return Object
 	 */
 	public Object getContextData();

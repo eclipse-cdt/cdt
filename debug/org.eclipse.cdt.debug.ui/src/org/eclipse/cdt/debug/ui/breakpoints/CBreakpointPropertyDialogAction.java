@@ -34,7 +34,7 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
- * Action for opening a Property Pages Dialog on the C breakpoint object 
+ * Action for opening a Property Pages Dialog on the C breakpoint object
  * in the currently selected element.
  * <p>
  * Generally speaking, this action is useful in pop-up menus because it allows
@@ -62,7 +62,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
 
 	private IDebugContextProvider fDebugContextProvider;
 
-	static final String PAGE_ID_COMMON = "org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"; //$NON-NLS-1$ 
+	static final String PAGE_ID_COMMON = "org.eclipse.cdt.debug.ui.propertypages.breakpoint.common"; //$NON-NLS-1$
 
 	public CBreakpointPropertyDialogAction(IShellProvider shell, ISelectionProvider selectionProvider,
 			IDebugContextProvider debugContextProvider) {
@@ -88,7 +88,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
 	 * This method is generally too expensive to use when updating the enabled
 	 * state of the action on each selection change.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if the selection is not empty and there are
 	 *         property pages for the selected element, and <code>false</code>
 	 *         otherwise
@@ -109,7 +109,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
 	 * This method is generally too expensive to use when updating the enabled
 	 * state of the action on each selection change.
 	 * </p>
-	 * 
+	 *
 	 * @param selection
 	 *            The selection to test
 	 * @return <code>true</code> if the selection is of not empty and there are
@@ -140,6 +140,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
+	@Override
 	public void run() {
 		CBreakpointContext bpContext = getCBreakpointContext();
 		if (bpContext != null) {
@@ -186,7 +187,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
 	/**
 	 * Create the dialog for the receiver. If no pages are found, an informative
 	 * message dialog is presented instead.
-	 * 
+	 *
 	 * @return PreferenceDialog or <code>null</code> if no applicable pages
 	 *         are found.
 	 */
@@ -206,6 +207,7 @@ public class CBreakpointPropertyDialogAction extends SelectionProviderAction {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.actions.SelectionProviderAction#selectionChanged(org.eclipse.jface.viewers.IStructuredSelection)
 	 */
+	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(!selection.isEmpty());
 	}

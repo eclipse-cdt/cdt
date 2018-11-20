@@ -31,23 +31,23 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIResultRecord;
 import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
- * In some cases GDB reports 'exec-*' commands failure after the '^running' event is fired. 
- * For instance, if an invalid breakpoint is set no error is reported but the consequent 
+ * In some cases GDB reports 'exec-*' commands failure after the '^running' event is fired.
+ * For instance, if an invalid breakpoint is set no error is reported but the consequent
  * 'exec-continue' command fails.
- * 
+ *
  * 36-exec-continue --thread 1
  * 36^running
  * *running,thread-id="all"
- * (gdb) 
+ * (gdb)
  * &"Warning:\n"
  * &"Cannot insert breakpoint 2.\n"
  * &"Cannot access memory at address 0x0\n"
  * &"\n"
  * 36^error,msg="Command aborted."
  * (gdb)
- * 
+ *
  * This class handles these type of situations by firing MIErrorEvent when such an error appears.
- * 
+ *
  * @since 5.3
  */
 public class MIAsyncErrorProcessor implements IEventProcessor {
@@ -66,7 +66,7 @@ public class MIAsyncErrorProcessor implements IEventProcessor {
 	@Override
 	public void eventReceived(Object output) {
 		MIResultRecord rr = ((MIOutput) output).getMIResultRecord();
-		// Handling the asynchronous error case, i.e. when the "<token>^running" event 
+		// Handling the asynchronous error case, i.e. when the "<token>^running" event
 		// appears before "<token>^error, msg=<error_message>" for run control commands.
 		if (rr != null && MIResultRecord.ERROR.equals(rr.getResultClass())) {
 			handleAsyncError((MIOutput) output);

@@ -16,8 +16,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -32,6 +30,8 @@ import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.internal.core.CCoreInternals;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.core.runtime.NullProgressMonitor;
+
+import junit.framework.Test;
 
 /**
  * @author Doug Schaefer

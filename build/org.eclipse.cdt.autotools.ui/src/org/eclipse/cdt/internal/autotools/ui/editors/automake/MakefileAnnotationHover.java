@@ -39,7 +39,7 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * MakefileAnnotationHover
- *  
+ *
  */
 public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHoverExtension {
 
@@ -47,7 +47,7 @@ public class MakefileAnnotationHover implements IAnnotationHover, IAnnotationHov
 	private IEditorPart fEditor;
 
 	/**
-	 *  
+	 *
 	 */
 	public MakefileAnnotationHover(IEditorPart editor) {
 		fEditor = editor;

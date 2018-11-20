@@ -1477,7 +1477,7 @@ public class CoreModel {
 		if (descriptionManager != null)
 			return descriptionManager;
 
-		// The method was called while initialization of the CoreModel hasn't finished yet. 
+		// The method was called while initialization of the CoreModel hasn't finished yet.
 		return CProjectDescriptionManager.getInstance();
 	}
 }

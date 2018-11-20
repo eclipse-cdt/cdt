@@ -23,14 +23,14 @@ public interface IRunToAddress {
 
 	/**
 	 * Returns whether this operation is currently available for this element.
-	 * 
+	 *
 	 * @return whether this operation is currently available
 	 */
 	public boolean canRunToAddress(IAddress address);
 
 	/**
 	 * Causes this element to run to specified address.
-	 * 
+	 *
 	 * @exception DebugException on failure. Reasons include:
 	 */
 	public void runToAddress(IAddress address, boolean skipBreakpoints) throws DebugException;

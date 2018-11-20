@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
  * Subclass for GDB >= 7.7.
- * 
+ *
  * @since 8.4
  */
 public class GDBJtagDSFFinalLaunchSequence_7_7 extends GDBJtagDSFFinalLaunchSequence_7_2 {
@@ -44,7 +44,7 @@ public class GDBJtagDSFFinalLaunchSequence_7_7 extends GDBJtagDSFFinalLaunchSequ
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Add the dprintf style steps before we source the gdbinit file
 			orderList.add(orderList.indexOf("stepSourceGDBInitFile"), "stepSetDPrinfStyle"); //$NON-NLS-1$ //$NON-NLS-2$

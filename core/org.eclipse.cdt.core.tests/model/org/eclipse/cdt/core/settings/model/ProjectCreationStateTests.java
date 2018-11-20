@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -27,6 +25,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.TestSuite;
 
 public class ProjectCreationStateTests extends BaseTestCase {
 	private static final String PROJ_NAME_PREFIX = "ProjectCreationStateTests_";

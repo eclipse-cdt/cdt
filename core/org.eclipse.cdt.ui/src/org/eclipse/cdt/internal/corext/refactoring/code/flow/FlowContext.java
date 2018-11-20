@@ -17,8 +17,6 @@ package org.eclipse.cdt.internal.corext.refactoring.code.flow;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -27,8 +25,8 @@ import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.core.runtime.Assert;
 
 public class FlowContext extends LocalVariableIndex {
 	private static class ComputeMode {
@@ -46,7 +44,7 @@ public class FlowContext extends LocalVariableIndex {
 
 	public FlowContext(IASTFunctionDefinition functionDefinition) {
 		super(functionDefinition);
-		fExceptionStack = new ArrayList<ICPPASTCatchHandler[]>(3);
+		fExceptionStack = new ArrayList<>(3);
 	}
 
 	public void setConsiderAccessMode(boolean b) {
@@ -129,7 +127,7 @@ public class FlowContext extends LocalVariableIndex {
 						// 15.3
 						if (caughtType.isSameType(exceptionType))
 							return true;
-						// TODO(sprigogin): Implement the rest of 15.3 matching logic. 
+						// TODO(sprigogin): Implement the rest of 15.3 matching logic.
 					}
 				}
 			}

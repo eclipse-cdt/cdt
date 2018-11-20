@@ -49,13 +49,13 @@ public class ScannerDiscoveryLegacySupport {
 	public static final String MBS_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.MBSLanguageSettingsProvider"; //$NON-NLS-1$
 
 	/**
-	 * ID of ScannerInfo language settings provider wrapping ScannerInfoProvider defined by org.eclipse.cdt.core.ScannerInfoProvider extension point 
+	 * ID of ScannerInfo language settings provider wrapping ScannerInfoProvider defined by org.eclipse.cdt.core.ScannerInfoProvider extension point
 	 * @since 5.5
 	 */
 	public static final String SI_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.core.LegacyScannerInfoLanguageSettingsProvider"; //$NON-NLS-1$
 
 	/**
-	 * ID of language settings provider wrapping {@link org.eclipse.cdt.core.resources.ScannerProvider} of {@link PathEntryManager} for 3.X projects 
+	 * ID of language settings provider wrapping {@link org.eclipse.cdt.core.resources.ScannerProvider} of {@link PathEntryManager} for 3.X projects
 	 * @since 5.5
 	 */
 	public static final String PATH_ENTRY_MANAGER_LANGUAGE_SETTINGS_PROVIDER_ID = "org.eclipse.cdt.core.PathEntryScannerInfoLanguageSettingsProvider"; //$NON-NLS-1$
@@ -69,7 +69,7 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Get preferences node for org.eclipse.cdt.core.
-	 * 
+	 *
 	 * @param project - project to get preferences or {@code null} for workspace preferences
 	 * @return
 	 */
@@ -88,7 +88,7 @@ public class ScannerDiscoveryLegacySupport {
 	 * @return {@code true} if functionality is defined
 	 *
 	 * @noreference This method is temporary and not intended to be referenced by clients.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public static boolean isLanguageSettingsProvidersFunctionalityDefined(IProject project) {
@@ -204,7 +204,7 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Return list containing User provider and one of wrapper providers to support legacy projects (backward compatibility).
-	 * 
+	 *
 	 * @noreference This is internal helper method to support compatibility with previous versions
 	 * which is not intended to be referenced by clients.
 	 * @since 5.5
@@ -227,7 +227,7 @@ public class ScannerDiscoveryLegacySupport {
 
 	/**
 	 * Checks if the provider is applicable for configuration from backward compatibility point of view
-	 * 
+	 *
 	 * @noreference This is internal helper method to support compatibility with previous versions
 	 * which is not intended to be referenced by clients.
 	 * @since 5.5
@@ -256,7 +256,7 @@ public class ScannerDiscoveryLegacySupport {
 	/**
 	 * If not defined yet, define property that controls if language settings providers functionality enabled for a given project.
 	 * Workspace preference is checked and the project property is set to match it.
-	 * 
+	 *
 	 * @param project - project to define enablement.
 	 * @since 5.5
 	 */
@@ -282,7 +282,7 @@ public class ScannerDiscoveryLegacySupport {
 	@SuppressWarnings("nls")
 	public static String getDeprecatedLegacyProfiles(String id) {
 		if (legacyProfiles == null) {
-			legacyProfiles = new HashMap<String, String>();
+			legacyProfiles = new HashMap<>();
 
 			// InputTypes
 			legacyProfiles.put("cdt.managedbuild.tool.gnu.c.compiler.input",

@@ -30,7 +30,7 @@ import org.eclipse.core.resources.IProject;
 
 /**
  * Instantiated scanner config profile
- * 
+ *
  * @author vhirsl
  */
 public class SCProfileInstance {
@@ -40,7 +40,7 @@ public class SCProfileInstance {
 	private InfoContext context;
 
 	/**
-	 * 
+	 *
 	 */
 	public SCProfileInstance(IProject project, ScannerConfigProfile profile) {
 		this(project, new InfoContext(project), profile);
@@ -53,7 +53,7 @@ public class SCProfileInstance {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void instantiateCollector() {
 		// create collector object

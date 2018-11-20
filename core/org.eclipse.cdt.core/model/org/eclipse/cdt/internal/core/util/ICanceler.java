@@ -15,13 +15,13 @@ package org.eclipse.cdt.internal.core.util;
 
 /**
  * An interface for objects accepting an instance of {@link ICancelable}.
- * 
+ *
  * @since 5.0
  */
 public interface ICanceler {
 	/**
 	 * Sets the cancelable object.
-	 * 
+	 *
 	 * @param cancelable  the cancelable object
 	 */
 	public void setCancelable(ICancelable cancelable);

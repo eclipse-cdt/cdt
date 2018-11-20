@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Breakpoints VM model proxy that includes an ICheckboxModelProxy implementation.
- * 
+ *
  * @since 2.1
  */
 public class BreakpointVMModelProxyStrategy extends DefaultVMModelProxyStrategy implements ICheckboxModelProxy {

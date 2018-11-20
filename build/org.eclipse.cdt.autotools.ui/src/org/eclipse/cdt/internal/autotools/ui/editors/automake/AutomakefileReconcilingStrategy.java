@@ -58,7 +58,7 @@ public class AutomakefileReconcilingStrategy implements IReconcilingStrategy {
 	public void reconcile(IRegion region) {
 		// We use a trick to avoid running the reconciler multiple times
 		// on a file when it gets changed. This is because this gets called
-		// multiple times with different regions of the file, we do a 
+		// multiple times with different regions of the file, we do a
 		// complete parse on the first region.
 		if (region.getOffset() <= fLastRegionOffset) {
 			reconcile();

@@ -19,7 +19,7 @@ import org.eclipse.cdt.ui.templateengine.SimpleElementException;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIComposite;
 
 /**
- * UIElement describes the abstract behavior expected from GenericUIElementGroup and 
+ * UIElement describes the abstract behavior expected from GenericUIElementGroup and
  * InputUIElement. Some of the methods are meaningful to group Element. They will throw
  * SimpleElementException when invoked on InputUIElement.
  */
@@ -80,7 +80,7 @@ public abstract class UIElement {
 	 * This method adds UIWidets to UIComposite. This method is called
 	 * recursively on all the children, if the UIElement instance on which this
 	 * method called is a GenericUIElementGroup.
-	 * 
+	 *
 	 * @param uiComposite
 	 */
 	public abstract void createWidgets(UIComposite uiComposite);
@@ -89,14 +89,14 @@ public abstract class UIElement {
 	 * disposes the widget. This method is called recursively on all the
 	 * children, if the UIElement instance on which this method is called, is a
 	 * GenericUIElementGroup.
-	 * 
+	 *
 	 */
 	public abstract void disposeWidget();
 
 	/**
 	 * getThe child UIElement at the given index. This method throws
 	 * SimpleElementException, if invoked on a InputUIElement.
-	 * 
+	 *
 	 * @param index
 	 * @return The child UIElement
 	 * @throws SimpleElementException
@@ -106,7 +106,7 @@ public abstract class UIElement {
 	/**
 	 * add the given UIElement to the childList. This method throws
 	 * SimpleElementException, if invoked on a InputUIElement.
-	 * 
+	 *
 	 * @param uiElement
 	 * @throws SimpleElementException
 	 */
@@ -115,7 +115,7 @@ public abstract class UIElement {
 	/**
 	 * returns the child count of UIElement. This method throws
 	 * SimpleElementException, if invoked on a InputUIElement.
-	 * 
+	 *
 	 * @return the child count of UIElement
 	 * @throws SimpleElementException
 	 */
@@ -124,7 +124,7 @@ public abstract class UIElement {
 	/**
 	 * The return value depends on the state of the UIElement. This information
 	 * is used by UIPage to enable or disable the UIPage.
-	 * 
+	 *
 	 * @return boolean.
 	 */
 	public abstract boolean isValid();

@@ -127,11 +127,11 @@ public abstract class ACBuilder extends IncrementalProjectBuilder implements IMa
 	 * Remove duplicate error markers that may have been created by
 	 * {@link ACBuilder#addMarker(ProblemMarkerInfo)} with the
 	 * {@link ProblemMarkerInfo#isDeferDeDuplication()} flag set.
-	 * 
+	 *
 	 * This method will also remove other duplicate
 	 * ICModelMarker.C_MODEL_PROBLEM_MARKER markers on the resources referred to
 	 * by ProblemMarkerInfo.
-	 * 
+	 *
 	 * @since 6.3
 	 */
 	public void deDuplicate() {

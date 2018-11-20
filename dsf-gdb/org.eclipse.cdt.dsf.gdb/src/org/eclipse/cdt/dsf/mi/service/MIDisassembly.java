@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -46,7 +46,7 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
 
 	/**
 	 * The service constructor
-	 * 
+	 *
 	 * @param session The debugging session
 	 */
 	public MIDisassembly(DsfSession session) {
@@ -105,9 +105,9 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
 		getInstructions(context, startAddress, endAddress, MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY, drm);
 	}
 
-	/** 
+	/**
 	 * Helper method to allow getting disassembly instructions not in mixed mode.
-	 * @since 4.4 
+	 * @since 4.4
 	 */
 	protected void getInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
 			int mode, final DataRequestMonitor<IInstruction[]> drm) {
@@ -144,9 +144,9 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
 		getInstructions(context, filename, linenum, lines, MIDataDisassemble.DATA_DISASSEMBLE_MODE_DISASSEMBLY, drm);
 	}
 
-	/** 
+	/**
 	 * Helper method to allow getting disassembly instructions not in mixed mode.
-	 * @since 4.4 
+	 * @since 4.4
 	 */
 	protected void getInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines, int mode,
 			final DataRequestMonitor<IInstruction[]> drm) {
@@ -181,9 +181,9 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
 		getMixedInstructions(context, startAddress, endAddress, MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED, drm);
 	}
 
-	/** 
+	/**
 	 * Helper method to allow getting disassembly instructions in mixed mode.
-	 * @since 4.4 
+	 * @since 4.4
 	 */
 	protected void getMixedInstructions(IDisassemblyDMContext context, BigInteger startAddress, BigInteger endAddress,
 			int mode, final DataRequestMonitor<IMixedInstruction[]> drm) {
@@ -220,9 +220,9 @@ public class MIDisassembly extends AbstractDsfService implements IDisassembly {
 		getMixedInstructions(context, filename, linenum, lines, MIDataDisassemble.DATA_DISASSEMBLE_MODE_MIXED, drm);
 	}
 
-	/** 
+	/**
 	 * Helper method to allow getting disassembly instructions in mixed mode.
-	 * @since 4.4 
+	 * @since 4.4
 	 */
 	protected void getMixedInstructions(IDisassemblyDMContext context, String filename, int linenum, int lines,
 			int mode, final DataRequestMonitor<IMixedInstruction[]> drm) {

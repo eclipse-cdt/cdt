@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -59,7 +59,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the Tests Runner Plug-in instance
-	 * 
+	 *
 	 * @return the plug-in instance
 	 */
 	public static TestsRunnerPlugin getDefault() {
@@ -73,7 +73,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
@@ -82,7 +82,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message the error message to log
 	 */
 	public static void logErrorMessage(String message) {
@@ -91,7 +91,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e the exception to be logged
 	 */
 	public static void log(Throwable e) {
@@ -112,7 +112,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Access the plugin's Testing Sessions Manager instance.
-	 * 
+	 *
 	 * @return sessions manager
 	 */
 	public TestingSessionsManager getTestingSessionsManager() {
@@ -121,7 +121,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Access the plugin's Test Runners manager instance.
-	 * 
+	 *
 	 * @return tests runners manager
 	 */
 	public TestsRunnerProvidersManager getTestsRunnerProvidersManager() {
@@ -130,7 +130,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the descriptor for image with <code>relativePath</code> path.
-	 * 
+	 *
 	 * @param relativePath path relative to <code>ICONS_PATH</code>
 	 * @return image descriptor
 	 */
@@ -140,7 +140,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the descriptor for image with <code>relativePath</code> path.
-	 * 
+	 *
 	 * @param relativePath path relative to <code>ICONS_PATH</code>
 	 * @return image descriptor
 	 */
@@ -151,7 +151,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the image with the specified path.
-	 * 
+	 *
 	 * @param path path
 	 * @return image image
 	 */
@@ -161,7 +161,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the image with the specified path.
-	 * 
+	 *
 	 * @param path path
 	 * @return image image
 	 */
@@ -179,7 +179,7 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 	 * contain variables like $NL$. If no image could be found,
 	 * <code>useMissingImageDescriptor</code> decides if either the 'missing
 	 * image descriptor' is returned or <code>null</code>.
-	 * 
+	 *
 	 * @param bundle a bundle
 	 * @param path path in the bundle
 	 * @param useMissingImageDescriptor if <code>true</code>, returns the shared
@@ -204,13 +204,13 @@ public class TestsRunnerPlugin extends AbstractUIPlugin {
 	 * Setup the launch delegate with id <code>delegateId</code> as default for
 	 * launch configuration type <code>cfgType</code> for <code>mode</code>
 	 * launch mode.
-	 * 
+	 *
 	 * @param cfgType launch configuration type
 	 * @param delegateId unique identifier of the launch delegate
 	 * @param mode launch mode
 	 */
 	private void setDefaultLaunchDelegate(ILaunchConfigurationType cfgType, String delegateId, String mode) {
-		HashSet<String> modes = new HashSet<String>();
+		HashSet<String> modes = new HashSet<>();
 		modes.add(mode);
 		try {
 			if (cfgType.getPreferredDelegate(modes) == null) {

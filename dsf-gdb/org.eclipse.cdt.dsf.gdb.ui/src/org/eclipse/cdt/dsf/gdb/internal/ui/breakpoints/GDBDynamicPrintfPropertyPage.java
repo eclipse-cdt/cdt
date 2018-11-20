@@ -49,7 +49,7 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * The preference page used to present the properties of a GDB dynamic printf as preferences. 
+ * The preference page used to present the properties of a GDB dynamic printf as preferences.
  */
 public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
@@ -75,7 +75,7 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 
 		/**
 		 * Only store if the text control is enabled
-		 * 
+		 *
 		 * @see FieldEditor#doStore()
 		 */
 		@Override
@@ -185,7 +185,7 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	private DynamicPrintfIntegerFieldEditor fLineEditor;
 	private DynamicPrintfIntegerFieldEditor fIgnoreCount;
 
-	/** 
+	/**
 	 * Indicates if the page currently aims to create
 	 * a breakpoint that already exits.
 	 */
@@ -196,9 +196,9 @@ public class GDBDynamicPrintfPropertyPage extends FieldEditorPreferencePage impl
 	private IAdaptable fElement;
 
 	/**
-	 * The preference store used to interface between the dynamic printf and the 
+	 * The preference store used to interface between the dynamic printf and the
 	 * dynamic printf preference page.  This preference store is initialized only
-	 * when the preference store cannot be retrieved from the preference 
+	 * when the preference store cannot be retrieved from the preference
 	 * dialog's element.
 	 * @see #getPreferenceStore()
 	 */

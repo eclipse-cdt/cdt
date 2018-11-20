@@ -15,15 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 
 public class CodeTemplateContextType extends FileTemplateContextType {
 	/* Context types */
@@ -56,16 +54,16 @@ public class CodeTemplateContextType extends FileTemplateContextType {
 	private static final String CODETEMPLATES_PREFIX = "org.eclipse.cdt.ui.text.codetemplates."; //$NON-NLS-1$
 	public static final String COMMENT_SUFFIX = "comment"; //$NON-NLS-1$
 
-	public static final String ASM_SOURCEFILE_ID = CODETEMPLATES_PREFIX + "asmsourcefile"; //$NON-NLS-1$	
-	public static final String CPP_SOURCEFILE_ID = CODETEMPLATES_PREFIX + "cppsourcefile"; //$NON-NLS-1$	
-	public static final String CPP_HEADERFILE_ID = CODETEMPLATES_PREFIX + "cppheaderfile"; //$NON-NLS-1$	
-	public static final String CPP_TESTFILE_ID = CODETEMPLATES_PREFIX + "cpptestfile"; //$NON-NLS-1$	
-	public static final String C_SOURCEFILE_ID = CODETEMPLATES_PREFIX + "csourcefile"; //$NON-NLS-1$	
-	public static final String C_HEADERFILE_ID = CODETEMPLATES_PREFIX + "cheaderfile"; //$NON-NLS-1$	
-	public static final String NAMESPACE_BEGIN_ID = CODETEMPLATES_PREFIX + "namespace_begin"; //$NON-NLS-1$	
-	public static final String NAMESPACE_END_ID = CODETEMPLATES_PREFIX + "namespace_end"; //$NON-NLS-1$	
-	public static final String CLASS_BODY_ID = CODETEMPLATES_PREFIX + "class_body"; //$NON-NLS-1$	
-	public static final String METHODSTUB_ID = CODETEMPLATES_PREFIX + "methodbody"; //$NON-NLS-1$	
+	public static final String ASM_SOURCEFILE_ID = CODETEMPLATES_PREFIX + "asmsourcefile"; //$NON-NLS-1$
+	public static final String CPP_SOURCEFILE_ID = CODETEMPLATES_PREFIX + "cppsourcefile"; //$NON-NLS-1$
+	public static final String CPP_HEADERFILE_ID = CODETEMPLATES_PREFIX + "cppheaderfile"; //$NON-NLS-1$
+	public static final String CPP_TESTFILE_ID = CODETEMPLATES_PREFIX + "cpptestfile"; //$NON-NLS-1$
+	public static final String C_SOURCEFILE_ID = CODETEMPLATES_PREFIX + "csourcefile"; //$NON-NLS-1$
+	public static final String C_HEADERFILE_ID = CODETEMPLATES_PREFIX + "cheaderfile"; //$NON-NLS-1$
+	public static final String NAMESPACE_BEGIN_ID = CODETEMPLATES_PREFIX + "namespace_begin"; //$NON-NLS-1$
+	public static final String NAMESPACE_END_ID = CODETEMPLATES_PREFIX + "namespace_end"; //$NON-NLS-1$
+	public static final String CLASS_BODY_ID = CODETEMPLATES_PREFIX + "class_body"; //$NON-NLS-1$
+	public static final String METHODSTUB_ID = CODETEMPLATES_PREFIX + "methodbody"; //$NON-NLS-1$
 	public static final String CONSTRUCTORSTUB_ID = CODETEMPLATES_PREFIX + "constructorbody"; //$NON-NLS-1$
 	public static final String DESTRUCTORSTUB_ID = CODETEMPLATES_PREFIX + "destructorbody"; //$NON-NLS-1$
 	public static final String FILECOMMENT_ID = CODETEMPLATES_PREFIX + "file" + COMMENT_SUFFIX; //$NON-NLS-1$

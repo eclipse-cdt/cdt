@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,17 +21,17 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 
 /**
  * Service for accessing register data.
- * 
+ *
  * @since 1.0
  */
 public interface IRegisters extends IFormattedValues {
 
-	/** 
-	 * Event indicating groups have changed.  The type of context returned by this 
-	 * event is generic, because different implementations of the the register service 
+	/**
+	 * Event indicating groups have changed.  The type of context returned by this
+	 * event is generic, because different implementations of the the register service
 	 * could configure register groups using different contexts.  Some implementations
-	 * could configure different register groups for each execution context, other 
-	 * services may have a global list of groups.   
+	 * could configure different register groups for each execution context, other
+	 * services may have a global list of groups.
 	 */
 	public interface IGroupsChangedDMEvent extends IDMEvent<IDMContext> {
 	}
@@ -48,9 +48,9 @@ public interface IRegisters extends IFormattedValues {
 	public interface IRegistersChangedDMEvent extends IDMEvent<IRegisterGroupDMContext> {
 	}
 
-	/** 
+	/**
 	 * Register groups only have a name and description.  Sub groups and registers are
-	 * retrieved through the service interface. 
+	 * retrieved through the service interface.
 	 */
 	public interface IRegisterGroupDMData extends IDMData {
 		public String getName();
@@ -95,9 +95,9 @@ public interface IRegisters extends IFormattedValues {
 	public interface IBitFieldChangedDMEvent extends IDMEvent<IBitFieldDMContext> {
 	}
 
-	/** 
-	 * Bitfield data, big groups and mnemonics are retrieved at the same 
-	 * time as rest of bit field data 
+	/**
+	 * Bitfield data, big groups and mnemonics are retrieved at the same
+	 * time as rest of bit field data
 	 */
 	public interface IBitFieldDMData extends IDMData {
 		String getName();
@@ -139,14 +139,14 @@ public interface IRegisters extends IFormattedValues {
 		String getLongName();
 	}
 
-	/** 
+	/**
 	 * Retrieves the list of register groups.
 	 * @param ctx Context for the returned data.
 	 * @param rm Request completion monitor.
 	 */
 	void getRegisterGroups(IDMContext ctx, DataRequestMonitor<IRegisterGroupDMContext[]> rm);
 
-	/** 
+	/**
 	 * Retrieves the list of registers for the given context.  The given context could include
 	 * a register group and an execution context or just an execution context, in which case all
 	 * registers for all groups should be returned.
@@ -155,14 +155,14 @@ public interface IRegisters extends IFormattedValues {
 	 */
 	void getRegisters(IDMContext ctx, DataRequestMonitor<IRegisterDMContext[]> rm);
 
-	/** 
+	/**
 	 * Retrieves bit fields for given register
 	 * @param ctx Context for the returned data.
 	 * @param rm Request completion monitor.
 	 */
 	void getBitFields(IDMContext ctx, DataRequestMonitor<IBitFieldDMContext[]> rm);
 
-	/** 
+	/**
 	 * Retrieves a Register Group context. The given context could include a register
 	 * group and an execution context or just an execution context.
 	 * @param ctx Context for the returned data.
@@ -171,8 +171,8 @@ public interface IRegisters extends IFormattedValues {
 	 */
 	void findRegisterGroup(IDMContext ctx, String name, DataRequestMonitor<IRegisterGroupDMContext> rm);
 
-	/** 
-	 * Retrieves a Register context. The given context could include a register group and an execution 
+	/**
+	 * Retrieves a Register context. The given context could include a register group and an execution
 	 * context or just an execution context.
 	 * @param ctx Context for the returned data.
 	 * @param name Name of register being requested
@@ -180,8 +180,8 @@ public interface IRegisters extends IFormattedValues {
 	 */
 	void findRegister(IDMContext ctx, String name, DataRequestMonitor<IRegisterDMContext> rm);
 
-	/** 
-	 * Retrieves bit field context. The given context could include a register and an execution 
+	/**
+	 * Retrieves bit field context. The given context could include a register and an execution
 	 * context or just an execution context.
 	 * @param ctx Context for the returned data.
 	 * @param name Name of bit field being requested
@@ -210,7 +210,7 @@ public interface IRegisters extends IFormattedValues {
 	 */
 	void getBitFieldData(IBitFieldDMContext dmc, DataRequestMonitor<IBitFieldDMData> rm);
 
-	/** 
+	/**
 	 * Writes a register value for a given register to the target
 	 * @param regCtx Context containing the register.
 	 * @param regValue Value of the register to be written.
@@ -219,7 +219,7 @@ public interface IRegisters extends IFormattedValues {
 	 */
 	void writeRegister(IRegisterDMContext regCtx, String regValue, String formatId, RequestMonitor rm);
 
-	/** 
+	/**
 	 * Writes a bit field value for a given bit field to the target
 	 * @param bitFieldCtx Context containing the bit field.
 	 * @param bitFieldValue Value of the bit field to be written.
@@ -228,7 +228,7 @@ public interface IRegisters extends IFormattedValues {
 	 */
 	void writeBitField(IBitFieldDMContext bitFieldCtx, String bitFieldValue, String formatId, RequestMonitor rm);
 
-	/** 
+	/**
 	 * Writes a bit field value for a given bit field to the target
 	 * @param bitFieldCtx Context containing the bit field.
 	 * @param mnemonic Mnemonic which represents the value to be written.

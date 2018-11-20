@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 /**
  * Default implementation of a root view model node.  This class may be sub-classed
  * to implement model-specific event handling.
- * 
+ *
  * @since 1.0
  */
 public class RootVMNode extends AbstractVMNode implements IRootVMNode {
@@ -47,7 +47,7 @@ public class RootVMNode extends AbstractVMNode implements IRootVMNode {
 		throw new UnsupportedOperationException("Root view model node should never be queried for list of elements."); //$NON-NLS-1$
 	}
 
-	/** 
+	/**
 	 * Default implementation does not examine the event and assumes that every
 	 * event should be processed to generate a delta.
 	 */
@@ -61,7 +61,7 @@ public class RootVMNode extends AbstractVMNode implements IRootVMNode {
 
 	/**
 	 * Default implementation creates a delta assuming that the root layout node
-	 * is the input object into the view.  
+	 * is the input object into the view.
 	 */
 	@Override
 	public void createRootDelta(Object rootObject, Object event, final DataRequestMonitor<VMDelta> rm) {

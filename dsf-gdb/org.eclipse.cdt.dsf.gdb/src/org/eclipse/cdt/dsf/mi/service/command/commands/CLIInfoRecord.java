@@ -14,9 +14,9 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
+import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
-import org.eclipse.cdt.dsf.mi.service.command.output.CLIInfoRecordInfo;
 
 /**
  * @since 5.0

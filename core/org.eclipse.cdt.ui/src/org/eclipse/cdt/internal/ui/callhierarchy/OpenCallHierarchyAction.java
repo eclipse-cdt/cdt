@@ -13,12 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IWorkbenchSite;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IEnumeration;
 import org.eclipse.cdt.core.model.IEnumerator;
@@ -26,6 +20,11 @@ import org.eclipse.cdt.core.model.IFunctionDeclaration;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IWorkbenchSite;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 public class OpenCallHierarchyAction extends SelectionDispatchAction {
 	private ITextEditor fEditor;

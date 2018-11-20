@@ -24,7 +24,7 @@ import org.eclipse.core.resources.IResource;
 /**
  * Implementation of IChecker that works with translation unit without locking
  * the index
- * 
+ *
  * Clients may extend this class.
  * @since 3.3
  */

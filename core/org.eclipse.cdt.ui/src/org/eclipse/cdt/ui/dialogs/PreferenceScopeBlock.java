@@ -14,6 +14,8 @@
 
 package org.eclipse.cdt.ui.dialogs;
 
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -25,9 +27,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 
 abstract public class PreferenceScopeBlock {
 	private Button fUseProjectSettings;

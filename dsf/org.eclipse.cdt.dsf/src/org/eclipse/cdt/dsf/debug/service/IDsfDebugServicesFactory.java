@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 /**
  * A factory to create DSF services.  Using this interface allows
  * to easily have different service implementation for different backends.
- * 
+ *
  * @since 1.1
  */
 public interface IDsfDebugServicesFactory {

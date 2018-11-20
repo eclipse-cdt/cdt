@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 237306)
  *     Marc Khouzam (Ericsson) - Workaround for Bug 352998
@@ -72,7 +72,7 @@ import com.ibm.icu.text.MessageFormat;
 
 /**
  * Adding support for multi-process with GDB 7.2
- * 
+ *
  * @since 4.0
  */
 public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminate, IMultiDetach {
@@ -154,7 +154,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		}
 	}
 
-	/** 
+	/**
 	 * The first thread-group id used by GDB.
 	 * GDB starts up with certain things already setup, and we need
 	 * to prepare some things using this id.
@@ -163,8 +163,8 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	public static final String INITIAL_THREAD_GROUP_ID = "i1"; //$NON-NLS-1$
 
 	/**
-	 * The id of the single thread to be used during event visualization. 
-	 * @since 4.1 
+	 * The id of the single thread to be used during event visualization.
+	 * @since 4.1
 	 */
 	protected static final String TRACE_VISUALIZATION_THREAD_ID = "1"; //$NON-NLS-1$
 
@@ -186,9 +186,9 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	 * We use this set for such things as not removing breakpoints
 	 * because we know the process will be restarted.
 	 */
-	private Set<IContainerDMContext> fProcRestarting = new HashSet<IContainerDMContext>();
+	private Set<IContainerDMContext> fProcRestarting = new HashSet<>();
 
-	/** 
+	/**
 	 * Indicates that we are currently visualizing trace data.
 	 */
 	private boolean fTraceVisualization;
@@ -210,7 +210,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The call-back object to notify when this service's
 	 *            initialization is done.
@@ -420,7 +420,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 													// Now that we have disconnected and set the binary,
 													// we may need to reconnect to the target.
 													// If we were unable to set the binary (e.g., if the specified path
-													// is invalid) we also need to reconnect to the target before 
+													// is invalid) we also need to reconnect to the target before
 													// aborting the rest of the sequence.
 													// Bug 352998
 
@@ -521,9 +521,9 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	/**
 	 * GDB 7.11 had a bug that -target-attach sometimes did not flush its error
 	 * response. However sending a newline forced GDB to flush the buffer.
-	 * 
+	 *
 	 * See Bug 522367
-	 * 
+	 *
 	 * @return whether to add extra newline.
 	 * @since 5.4
 	 */
@@ -618,7 +618,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 												// Detach failed
 												getDetachedProcesses().remove(containerDmc.getGroupId());
 												super.handleFailure();
-											};
+											}
 										});
 							}
 						}
@@ -649,7 +649,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 			// Only one process is allowed in all-stop (for now)
 			return getNumConnected() == 0;
 			// NOTE: when we support multi-process in all-stop mode,
-			// we will need to interrupt the target to when starting 
+			// we will need to interrupt the target to when starting
 			// the new process.
 		}
 
@@ -680,7 +680,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		super.getProcessesBeingDebugged(dmc, rm);
 	}
 
-	/** 
+	/**
 	 * Creates the container context that is to be used for the new process that will
 	 * be created by the restart operation.
 	 * This container does not have its pid yet, while the container of the process
@@ -688,7 +688,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	 * Starting with GDB 7.2, the groupId stays the same when restarting a process, so
 	 * we should re-use it; this is particularly important since we support multi-process
 	 * and we need the proper groupId
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	@Override
@@ -765,18 +765,18 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 		super.eventDispatched(e);
 	}
 
-	/** 
+	/**
 	 * GDB 7.2 has a bug which causes a gdbserver crash if we set the binary after we
 	 * have connected to the target.  Because GDB 7.2.1 was not released when CDT 8.0
 	 * was released, we need to workaround the bug in Eclipse.
-	 * 
+	 *
 	 * This method can be overridden to easily disable the workaround, for versions
 	 * of GDB that no longer have the bug.
-	 * 
+	 *
 	 * See http://sourceware.org/ml/gdb-patches/2011-03/msg00531.html
 	 * and Bug 352998
-	 * 
-	 * @since 4.1 
+	 *
+	 * @since 4.1
 	 */
 	protected boolean needFixForGDB72Bug352998() {
 		return true;
@@ -810,7 +810,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	 * @since 4.6
 	 */
 	protected void canDetachFromProcesses(IDMContext[] dmcs, boolean all, DataRequestMonitor<Boolean> rm) {
-		Set<IMIContainerDMContext> contDmcs = new HashSet<IMIContainerDMContext>();
+		Set<IMIContainerDMContext> contDmcs = new HashSet<>();
 		for (IDMContext c : dmcs) {
 			IMIContainerDMContext contDmc = DMContexts.getAncestorOfType(c, IMIContainerDMContext.class);
 			if (contDmc != null) {
@@ -832,7 +832,7 @@ public class GDBProcesses_7_2 extends GDBProcesses_7_1 implements IMultiTerminat
 	 */
 	@Override
 	public void detachDebuggerFromProcesses(IDMContext[] dmcs, final RequestMonitor rm) {
-		Set<IMIContainerDMContext> contDmcs = new HashSet<IMIContainerDMContext>();
+		Set<IMIContainerDMContext> contDmcs = new HashSet<>();
 		for (IDMContext c : dmcs) {
 			IMIContainerDMContext contDmc = DMContexts.getAncestorOfType(c, IMIContainerDMContext.class);
 			if (contDmc != null) {

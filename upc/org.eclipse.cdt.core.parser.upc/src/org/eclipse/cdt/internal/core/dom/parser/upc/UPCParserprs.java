@@ -23,7 +23,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static byte isKeyword[] = IsKeyword.isKeyword;
 
@@ -136,7 +136,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				-311, 0, 0, 0, 0, 0, -313, 0, -337, 0, 0, 0, 0, 0, 0, -339, 0, -187, 0, 0, 0, 0, 0, -189, 0, 0, 0, 0, 0,
 				0, 0, 0, -190, 0, -288, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static short baseCheck[] = BaseCheck.baseCheck;
 
@@ -150,7 +150,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 	@Override
 	public final int rhs(int index) {
 		return rhs[index];
-	};
+	}
 
 	public interface BaseAction {
 		public final static char baseAction[] = { 111, 1, 130, 39, 39, 11, 11, 49, 49, 3, 3, 2, 2, 5, 5, 5, 5, 6, 6, 6,
@@ -311,7 +311,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 2131, 3262, 3262, 3262,
 				3262, 3262, 3262, 3262, 3262, 2347, 3262, 0, 328, 837, 0, 11, 227, 0, 3270, 1, 0, 1, 3500, 0, 8, 10, 0,
 				1656, 119, 0, 180, 20, 0, 1, 3489, 0, 113, 2099, 0 };
-	};
+	}
 
 	public final static char baseAction[] = BaseAction.baseAction;
 
@@ -325,7 +325,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 	@Override
 	public final int lhs(int index) {
 		return lhs[index];
-	};
+	}
 
 	public interface TermCheck {
 		public final static byte termCheck[] = { 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
@@ -439,7 +439,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				73, 0, 0, 0, 0, 0, 0, 72, 79, 0, 0, 72, 0, 0, 0, 0, 0, 71, 71, 0, 0, 0, 0, 71, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 74, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 75, 0, 0, 74, 0, 74, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static byte termCheck[] = TermCheck.termCheck;
 
@@ -592,7 +592,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				3262, 558, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 1610,
 				3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 3262, 748, 3262, 3262, 3274, 3262,
 				3273 };
-	};
+	}
 
 	public final static char termAction[] = TermAction.termAction;
 
@@ -620,7 +620,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				638, 638, 182, 64, 481, 638, 638, 182, 638, 182, 82, 481, 639, 182, 64, 323, 64, 64, 481, 64, 481, 638,
 				64, 64, 481, 64, 481, 638, 64, 481, 638, 638, 182, 64, 481, 64, 64, 64, 481, 64, 64, 64, 481, 64, 64,
 				481, 64, 481, 638, 64, 64, 64, 64, 64, 64, 481, 64 };
-	};
+	}
 
 	public final static char asb[] = Asb.asb;
 
@@ -655,7 +655,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				54, 70, 63, 64, 45, 65, 66, 67, 1, 3, 46, 47, 48, 79, 4, 0, 4, 2, 55, 73, 5, 50, 56, 43, 57, 68, 51, 58,
 				52, 59, 60, 53, 44, 61, 62, 49, 69, 54, 70, 63, 64, 45, 65, 66, 67, 1, 3, 46, 47, 48, 79, 0, 27, 5, 73,
 				12, 13, 14, 15, 16, 1, 3, 2, 10, 11, 9, 4, 7, 8, 17, 18, 19, 20, 21, 22, 23, 24, 0 };
-	};
+	}
 
 	public final static byte asr[] = Asr.asr;
 
@@ -682,7 +682,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				65, 177, 65, 71, 158, 174, 65, 39, 84, 39, 39, 158, 39, 158, 177, 39, 39, 158, 39, 158, 177, 39, 158,
 				177, 177, 65, 39, 158, 39, 39, 39, 158, 39, 39, 39, 158, 39, 39, 158, 39, 158, 177, 39, 39, 39, 39, 39,
 				39, 158, 39 };
-	};
+	}
 
 	public final static char nasb[] = Nasb.nasb;
 
@@ -699,7 +699,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				1, 33, 0, 1, 33, 2, 18, 96, 0, 33, 1, 127, 0, 79, 74, 75, 76, 77, 69, 54, 0, 43, 48, 41, 46, 40, 0, 11,
 				41, 46, 65, 66, 1, 0, 1, 33, 40, 61, 0, 43, 48, 46, 41, 1, 0, 8, 53, 50, 0, 65, 66, 1, 11, 0, 117, 1,
 				33, 0, 1, 58, 14, 0, 99, 1, 58, 0, 33, 51, 1, 68, 0, 1, 44, 11, 0, 1, 58, 92, 0 };
-	};
+	}
 
 	public final static char nasr[] = Nasr.nasr;
 
@@ -714,7 +714,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				106, 48, 64, 76, 96, 97, 98, 69, 44, 55, 60, 63, 72, 1, 47, 52, 56, 61, 62, 66, 67, 74, 75, 78, 79, 80,
 				54, 70, 73, 42, 91, 90, 29, 31, 16, 17, 89, 30, 4, 14, 15, 18, 19, 20, 21, 108, 22, 23, 24, 25, 26, 53,
 				5, 27, 28, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 88 };
-	};
+	}
 
 	public final static char terminalIndex[] = TerminalIndex.terminalIndex;
 
@@ -730,7 +730,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				181, 184, 185, 186, 0, 0, 150, 0, 174, 180, 138, 151, 152, 153, 154, 157, 159, 179, 183, 0, 142, 143,
 				144, 145, 146, 149, 155, 156, 0, 161, 166, 116, 133, 137, 141, 0, 160, 164, 0, 0, 165, 175, 178, 188,
 				193, 0, 0, 195, 0, 0, 0, 0, 163, 0, 176, 177, 182, 187, 0, 189, 190, 0, 191, 192, 194, 196, 0, 0 };
-	};
+	}
 
 	public final static char nonterminalIndex[] = NonterminalIndex.nonterminalIndex;
 
@@ -743,7 +743,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 		public final static char scopePrefix[] = { 120, 151, 130, 59, 69, 159, 26, 186, 35, 87, 105, 75, 6, 12, 16, 40,
 				83, 52, 141, 195, 212, 219, 223, 52, 52, 199, 52, 1, 1, 1, 44, 47, 92, 115, 47, 227, 20, 145, 206, 206,
 				177, 137, 165, 165, 165, 165, 165, 95, 95, 95 };
-	};
+	}
 
 	public final static char scopePrefix[] = ScopePrefix.scopePrefix;
 
@@ -756,7 +756,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 		public final static char scopeSuffix[] = { 128, 128, 128, 4, 4, 128, 32, 192, 10, 4, 10, 80, 10, 10, 10, 10, 4,
 				4, 139, 128, 10, 10, 4, 56, 80, 203, 65, 4, 4, 4, 10, 50, 4, 10, 118, 10, 23, 148, 209, 216, 180, 139,
 				167, 169, 171, 173, 175, 102, 97, 110 };
-	};
+	}
 
 	public final static char scopeSuffix[] = ScopeSuffix.scopeSuffix;
 
@@ -769,7 +769,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 		public final static char scopeLhs[] = { 76, 74, 76, 52, 52, 74, 50, 22, 67, 52, 43, 52, 9, 9, 9, 67, 52, 52, 92,
 				16, 9, 8, 8, 52, 52, 32, 52, 128, 125, 124, 65, 81, 52, 41, 59, 6, 106, 92, 10, 8, 23, 92, 87, 86, 85,
 				84, 83, 43, 48, 43 };
-	};
+	}
 
 	public final static char scopeLhs[] = ScopeLhs.scopeLhs;
 
@@ -782,7 +782,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 		public final static byte scopeLa[] = { 72, 72, 72, 78, 78, 72, 72, 93, 73, 78, 73, 13, 73, 73, 73, 73, 78, 78,
 				25, 72, 73, 73, 78, 4, 13, 74, 49, 78, 78, 78, 73, 2, 78, 73, 1, 73, 75, 1, 73, 73, 28, 25, 1, 68, 69,
 				69, 64, 2, 2, 2 };
-	};
+	}
 
 	public final static byte scopeLa[] = ScopeLa.scopeLa;
 
@@ -795,7 +795,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 		public final static char scopeStateSet[] = { 153, 153, 153, 126, 126, 153, 49, 10, 130, 126, 139, 126, 60, 60,
 				60, 130, 126, 126, 5, 9, 60, 60, 60, 126, 126, 94, 126, 137, 1, 3, 130, 132, 126, 139, 144, 60, 123, 5,
 				66, 60, 10, 5, 154, 154, 154, 154, 154, 139, 141, 139 };
-	};
+	}
 
 	public final static char scopeStateSet[] = ScopeStateSet.scopeStateSet;
 
@@ -815,7 +815,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				0, 153, 0, 152, 0, 151, 0, 150, 0, 126, 32, 0, 77, 2, 114, 110, 112, 0, 126, 118, 121, 2, 35, 0, 53,
 				135, 0, 203, 108, 6, 0, 121, 96, 138, 0, 29, 131, 0, 169, 2, 0, 110, 120, 0, 169, 2, 12, 0, 110, 118, 0,
 				219, 2, 115, 0, 121, 55, 115, 0, 121, 2, 0 };
-	};
+	}
 
 	public final static char scopeRhs[] = ScopeRhs.scopeRhs;
 
@@ -834,7 +834,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				1373, 940, 1340, 1307, 1274, 1241, 1208, 1175, 1142, 1109, 1076, 1043, 1010, 905, 368, 973, 872, 640,
 				802, 837, 558, 519, 0, 1127, 1101, 552, 492, 369, 2898, 1838, 2781, 1811, 1628, 0, 450, 0, 500, 429,
 				369, 2767, 1760, 2613, 2575, 1838, 2560, 1811, 448, 678, 1898, 0, 1740, 368, 659, 429, 0 };
-	};
+	}
 
 	public final static char scopeState[] = ScopeState.scopeState;
 
@@ -862,7 +862,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				121, 110, 121, 110, 175, 110, 118, 93, 167, 118, 118, 151, 118, 151, 110, 118, 118, 151, 118, 151, 110,
 				118, 151, 110, 110, 121, 118, 175, 118, 118, 118, 151, 118, 118, 118, 151, 118, 118, 151, 118, 151, 110,
 				118, 118, 118, 118, 118, 118, 151, 118 };
-	};
+	}
 
 	public final static char inSymb[] = InSymb.inSymb;
 
@@ -904,7 +904,7 @@ public class UPCParserprs implements lpg.lpgjavaruntime.ParseTable, UPCParsersym
 				"array_direct_abstract_declarat" + "or", "initializer_seq", "designated_initializer", "designation",
 				"designator_list", "designator", "external_declaration_list", "external_declaration",
 				"declaration_list", "function_body", "layout_qualifier", "affinity" };
-	};
+	}
 
 	public final static String name[] = Name.name;
 

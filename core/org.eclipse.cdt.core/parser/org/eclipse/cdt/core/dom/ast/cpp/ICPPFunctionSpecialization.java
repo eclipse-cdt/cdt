@@ -12,7 +12,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
  * Binding for specializations of functions.
- * 
+ *
  * @since 6.2
  */
 public interface ICPPFunctionSpecialization extends ICPPFunction, ICPPSpecialization {

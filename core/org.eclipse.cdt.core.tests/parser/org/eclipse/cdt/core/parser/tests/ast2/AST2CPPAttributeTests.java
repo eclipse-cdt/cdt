@@ -113,12 +113,13 @@ public class AST2CPPAttributeTests extends AST2TestBase {
 			shouldVisitAttributes = true;
 		}
 
-		private List<IASTAttributeSpecifier> specifiers = new ArrayList<IASTAttributeSpecifier>();
+		private List<IASTAttributeSpecifier> specifiers = new ArrayList<>();
 
 		public List<IASTAttributeSpecifier> getAttributes() {
 			return specifiers;
 		}
 
+		@Override
 		public int visit(IASTAttributeSpecifier specifier) {
 			specifiers.add(specifier);
 			return PROCESS_CONTINUE;

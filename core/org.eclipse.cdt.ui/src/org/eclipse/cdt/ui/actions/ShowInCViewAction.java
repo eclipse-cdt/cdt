@@ -36,10 +36,10 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * This class will open the C/C++ Projects view and highlight the
  * selected resource matching the current resouce being edited in
- * the C/C++ Editor.  It uses the IShowInSource/IShowInTarget to 
+ * the C/C++ Editor.  It uses the IShowInSource/IShowInTarget to
  * accomplish this task so as to provide some additional portability
  * and future proofing.
- * 
+ *
  * @deprecated Use generic IShowInTarget support instead.
  */
 @Deprecated

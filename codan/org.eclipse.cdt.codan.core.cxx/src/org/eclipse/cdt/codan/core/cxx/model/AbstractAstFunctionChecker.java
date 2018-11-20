@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009,2012 Alena Laskavaia 
+ * Copyright (c) 2009,2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,7 +36,7 @@ public abstract class AbstractAstFunctionChecker extends AbstractIndexAstChecker
 				if (element instanceof IASTFunctionDefinition) {
 					processFunction((IASTFunctionDefinition) element);
 				}
-				// visit all nodes to support inner functions within class definitions 
+				// visit all nodes to support inner functions within class definitions
 				// and gcc extensions
 				return PROCESS_CONTINUE;
 			}
@@ -45,7 +45,7 @@ public abstract class AbstractAstFunctionChecker extends AbstractIndexAstChecker
 
 	/**
 	 * Process function.
-	 * 
+	 *
 	 * @param func
 	 *        - ast node representing function definition
 	 */

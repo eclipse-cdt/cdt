@@ -22,6 +22,22 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -48,24 +64,6 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsSerializableProvider;
-import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.ui.language.settings.providers.AbstractLanguageSettingProviderOptionPage;
-import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
-import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 
 /**
  * This tab presents language settings entries categorized by language
@@ -110,8 +108,8 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 	 * not raw providers.
 	 */
 	private List<ILanguageSettingsProvider> presentedProviders = null;
-	private final Map<String, ICOptionPage> optionsPageMap = new HashMap<String, ICOptionPage>();
-	private Map<String/*cfgId*/, List<ILanguageSettingsProvider>> initialProvidersByCfg = new HashMap<String, List<ILanguageSettingsProvider>>();
+	private final Map<String, ICOptionPage> optionsPageMap = new HashMap<>();
+	private Map<String/*cfgId*/, List<ILanguageSettingsProvider>> initialProvidersByCfg = new HashMap<>();
 
 	/**
 	 * Label provider for language settings providers displayed by this tab.
@@ -910,18 +908,18 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 		// The providers list is formed to consist of configuration providers (checked elements on top of the table)
 		// and after that other providers which could be possible added (unchecked) sorted by name.
 
-		List<String> idsList = new ArrayList<String>();
+		List<String> idsList = new ArrayList<>();
 
 		List<ILanguageSettingsProvider> providers;
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-			providers = new ArrayList<ILanguageSettingsProvider>(
+			providers = new ArrayList<>(
 					((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 			for (ILanguageSettingsProvider provider : providers) {
 				idsList.add(provider.getId());
 			}
 		} else {
-			providers = new ArrayList<ILanguageSettingsProvider>();
+			providers = new ArrayList<>();
 		}
 
 		List<ILanguageSettingsProvider> allAvailableProvidersSet = LanguageSettingsManager.getWorkspaceProviders();
@@ -1139,7 +1137,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 							ScannerDiscoveryLegacySupport.isLanguageSettingsProvidersFunctionalityEnabled(null));
 					ICConfigurationDescription cfgDescription = getConfigurationDescription();
 					if (cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
-						List<ILanguageSettingsProvider> cfgProviders = new ArrayList<ILanguageSettingsProvider>(
+						List<ILanguageSettingsProvider> cfgProviders = new ArrayList<>(
 								((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 						String[] defaultIds = ((ILanguageSettingsProvidersKeeper) cfgDescription)
 								.getDefaultLanguageSettingsProvidersIds();
@@ -1152,7 +1150,7 @@ public class LanguageSettingsProviderTab extends AbstractCPropertyTab {
 					}
 
 				} else if (page.isForPrefs()) {
-					presentedProviders = new ArrayList<ILanguageSettingsProvider>();
+					presentedProviders = new ArrayList<>();
 					for (String id : LanguageSettingsManager.getExtensionProviderIds()) {
 						ILanguageSettingsProvider provider = LanguageSettingsManager.getWorkspaceProvider(id);
 						ILanguageSettingsProvider rawProvider = LanguageSettingsManager.getRawProvider(provider);

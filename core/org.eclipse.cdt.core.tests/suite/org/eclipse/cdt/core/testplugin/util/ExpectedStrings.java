@@ -25,7 +25,7 @@ public class ExpectedStrings {
 
 	public String[] expStrings;
 	private boolean[] foundStrings;
-	private Stack extraStrings; /* A stack of the unecpected strings we 
+	private Stack extraStrings; /* A stack of the unecpected strings we
 								 * recieved
 								 */
 	private boolean extra;

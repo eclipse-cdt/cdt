@@ -52,13 +52,13 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 
 public class ResourceChangeHandler implements IResourceChangeListener, ISaveParticipant {
 
-	private Map<IProject, IManagedBuildInfo> fRmProjectToBuildInfoMap = new HashMap<IProject, IManagedBuildInfo>();
+	private Map<IProject, IManagedBuildInfo> fRmProjectToBuildInfoMap = new HashMap<>();
 
 	private class ResourceConfigurationChecker implements IResourceDeltaVisitor {
 		private IResourceDelta fRootDelta;
-		private HashMap<IProject, IManagedBuilderMakefileGenerator> fBuildFileGeneratorMap = new HashMap<IProject, IManagedBuilderMakefileGenerator>();
-		private HashSet<IPath> fValidatedFilesSet = new HashSet<IPath>();
-		private HashSet<IProject> fModifiedProjects = new HashSet<IProject>();
+		private HashMap<IProject, IManagedBuilderMakefileGenerator> fBuildFileGeneratorMap = new HashMap<>();
+		private HashSet<IPath> fValidatedFilesSet = new HashSet<>();
+		private HashSet<IProject> fModifiedProjects = new HashSet<>();
 
 		public ResourceConfigurationChecker(IResourceDelta rootDelta) {
 			fRootDelta = rootDelta;

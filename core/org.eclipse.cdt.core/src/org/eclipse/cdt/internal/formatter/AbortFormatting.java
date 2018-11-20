@@ -16,8 +16,8 @@ package org.eclipse.cdt.internal.formatter;
 
 /**
  * Unchecked exception wrapping invalid input checked exception which may occur
- * when scanning original formatted source. 
- * 
+ * when scanning original formatted source.
+ *
  * @since 4.0
  */
 public class AbortFormatting extends RuntimeException {

@@ -57,6 +57,7 @@ public class Event {
 	// --- Object methods ---
 
 	/** Returns string representation of event */
+	@Override
 	public String toString() {
 		StringBuilder result = new StringBuilder();
 		result.append(getClass().getSimpleName());

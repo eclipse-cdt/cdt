@@ -183,7 +183,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	/**
 	 * This test sets up by first creating a trace file
 	 * by calling {@link #createTraceFile}
-	 * 
+	 *
 	 * It then removes all existing tracepoint actions and tracepoints
 	 * and verifies that corresponding platform tracepoints with the proper
 	 * actions are created.
@@ -223,7 +223,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	/**
 	 * This test sets up by first creating a trace file and importing it back
 	 * by calling {@link #testTraceFile} which also calls {@link #createTraceFile}
-	
+
 	 * It then verifies that the tracepoint actions and platform tracepoints
 	 * created by {@link #testTraceFile()} are associated with the corresponding target
 	 * tracepoints and are not created a second time.
@@ -418,7 +418,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 	}
 
 	private MIBreakpointDMContext setBreakpointAtEndLine() throws Throwable {
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.FUNCTION, END_FUNCTION);
@@ -445,7 +445,7 @@ public class TraceFileTest extends BaseParametrizedTestCase {
 		evalAction.setName(String.format("Evaluate %s", TEVAL_STRING));
 		tam.addAction(evalAction);
 
-		Map<String, Object> attributes = new HashMap<String, Object>();
+		Map<String, Object> attributes = new HashMap<>();
 		attributes.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.TRACEPOINT);
 		attributes.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		attributes.put(MIBreakpoints.LINE_NUMBER, getLineForTag("IF_X_NE_A"));

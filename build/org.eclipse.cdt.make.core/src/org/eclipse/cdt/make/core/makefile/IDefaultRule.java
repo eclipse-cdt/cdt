@@ -18,7 +18,7 @@ package org.eclipse.cdt.make.core.makefile;
  * If the makefile uses this special target, the application shall ensure that it is
  * specified with commands, but without prerequisites.
  * The commands shall be used by make if there are no other rules available to build a target.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

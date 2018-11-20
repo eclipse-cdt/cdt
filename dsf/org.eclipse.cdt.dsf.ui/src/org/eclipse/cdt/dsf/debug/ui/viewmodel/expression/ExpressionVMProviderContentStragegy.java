@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * The IElementContentProvider implementation to be used with an expression
  * view model provider.
- * 
+ *
  * @see ExpressionVMProvider
  */
 public class ExpressionVMProviderContentStragegy extends DefaultVMContentProviderStrategy {
@@ -54,11 +54,11 @@ public class ExpressionVMProviderContentStragegy extends DefaultVMContentProvide
 				new ViewerDataRequestMonitor<Object>(getVMProvider().getExecutor(), update) {
 					@Override
 					protected void handleSuccess() {
-						// Check if the evaluated node has child expression nodes.  
+						// Check if the evaluated node has child expression nodes.
 						// If it does, check if any of those nodes can evaluate the given
 						// expression further.  If they can, call the child node to further
-						// process the expression.  Otherwise we found our element and 
-						// we're done. 
+						// process the expression.  Otherwise we found our element and
+						// we're done.
 						final IExpressionVMNode matchingNode = getExpressionVMProvider().findNodeToParseExpression(node,
 								update.getExpression());
 

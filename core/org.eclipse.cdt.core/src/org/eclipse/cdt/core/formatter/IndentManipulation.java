@@ -22,12 +22,11 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DefaultLineTracker;
 import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
-
 import org.eclipse.text.edits.ReplaceEdit;
 
 /**
  * Helper class to provide String manipulation functions dealing with indentations.
- * 
+ *
  * @since 5.0
  */
 public final class IndentManipulation {
@@ -41,7 +40,7 @@ public final class IndentManipulation {
 	/**
 	 * Returns <code>true</code> if the given character is an indentation character. Indentation character are all whitespace characters
 	 * except the line delimiter characters.
-	 * 
+	 *
 	 * @param ch the given character
 	 * @return Returns <code>true</code> if this the character is a indent character, <code>false</code> otherwise
 	 */
@@ -51,7 +50,7 @@ public final class IndentManipulation {
 
 	/**
 	 * Returns <code>true</code> if the given character is a line delimiter character.
-	 * 
+	 *
 	 * @param ch the given character
 	 * @return Returns <code>true</code> if this the character is a line delimiter character, <code>false</code> otherwise
 	 */
@@ -63,7 +62,7 @@ public final class IndentManipulation {
 	 * Returns the indentation of the given line in indentation units. Odd spaces are
 	 * not counted. This method only analyzes the content of <code>line</code> up to the first
 	 * non-whitespace character.
-	 * 
+	 *
 	 * @param line the string to measure the indent of
 	 * @param tabWidth the width of one tab character in space equivalents
 	 * @param indentWidth the width of one indentation unit in space equivalents
@@ -86,11 +85,11 @@ public final class IndentManipulation {
 
 	/**
 	 * Returns the indentation of the given line in space equivalents.
-	 * 
+	 *
 	 * <p>Tab characters are counted using the given <code>tabWidth</code> and every other indent
 	 * character as one. This method analyzes the content of <code>line</code> up to the first
 	 * non-whitespace character.</p>
-	 * 
+	 *
 	 * @param line the string to measure the indent of
 	 * @param tabWidth the width of one tab in space equivalents
 	 * @return the measured indent width in space equivalents
@@ -125,7 +124,7 @@ public final class IndentManipulation {
 	 * Returns the leading indentation string of the given line. Note that the returned string
 	 * need not be equal to the leading whitespace as odd spaces are not considered part of the
 	 * indentation.
-	 * 
+	 *
 	 * @param line the line to scan
 	 * @param tabWidth the size of one tab in space equivalents
 	 * @param indentWidth the width of one indentation unit in space equivalents
@@ -247,7 +246,7 @@ public final class IndentManipulation {
 	 * and a new indent string is added.
 	 * <p>The first line of the code will not be changed (It is considered to have no indent as it might start in
 	 * the middle of a line).</p>
-	 * 
+	 *
 	 * @param code the code to change the indent of
 	 * @param indentUnitsToRemove the number of indent units to remove from each line (except the first) of the given code
 	 * @param tabWidth the size of one tab in space equivalents
@@ -305,11 +304,11 @@ public final class IndentManipulation {
 
 	/**
 	 * Returns the text edits retrieved after changing the indentation of a, possible multi-line, code string.
-	 * 
+	 *
 	 * <p>The given number of indent units is removed, and a new indent string is added.</p>
 	 * <p>The first line of the code will not be changed (It is considered to have no indent as it might start in
 	 * the middle of a line).</p>
-	 * 
+	 *
 	 * @param source The code to change the indent of
 	 * @param indentUnitsToRemove the number of indent units to remove from each line (except the first) of the given code
 	 * @param tabWidth the size of one tab in space equivalents
@@ -331,7 +330,7 @@ public final class IndentManipulation {
 			throw new IllegalArgumentException();
 		}
 
-		ArrayList<ReplaceEdit> result = new ArrayList<ReplaceEdit>();
+		ArrayList<ReplaceEdit> result = new ArrayList<>();
 		try {
 			ILineTracker tracker = new DefaultLineTracker();
 			tracker.set(source);
@@ -388,9 +387,9 @@ public final class IndentManipulation {
 	/**
 	 * Returns the tab width as configured in the given map.
 	 * <p>Use {@link org.eclipse.cdt.core.model.ICProject#getOptions(boolean)} to get the most current project options.</p>
-	 * 
+	 *
 	 * @param options the map to get the formatter settings from.
-	 * 
+	 *
 	 * @return the tab width
 	 * @exception IllegalArgumentException if the given <code>options</code> is null
 	 */
@@ -404,9 +403,9 @@ public final class IndentManipulation {
 	/**
 	 * Returns the tab width as configured in the given map.
 	 * <p>Use {@link org.eclipse.cdt.core.model.ICProject#getOptions(boolean)} to get the most current project options.</p>
-	 * 
+	 *
 	 * @param options the map to get the formatter settings from
-	 * 
+	 *
 	 * @return the indent width
 	 * @exception IllegalArgumentException if the given <code>options</code> is null
 	 */

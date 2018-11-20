@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
@@ -31,28 +31,28 @@ import org.osgi.framework.ServiceReference;
 
 /**
  * Convenience class to help track DSF services that a given
- * client needs to use.  This class is similar to the standard OSGI 
+ * client needs to use.  This class is similar to the standard OSGI
  * org.osgi.util.tracker.ServiceTracker class, with a few differences:
  * <br>1. This class is assumed to be accessed by a single thread hence it
- * has no synchronization built in, while OSGI ServiceTracker synchronized 
+ * has no synchronization built in, while OSGI ServiceTracker synchronized
  * access to its data.
- * <br>2. This class is primarily designed to track multiple services of 
+ * <br>2. This class is primarily designed to track multiple services of
  * different type (class), while OSGI ServiceTracker is designed to work with
  * single class type, with optional filtering options.
  * <br>3. This class uses knowledge of DSF sessions to help narrow down
  * service references.
- * <br>4. OSGI Service tracker explicitly listens to OSGI service 
+ * <br>4. OSGI Service tracker explicitly listens to OSGI service
  * startup/shutdown events and it will clear a reference to a service as
- * soon as it's shut down.  
+ * soon as it's shut down.
  * Since version 2.0, this class listens to service unregister events
  * as an indication of service shutdown.  In the case of an unregister event,
  * this class will clear the reference to that service.
  * <p>
  * That said, it might be more convenient for certain types of clients to use
- * OSGI Service tracker for the additional features it provides. 
- * 
+ * OSGI Service tracker for the additional features it provides.
+ *
  * @see org.osgi.util.tracker.ServiceTracker
- * 
+ *
  * @since 1.0
  */
 @ConfinedToDsfExecutor("DsfSession.getSession(sessionId).getExecutor()")
@@ -105,7 +105,7 @@ public class DsfServicesTracker {
 				return;
 			}
 
-			// If session is not active anymore, just exit.  The tracker should 
+			// If session is not active anymore, just exit.  The tracker should
 			// soon be disposed.
 			DsfSession session = DsfSession.getSession(fSessionId);
 			if (session == null) {
@@ -142,10 +142,10 @@ public class DsfServicesTracker {
 		}
 	}
 
-	/** 
+	/**
 	 * Only constructor.
-	 * @param bundleContext Context of the plugin that the client lives in. 
-	 * @param sessionId The DSF session that this tracker will be used for. 
+	 * @param bundleContext Context of the plugin that the client lives in.
+	 * @param sessionId The DSF session that this tracker will be used for.
 	 */
 	@ThreadSafe
 	public DsfServicesTracker(BundleContext bundleContext, String sessionId) {
@@ -160,13 +160,13 @@ public class DsfServicesTracker {
 	}
 
 	/**
-	 * Retrieves a service reference for given service class and optional filter.  
+	 * Retrieves a service reference for given service class and optional filter.
 	 * Filter should be used if there are multiple instances of the desired service
-	 * running within the same session. 
+	 * running within the same session.
 	 * @param serviceClass class of the desired service
-	 * @param custom filter to use when searching for the service, this filter will 
-	 * be used instead of the standard filter so it should also specify the desired 
-	 * session-ID 
+	 * @param custom filter to use when searching for the service, this filter will
+	 * be used instead of the standard filter so it should also specify the desired
+	 * session-ID
 	 * @return OSGI service reference object to the desired service, null if not found
 	 */
 	public <V> ServiceReference<V> getServiceReference(Class<V> serviceClass, String filter) {
@@ -215,14 +215,14 @@ public class DsfServicesTracker {
 		return getService(serviceClass, null);
 	}
 
-	/** 
+	/**
 	 * Retrieves the service given service class and optional filter.
 	 * Filter should be used if there are multiple instances of the desired service
-	 * running within the same session. 
+	 * running within the same session.
 	 * @param serviceClass class of the desired service
-	 * @param custom filter to use when searching for the service, this filter will 
-	 * be used instead of the standard filter so it should also specify the desired 
-	 * session-ID 
+	 * @param custom filter to use when searching for the service, this filter will
+	 * be used instead of the standard filter so it should also specify the desired
+	 * session-ID
 	 * @return instance of the desired service, null if not found
 	 */
 	public <V> V getService(Class<V> serviceClass, String filter) {
@@ -269,7 +269,7 @@ public class DsfServicesTracker {
 			} catch (RejectedExecutionException e) {
 			}
 		}
-		// We should get to this point if 
+		// We should get to this point if
 		// 1) we're in session's executor thread
 		// 2) session is disposed already
 		// 3) executor rejected our runnable

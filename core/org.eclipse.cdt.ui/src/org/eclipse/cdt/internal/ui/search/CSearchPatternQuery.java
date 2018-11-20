@@ -21,12 +21,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.cdt.core.dom.ast.ICompositeType;
 import org.eclipse.cdt.core.dom.ast.IEnumeration;
 import org.eclipse.cdt.core.dom.ast.IEnumerator;
@@ -42,6 +36,11 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 
 /**
  * @author Doug Schaefer
@@ -78,7 +77,7 @@ public class CSearchPatternQuery extends CSearchQuery {
 		this.patternStr = patternStr.trim();
 
 		// Parse the pattern string
-		List<Pattern> patternList = new ArrayList<Pattern>();
+		List<Pattern> patternList = new ArrayList<>();
 		StringBuilder buff = new StringBuilder();
 		int n = patternStr.length();
 		for (int i = 0; i < n; ++i) {
@@ -144,11 +143,11 @@ public class CSearchPatternQuery extends CSearchQuery {
 		try {
 			IndexFilter filter = IndexFilter.ALL;
 			IIndexBinding[] bindings = index.findBindings(pattern, false, filter, monitor);
-			ArrayList<IIndexBinding> matchedBindings = new ArrayList<IIndexBinding>();
+			ArrayList<IIndexBinding> matchedBindings = new ArrayList<>();
 			for (int i = 0; i < bindings.length; ++i) {
 				IIndexBinding pdomBinding = bindings[i];
 
-				// Select the requested bindings  
+				// Select the requested bindings
 				boolean matches = false;
 				if ((flags & FIND_ALL_TYPES) == FIND_ALL_TYPES) {
 					matches = true;

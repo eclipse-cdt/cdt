@@ -21,8 +21,8 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
  * GDB/MI var-list-children
  * -var-list-children var2
  *  ^done,numchild="6",children={child={name="var2.0",exp="0",numchild="0",type="char"},child={name="var2.1",exp="1",numchild="0",type="char"},child={name="var2.2",exp="2",numchild="0",type="char"},child={name="var2.3",exp="3",numchild="0",type="char"},child={name="var2.4",exp="4",numchild="0",type="char"},child={name="var2.5",exp="5",numchild="0",type="char"}}
- *  
- * -var-list-children var3 
+ *
+ * -var-list-children var3
  *  ^done,numchild="3",displayhint="array",children=[child={name="var6.[0].[1]",exp="[1]",numchild="0",type="std::basic_string<char, std::char_traits<char>, std::allocator<char> >",thread-id="1"\
 ,displayhint="string",dynamic="1"},child={name="var6.[0].[2]",exp="[2]",numchild="0",type="std::basic_string<char, std::char_traits<char>, std::allocator<char> >",thread-id="1",displayhint="string",dy\
 namic="1"},child={name="var6.[0].[3]",exp="[3]",numchild="0",type="std::basic_string<char, std::char_traits<char>, std::allocator<char> >",thread-id="1",displayhint="string",dynamic="1"}],has_more="0"\
@@ -63,7 +63,7 @@ public class MIVar {
 	 *            If isDynamic is true, whether there are more children
 	 *            available than just <code>num</code>.
 	 * @param t
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public MIVar(String n, boolean isDynamic, int num, boolean hasMore, String t) {
@@ -118,7 +118,7 @@ public class MIVar {
 	/**
 	 * @return Whether the value and children of this variable are provided
 	 *         by a pretty printer.
-	 *         
+	 *
 	 * @since 4.0
 	 */
 	public boolean isDynamic() {
@@ -129,7 +129,7 @@ public class MIVar {
 	 * @return The number of children. If {@link #isDynamic()} returns true,
 	 *         the returned value only reflects the number of children currently
 	 *         fetched by gdb. Check {@link #hasMore()} in order to find out
-	 *         whether the are more children. 
+	 *         whether the are more children.
 	 */
 	public int getNumChild() {
 		return numchild;
@@ -140,7 +140,7 @@ public class MIVar {
 	 *         method returns whether there are children in addition to the
 	 *         currently fetched, i.e. whether there are more children than
 	 *         {@link #getNumChild()} returns.
-	 *         
+	 *
 	 * @since 4.0
 	 */
 	public boolean hasMore() {
@@ -154,7 +154,7 @@ public class MIVar {
 	/**
 	 * @return Whether the underlying value conceptually represents a string,
 	 *         array, or map.
-	 *         
+	 *
 	 * @since 4.0
 	 */
 	public MIDisplayHint getDisplayHint() {

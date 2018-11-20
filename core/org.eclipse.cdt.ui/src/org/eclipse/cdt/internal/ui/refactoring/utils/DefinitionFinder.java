@@ -18,13 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -39,12 +32,16 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-
 import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * Helper class for finding definitions and class member declarations
@@ -53,7 +50,7 @@ public class DefinitionFinder {
 	/**
 	 * Finds the definition for the given name. The definition and the original name may belong
 	 * to a different ASTs. The search is done in the index and in the ASTs of dirty editors.
-	 * 
+	 *
 	 * @param name the name to find the definition for
 	 * @param context the refactoring context
 	 * @param pm the progress monitor
@@ -73,11 +70,11 @@ public class DefinitionFinder {
 	/**
 	 * Finds the definition for the given binding. The search is done in the index and in the ASTs
 	 * of dirty editors.
-	 * 
+	 *
 	 * @param binding the binding to find the definition for
 	 * @param contextTu the translation unit that determines the set of files to search for
 	 *     the definition. Only the files directly or indirectly included by the translation unit
-	 *     are considered. 
+	 *     are considered.
 	 * @param context the refactoring context
 	 * @param pm the progress monitor
 	 * @return the definition name, or {@code null} if there is no definition or if it is
@@ -94,8 +91,8 @@ public class DefinitionFinder {
 		IIndexBinding indexBinding = index.adaptBinding(binding);
 		if (binding == null)
 			return null;
-		Set<String> searchedFiles = new HashSet<String>();
-		List<IASTName> definitions = new ArrayList<IASTName>();
+		Set<String> searchedFiles = new HashSet<>();
+		List<IASTName> definitions = new ArrayList<>();
 		IIndexName[] definitionsFromIndex = index.findNames(indexBinding,
 				IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		int remainingCount = definitionsFromIndex.length;
@@ -142,7 +139,7 @@ public class DefinitionFinder {
 	/**
 	 * Checks if the given binding has a definition. The search is done in the index and in the ASTs
 	 * of dirty editors.
-	 * 
+	 *
 	 * @param binding the binding to find the definition for
 	 * @param context the refactoring context
 	 * @param pm the progress monitor
@@ -159,7 +156,7 @@ public class DefinitionFinder {
 		IIndexBinding indexBinding = index.adaptBinding(binding);
 		if (binding == null)
 			return false;
-		Set<String> dirtyFiles = new HashSet<String>();
+		Set<String> dirtyFiles = new HashSet<>();
 		IEditorPart[] dirtyEditors = EditorUtility.getDirtyEditors(true);
 		for (IEditorPart editor : dirtyEditors) {
 			IEditorInput editorInput = editor.getEditorInput();
@@ -169,7 +166,7 @@ public class DefinitionFinder {
 			}
 		}
 
-		Set<String> searchedFiles = new HashSet<String>();
+		Set<String> searchedFiles = new HashSet<>();
 		IIndexName[] definitionsFromIndex = index.findNames(indexBinding,
 				IIndex.FIND_DEFINITIONS | IIndex.SEARCH_ACROSS_LANGUAGE_BOUNDARIES);
 		int remainingCount = definitionsFromIndex.length;
@@ -224,7 +221,7 @@ public class DefinitionFinder {
 	 * Finds the declaration for the given class member. The declaration and the original member
 	 * name may belong to a different ASTs. The search is done in the index and in the ASTs of dirty
 	 * editors.
-	 * 
+	 *
 	 * @param memberName the name of the class member to find the declaration for
 	 * @param context the refactoring context
 	 * @param pm the progress monitor
@@ -244,11 +241,11 @@ public class DefinitionFinder {
 	 * Finds the declaration for the given class member. The declaration and the original member
 	 * name may belong to a different ASTs. The search is done in the index and in the ASTs of dirty
 	 * editors.
-	 * 
+	 *
 	 * @param member the class member binding to find the declaration for
 	 * @param contextTu the translation unit that determines the set of files to search for
 	 *     the declaration. Only the files directly or indirectly included by the translation unit
-	 *     are considered. 
+	 *     are considered.
 	 * @param context the refactoring context
 	 * @param pm the progress monitor
 	 * @return the declaration name, or {@code null} if there is no declaration or if it is

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -18,9 +18,9 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 
 /**
  * This interface provides the ability to perform run control operations on multiple contexts.
- * 
+ *
  * @see org.eclipse.cdt.dsf.debug.service.IRunControl
- * 
+ *
  * @since 2.3
  */
 public interface IMultiRunControl extends IRunControl {
@@ -127,7 +127,7 @@ public interface IMultiRunControl extends IRunControl {
 	void suspend(IExecutionDMContext[] contexts, RequestMonitor rm);
 
 	/**
-	 * Request that all specified context be stepped using stepType.  Only contexts 
+	 * Request that all specified context be stepped using stepType.  Only contexts
 	 * that are in a state that can be stepped will be affected, others will be ignored.
 	 * @param context List of execution contexts that are to be stepped
 	 * @param stepStype The type of step to be used.

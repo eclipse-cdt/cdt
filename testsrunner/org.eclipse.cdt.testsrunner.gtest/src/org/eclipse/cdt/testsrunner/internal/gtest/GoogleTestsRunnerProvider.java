@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,7 @@ import org.eclipse.cdt.testsrunner.model.TestingException;
 
 /**
  * The Tests Runner provider plug-in to run tests with Google Testing framework.
- * 
+ *
  * Parses the text test module to output and provides the data for the Tests
  * Runner Plug-In.
  */
@@ -74,7 +74,7 @@ public class GoogleTestsRunnerProvider implements ITestsRunnerProvider {
 
 	/**
 	 * Construct the error message from prefix and detailed description.
-	 * 
+	 *
 	 * @param prefix prefix
 	 * @param description detailed description
 	 * @return the full message

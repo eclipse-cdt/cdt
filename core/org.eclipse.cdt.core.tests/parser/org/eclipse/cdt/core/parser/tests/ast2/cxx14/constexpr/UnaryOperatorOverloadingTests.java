@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -66,13 +66,13 @@ public class UnaryOperatorOverloadingTests extends TestBase {
 	//	    return y;
 	//	  }
 	//	};
-	//	
+	//
 	//	constexpr Point& operator++(Point& p) {
 	//	  ++p.x;
 	//	  ++p.y;
 	//	  return p;
 	//	}
-	//	
+	//
 	//	constexpr int f() {
 	//	  Point p{4,5};
 	//	  ++p;

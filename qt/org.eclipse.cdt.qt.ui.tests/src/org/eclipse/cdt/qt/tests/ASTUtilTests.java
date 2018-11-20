@@ -39,7 +39,7 @@ public class ASTUtilTests extends AST2TestBase {
 		assertNotNull(tu);
 
 		// Find the callee function call.
-		ArrayList<IASTFunctionCallExpression> fnCalls = new ArrayList<IASTFunctionCallExpression>();
+		ArrayList<IASTFunctionCallExpression> fnCalls = new ArrayList<>();
 		collectChildren(fnCalls, tu, IASTFunctionCallExpression.class);
 		assertEquals(7, fnCalls.size());
 
@@ -89,7 +89,7 @@ public class ASTUtilTests extends AST2TestBase {
 		assertNotNull(tu);
 
 		// Find the C1 type.
-		ArrayList<ICPPASTCompositeTypeSpecifier> specs = new ArrayList<ICPPASTCompositeTypeSpecifier>();
+		ArrayList<ICPPASTCompositeTypeSpecifier> specs = new ArrayList<>();
 		collectChildren(specs, tu, ICPPASTCompositeTypeSpecifier.class);
 		assertEquals(1, specs.size());
 
@@ -101,7 +101,7 @@ public class ASTUtilTests extends AST2TestBase {
 		assertEquals("C1", specName.getRawSignature());
 
 		// Find the function call expression "c.get()".
-		ArrayList<IASTFunctionCallExpression> fnCalls = new ArrayList<IASTFunctionCallExpression>();
+		ArrayList<IASTFunctionCallExpression> fnCalls = new ArrayList<>();
 		collectChildren(fnCalls, tu, IASTFunctionCallExpression.class);
 		assertEquals(2, fnCalls.size());
 

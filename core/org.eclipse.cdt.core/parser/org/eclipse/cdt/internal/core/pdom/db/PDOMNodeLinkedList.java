@@ -85,7 +85,7 @@ public class PDOMNodeLinkedList {
 
 	/**
 	 * Returns node at position {@code pos}. Not recommended to be used in a loop since
-	 * such a loop would be more expensive that a single {@code accept(IPDOMVisitor)} call. 
+	 * such a loop would be more expensive that a single {@code accept(IPDOMVisitor)} call.
 	 * @param pos A zero-based position in the list.
 	 * @return The node at position {@code pos}, or {@code null} if no such node exists.
 	 */

@@ -14,7 +14,7 @@
 package org.eclipse.cdt.make.ui.wizards;
 
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
-import org.eclipse.cdt.make.ui.actions.*;
+import org.eclipse.cdt.make.ui.actions.UpdateMakeProjectAction;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.wizard.Wizard;
 

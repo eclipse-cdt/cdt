@@ -19,8 +19,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * Interface for providers of C/C++ scanner info 
- * 
+ * Interface for providers of C/C++ scanner info
+ *
  * @author vhirsl
  */
 public interface IExternalScannerInfoProvider {

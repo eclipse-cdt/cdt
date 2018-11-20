@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model.ext;
 
+import java.net.URI;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -37,10 +41,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Region;
-
-import java.net.URI;
-import java.util.Collections;
-import java.util.List;
 
 abstract class CElementHandle implements ICElementHandle, ISourceReference {
 	protected static final String[] EMPTY_STRING_ARRAY = {};

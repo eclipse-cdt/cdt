@@ -20,7 +20,7 @@ import java.io.IOException;
  * ICommand
  * Commands are associated with a rule and executed by
  * the make program when building a target.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

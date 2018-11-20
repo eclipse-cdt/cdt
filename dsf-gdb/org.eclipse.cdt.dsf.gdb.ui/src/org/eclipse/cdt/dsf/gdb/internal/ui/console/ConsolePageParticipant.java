@@ -41,7 +41,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * It adds a save button to the gdb tracing console.
  * It also brings to the front the proper inferior console when an element of the
  * debug view is selected.
- * 
+ *
  * @since 2.1
  */
 public class ConsolePageParticipant implements IConsolePageParticipant, IDebugContextListener {
@@ -58,7 +58,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 
 		if (isConsoleInferior(console)) {
 			// This console participant will affect all consoles, even those not for DSF-GDB.
-			// Only consoles for InferiorRuntimeProcess are what we care about for DSF-GDB 
+			// Only consoles for InferiorRuntimeProcess are what we care about for DSF-GDB
 			DebugUITools.getDebugContextManager().getContextService(fPage.getSite().getWorkbenchWindow())
 					.addDebugContextListener(this);
 		}
@@ -77,7 +77,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 
 	/**
 	 * Checks if the the console is for an inferior.
-	 * 
+	 *
 	 * @param console The console to check
 	 * @return true if the the console is for an inferior
 	 */
@@ -138,7 +138,7 @@ public class ConsolePageParticipant implements IConsolePageParticipant, IDebugCo
 			// after our current class, so the console it chooses wins in the
 			// case of ILaunch.
 			// So, for consistency, when GDBProcess is selected, we choose the
-			// same inferior chosen by ProcessConsolePageParticipant when 
+			// same inferior chosen by ProcessConsolePageParticipant when
 			// ILaunch is selected, which is the last (not the first) inferior
 			// process.
 			// Note that we could ignore the ILaunch case in this class

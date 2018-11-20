@@ -364,9 +364,9 @@ public class OverlayPreferenceStore implements IPreferenceStore {
 	/**
 	 * The keys to add to the list of overlay keys.
 	 * <p>
-	 * Note: This method must be called before {@link #load()} is called. 
+	 * Note: This method must be called before {@link #load()} is called.
 	 * </p>
-	 * 
+	 *
 	 * @param keys
 	 * @since 3.0
 	 */

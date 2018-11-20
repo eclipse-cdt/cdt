@@ -18,10 +18,6 @@ import java.io.FileNotFoundException;
 import java.util.Iterator;
 import java.util.Vector;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -42,8 +38,12 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 /**
- * Class for testing the C Element Delta Builder. 
+ * Class for testing the C Element Delta Builder.
  */
 public class ElementDeltaTests extends TestCase implements IElementChangedListener {
 	private ICProject fCProject;
@@ -124,7 +124,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		assertRemovedElement(ICElement.C_INCLUDE, "stdio.h");
 		assertEmptyDelta();
 
-		// add the field x		
+		// add the field x
 		wcBuf.setContents("\n class Hello{\n int x; \n};");
 		wc.reconcile();
 		wc.commit(true, monitor);
@@ -175,7 +175,7 @@ public class ElementDeltaTests extends TestCase implements IElementChangedListen
 		assertRemovedElement(ICElement.C_METHOD_DECLARATION, "setValue");
 		assertEmptyDelta();
 
-		// remove the field		
+		// remove the field
 		wcBuf.setContents("\n class Hello{ \n};");
 		wc.reconcile();
 		wc.commit(true, monitor);

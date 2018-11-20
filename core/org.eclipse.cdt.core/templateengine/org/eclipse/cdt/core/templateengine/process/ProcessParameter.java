@@ -96,7 +96,7 @@ public class ProcessParameter {
 	}
 
 	/**
-	 * Checks whether the element in external. 
+	 * Checks whether the element in external.
 	 */
 	public boolean isExternal() {
 		return external;

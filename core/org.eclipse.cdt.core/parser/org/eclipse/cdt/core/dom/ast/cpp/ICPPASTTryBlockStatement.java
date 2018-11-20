@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 /**
  * This interface represents the try block statement. try { //body } catch (Exc e)
  * { // handler } catch ( ... ) { }
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -31,14 +31,14 @@ public interface ICPPASTTryBlockStatement extends IASTStatement {
 
 	/**
 	 * Sets the try body.
-	 * 
+	 *
 	 * @param tryBlock {@code IASTStatement}
 	 */
 	public void setTryBody(IASTStatement tryBlock);
 
 	/**
 	 * Returns the try body.
-	 * 
+	 *
 	 * @return {@code IASTStatement}
 	 */
 	public IASTStatement getTryBody();
@@ -51,14 +51,14 @@ public interface ICPPASTTryBlockStatement extends IASTStatement {
 
 	/**
 	 * Adds catch handler.
-	 * 
+	 *
 	 * @param handler {@code ICPPASTCatchHandler}
 	 */
 	public void addCatchHandler(ICPPASTCatchHandler handler);
 
 	/**
 	 * Returns the catch handlers.
-	 * 
+	 *
 	 * @return {@code ICPPASTCatchHandler[]}
 	 */
 	public ICPPASTCatchHandler[] getCatchHandlers();

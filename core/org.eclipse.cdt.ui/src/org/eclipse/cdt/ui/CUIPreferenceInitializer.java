@@ -14,18 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
-import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.EditorsUI;
-import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-
 import org.eclipse.cdt.internal.ui.ICThemeConstants;
 import org.eclipse.cdt.internal.ui.cview.CView;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
@@ -35,6 +23,16 @@ import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.CodeAssistPreferencePage;
 import org.eclipse.cdt.internal.ui.preferences.WorkInProgressPreferencePage;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
+import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.editors.text.EditorsUI;
+import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
+import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 /**
  * This class implements the setting of the CUI initial preference store settings.

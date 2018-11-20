@@ -90,7 +90,7 @@ public class ManagedBuildCPathEntryContainer implements IPathEntryContainer {
 	public ManagedBuildCPathEntryContainer(IProject project) {
 		super();
 		this.project = project;
-		entries = new Vector<IPathEntry>();
+		entries = new Vector<>();
 	}
 
 	protected void addDefinedSymbols(Map<String, String> definedSymbols) {

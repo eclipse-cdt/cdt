@@ -61,7 +61,7 @@ abstract public class AbstractCDebuggerPage extends AbstractLaunchConfigurationT
 
 	/**
 	 * Notifies the registered listeners that the page's content has changed.
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	protected void contentChanged() {

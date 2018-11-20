@@ -18,8 +18,6 @@ package org.eclipse.cdt.internal.pdom.tests;
 import java.io.File;
 import java.util.Random;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.pdom.db.BTree;
@@ -31,6 +29,8 @@ import org.eclipse.cdt.internal.core.pdom.db.IString;
 import org.eclipse.cdt.internal.core.pdom.db.ShortString;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+
+import junit.framework.Test;
 
 /**
  * Tests for the {@link Database} class.

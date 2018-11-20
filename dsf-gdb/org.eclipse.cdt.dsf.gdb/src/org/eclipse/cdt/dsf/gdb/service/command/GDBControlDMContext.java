@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Onur Akdemir (TUBITAK BILGEM-ITI) - Multi-process debugging (Bug 335324)
@@ -23,7 +23,7 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.ITraceTargetDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.MIControlDMContext;
 
 /**
- * 
+ *
  */
 public class GDBControlDMContext extends MIControlDMContext implements ISymbolDMContext, ISourceLookupDMContext,
 		ISignalsDMContext, ITraceTargetDMContext, IHardwareTargetDMContext {

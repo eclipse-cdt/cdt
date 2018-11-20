@@ -30,7 +30,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
  * one.
  */
 public class LocalVariableIndex {
-	private final Map<IVariable, Integer> variableMap = new HashMap<IVariable, Integer>();
+	private final Map<IVariable, Integer> variableMap = new HashMap<>();
 
 	public LocalVariableIndex(IASTFunctionDefinition functionDefinition) {
 		functionDefinition.accept(new ASTVisitor() {

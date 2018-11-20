@@ -47,7 +47,7 @@ public class QMakeProjectInfoManager {
 	// called by QtPlugin activator to setup this class
 	public static final void start() {
 		synchronized (CACHE_SYNC) {
-			CACHE = new HashMap<IProject, QMakeProjectInfo>();
+			CACHE = new HashMap<>();
 		}
 		CoreModel.getDefault().addCProjectDescriptionListener(PD_LISTENER,
 				CProjectDescriptionEvent.LOADED | CProjectDescriptionEvent.APPLIED);
@@ -61,7 +61,7 @@ public class QMakeProjectInfoManager {
 		CoreModel.getDefault().removeCProjectDescriptionListener(PD_LISTENER);
 		List<QMakeProjectInfo> infos;
 		synchronized (CACHE_SYNC) {
-			infos = new ArrayList<QMakeProjectInfo>(CACHE.values());
+			infos = new ArrayList<>(CACHE.values());
 			CACHE = null;
 		}
 		for (QMakeProjectInfo info : infos) {
@@ -176,9 +176,9 @@ public class QMakeProjectInfoManager {
 
 	private static final class RDVisitor implements IResourceDeltaVisitor {
 
-		private final Set<IResource> projectsToDelete = new HashSet<IResource>();
-		private final Set<IResource> projectsToUpdate = new HashSet<IResource>();
-		private final Set<IPath> changedFiles = new HashSet<IPath>();
+		private final Set<IResource> projectsToDelete = new HashSet<>();
+		private final Set<IResource> projectsToUpdate = new HashSet<>();
+		private final Set<IPath> changedFiles = new HashSet<>();
 
 		@Override
 		public boolean visit(IResourceDelta delta) throws CoreException {
@@ -233,7 +233,7 @@ public class QMakeProjectInfoManager {
 				if (CACHE == null)
 					return;
 
-				infos = new ArrayList<QMakeProjectInfo>(CACHE.values());
+				infos = new ArrayList<>(CACHE.values());
 			}
 			for (QMakeProjectInfo info : infos) {
 				// checking if any project description change or any of the changed files affect QMakeProjectInfo

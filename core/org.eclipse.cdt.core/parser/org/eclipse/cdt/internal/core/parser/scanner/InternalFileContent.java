@@ -29,7 +29,7 @@ import org.eclipse.cdt.core.parser.ISignificantMacros;
 public class InternalFileContent extends FileContent {
 	public enum InclusionKind {
 		/**
-		 * Instruct the preprocessor to skip this inclusion. 
+		 * Instruct the preprocessor to skip this inclusion.
 		 */
 		SKIP_FILE,
 		/**
@@ -139,7 +139,7 @@ public class InternalFileContent extends FileContent {
 	 * For using information about an include file from the index.
 	 * @param fileLocation the location of the file
 	 * @param macroDefinitions a list of macro definitions
-	 * @param files 
+	 * @param files
 	 * @throws IllegalArgumentException in case the fileLocation or the macroDefinitions are <code>null</code>.
 	 */
 	public InternalFileContent(String fileLocation, List<IIndexMacro> macroDefinitions,

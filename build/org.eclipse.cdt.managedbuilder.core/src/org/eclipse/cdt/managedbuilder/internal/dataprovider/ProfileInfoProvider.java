@@ -41,7 +41,7 @@ public class ProfileInfoProvider {
 		//		IResourceInfo rcInfo = lData.getTool().getParentResourceInfo();
 		//		fContext = new CfgInfoContext(rcInfo, lData.getTool(), lData.getInputType());
 		fMngr = CfgDiscoveredPathManager.getInstance();
-		//		IResource rc = rcInfo.getParent().getOwner(); 
+		//		IResource rc = rcInfo.getParent().getOwner();
 		//		fProject = rc != null ? rc.getProject() : null;
 	}
 

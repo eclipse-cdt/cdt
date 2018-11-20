@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.workingsets;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.osgi.util.NLS;
@@ -24,14 +25,12 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.actions.CompoundContributionItem;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * A dynamic contribution of sub-menus for working set configuration actions, with further sub-menus showing
  * the configurations to choose from.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 abstract class AbstractWorkingSetsContribution extends CompoundContributionItem {
@@ -47,7 +46,7 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 
 	/**
 	 * Initializes me with my identifier.
-	 * 
+	 *
 	 * @param id
 	 *            my identifier
 	 */
@@ -58,7 +57,7 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 	@Override
 	protected IContributionItem[] getContributionItems() {
 		// at most 5 recent working sets
-		List<IContributionItem> result = new java.util.ArrayList<IContributionItem>(5);
+		List<IContributionItem> result = new java.util.ArrayList<>(5);
 
 		int i = 0;
 		for (IWorkingSet recent : getWorkingsetManager().getRecentWorkingSets()) {
@@ -101,7 +100,7 @@ abstract class AbstractWorkingSetsContribution extends CompoundContributionItem 
 
 	/**
 	 * Creates a contribution item for a working set.
-	 * 
+	 *
 	 * @param workingSet
 	 *            a working set
 	 * @return the contribution

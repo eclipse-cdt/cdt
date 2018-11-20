@@ -114,7 +114,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 				ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, markerGenerator,
 						errorParsers);
 
-				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+				List<IConsoleParser> parsers = new ArrayList<>();
 				if (!isOnlyClean) {
 					ICConfigurationDescription cfgDescription = ManagedBuildManager
 							.getDescriptionForConfiguration(configuration);
@@ -199,7 +199,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 	}
 
 	protected Map<String, String> getEnvironment(IBuilder builder) throws CoreException {
-		Map<String, String> envMap = new HashMap<String, String>();
+		Map<String, String> envMap = new HashMap<>();
 		if (builder.appendEnvironment()) {
 			ICConfigurationDescription cfgDes = ManagedBuildManager
 					.getDescriptionForConfiguration(builder.getParent().getParent());
@@ -221,7 +221,7 @@ public class ExternalBuildRunner extends AbstractBuildRunner {
 	@Deprecated
 	protected static String[] getEnvStrings(Map<String, String> env) {
 		// Convert into env strings
-		List<String> strings = new ArrayList<String>(env.size());
+		List<String> strings = new ArrayList<>(env.size());
 		for (Entry<String, String> entry : env.entrySet()) {
 			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());

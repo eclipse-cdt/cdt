@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 /**
  * Scanner configuration discovery tests
- * 
+ *
  * @author vhirsl
  */
 public class ScannerConfigDiscoveryTests extends BaseTestCase {

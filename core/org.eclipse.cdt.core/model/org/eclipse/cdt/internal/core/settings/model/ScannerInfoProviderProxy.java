@@ -71,7 +71,7 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy
 		List<IScannerInfoChangeListener> list = map.get(project);
 		if (list == null) {
 			// Create a new list
-			list = new ArrayList<IScannerInfoChangeListener>();
+			list = new ArrayList<>();
 			map.put(project, list);
 		}
 		if (!list.contains(listener)) {
@@ -85,7 +85,7 @@ public class ScannerInfoProviderProxy extends AbstractCExtensionProxy
 	 */
 	private Map<IProject, List<IScannerInfoChangeListener>> getListeners() {
 		if (listeners == null) {
-			listeners = new HashMap<IProject, List<IScannerInfoChangeListener>>();
+			listeners = new HashMap<>();
 		}
 		return listeners;
 	}

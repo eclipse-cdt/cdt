@@ -18,6 +18,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.ICModelMarker;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -26,13 +31,6 @@ import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.cdt.core.model.ICModelMarker;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 
 public final class ContributedProcessorDescriptor {
 	private final IConfigurationElement fConfigurationElement;
@@ -58,7 +56,7 @@ public final class ContributedProcessorDescriptor {
 	}
 
 	private Set<String> getHandledMarkerTypes(IConfigurationElement element) {
-		HashSet<String> map = new HashSet<String>(7);
+		HashSet<String> map = new HashSet<>(7);
 		IConfigurationElement[] children = element.getChildren(HANDLED_MARKER_TYPES);
 		for (IConfigurationElement element2 : children) {
 			IConfigurationElement[] types = element2.getChildren(MARKER_TYPE);

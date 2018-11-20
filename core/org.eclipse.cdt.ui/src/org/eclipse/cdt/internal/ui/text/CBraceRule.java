@@ -23,7 +23,7 @@ import org.eclipse.jface.text.rules.IToken;
 public class CBraceRule extends SingleCharRule {
 
 	/**
-	 * Creates new rule. 
+	 * Creates new rule.
 	 * @param token Style token.
 	 */
 	public CBraceRule(IToken token) {

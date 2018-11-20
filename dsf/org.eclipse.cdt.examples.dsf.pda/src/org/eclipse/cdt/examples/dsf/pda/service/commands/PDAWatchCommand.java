@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 
 /**
  * Sets a watchpoint on a given variable
- * 
+ *
  * <pre>
  *    C: watch {function}::{variable_name} {watch_operation}
  *    R: ok
@@ -32,7 +32,7 @@ public class PDAWatchCommand extends AbstractPDACommand<PDACommandResult> {
 
 	public enum WatchOperation {
 		READ, WRITE, BOTH, NONE
-	};
+	}
 
 	private static int getWatchOperationCode(WatchOperation operation) {
 		switch (operation) {

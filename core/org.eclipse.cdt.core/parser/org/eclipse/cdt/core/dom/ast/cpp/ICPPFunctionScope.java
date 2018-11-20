@@ -24,7 +24,7 @@ public interface ICPPFunctionScope extends ICPPScope {
 	/**
 	 * Returns the scope representing the function body, or {@code null} if there is no
 	 * function definition.
-	 * 
+	 *
 	 * @throws DOMException
 	 */
 	public IScope getBodyScope() throws DOMException;

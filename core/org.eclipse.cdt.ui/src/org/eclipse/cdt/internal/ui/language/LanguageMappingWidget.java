@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.LanguageManager;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
@@ -29,8 +30,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Table;
-
-import org.eclipse.cdt.core.model.LanguageManager;
 
 public abstract class LanguageMappingWidget {
 
@@ -54,7 +53,7 @@ public abstract class LanguageMappingWidget {
 		fOverriddenContentTypes = Collections.emptySet();
 
 		// keep a mapping of all registered content types and their names
-		fContentTypeNamesToIDsMap = new HashMap<String, String>();
+		fContentTypeNamesToIDsMap = new HashMap<>();
 		String[] contentTypesIDs = LanguageManager.getInstance().getRegisteredContentTypeIds();
 
 		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
@@ -69,7 +68,7 @@ public abstract class LanguageMappingWidget {
 			fContentTypeNamesToIDsMap.put(name, contentTypesIDs[i]);
 		}
 
-		fAffectedContentTypes = new HashSet<IContentType>();
+		fAffectedContentTypes = new HashSet<>();
 	}
 
 	public IAdaptable getElement() {

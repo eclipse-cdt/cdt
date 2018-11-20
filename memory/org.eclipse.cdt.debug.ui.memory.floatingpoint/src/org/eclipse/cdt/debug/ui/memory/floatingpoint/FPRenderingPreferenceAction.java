@@ -27,7 +27,7 @@ public class FPRenderingPreferenceAction extends ActionDelegate implements IView
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	@Override
@@ -38,7 +38,7 @@ public class FPRenderingPreferenceAction extends ActionDelegate implements IView
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
 	@Override

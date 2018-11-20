@@ -41,7 +41,7 @@ public class Resources {
 
 	/**
 	 * Checks if the given resource is in sync with the underlying file system.
-	 * 
+	 *
 	 * @param resource the resource to be checked
 	 * @return IStatus status describing the check's result. If <code>status.
 	 * isOK()</code> returns <code>true</code> then the resource is in sync
@@ -53,7 +53,7 @@ public class Resources {
 	/**
 	 * Checks if the given resources are in sync with the underlying file
 	 * system.
-	 * 
+	 *
 	 * @param resources the resources to be checked
 	 * @return IStatus status describing the check's result. If <code>status.
 	 *  isOK() </code> returns <code>true</code> then the resources are in sync
@@ -68,18 +68,18 @@ public class Resources {
 		}
 		if (result != null)
 			return result;
-		return new Status(IStatus.OK, CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$		
+		return new Status(IStatus.OK, CUIPlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
 	}
 
 	/**
 	 * Makes the given resource committable. Committable means that it is
 	 * writeable and that its content hasn't changed by calling
 	 * <code>validateEdit</code> for the given resource on <tt>IWorkspace</tt>.
-	 * 
+	 *
 	 * @param resource the resource to be checked
-	 * @param context the context passed to <code>validateEdit</code> 
+	 * @param context the context passed to <code>validateEdit</code>
 	 * @return status describing the method's result. If <code>status.isOK()</code> returns <code>true</code> then the resources are committable.
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
 	 */
 	public static IStatus makeCommittable(IResource resource, Object context) {
@@ -91,17 +91,17 @@ public class Resources {
 	 * resources are writeable and that the content of the resources hasn't
 	 * changed by calling <code>validateEdit</code> for a given file on
 	 * <tt>IWorkspace</tt>.
-	 * 
+	 *
 	 * @param resources the resources to be checked
-	 * @param context the context passed to <code>validateEdit</code> 
+	 * @param context the context passed to <code>validateEdit</code>
 	 * @return IStatus status describing the method's result. If <code>status.
 	 * isOK()</code> returns <code>true</code> then the add resources are
 	 * committable
-	 * 
+	 *
 	 * @see org.eclipse.core.resources.IWorkspace#validateEdit(org.eclipse.core.resources.IFile[], java.lang.Object)
 	 */
 	public static IStatus makeCommittable(IResource[] resources, Object context) {
-		List<IResource> readOnlyFiles = new ArrayList<IResource>();
+		List<IResource> readOnlyFiles = new ArrayList<>();
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
 			if (resource.getType() == IResource.FILE) {
@@ -133,7 +133,7 @@ public class Resources {
 	}
 
 	private static Map<IFile, Long> createModificationStampMap(List<IResource> files) {
-		Map<IFile, Long> map = new HashMap<IFile, Long>();
+		Map<IFile, Long> map = new HashMap<>();
 		for (Iterator<IResource> iter = files.iterator(); iter.hasNext();) {
 			IFile file = (IFile) iter.next();
 			map.put(file, Long.valueOf(file.getModificationStamp()));
@@ -177,7 +177,7 @@ public class Resources {
 	}
 
 	public static String[] getLocationOSStrings(IResource[] resources) {
-		List<String> result = new ArrayList<String>(resources.length);
+		List<String> result = new ArrayList<>(resources.length);
 		for (int i = 0; i < resources.length; i++) {
 			IPath location = resources[i].getLocation();
 			if (location != null)

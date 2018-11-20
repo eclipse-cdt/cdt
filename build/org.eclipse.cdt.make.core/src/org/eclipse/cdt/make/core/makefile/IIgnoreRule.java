@@ -17,7 +17,7 @@ package org.eclipse.cdt.make.core.makefile;
  * .IGNORE
  * Prerequisites of this special target are targets themselves; this shall cause errors
  * from commands associated with them to be ignored in the same manner as specified by the -i option.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

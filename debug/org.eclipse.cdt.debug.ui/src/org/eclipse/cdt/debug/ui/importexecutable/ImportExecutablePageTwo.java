@@ -428,7 +428,7 @@ public class ImportExecutablePageTwo extends WizardPage {
 
 			// check if executables with same names already exist in the existing project
 			String[] executables = wizard.getImportExecutablePage().getSelectedExecutables();
-			List<String> existingNames = new ArrayList<String>();
+			List<String> existingNames = new ArrayList<>();
 			for (String executable : executables) {
 				IFile exeFile = getExecutableFile(project.getProject(), executable);
 				if (exeFile.exists()) {

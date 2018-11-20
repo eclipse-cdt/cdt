@@ -15,12 +15,11 @@ package org.eclipse.cdt.internal.ui.help;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.help.IHelpResource;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import org.eclipse.cdt.ui.IFunctionSummary;
 
 public class CHelpEntry {
 	private static final String ATTR_KEYWD = "keyword"; //$NON-NLS-1$
@@ -34,8 +33,8 @@ public class CHelpEntry {
 
 	public CHelpEntry(Element e) {
 		keyword = e.getAttribute(ATTR_KEYWD).trim();
-		ArrayList<CFunctionSummary> obs1 = new ArrayList<CFunctionSummary>();
-		ArrayList<CHelpTopic> obs2 = new ArrayList<CHelpTopic>();
+		ArrayList<CFunctionSummary> obs1 = new ArrayList<>();
+		ArrayList<CHelpTopic> obs2 = new ArrayList<>();
 		NodeList list = e.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			Node node = list.item(i);
@@ -56,8 +55,8 @@ public class CHelpEntry {
 
 	/**
 	 * Returns true if help entry is correct
-	 * Returns false if entry is empty or when 
-	 *   subsequent processing failed somehow. 
+	 * Returns false if entry is empty or when
+	 *   subsequent processing failed somehow.
 	 * @return entry state
 	 */
 	public boolean isValid() {

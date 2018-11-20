@@ -19,6 +19,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexChangeEvent;
+import org.eclipse.cdt.core.index.IIndexChangeListener;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IIndexerStateEvent;
+import org.eclipse.cdt.core.index.IIndexerStateListener;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -32,18 +43,6 @@ import org.eclipse.swt.SWTException;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexChangeEvent;
-import org.eclipse.cdt.core.index.IIndexChangeListener;
-import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.index.IIndexerStateEvent;
-import org.eclipse.cdt.core.index.IIndexerStateListener;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
 
 class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, ILabelProviderListener {
 	private static final String DECORATOR_ID = "org.eclipse.cdt.ui.indexedFiles"; //$NON-NLS-1$
@@ -64,7 +63,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 		return INSTANCE;
 	}
 
-	private final HashMap<String, Set<Integer>> fIndexedFiles = new HashMap<String, Set<Integer>>();
+	private final HashMap<String, Set<Integer>> fIndexedFiles = new HashMap<>();
 	private boolean fIsDirty = false;
 	private boolean fActive = false;
 
@@ -126,7 +125,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 
 	final protected void initialize(ICProject prj) throws CoreException, InterruptedException {
 		IIndex index = CCorePlugin.getIndexManager().getIndex(prj);
-		List<IIndexFileLocation> list = new ArrayList<IIndexFileLocation>();
+		List<IIndexFileLocation> list = new ArrayList<>();
 		index.acquireReadLock();
 		try {
 			IIndexFile[] files = index.getAllFiles();
@@ -140,7 +139,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 				synchronized (fIndexedFiles) {
 					Set<Integer> cache = fIndexedFiles.get(prjName);
 					if (cache == null) {
-						cache = new HashSet<Integer>();
+						cache = new HashSet<>();
 						fIndexedFiles.put(prjName, cache);
 					} else {
 						if (!cache.isEmpty()) {
@@ -186,7 +185,7 @@ class IndexedFilesCache implements IIndexChangeListener, IIndexerStateListener, 
 				if (!(filesCleared.isEmpty() && filesWritten.isEmpty())) {
 					Set<Integer> cache = fIndexedFiles.get(prjName);
 					if (cache == null) {
-						cache = new HashSet<Integer>();
+						cache = new HashSet<>();
 						fIndexedFiles.put(prjName, cache);
 					}
 					for (IIndexFileLocation ifl : filesCleared) {

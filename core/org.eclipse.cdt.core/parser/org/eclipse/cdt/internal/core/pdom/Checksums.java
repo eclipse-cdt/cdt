@@ -33,7 +33,7 @@ public class Checksums {
 
 	/**
 	 * Returns the default algorithm used to compute checksums.
-	 * @throws NoSuchAlgorithmException 
+	 * @throws NoSuchAlgorithmException
 	 * @since 4.0
 	 */
 	public static MessageDigest getDefaultAlgorithm() throws NoSuchAlgorithmException {
@@ -42,7 +42,7 @@ public class Checksums {
 
 	/**
 	 * Retrieves the algorithm for computing checksums from the persisted map.
-	 * @throws NoSuchAlgorithmException 
+	 * @throws NoSuchAlgorithmException
 	 * @since 4.0
 	 */
 	public static MessageDigest getAlgorithm(Map<?, ?> persistedMap) throws NoSuchAlgorithmException {
@@ -105,7 +105,7 @@ public class Checksums {
 	 */
 	public static Map<String, Object> createChecksumMap(IFile[] tus, MessageDigest md, IProgressMonitor pm)
 			throws OperationCanceledException {
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		putAlgorithm(result, md);
 		pm.beginTask(Messages.Checksums_taskComputeChecksums, tus.length);
 		for (IFile file : tus) {

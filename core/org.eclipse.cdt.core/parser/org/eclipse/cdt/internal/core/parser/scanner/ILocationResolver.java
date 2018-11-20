@@ -108,7 +108,7 @@ public interface ILocationResolver {
 	 * found in the same file. So the resulting location contains the include directives that
 	 * actually cause the range to be part of the AST.
 	 * @param offset sequence number as stored in the ASTNodes.
-	 * @param length 
+	 * @param length
 	 */
 	IASTFileLocation getMappedFileLocation(int offset, int length);
 
@@ -141,9 +141,9 @@ public interface ILocationResolver {
 	char[] getUnpreprocessedSignature(IASTFileLocation loc);
 
 	/**
-	 * Searches for a preprocessor node matching the given specification. Candidates are passed to 
+	 * Searches for a preprocessor node matching the given specification. Candidates are passed to
 	 * nodeSpec, which selects and stores the best result.
-	 * 
+	 *
 	 * @param nodeSpec specification of node to search for.
 	 */
 	void findPreprocessorNode(ASTNodeSpecification<?> nodeSpec);
@@ -169,7 +169,7 @@ public interface ILocationResolver {
 
 	/**
 	 * Returns all explicit macro expansions that intersect with the given file location.
-	 * Include files that may be included within the given location are not examined. 
+	 * Include files that may be included within the given location are not examined.
 	 * @param loc the file-location to search for macro references
 	 * @return an array of macro expansions.
 	 * @since 5.0

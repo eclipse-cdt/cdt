@@ -14,6 +14,7 @@
 
 package org.eclipse.cdt.internal.ui.dnd;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -21,12 +22,10 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.PluginTransfer;
 
-import org.eclipse.cdt.core.model.ICElement;
-
 /**
  * PluginTransferDropAdapter
  * Enable DND to support PluginTransfer type.
- * The actual DND operation is a call back to the 
+ * The actual DND operation is a call back to the
  * org.eclipse.ui.dropActions delegate.
  *
  */

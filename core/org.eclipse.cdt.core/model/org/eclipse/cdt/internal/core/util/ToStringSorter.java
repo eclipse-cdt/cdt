@@ -18,7 +18,7 @@ package org.eclipse.cdt.internal.core.util;
  * a sorted collection of these objects. The sorting of these
  * objects is based on their toString(). They are sorted in
  * alphabetical order.
- * 
+ *
  * This class is similar to the JDT toStringSorter class.
  */
 public class ToStringSorter {
@@ -74,7 +74,7 @@ public class ToStringSorter {
 		this.sortedObjects = new Object[size];
 		this.sortedStrings = new String[size];
 
-		//copy the array so can return a new sorted collection  
+		//copy the array so can return a new sorted collection
 		System.arraycopy(unSortedObjects, 0, this.sortedObjects, 0, size);
 		System.arraycopy(unsortedStrings, 0, this.sortedStrings, 0, size);
 		if (size > 1)

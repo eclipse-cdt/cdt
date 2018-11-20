@@ -19,7 +19,7 @@ package org.eclipse.cdt.core.dom.ast;
  * to determine the relationship between a child node and it's parent. This is
  * especially important with rewrite since we need to understand how to properly
  * replace the child in the source.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -33,7 +33,7 @@ public class ASTNodeProperty {
 	/**
 	 * Each property has a name to help distinguish it from other properties of
 	 * a node.
-	 * 
+	 *
 	 * @return the name of the property
 	 */
 	public String getName() {

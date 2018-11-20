@@ -17,12 +17,12 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  * unset env [VARNAME]
- * 
+ *
  * Deletes the environment variable VARNAME for the inferior, not GDB itself.
  * If VARNAME is omitted, all environment variables are deleted.
- * 
+ *
  * @since 3.0
  */
 public class CLIUnsetEnv extends CLICommand<MIInfo> {

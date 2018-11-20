@@ -17,7 +17,6 @@ import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_Compl
 import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_relaxed;
 import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_shared;
 import static org.eclipse.cdt.internal.core.dom.parser.upc.UPCParsersym.TK_strict;
-import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
@@ -25,14 +24,16 @@ import org.eclipse.cdt.core.dom.ast.IASTStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
 import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
 import org.eclipse.cdt.core.dom.ast.c.ICASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ISecondaryParserFactory;
+import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
 import org.eclipse.cdt.core.dom.lrparser.action.c99.C99BuildASTParserAction;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTForallStatement;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTKeywordExpression;
 import org.eclipse.cdt.core.dom.upc.ast.IUPCASTSynchronizationStatement;
+
+import lpg.lpgjavaruntime.IToken;
 
 /**
  * Extension to the C99ParserAction that adds support fot building
@@ -143,7 +144,7 @@ public class UPCParserAction extends C99BuildASTParserAction {
 	 * Temporary object used during the parsing of UPC declaration specifiers.
 	 * Stored temporarily on the astStack, but does not become part of the AST.
 	 * Makes parsing of layout qualifiers easier.
-	 * 
+	 *
 	 * @author Mike
 	 */
 	private static class UPCParserActionLayoutQualifier {
@@ -178,7 +179,7 @@ public class UPCParserAction extends C99BuildASTParserAction {
 
 	/**
 	 * Support for new declaration specifier keywords.
-	 * 
+	 *
 	 * 'shared' without [] is handled here
 	 * 'shared' with [] is handled in setLayoutQualifier().
 	 */

@@ -82,7 +82,7 @@ public final class ImageCombo extends Composite {
 	 * <p>
 	 * The style value is either one of the style constants defined in
 	 * class <code>SWT</code> which is applicable to instances of this
-	 * class, or must be built by <em>bitwise OR</em>'ing together 
+	 * class, or must be built by <em>bitwise OR</em>'ing together
 	 * (that is, using the <code>int</code> "|" operator) two or more
 	 * of those <code>SWT</code> style constants. The class description
 	 * lists the style constants that are applicable to the class.
@@ -314,7 +314,7 @@ public final class ImageCombo extends Composite {
 	 * text field is editable, this has the effect of placing the
 	 * i-beam at the start of the text.
 	 * <p>
-	 * Note: To clear the selected items in the receiver's list, 
+	 * Note: To clear the selected items in the receiver's list,
 	 * use <code>deselectAll()</code>.
 	 * </p>
 	 *
@@ -411,7 +411,7 @@ public final class ImageCombo extends Composite {
 	}
 
 	/**
-	 * Deselects the item at the given zero-relative index in the receiver's 
+	 * Deselects the item at the given zero-relative index in the receiver's
 	 * list.  If the item at the index was already deselected, it remains
 	 * deselected. Indices that are out of range are ignored.
 	 *
@@ -493,9 +493,9 @@ public final class ImageCombo extends Composite {
 		table.setFocus();
 	}
 
-	/* 
-	 * Return the Label immediately preceding the receiver in the z-order, 
-	 * or null if none. 
+	/*
+	 * Return the Label immediately preceding the receiver in the z-order,
+	 * or null if none.
 	 */
 	Label getAssociatedLabel() {
 		Control[] siblings = getParent().getChildren();
@@ -519,12 +519,12 @@ public final class ImageCombo extends Composite {
 	 * Gets the editable state.
 	 *
 	 * @return whether or not the reciever is editable
-	 * 
+	 *
 	 * @exception SWTException <ul>
 	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public boolean getEditable() {
@@ -586,11 +586,11 @@ public final class ImageCombo extends Composite {
 
 	/**
 	 * Returns an array of <code>String</code>s which are the items
-	 * in the receiver's list. 
+	 * in the receiver's list.
 	 * <p>
 	 * Note: This is not the actual structure used by the receiver
 	 * to maintain its list of items, so modifying the array will
-	 * not affect the receiver. 
+	 * not affect the receiver.
 	 * </p>
 	 *
 	 * @return the items in the receiver's list
@@ -708,9 +708,9 @@ public final class ImageCombo extends Composite {
 	 * text field is capable of holding. If this has not been changed
 	 * by <code>setTextLimit()</code>, it will be the constant
 	 * <code>Combo.LIMIT</code>.
-	 * 
+	 *
 	 * @return the text limit
-	 * 
+	 *
 	 * @exception SWTException <ul>
 	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
@@ -731,7 +731,7 @@ public final class ImageCombo extends Composite {
 	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public int getVisibleItemCount() {
@@ -779,7 +779,7 @@ public final class ImageCombo extends Composite {
 
 	/**
 	 * Searches the receiver's list starting at the first item
-	 * (index 0) until an item is found that is equal to the 
+	 * (index 0) until an item is found that is equal to the
 	 * argument, and returns the index of that item. If no item
 	 * is found, returns -1.
 	 *
@@ -1093,7 +1093,7 @@ public final class ImageCombo extends Composite {
 
 	/**
 	 * Removes the items from the receiver's list which are
-	 * between the given zero-relative start and end 
+	 * between the given zero-relative start and end
 	 * indices (inclusive).
 	 *
 	 * @param start the start of the range
@@ -1114,7 +1114,7 @@ public final class ImageCombo extends Composite {
 
 	/**
 	 * Searches the receiver's list starting at the first item
-	 * until an item is found that is equal to the argument, 
+	 * until an item is found that is equal to the argument,
 	 * and removes that item from the list.
 	 *
 	 * @param string the item to remove
@@ -1207,7 +1207,7 @@ public final class ImageCombo extends Composite {
 	}
 
 	/**
-	 * Selects the item at the given zero-relative index in the receiver's 
+	 * Selects the item at the given zero-relative index in the receiver's
 	 * list.  If the item at the index was already selected, it remains
 	 * selected. Indices that are out of range are ignored.
 	 *
@@ -1256,7 +1256,7 @@ public final class ImageCombo extends Composite {
 	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void setEditable(boolean editable) {
@@ -1375,7 +1375,7 @@ public final class ImageCombo extends Composite {
 	 * Sets the selection in the receiver's text field to the
 	 * range specified by the argument whose x coordinate is the
 	 * start of the selection and whose y coordinate is the end
-	 * of the selection. 
+	 * of the selection.
 	 *
 	 * @param selection a point representing the new selection start and end
 	 *
@@ -1401,7 +1401,7 @@ public final class ImageCombo extends Composite {
 	 * Note: The text field in a <code>Combo</code> is typically
 	 * only capable of displaying a single line of text. Thus,
 	 * setting the text to a string containing line breaks or
-	 * other special characters will probably cause it to 
+	 * other special characters will probably cause it to
 	 * display incorrectly.
 	 * </p>
 	 *
@@ -1481,7 +1481,7 @@ public final class ImageCombo extends Composite {
 	 *    <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
 	 *    <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 * </ul>
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void setVisibleItemCount(int count) {
@@ -1555,7 +1555,7 @@ public final class ImageCombo extends Composite {
 					break;
 			}
 
-			// Further work : Need to add support for incremental search in 
+			// Further work : Need to add support for incremental search in
 			// pop up list as characters typed in text widget
 
 			Event e = new Event();

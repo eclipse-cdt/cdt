@@ -13,18 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.actions.AbstractUpdateIndexAction;
+import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.search.CSearchUnresolvedIncludesQuery;
+import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.search.ui.ISearchQuery;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchSite;
-
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.internal.ui.actions.AbstractUpdateIndexAction;
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.CSearchUnresolvedIncludesQuery;
-import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 
 /**
  * Searches projects for unresolved includes.

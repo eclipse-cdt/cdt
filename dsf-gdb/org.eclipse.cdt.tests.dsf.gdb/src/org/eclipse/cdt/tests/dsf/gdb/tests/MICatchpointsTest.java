@@ -595,7 +595,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 	public void insertCatchpoint_InvalidContext() throws Throwable {
 
 		// Attempt to create a catchpoint with an invalid execution context (should fail)
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
 		breakpoint.put(MIBreakpoints.CATCHPOINT_TYPE, "throw");
 		insertBreakpoint(null, breakpoint);
@@ -769,7 +769,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 
 		// Set a throw catchpoint; don't use the utility method since it assumes
 		// the target is running
-		Map<String, Object> bkptsProps = new HashMap<String, Object>();
+		Map<String, Object> bkptsProps = new HashMap<>();
 		bkptsProps.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
 		bkptsProps.put(MIBreakpoints.CATCHPOINT_TYPE, "throw");
 		insertBreakpoint(fBreakpointsDmc, bkptsProps);
@@ -1289,7 +1289,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		IBreakpointDMContext[] bkptsBefore = getBreakpoints(fBreakpointsDmc);
 
 		// Set the breakpoint
-		Map<String, Object> breakpoint = new HashMap<String, Object>();
+		Map<String, Object> breakpoint = new HashMap<>();
 		breakpoint.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.BREAKPOINT);
 		breakpoint.put(MIBreakpoints.FILE_NAME, SOURCE_NAME);
 		breakpoint.put(MIBreakpoints.LINE_NUMBER, lineNumber);
@@ -1302,7 +1302,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		assertEquals("Unexpected number of breakpoint-added events", 1, getBreakpointEventCount(BP_ADDED));
 
 		// Ensure the breakpoint service sees what we expect
-		List<IBreakpointDMContext> bkptsAfter = new LinkedList<IBreakpointDMContext>(
+		List<IBreakpointDMContext> bkptsAfter = new LinkedList<>(
 				Arrays.asList(getBreakpoints(fBreakpointsDmc)));
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", bkptsBefore.length + 1,
 				bkptsAfter.size());
@@ -1341,7 +1341,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		IBreakpointDMContext[] bkptsBefore = getBreakpoints(fBreakpointsDmc);
 
 		// set the catchpoint
-		Map<String, Object> bkptsProps = new HashMap<String, Object>();
+		Map<String, Object> bkptsProps = new HashMap<>();
 		bkptsProps.put(MIBreakpoints.BREAKPOINT_TYPE, MIBreakpoints.CATCHPOINT);
 		bkptsProps.put(MIBreakpoints.CATCHPOINT_TYPE, event);
 		if (condition != null) {
@@ -1361,7 +1361,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 		// Ensure the breakpoint service sees what we expect. Ask the breakpoint
 		// service for the list of breakpoint against and make sure it differs
 		// only by the newly added one
-		List<IBreakpointDMContext> bkptsAfter = new LinkedList<IBreakpointDMContext>(
+		List<IBreakpointDMContext> bkptsAfter = new LinkedList<>(
 				Arrays.asList(getBreakpoints(fBreakpointsDmc)));
 		assertEquals("Breakpoints service reports unexpected number of breakpoints", bkptsBefore.length + 1,
 				bkptsAfter.size());
@@ -1432,7 +1432,7 @@ public class MICatchpointsTest extends BaseParametrizedTestCase {
 	private void modifyBkptProperty(IBreakpointDMContext bkptRef, String property, Object value) throws Throwable {
 		// Modify the catchpoint to not have an ignore count
 		clearEventCounters();
-		Map<String, Object> bkptProps = new HashMap<String, Object>();
+		Map<String, Object> bkptProps = new HashMap<>();
 		bkptProps.put(property, value);
 		updateBreakpoint(bkptRef, bkptProps);
 		assertTrue(fWait.getMessage(), fWait.isOK());

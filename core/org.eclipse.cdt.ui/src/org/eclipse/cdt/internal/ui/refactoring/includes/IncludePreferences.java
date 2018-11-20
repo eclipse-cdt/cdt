@@ -20,14 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
-
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle.IncludeKind;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 /**
  * Preferences for managing of includes.

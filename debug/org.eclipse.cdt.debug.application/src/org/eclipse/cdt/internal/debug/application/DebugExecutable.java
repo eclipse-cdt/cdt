@@ -57,7 +57,7 @@ public class DebugExecutable {
 
 	private static final String GCC_BUILTIN_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"; //$NON-NLS-1$
 	private static final String GCC_COMPILE_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"; //$NON-NLS-1$
-	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$ 
+	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$
 	private static final String STANDALONE_QUALIFIER = "org.eclipse.cdt.debug.application"; //$NON-NLS-1$
 	private static final String LAST_LAUNCH = "lastLaunch"; //$NON-NLS-1$
 
@@ -70,7 +70,7 @@ public class DebugExecutable {
 
 	/**
 	 * Import given executable into the Executables project then create a launch configuration.
-	 * 
+	 *
 	 * @param monitor
 	 * @param executable
 	 * @param buildLog

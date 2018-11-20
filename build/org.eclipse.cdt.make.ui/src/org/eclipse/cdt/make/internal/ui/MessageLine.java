@@ -23,8 +23,8 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * A message line. It distinguishs between "normal" messages and errors. 
- * Setting an error message hides a currently displayed message until 
+ * A message line. It distinguishs between "normal" messages and errors.
+ * Setting an error message hides a currently displayed message until
  * <code>clearErrorMessage</code> is called.
  */
 public class MessageLine extends CLabel {

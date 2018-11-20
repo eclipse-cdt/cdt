@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -27,13 +27,13 @@ import org.eclipse.core.runtime.MultiStatus;
  * Utility class to collect multiple request monitor results of commands
  * that are initiated simultaneously.  The usage is as follows:
  * <pre>
- *     final MultiRequestMonitor multiRequestMon = new MultiRequestMonitor(fExecutor, null) { 
+ *     final MultiRequestMonitor multiRequestMon = new MultiRequestMonitor(fExecutor, null) {
  *         public void handleCompleted() {
  *             System.out.println("All complete, errors=" + !getStatus().isOK());
  *         }
  *     };
  *     multiReqMon.requireDoneAdding();
- *     
+ *
  *     for (int i = 0; i < 10; i++) {
  *         service.call(i, multiRequestMon.add(
  *             new RequestMonitor(fExecutor, null) {
@@ -43,10 +43,10 @@ import org.eclipse.core.runtime.MultiStatus;
  *                }
  *             }));
  *     }
- *     
+ *
  *     multiReqMon.doneAdding();
  * </pre>
- * 
+ *
  * @since 1.0
  */
 public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonitor {
@@ -70,12 +70,12 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
 		setStatus(new MultiStatus(DsfPlugin.PLUGIN_ID, 0, "Collective status for set of sub-operations.", null)); //$NON-NLS-1$
 	}
 
-	/** 
-	 * Adds a new RequestMonitor callback to this tracker's list. 
-	 * @param <T> Client-specific class of the RequestMonitor callback, it's used here to avoid an 
+	/**
+	 * Adds a new RequestMonitor callback to this tracker's list.
+	 * @param <T> Client-specific class of the RequestMonitor callback, it's used here to avoid an
 	 * unnecessary cast by the client.
 	 * @param rm Request monitor object to add to the tracker
-	 * @return The request monitor that was just added, it allows this method to be used 
+	 * @return The request monitor that was just added, it allows this method to be used
 	 * in-lined in service method calls
 	 */
 	public synchronized <T extends V> T add(T rm) {
@@ -90,7 +90,7 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
 	}
 
 	/**
-	 * Marks the given RequestMonitor callback as completed.  Client implementations of 
+	 * Marks the given RequestMonitor callback as completed.  Client implementations of
 	 * the RequestMonitor callback have to call this method in order for the tracker
 	 * to complete.
 	 * <br>
@@ -129,7 +129,7 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
 	 */
 	public List<V> getRequestMonitors() {
 		synchronized (fRequestMonitorList) { // needed while copying, even when list is a synchronized collection
-			return new LinkedList<V>(fRequestMonitorList);
+			return new LinkedList<>(fRequestMonitorList);
 		}
 	}
 
@@ -145,7 +145,7 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
 	 * clients should call this method immediately after creating the monitor.
 	 * Doing so will require the client to use {@link #doneAdding()} to indicate
 	 * it has finished adding monitors via {@link #add(RequestMonitor)}
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public void requireDoneAdding() {
@@ -157,7 +157,7 @@ public class MultiRequestMonitor<V extends RequestMonitor> extends RequestMonito
 	 * MultiRequestMonitor. The client must have first called
 	 * {@link #requireDoneAdding()}, otherwise an {@link IllegalStateException}
 	 * is thrown
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public void doneAdding() {

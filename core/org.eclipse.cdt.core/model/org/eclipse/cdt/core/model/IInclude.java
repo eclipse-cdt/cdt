@@ -16,13 +16,13 @@ package org.eclipse.cdt.core.model;
 
 /**
  * Represents an include declaration in a C translation unit.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IInclude extends ICElement, ISourceReference, ISourceManipulation {
 	/**
-	 * Returns the name that of the included file. 
+	 * Returns the name that of the included file.
 	 * For example, for the statement {@code #include <stdio.h>},
 	 * this returns {@code "stdio.h"}.
 	 */

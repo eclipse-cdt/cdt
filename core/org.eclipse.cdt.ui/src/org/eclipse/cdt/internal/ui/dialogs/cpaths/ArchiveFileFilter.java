@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * Viewer filter for archive selection dialogs.
  * Archives are files with file extension "a",  "dll", "so.
  * The filter is not case sensitive.
- * 
+ *
  * @deprecated as of CDT 4.0. This class was used for property pages
  * for 3.X style projects.
  */
@@ -44,7 +44,7 @@ public class ArchiveFileFilter extends ViewerFilter {
 
 	/**
 	 * @param excludedFiles Excluded files will not pass the filter.
-	 * <code>null</code> is allowed if no files should be excluded. 
+	 * <code>null</code> is allowed if no files should be excluded.
 	 * @param recusive Folders are only shown if, searched recursivly, contain
 	 * an archive
 	 */

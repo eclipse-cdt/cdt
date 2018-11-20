@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Andrey Eremchenko, kamre@ngs.ru - 222495 C/C++ search should show line matches and line numbers	
+ *     Andrey Eremchenko, kamre@ngs.ru - 222495 C/C++ search should show line matches and line numbers
  *     Markus Schorn (Wind River Systems)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
@@ -20,16 +20,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.core.index.IIndexFileLocation;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.parser.scanner.AbstractCharArray;
 import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 
 /**
  * Element representing a line with one ore more matches.
@@ -174,8 +172,8 @@ public class LineSearchElement extends CSearchElement {
 		// Sort matches according to their offsets
 		Arrays.sort(matches, MATCHES_COMPARATOR);
 		// Group all matches by lines and create LineSearchElements
-		List<LineSearchElement> result = new ArrayList<LineSearchElement>();
-		List<Match> matchCollector = new ArrayList<Match>();
+		List<LineSearchElement> result = new ArrayList<>();
+		List<Match> matchCollector = new ArrayList<>();
 		int minOffset = 0;
 		int lineNumber = 0;
 		int lineOffset = 0;
@@ -225,8 +223,8 @@ public class LineSearchElement extends CSearchElement {
 
 	private static LineSearchElement[] collectLineElements(AbstractCharArray buf, Match[] matches,
 			IIndexFileLocation fileLocation) {
-		List<LineSearchElement> result = new ArrayList<LineSearchElement>();
-		List<Match> matchCollector = new ArrayList<Match>();
+		List<LineSearchElement> result = new ArrayList<>();
+		List<Match> matchCollector = new ArrayList<>();
 
 		boolean skipLF = false;
 		int lineNumber = 1;

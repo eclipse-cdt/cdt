@@ -38,7 +38,7 @@ import org.eclipse.debug.core.sourcelookup.containers.DefaultSourceContainer;
  * GDB backend handling path substitutions using gdb's "set substitute-path"
  * mechanism. This director works in tandem with {@link IGDBSourceLookup}
  * service to synchronise GDB's path substitutions.
- * 
+ *
  * @since 5.0
  */
 public class GdbSourceLookupDirector extends DsfSourceLookupDirector {
@@ -63,7 +63,7 @@ public class GdbSourceLookupDirector extends DsfSourceLookupDirector {
 	/**
 	 * Return a map of substitutions with the Key being the compilation path and
 	 * the Value being the machine local path.
-	 * 
+	 *
 	 * @return map of substitutions
 	 */
 	public Map<String, String> getSubstitutionsPaths() {
@@ -75,7 +75,7 @@ public class GdbSourceLookupDirector extends DsfSourceLookupDirector {
 			 * Bug 500988: getting source containers from composite containers has a race
 			 * condition around termination. This can lead to a NPE being thrown from within
 			 * the above code.
-			 * 
+			 *
 			 * The reason for the NPE is that termination of a launch can cause the launch
 			 * configuration to be updated (e.g. with memory settings memento). This update
 			 * causes the source lookups to be recalculated, however that recalculation is
@@ -84,7 +84,7 @@ public class GdbSourceLookupDirector extends DsfSourceLookupDirector {
 			 * thread safe, we get NPEs. See CompositeSourceContainer.dispose() where the
 			 * race condition is. Unfortunately synchronizing it leads to potential
 			 * deadlocks.
-			 * 
+			 *
 			 * Catching all NPEs and silently discarding them makes it very hard to track
 			 * down bugs, so in case the NPE is caused for another reason we are logging it.
 			 */
@@ -135,7 +135,7 @@ public class GdbSourceLookupDirector extends DsfSourceLookupDirector {
 					 * DefaultSourceContainer, but not in other types of
 					 * composite containers (e.g. a DirectorySourceContainer
 					 * cannot contain a MappingSourceContainer).
-					 * 
+					 *
 					 * It is important we don't recurse across all composites
 					 * containers for performance reasons. If a
 					 * DirectorySourceContainer was recursed here, then it could

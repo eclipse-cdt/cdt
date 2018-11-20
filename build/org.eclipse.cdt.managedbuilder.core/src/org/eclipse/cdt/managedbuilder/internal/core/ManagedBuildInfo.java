@@ -212,7 +212,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 */
 	@Override
 	public String[] getConfigurationNames() {
-		ArrayList<String> configNames = new ArrayList<String>();
+		ArrayList<String> configNames = new ArrayList<>();
 		IConfiguration[] configs = managedProject.getConfigurations();
 		for (int i = 0; i < configs.length; i++) {
 			IConfiguration configuration = configs[i];
@@ -384,7 +384,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 
 	private ArrayList<String> getIncludePathEntries() {
 		// Extract the resolved paths from the project (if any)
-		ArrayList<String> paths = new ArrayList<String>();
+		ArrayList<String> paths = new ArrayList<>();
 		if (cProject != null) {
 			try {
 				IPathEntry[] entries = cProject.getResolvedPathEntries();
@@ -426,7 +426,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	}
 
 	private HashMap<String, String> getMacroPathEntries() {
-		HashMap<String, String> macros = new HashMap<String, String>();
+		HashMap<String, String> macros = new HashMap<>();
 		if (cProject != null) {
 			try {
 				IPathEntry[] entries = cProject.getResolvedPathEntries();
@@ -1003,7 +1003,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Deprecated
 	private Map<String, ITarget> getTargetMap() {
 		if (targetMap == null) {
-			targetMap = new HashMap<String, ITarget>();
+			targetMap = new HashMap<>();
 		}
 		return targetMap;
 	}
@@ -1016,7 +1016,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	@Deprecated
 	public List<ITarget> getTargets() {
 		if (targetList == null) {
-			targetList = new ArrayList<ITarget>();
+			targetList = new ArrayList<>();
 		}
 		return targetList;
 	}
@@ -1106,7 +1106,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @return IPathEntry[]
 	 */
 	public IPathEntry[] getManagedBuildValues() {
-		List<IPathEntry> entries = new ArrayList<IPathEntry>();
+		List<IPathEntry> entries = new ArrayList<>();
 		int i = 0;
 		IPathEntry[] a = getManagedBuildValues(IPathEntry.CDT_INCLUDE);
 		if (a != null) {
@@ -1131,7 +1131,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @return IPathEntry[]
 	 */
 	public IPathEntry[] getManagedBuildBuiltIns() {
-		List<IPathEntry> entries = new ArrayList<IPathEntry>();
+		List<IPathEntry> entries = new ArrayList<>();
 		int i = 0;
 		IPathEntry[] a = getManagedBuildBuiltIns(IPathEntry.CDT_INCLUDE);
 		if (a != null) {
@@ -1177,7 +1177,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	 * @return list of strings which contains all found values
 	 */
 	private List<IPathEntry> getOptionValues(int entryType, boolean builtIns) {
-		List<IPathEntry> entries = new ArrayList<IPathEntry>();
+		List<IPathEntry> entries = new ArrayList<>();
 		IConfiguration cfg = getDefaultConfiguration();
 
 		// process config toolchain's options
@@ -1286,7 +1286,7 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 	protected List<IPathEntry> addPaths(List<IPathEntry> entries, String[] values, IPath resPath, int context,
 			Object obj, int type) {
 		if (values != null && values.length > 0) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (int k = 0; k < values.length; k++) {
 				processPath(list, values[k], context, obj);
 			}

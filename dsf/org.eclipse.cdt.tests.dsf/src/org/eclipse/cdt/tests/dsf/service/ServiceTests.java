@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -235,7 +235,7 @@ public class ServiceTests {
 	}
 
 	/**
-	 * Creates two sessions and starts a single service within each session.  
+	 * Creates two sessions and starts a single service within each session.
 	 * Then it tests retrieving the reference to the service.
 	 */
 	@Test

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -32,11 +32,11 @@ import org.eclipse.debug.core.sourcelookup.containers.WorkspaceSourceContainer;
 
 /**
  * Computes the default source lookup path for a PDA launch configuration.
- * The default source lookup path is the folder or project containing 
+ * The default source lookup path is the folder or project containing
  * the PDA program being launched. If the program is not specified, the workspace
  * is searched by default.
  * <p>
- * This class is identical to the corresponding in PDA debugger implemented in 
+ * This class is identical to the corresponding in PDA debugger implemented in
  * org.eclipse.debug.examples.
  * </p>
  */

@@ -14,10 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 public class RefactoringSavePreferences {
 	public static final String PREF_SAVE_ALL_EDITORS = PreferenceConstants.REFACTOR_SAVE_ALL_EDITORS;

@@ -22,11 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -53,18 +48,20 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.Context;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions.UDCMode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Cost;
-
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * This class is based on org.eclipse.jdt.internal.ui.text.java.ParameterGuesser
- * 
+ *
  * This class produces a logically-ordered list of applicable variables for later use as parameter guessing
  * proposals for a function parameter.
  */
@@ -72,7 +69,7 @@ public class ParameterGuesser {
 	private final Set<String> fAlreadyMatchedNames = new HashSet<>();
 
 	/**
-	 * Variable type. Used to choose the best guess based on scope (LOCAL is preferred over FIELD, 
+	 * Variable type. Used to choose the best guess based on scope (LOCAL is preferred over FIELD,
 	 * which is preferred over GLOBAL).
 	 */
 	static enum VariableType {
@@ -271,7 +268,7 @@ public class ParameterGuesser {
 
 	/**
 	 * Returns the matches for the type and name argument, ordered by match quality.
-	 * 
+	 *
 	 * @param expectedType the qualified type of the parameter we are trying to match
 	 * @param paramName the name of the parameter (used to find similarly named matches)
 	 * @param pos the position
@@ -355,7 +352,7 @@ public class ParameterGuesser {
 	/**
 	 * The four order criteria as described below - put already used into bit 10, all others into bits
 	 * 0-9, 11-20, 21-30; 31 is sign - always 0
-	 * 
+	 *
 	 * @param v the variable
 	 * @param parameterName the name of the parameter to be replaced.
 	 * @return the score for <code>v</code>

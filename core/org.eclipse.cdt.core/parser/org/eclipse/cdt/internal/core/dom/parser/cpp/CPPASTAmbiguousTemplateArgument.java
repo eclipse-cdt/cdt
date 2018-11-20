@@ -44,7 +44,7 @@ public class CPPASTAmbiguousTemplateArgument extends ASTAmbiguousNode implements
 	 * or {@link ICPPASTPackExpansionExpression}.
 	 */
 	public CPPASTAmbiguousTemplateArgument(IASTNode... nodes) {
-		fNodes = new ArrayList<IASTNode>(2);
+		fNodes = new ArrayList<>(2);
 		for (IASTNode node : nodes) {
 			if (node instanceof IASTTypeId || node instanceof IASTExpression) {
 				fNodes.add(node);

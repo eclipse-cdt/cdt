@@ -19,10 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -69,6 +65,10 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class ProjectModelTests extends TestCase implements IElementChangedListener {
 	private boolean isPrint = false;
@@ -637,7 +637,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 		}
 
 		CMacroEntry entry = new CMacroEntry("a", "b", 0);
-		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> list = new ArrayList<>();
 		list.add(entry);
 		list.addAll(Arrays.asList(entries));
 
@@ -697,7 +697,7 @@ public class ProjectModelTests extends TestCase implements IElementChangedListen
 	}
 
 	/**
-	 * Verifies that project-model is not re-serialized unnecessarily. 
+	 * Verifies that project-model is not re-serialized unnecessarily.
 	 */
 	public void testCompulsiveSerialization_Bug340219() throws Exception {
 		final String projectName = "test_bug340219";

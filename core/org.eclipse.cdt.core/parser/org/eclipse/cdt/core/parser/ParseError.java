@@ -28,7 +28,7 @@ public class ParseError extends Error {
 		// the method called is not implemented in this particular implementation
 		METHOD_NOT_IMPLEMENTED,
 
-		// offset specified is within a section of code #if'd out by the preprocessor 
+		// offset specified is within a section of code #if'd out by the preprocessor
 		// semantic context cannot be provided in this case
 		OFFSETDUPLE_UNREACHABLE,
 

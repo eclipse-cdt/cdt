@@ -17,20 +17,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.core.model.IProjectEntry;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.model.IProjectEntry;
-import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
-
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 public class CPathContainerWizard extends Wizard {
 
@@ -91,7 +89,7 @@ public class CPathContainerWizard extends Wizard {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IWizard#performFinish()
 	 */
 	@Override
@@ -114,7 +112,7 @@ public class CPathContainerWizard extends Wizard {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IWizard#addPages()
 	 */
 	@Override
@@ -125,7 +123,7 @@ public class CPathContainerWizard extends Wizard {
 		} else if (fEntryToEdit == null) { // new entry: show selection page as
 			// first page
 			IContainerDescriptor[] containers = CPathContainerDescriptor.getDescriptors();
-			List<IContainerDescriptor> allContainers = new ArrayList<IContainerDescriptor>(Arrays.asList(containers));
+			List<IContainerDescriptor> allContainers = new ArrayList<>(Arrays.asList(containers));
 			if (fFilterType != null) {
 				allContainers.add(0, new ProjectContainerDescriptor(fFilterType));
 			}
@@ -170,7 +168,7 @@ public class CPathContainerWizard extends Wizard {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IWizard#getNextPage(IWizardPage)
 	 */
 	@Override
@@ -213,7 +211,7 @@ public class CPathContainerWizard extends Wizard {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IWizard#canFinish()
 	 */
 	@Override

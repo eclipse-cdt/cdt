@@ -92,13 +92,13 @@ public class TestCProjectPlatformPage extends TestCase implements IWizardItemsLi
 		NewModelProjectWizard wiz = new CDTProjectWizard();
 		/*
 		String s = System.getenv("TEMP");
-		
+
 		System.out.println(s);
 		assertNotNull(wiz);
 		/*
 		IProject pr1 = wiz.createIProject("test1", null);
 		assertNotNull(pr1);
-		
+
 		IProject pr2 = wiz.createIProject("test2", p.append("test2"));
 		assertNotNull(pr2);
 		*/

@@ -45,7 +45,7 @@ public interface ILexerLog {
 	 * @param source the input of the lexer.
 	 * @param offset the offset where the comment starts
 	 * @param endOffset the offset where the comment ends
-	 * @param input the contents of the file being parsed 
+	 * @param input the contents of the file being parsed
 	 */
 	void handleComment(boolean isBlockComment, int offset, int endOffset, AbstractCharArray input);
 }

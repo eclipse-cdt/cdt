@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -65,7 +65,7 @@ public class DisassemblyTextHover implements ITextHover {
 
 			value = fDisassemblyPart.getHoverInfoData(pos, ident);
 
-			// If returns null (or empty string), not implemented or something went wrong.		
+			// If returns null (or empty string), not implemented or something went wrong.
 			if (value == null || value.length() == 0) {
 				if (pos instanceof SourcePosition) {
 					value = evaluateExpression(ident);

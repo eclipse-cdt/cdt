@@ -31,7 +31,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * CDT visualizer UI plugin class.
- * 
+ *
  * This plugin contains the UI components of the visualizer framework.
  */
 public class CDTVisualizerUIPlugin extends AbstractUIPlugin {
@@ -67,6 +67,7 @@ public class CDTVisualizerUIPlugin extends AbstractUIPlugin {
 	// --- plugin startup/shutdown methods ---
 
 	/** Invoked when plugin is loaded. */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		s_plugin = this;
@@ -80,6 +81,7 @@ public class CDTVisualizerUIPlugin extends AbstractUIPlugin {
 	}
 
 	/** Invoked when plugin is stopped. */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		// clean up resource management
 		cleanupPluginResources();
@@ -90,7 +92,7 @@ public class CDTVisualizerUIPlugin extends AbstractUIPlugin {
 
 	// --- logging ---
 
-	/** 
+	/**
 	 * Writes message to Eclipse log.
 	 * Severity can be one of:
 	 * Status.OK, Status.ERROR, Status.INFO, Status.WARNING, Status.CANCEL

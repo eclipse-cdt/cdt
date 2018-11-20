@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
@@ -45,9 +47,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
 import org.eclipse.ui.views.navigator.ResourceComparator;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  * @deprecated as of CDT 4.0. This class was used for property pages
@@ -86,7 +85,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	}
 
 	public void setExisting(Object[] existing) {
-		fExisting = new HashSet<Object>();
+		fExisting = new HashSet<>();
 		for (int i = 0; i < existing.length; i++) {
 			fExisting.add(existing[i]);
 		}
@@ -94,7 +93,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/**
 	 * Sets the tree input.
-	 * 
+	 *
 	 * @param input
 	 *        the tree input.
 	 */
@@ -104,13 +103,13 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/**
 	 * Adds a filter to the tree viewer.
-	 * 
+	 *
 	 * @param filter
 	 *        a filter.
 	 */
 	public void addFilter(ViewerFilter filter) {
 		if (fFilters == null)
-			fFilters = new ArrayList<ViewerFilter>(4);
+			fFilters = new ArrayList<>(4);
 
 		fFilters.add(filter);
 	}
@@ -135,7 +134,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 				checked = null;
 			}
 		} else {
-			ArrayList<Object> res = new ArrayList<Object>();
+			ArrayList<Object> res = new ArrayList<>();
 			for (int i = 0; i < checked.length; i++) {
 				Object elem = checked[i];
 				if (!fExisting.contains(elem)) {
@@ -184,7 +183,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/**
 	 * Creates the tree viewer.
-	 * 
+	 *
 	 * @param parent
 	 *        the parent composite
 	 * @return the tree viewer
@@ -214,7 +213,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 	}
 
 	/**
-	 *  
+	 *
 	 */
 	protected void updateOKStatus() {
 		computeResult();
@@ -227,7 +226,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -316,7 +315,7 @@ public class MultipleFolderSelectionDialog extends SelectionStatusDialog impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	@Override

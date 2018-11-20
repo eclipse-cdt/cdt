@@ -249,7 +249,7 @@ public final class CompositeValue implements IValue {
 		if (position >= 0 && position < values.length) {
 			values[position] = newValue == null ? EvalFixed.INCOMPLETE : newValue;
 		} else {
-			CCorePlugin.log(IStatus.WARNING, "Out-of-bounds access to composite value: " + position + //$NON-NLS-1$ 
+			CCorePlugin.log(IStatus.WARNING, "Out-of-bounds access to composite value: " + position + //$NON-NLS-1$
 					" (length is " + values.length + ")"); //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}

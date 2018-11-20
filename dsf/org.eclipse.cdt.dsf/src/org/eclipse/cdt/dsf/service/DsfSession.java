@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -40,8 +40,8 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.Filter;
 
 /**
- * Class to manage DSF sessions.  A DSF session is a way to 
- * associate a set of DSF services that are running simultaneously and 
+ * Class to manage DSF sessions.  A DSF session is a way to
+ * associate a set of DSF services that are running simultaneously and
  * are interacting with each other to provide a complete set of functionality.
  * <p>
  * Properties of a session are following:
@@ -51,10 +51,10 @@ import org.osgi.framework.Filter;
  * the services belonging to this session when registering with OSGI services.
  * <br>3. Each session has its set of service event listeners.
  * <br>4. Start and end of each session is announced by events, which are always
- * sent on that session's executor dispatch thread.      
- * 
+ * sent on that session's executor dispatch thread.
+ *
  * @see org.eclipse.cdt.dsf.concurrent.DsfExecutor
- * 
+ *
  * @since 1.0
  */
 @ConfinedToDsfExecutor("getExecutor")
@@ -62,7 +62,7 @@ public class DsfSession {
 	/**
 	 * Has the "debug/session" tracing option been turned on? Requires "debug"
 	 * to also be turned on.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	private static final boolean DEBUG_SESSION;
@@ -70,7 +70,7 @@ public class DsfSession {
 	/**
 	 * Has the "debug/session/listeners" tracing option been turned on? Requires
 	 * "debug/session" to also be turned on.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	private static final boolean DEBUG_SESSION_LISTENERS;
@@ -78,7 +78,7 @@ public class DsfSession {
 	/**
 	 * Has the "debug/session/dispatches" tracing option been turned on? Requires
 	 * "debug/session" to also be turned on.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	private static final boolean DEBUG_SESSION_DISPATCHES;
@@ -86,7 +86,7 @@ public class DsfSession {
 	/**
 	 * Has the "debug/session/modelAdapters" tracing option been turned on? Requires
 	 * "debug/session" to also be turned on.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	private static final boolean DEBUG_SESSION_MODELADAPTERS;
@@ -102,25 +102,25 @@ public class DsfSession {
 				&& Boolean.parseBoolean(Platform.getDebugOption("org.eclipse.cdt.dsf/debug/session/modelAdapters")); //$NON-NLS-1$
 	}
 
-	/** 
+	/**
 	 * Listener for session started events.  This listener is always going to be
-	 * called in the dispatch thread of the session's executor.  
+	 * called in the dispatch thread of the session's executor.
 	 */
 	public static interface SessionStartedListener {
-		/** 
-		 * Called when a new session is started.  It is always called in the 
+		/**
+		 * Called when a new session is started.  It is always called in the
 		 * dispatch thread of the new session.
 		 */
 		public void sessionStarted(DsfSession session);
 	}
 
-	/** 
+	/**
 	 * Listener for session ended events.  This listener is always going to be
-	 * called in the dispatch thread of the session's executor. 
+	 * called in the dispatch thread of the session's executor.
 	 */
 	public static interface SessionEndedListener {
-		/** 
-		 * Called when a session is ended.  It is always called in the 
+		/**
+		 * Called when a session is ended.  It is always called in the
 		 * dispatch thread of the session.
 		 */
 		public void sessionEnded(DsfSession session);
@@ -153,7 +153,7 @@ public class DsfSession {
 
 	/**
 	 * Returns the active sessions
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	@ThreadSafe
@@ -161,9 +161,9 @@ public class DsfSession {
 		return fgActiveSessions.toArray(new DsfSession[fgActiveSessions.size()]);
 	}
 
-	/** 
+	/**
 	 * Registers a listener for session started events.
-	 * Can be called on any thread. 
+	 * Can be called on any thread.
 	 */
 	@ThreadSafe
 	public static void addSessionStartedListener(SessionStartedListener listener) {
@@ -171,9 +171,9 @@ public class DsfSession {
 		fSessionStartedListeners.add(listener);
 	}
 
-	/** 
-	 * Un-registers a listener for session started events. 
-	 * Can be called on any thread. 
+	/**
+	 * Un-registers a listener for session started events.
+	 * Can be called on any thread.
 	 */
 	@ThreadSafe
 	public static void removeSessionStartedListener(SessionStartedListener listener) {
@@ -181,9 +181,9 @@ public class DsfSession {
 		fSessionStartedListeners.remove(listener);
 	}
 
-	/** 
-	 * Registers a listener for session ended events. 
-	 * Can be called on any thread. 
+	/**
+	 * Registers a listener for session ended events.
+	 * Can be called on any thread.
 	 */
 	@ThreadSafe
 	public static void addSessionEndedListener(SessionEndedListener listener) {
@@ -191,9 +191,9 @@ public class DsfSession {
 		fSessionEndedListeners.add(listener);
 	}
 
-	/** 
-	 * Un-registers a listener for session ended events. 
-	 * Can be called on any thread. 
+	/**
+	 * Un-registers a listener for session ended events.
+	 * Can be called on any thread.
 	 */
 	@ThreadSafe
 	public static void removeSessionEndedListener(SessionEndedListener listener) {
@@ -203,7 +203,7 @@ public class DsfSession {
 
 	/**
 	 * Starts and returns a new session instance.  This method can be called on any
-	 * thread, but the session-started listeners will be called using the session's 
+	 * thread, but the session-started listeners will be called using the session's
 	 * executor.
 	 * @param executor The DSF executor to use for this session.
 	 * @param ownerId ID (plugin ID preferably) of the owner of this session
@@ -230,7 +230,7 @@ public class DsfSession {
 
 	/**
 	 * Terminates the given session.  This method can be also called on any
-	 * thread, but the session-ended listeners will be called using the session's 
+	 * thread, but the session-ended listeners will be called using the session's
 	 * executor.
 	 * @param session session to terminate
 	 */
@@ -287,12 +287,12 @@ public class DsfSession {
 	private int fServiceInstanceCounter;
 
 	/** Map of registered event listeners. */
-	private Map<ListenerEntry, Method[]> fListeners = new HashMap<ListenerEntry, Method[]>();
+	private Map<ListenerEntry, Method[]> fListeners = new HashMap<>();
 
-	/** 
-	 * Map of registered adapters, for implementing the <code>IDMContext.getAdapter()</code> 
+	/**
+	 * Map of registered adapters, for implementing the <code>IDMContext.getAdapter()</code>
 	 * method.
-	 * @see org.eclipse.cdt.dsf.datamodel.AbstractDMContext#getAdapter 
+	 * @see org.eclipse.cdt.dsf.datamodel.AbstractDMContext#getAdapter
 	 */
 	private Map<Class<?>, Object> fAdapters = Collections.synchronizedMap(new HashMap<Class<?>, Object>());
 
@@ -319,16 +319,16 @@ public class DsfSession {
 	}
 
 	/**
-	 * Adds a new listener for service events in this session.  If the given 
+	 * Adds a new listener for service events in this session.  If the given
 	 * object is already registered as a listener, then this call does nothing.
-	 * 
+	 *
 	 * <p>
 	 * Listeners don't implement any particular interfaces. They declare one or
 	 * more methods that are annotated with '@DsfServiceEventHandler', and which
 	 * take a single event parameter. The type of the parameter indicates what
 	 * events the handler is interested in. Any event that can be cast to that
 	 * type (and which meets the optional filter) will be sent to it.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener that will receive service events.
 	 * @param filter
@@ -352,9 +352,9 @@ public class DsfSession {
 	}
 
 	/**
-	 * Removes the given listener.  If the given object is not registered as a 
+	 * Removes the given listener.  If the given object is not registered as a
 	 * listener, then this call does nothing.
-	 * 
+	 *
 	 * @param listener listener to remove
 	 */
 	public void removeServiceEventListener(Object listener) {
@@ -375,7 +375,7 @@ public class DsfSession {
 
 	/**
 	 * Retrieves and increments the startup counter for services in this session.
-	 * DSF services should retrieve this counter when they are initialized, 
+	 * DSF services should retrieve this counter when they are initialized,
 	 * and should return it through IService.getStartupNumber().  This number is then
 	 * used to prioritize service events.
 	 * @return current startup counter value
@@ -385,7 +385,7 @@ public class DsfSession {
 	}
 
 	/**
-	 * Dispatches the given event to service event listeners.  The event is submitted to 
+	 * Dispatches the given event to service event listeners.  The event is submitted to
 	 * the executor to be dispatched.
 	 * @param event to be sent out
 	 * @param serviceProperties properties of the service requesting the event to be dispatched
@@ -455,7 +455,7 @@ public class DsfSession {
 		fAdapters.remove(adapterType);
 	}
 
-	/** 
+	/**
 	 * Retrieves an adapter for given type for <code>IDMContext</code>.
 	 * @param adapterType adapter type to look fors
 	 * @return adapter object for given type, null if none is registered with the session
@@ -485,7 +485,7 @@ public class DsfSession {
 		Dictionary<String, ?> serviceProperties = (Dictionary<String, ?>) _serviceProperties;
 
 		// Build a list of listeners;
-		SortedMap<ListenerEntry, List<Method>> listeners = new TreeMap<ListenerEntry, List<Method>>(
+		SortedMap<ListenerEntry, List<Method>> listeners = new TreeMap<>(
 				new Comparator<ListenerEntry>() {
 					@Override
 					public int compare(ListenerEntry o1, ListenerEntry o2) {
@@ -517,7 +517,7 @@ public class DsfSession {
 				continue;
 			}
 			Method[] allMethods = entry.getValue();
-			List<Method> matchingMethods = new ArrayList<Method>();
+			List<Method> matchingMethods = new ArrayList<>();
 			for (Method method : allMethods) {
 				assert method.getParameterTypes().length > 0 : eventClass.getName() + "." + method.getName() //$NON-NLS-1$
 						+ " signature contains zero parameters"; //$NON-NLS-1$
@@ -560,17 +560,17 @@ public class DsfSession {
 	 * type of the parameter indicates what events the handler is interested in.
 	 * Any event that can be cast to that type (and which meets the optional
 	 * filter provided when the listener is registered) will be sent to it.
-	 * 
+	 *
 	 * This method returns the methods annotated as handlers. Each method is
 	 * checked to ensure it takes a single parameter; an
 	 * {@link IllegalArgumentException} is thrown otherwise.
-	 * 
+	 *
 	 * @param listener
 	 *            an object which should contain handler methods
 	 * @return the collection of handler methods
 	 */
 	private Method[] getEventHandlerMethods(Object listener) {
-		List<Method> retVal = new ArrayList<Method>();
+		List<Method> retVal = new ArrayList<>();
 		try {
 			Method[] methods = listener.getClass().getMethods();
 			for (Method method : methods) {

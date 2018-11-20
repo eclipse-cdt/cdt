@@ -48,7 +48,7 @@ public class DebugAttachedExecutable {
 
 	private static final String GCC_BUILTIN_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuiltinSpecsDetector"; //$NON-NLS-1$
 	private static final String GCC_COMPILE_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"; //$NON-NLS-1$
-	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$ 
+	private static final String GCC_BUILD_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.managedbuilder.core.GCCBuildCommandParser"; //$NON-NLS-1$
 	private static final String DEBUG_PROJECT_ID = "org.eclipse.cdt.debug"; //$NON-NLS-1$
 
 	public DebugAttachedExecutable() {
@@ -83,7 +83,7 @@ public class DebugAttachedExecutable {
 
 	/**
 	 * Import given executable into the Executables project then create a launch configuration.
-	 * 
+	 *
 	 * @param monitor
 	 * @param buildLog
 	 * @throws CoreException
@@ -96,7 +96,7 @@ public class DebugAttachedExecutable {
 
 	/**
 	 * Import given executable into the Executables project then create a launch configuration.
-	 * 
+	 *
 	 * @param monitor
 	 * @param buildLog
 	 * @param pid

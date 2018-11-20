@@ -19,6 +19,15 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -42,16 +51,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.handlers.HandlerUtil;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.AbstractPage;
 
 /**
  * Handler for command that deletes resource description. (If resource description is missing
@@ -118,7 +117,7 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 							ICResourceDescription rd = cfgd.getResourceDescription(path, true);
 							if (rd != null) {
 								if (objects == null)
-									objects = new ArrayList<IResource>();
+									objects = new ArrayList<>();
 								objects.add(res);
 								break; // stop configurations scanning
 							}
@@ -212,7 +211,7 @@ public class DeleteResConfigsHandler extends AbstractHandler {
 				if (outData != null)
 					return outData.toArray();
 
-				outData = new ArrayList<ResCfgData>();
+				outData = new ArrayList<>();
 				List<?> ls = (List<?>) inputElement;
 				Iterator<?> it = ls.iterator();
 				IProject proj = null;

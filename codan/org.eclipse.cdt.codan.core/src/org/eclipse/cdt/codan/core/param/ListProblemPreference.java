@@ -31,7 +31,7 @@ public class ListProblemPreference extends AbstractProblemPreference
 	 * of all elements.
 	 */
 	public static final String COMMON_DESCRIPTOR_KEY = "#"; //$NON-NLS-1$
-	protected ArrayList<Object> list = new ArrayList<Object>();
+	protected ArrayList<Object> list = new ArrayList<>();
 	protected IProblemPreference childDescriptor;
 
 	/**
@@ -196,7 +196,7 @@ public class ListProblemPreference extends AbstractProblemPreference
 	@Override
 	public Object clone() {
 		ListProblemPreference list1 = (ListProblemPreference) super.clone();
-		list1.list = new ArrayList<Object>();
+		list1.list = new ArrayList<>();
 		list1.setChildDescriptor((IProblemPreference) getChildDescriptor().clone());
 		for (Iterator<Object> iterator = list.iterator(); iterator.hasNext();) {
 			Object value = iterator.next();

@@ -176,7 +176,7 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		checkKeyword(tokenizer, keyword);
 		checkChar(tokenizer, '=');
 		checkChar(tokenizer, '>');
-		ArrayList<IPath> list = new ArrayList<IPath>();
+		ArrayList<IPath> list = new ArrayList<>();
 		int token;
 		try {
 			checkChar(tokenizer, '(');

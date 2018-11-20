@@ -23,11 +23,10 @@ import java.util.Map;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-
 import org.eclipse.cdt.internal.ui.preferences.formatter.SnippetPreview.PreviewSnippet;
 
 /**
- * Manage code formatter white space options on a higher level. 
+ * Manage code formatter white space options on a higher level.
  */
 public final class WhiteSpaceOptions {
 
@@ -50,7 +49,7 @@ public final class WhiteSpaceOptions {
 			fParent = parent;
 			fWorkingValues = workingValues;
 			fName = message;
-			fChildren = new ArrayList<Node>();
+			fChildren = new ArrayList<>();
 			if (fParent != null)
 				fParent.add(this);
 		}
@@ -100,7 +99,7 @@ public final class WhiteSpaceOptions {
 
 		@Override
 		public List<PreviewSnippet> getSnippets() {
-			final ArrayList<PreviewSnippet> snippets = new ArrayList<PreviewSnippet>(fChildren.size());
+			final ArrayList<PreviewSnippet> snippets = new ArrayList<>(fChildren.size());
 			for (Object element : fChildren) {
 				final List<PreviewSnippet> childSnippets = ((Node) element).getSnippets();
 				for (PreviewSnippet snippet : childSnippets) {
@@ -130,7 +129,7 @@ public final class WhiteSpaceOptions {
 				PreviewSnippet snippet) {
 			super(parent, workingValues, messageKey);
 			fKey = key;
-			fSnippets = new ArrayList<PreviewSnippet>(1);
+			fSnippets = new ArrayList<>(1);
 			fSnippets.add(snippet);
 		}
 
@@ -233,7 +232,7 @@ public final class WhiteSpaceOptions {
 	 * @return returns roots (type <code>Node</code>)
 	 */
 	public List<InnerNode> createTreeBySyntaxElem(Map<String, String> workingValues) {
-		final ArrayList<InnerNode> roots = new ArrayList<InnerNode>();
+		final ArrayList<InnerNode> roots = new ArrayList<>();
 
 		InnerNode element;
 
@@ -335,7 +334,7 @@ public final class WhiteSpaceOptions {
 	 */
 	public List<InnerNode> createAltTree(Map<String, String> workingValues) {
 
-		final ArrayList<InnerNode> roots = new ArrayList<InnerNode>();
+		final ArrayList<InnerNode> roots = new ArrayList<>();
 
 		InnerNode parent;
 
@@ -427,10 +426,10 @@ public final class WhiteSpaceOptions {
 		parent = createParentNode(roots, workingValues, FormatterMessages.WhiteSpaceOptions_after_question_mark);
 		createAfterQuestionTree(workingValues, parent);
 
-		//        parent= createParentNode(roots, workingValues, FormatterMessages.WhiteSpaceOptions_before_ellipsis); 
+		//        parent= createParentNode(roots, workingValues, FormatterMessages.WhiteSpaceOptions_before_ellipsis);
 		//        createBeforeEllipsis(workingValues, parent);
-		//        
-		//        parent= createParentNode(roots, workingValues, FormatterMessages.WhiteSpaceOptions_after_ellipsis); 
+		//
+		//        parent= createParentNode(roots, workingValues, FormatterMessages.WhiteSpaceOptions_after_ellipsis);
 		//        createAfterEllipsis(workingValues, parent);
 
 		return roots;
@@ -483,7 +482,7 @@ public final class WhiteSpaceOptions {
 		createTemplateArgumentTree(workingValues, templates);
 		createTemplateParameterTree(workingValues, templates);
 
-		final ArrayList<InnerNode> roots = new ArrayList<InnerNode>();
+		final ArrayList<InnerNode> roots = new ArrayList<>();
 		roots.add(declarations);
 		roots.add(statements);
 		roots.add(expressions);
@@ -523,9 +522,9 @@ public final class WhiteSpaceOptions {
 
 	private void createBeforeCommaTree(Map<String, String> workingValues, final InnerNode parent) {
 
-		//        final InnerNode forStatement= createChild(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for);  
-		//        createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_initialization, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INITS, FOR_PREVIEW); 
-		//        createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_incrementation, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INCREMENTS, FOR_PREVIEW); 
+		//        final InnerNode forStatement= createChild(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for);
+		//        createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_initialization, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INITS, FOR_PREVIEW);
+		//        createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_incrementation, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INCREMENTS, FOR_PREVIEW);
 
 		final InnerNode invocation = createChild(parent, workingValues, FormatterMessages.WhiteSpaceOptions_arguments);
 		createOption(invocation, workingValues, FormatterMessages.WhiteSpaceOptions_function_call,
@@ -701,11 +700,11 @@ public final class WhiteSpaceOptions {
 	}
 
 	//	private void createBeforeEllipsis(Map workingValues, InnerNode parent) {
-	//		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_vararg_parameter, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_ELLIPSIS, VARARG_PARAMETER_PREVIEW); 
+	//		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_vararg_parameter, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_ELLIPSIS, VARARG_PARAMETER_PREVIEW);
 	//	}
-	//	
+	//
 	//	private void createAfterEllipsis(Map workingValues, InnerNode parent) {
-	//		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_vararg_parameter, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_ELLIPSIS, VARARG_PARAMETER_PREVIEW); 
+	//		createOption(parent, workingValues, FormatterMessages.WhiteSpaceOptions_vararg_parameter, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_ELLIPSIS, VARARG_PARAMETER_PREVIEW);
 	//	}
 
 	private void createAfterSemicolonTree(Map<String, String> workingValues, final InnerNode parent) {
@@ -724,9 +723,9 @@ public final class WhiteSpaceOptions {
 
 	private void createAfterCommaTree(Map<String, String> workingValues, final InnerNode parent) {
 
-		//        final InnerNode forStatement= createChild(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for); { 
-		//            createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_initialization, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INITS, FOR_PREVIEW); 
-		//            createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_incrementation, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INCREMENTS, FOR_PREVIEW); 
+		//        final InnerNode forStatement= createChild(parent, workingValues, FormatterMessages.WhiteSpaceOptions_for); {
+		//            createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_initialization, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INITS, FOR_PREVIEW);
+		//            createOption(forStatement, workingValues, FormatterMessages.WhiteSpaceOptions_incrementation, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INCREMENTS, FOR_PREVIEW);
 		//        }
 		final InnerNode invocation = createChild(parent, workingValues, FormatterMessages.WhiteSpaceOptions_arguments);
 		{
@@ -1062,8 +1061,8 @@ public final class WhiteSpaceOptions {
 		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_calls_after_comma_in_function_args,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_METHOD_INVOCATION_ARGUMENTS,
 				METHOD_CALL_PREVIEW);
-		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_calls_before_comma_in_alloc, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ALLOCATION_EXPRESSION, ALLOC_PREVIEW); 
-		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_calls_after_comma_in_alloc, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ALLOCATION_EXPRESSION, ALLOC_PREVIEW); 
+		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_calls_before_comma_in_alloc, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_ALLOCATION_EXPRESSION, ALLOC_PREVIEW);
+		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_calls_after_comma_in_alloc, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_ALLOCATION_EXPRESSION, ALLOC_PREVIEW);
 		return root;
 	}
 
@@ -1141,10 +1140,10 @@ public final class WhiteSpaceOptions {
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_OPENING_PAREN_IN_FOR, FOR_PREVIEW);
 		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_closing_paren,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_CLOSING_PAREN_IN_FOR, FOR_PREVIEW);
-		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_for_before_comma_init, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INITS, FOR_PREVIEW); 
-		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_for_after_comma_init, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INITS, FOR_PREVIEW); 
-		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_for_before_comma_inc, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INCREMENTS, FOR_PREVIEW); 
-		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_for_after_comma_inc, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INCREMENTS, FOR_PREVIEW); 
+		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_for_before_comma_init, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INITS, FOR_PREVIEW);
+		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_for_after_comma_init, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INITS, FOR_PREVIEW);
+		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_for_before_comma_inc, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_COMMA_IN_FOR_INCREMENTS, FOR_PREVIEW);
+		//        createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_for_after_comma_inc, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_AFTER_COMMA_IN_FOR_INCREMENTS, FOR_PREVIEW);
 		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_semicolon,
 				DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_SEMICOLON_IN_FOR, FOR_PREVIEW);
 		createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_after_semicolon,
@@ -1154,13 +1153,13 @@ public final class WhiteSpaceOptions {
 	}
 
 	//    private InnerNode createReturnTree(Map workingValues, InnerNode parent) {
-	//    	final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceOptions_return); 
+	//    	final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceOptions_return);
 	//    	createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_parenthesized_expressions, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_PARENTHESIZED_EXPRESSION_IN_RETURN, RETURN_PREVIEW);
 	//    	return root;
 	//    }
 
 	//    private InnerNode createThrowTree(Map workingValues, InnerNode parent) {
-	//    	final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceOptions_throw); 
+	//    	final InnerNode root= new InnerNode(parent, workingValues, FormatterMessages.WhiteSpaceOptions_throw);
 	//    	createOption(root, workingValues, FormatterMessages.WhiteSpaceTabPage_before_parenthesized_expressions, DefaultCodeFormatterConstants.FORMATTER_INSERT_SPACE_BEFORE_PARENTHESIZED_EXPRESSION_IN_THROW, THROW_PREVIEW);
 	//    	return root;
 	//    }

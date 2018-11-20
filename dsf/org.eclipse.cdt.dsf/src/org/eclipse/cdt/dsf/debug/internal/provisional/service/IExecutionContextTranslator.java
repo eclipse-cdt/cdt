@@ -22,21 +22,21 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * EXPERIMENTAL. This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
  * it will remain the same.
- * 
+ *
  * Interface for translating one model of execution context hierarchy to another.
- * As the grouping feature is added incrementally this interface will be defined properly. 
- * 
- * The reason this interface is proposed at the DSF level is to accommodate requirements from 
- * multiple DSF debuggers. 
- *   
+ * As the grouping feature is added incrementally this interface will be defined properly.
+ *
+ * The reason this interface is proposed at the DSF level is to accommodate requirements from
+ * multiple DSF debuggers.
+ *
  * @since 2.2
  * @experimental
  */
 public interface IExecutionContextTranslator extends IDsfService {
 
 	/**
-	 * returns true if all DM contexts can be grouped into one container. 
-	 * 
+	 * returns true if all DM contexts can be grouped into one container.
+	 *
 	 * @param context
 	 * @param rm
 	 */
@@ -44,15 +44,15 @@ public interface IExecutionContextTranslator extends IDsfService {
 
 	/**
 	 * returns true if all DM contexts can be ungrouped.
-	 * 
+	 *
 	 * @param context
 	 * @param rm
 	 */
 	void canUngroup(IExecutionDMContext[] contexts, DataRequestMonitor<Boolean> rm);
 
 	/**
-	 * Groups the specified execution contexts. 
-	 * 
+	 * Groups the specified execution contexts.
+	 *
 	 * @param context
 	 * @param requestMonitor
 	 */
@@ -60,7 +60,7 @@ public interface IExecutionContextTranslator extends IDsfService {
 
 	/**
 	 * Ungroups the specified execution contexts.
-	 *  
+	 *
 	 * @param context
 	 * @param requestMonitor
 	 */

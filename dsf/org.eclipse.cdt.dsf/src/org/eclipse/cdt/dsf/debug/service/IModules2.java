@@ -41,13 +41,13 @@ public interface IModules2 extends IModules {
 	public interface ISymbolsUnloadedDMEvent extends ISymbolsChangedDMEvent {
 	}
 
-	/** 
-	 * Load symbols for all modules of the specified symbol context 
+	/**
+	 * Load symbols for all modules of the specified symbol context
 	 */
 	void loadSymbolsForAllModules(ISymbolDMContext symCtx, RequestMonitor rm);
 
 	/**
-	 *  Load symbols for the specified module 
+	 *  Load symbols for the specified module
 	 */
 	void loadSymbols(IModuleDMContext dmc, RequestMonitor rm);
 }

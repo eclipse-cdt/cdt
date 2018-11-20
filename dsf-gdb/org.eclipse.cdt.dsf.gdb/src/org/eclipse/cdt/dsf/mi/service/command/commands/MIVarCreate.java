@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarCreateInfo;
 
 /**
- * 
+ *
  *    -var-create {NAME | "-"}
  *       {FRAME-ADDR | "*"} EXPRESSION
  *
@@ -47,7 +47,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarCreateInfo;
  *   * `*ADDR-ADDR' -- a memory address range (TBD)
  *
  *   * `$REGNAME' -- a CPU register name
- * 
+ *
  */
 public class MIVarCreate extends MICommand<MIVarCreateInfo> {
 	public MIVarCreate(IExpressionDMContext dmc, String expression) {

@@ -46,6 +46,7 @@ public class CFunctionTracepoint extends AbstractTracepoint implements ICFunctio
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
+	@Override
 	public String getMarkerType() {
 		return C_FUNCTION_TRACEPOINT_MARKER;
 	}

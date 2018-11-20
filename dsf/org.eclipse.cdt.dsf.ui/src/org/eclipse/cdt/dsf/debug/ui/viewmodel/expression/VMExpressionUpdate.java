@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * 
+ *
  */
 class VMExpressionUpdate extends VMViewerUpdate implements IExpressionUpdate {
 
@@ -85,7 +85,8 @@ class VMExpressionUpdate extends VMViewerUpdate implements IExpressionUpdate {
 		if (VMViewerUpdateTracing.DEBUG_VMUPDATES && !isCanceled()
 				&& VMViewerUpdateTracing.matchesFilterRegex(this.getClass())) {
 			DsfUIPlugin.debug(DsfPlugin.getDebugTime() + " " + LoggingUtils.toString(this) + " marked done; element = " //$NON-NLS-1$//$NON-NLS-2$
-					+ LoggingUtils.toString(getElement()) + "\n   expression = " + (fExpressionElement != null ? LoggingUtils.toString(fExpressionElement) : "<unset>")); //$NON-NLS-2$
+					+ LoggingUtils.toString(getElement()) + "\n   expression = "
+					+ (fExpressionElement != null ? LoggingUtils.toString(fExpressionElement) : "<unset>")); //$NON-NLS-1$
 		}
 
 		super.done();

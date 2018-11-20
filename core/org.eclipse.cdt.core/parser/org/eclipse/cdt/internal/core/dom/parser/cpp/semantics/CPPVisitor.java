@@ -569,10 +569,10 @@ public class CPPVisitor extends ASTQueries {
 				}
 				// Name may live in a different scope, so make sure to add it to the owner scope as well.
 				// [namespace.memdef] p3:
-				// 	"If a friend declaration in a non-local class first declares a 
-				//	class, function, class template or function template the friend 
-				//	is a member of the innermost enclosing namespace. The friend 
-				//	declaration does not by itself make the name visible to 
+				// 	"If a friend declaration in a non-local class first declares a
+				//	class, function, class template or function template the friend
+				//	is a member of the innermost enclosing namespace. The friend
+				//	declaration does not by itself make the name visible to
 				//	unqualified lookup or qualified lookup."
 				boolean visibleToAdlOnly = isFriend;
 				ASTInternal.addName(scope, elabType.getName(), visibleToAdlOnly);
@@ -2406,8 +2406,8 @@ public class CPPVisitor extends ASTQueries {
 			IType returnType = returnEval.getType();
 			if (returnType instanceof ISemanticProblem) {
 				// If a function makes a recursive call in some of its return statements,
-				// the type those return expressions will be a problem type. We ignore 
-				// these, because we can still successfully deduce from another return 
+				// the type those return expressions will be a problem type. We ignore
+				// these, because we can still successfully deduce from another return
 				// statement that is not recursive.
 				// If all return statements are recursive, fReturnEvals will remain empty
 				// and deduceReturnType() will error out as desired.
@@ -2461,8 +2461,8 @@ public class CPPVisitor extends ASTQueries {
 			return ProblemType.CANNOT_DEDUCE_AUTO_TYPE;
 		}
 
-		// [dcl.spec.auto] p7: 
-		//   If a function with a declared return type that contains a placeholder type has multiple 
+		// [dcl.spec.auto] p7:
+		//   If a function with a declared return type that contains a placeholder type has multiple
 		//   return statements, the return type is deduced for each such return statement.
 		//   If the type deduced is not the same in each deduction, the program is ill-formed.
 		IType returnType = deduceTypeFromReturnEvaluation(returnEvals[0], autoDeclSpec, autoDeclarator, placeholder);

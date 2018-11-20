@@ -22,7 +22,7 @@ import org.eclipse.jface.text.rules.WordRule;
 
 /**
  * Implementation of <code>IRule</code> for C/C++ preprocessor scanning.
- * It is capable of detecting a pattern which begins with 0 or more whitespaces 
+ * It is capable of detecting a pattern which begins with 0 or more whitespaces
  * at the beginning of the string, then '#' sign, then 0 or more whitespaces
  * again, and then directive itself.
  */
@@ -33,8 +33,8 @@ public class PreprocessorRule extends WordRule {
 
 	/**
 	 * Creates a rule which, with the help of a word detector, will return the token
-	 * associated with the detected word. If no token has been associated, the scanner 
-	 * will be rolled back and an undefined token will be returned in order to allow 
+	 * associated with the detected word. If no token has been associated, the scanner
+	 * will be rolled back and an undefined token will be returned in order to allow
 	 * any subsequent rules to analyze the characters.
 	 *
 	 * @param detector the word detector to be used by this rule, may not be <code>null</code>
@@ -51,7 +51,7 @@ public class PreprocessorRule extends WordRule {
 	 * specified default token will be returned.
 	 *
 	 * @param detector the word detector to be used by this rule, may not be <code>null</code>
-	 * @param defaultToken the default token to be returned on success 
+	 * @param defaultToken the default token to be returned on success
 	 *  if nothing else is specified, may not be <code>null</code>
 	 *
 	 * @see WordRule#addWord
@@ -66,10 +66,10 @@ public class PreprocessorRule extends WordRule {
 	 * specified default token will be returned.
 	 *
 	 * @param detector the word detector to be used by this rule, may not be <code>null</code>
-	 * @param defaultToken the default token to be returned on success 
+	 * @param defaultToken the default token to be returned on success
 	 *  if nothing else is specified, may not be <code>null</code>
 	 * @param malformedToken  the token to be returned if the directive is malformed
-	 * 
+	 *
 	 * @see WordRule#addWord
 	 */
 	public PreprocessorRule(IWordDetector detector, IToken defaultToken, IToken malformedToken) {

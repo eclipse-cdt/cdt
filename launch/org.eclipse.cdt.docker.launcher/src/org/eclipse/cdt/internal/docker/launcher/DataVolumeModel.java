@@ -66,7 +66,7 @@ public class DataVolumeModel extends BaseDatabindingModel implements Comparable<
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param containerPath
 	 *            the container path
 	 */
@@ -105,7 +105,7 @@ public class DataVolumeModel extends BaseDatabindingModel implements Comparable<
 
 	/**
 	 * Create a DataVolumeModel from a toString() output.
-	 * 
+	 *
 	 * @param fromString
 	 * @return DataVolumeModel
 	 */
@@ -143,12 +143,12 @@ public class DataVolumeModel extends BaseDatabindingModel implements Comparable<
 
 	/**
 	 * creates a {@link DataVolumeModel} from the 'volumeFrom' container info
-	 * 
+	 *
 	 * @param volumeFrom
 	 *            the value to parse.
-	 * 
+	 *
 	 *            Format: <code>&lt;containerName&gt;</code>
-	 * 
+	 *
 	 * @See <a href="https://docs.docker.com/engine/userguide/dockervolumes/">
 	 *      https://docs.docker.com/engine/userguide/dockervolumes/</a>
 	 */
@@ -162,18 +162,18 @@ public class DataVolumeModel extends BaseDatabindingModel implements Comparable<
 
 	/**
 	 * creates a {@link DataVolumeModel} from the 'volumeFrom' container info
-	 * 
+	 *
 	 * @param volumeFrom
 	 *            the value to parse. Format:
 	 *            <code>&lt;host_path&gt;:&lt;container_path&gt;:&lt;label_suffix_flag&gt;</code>
-	 * 
+	 *
 	 * @See <a href="https://docs.docker.com/engine/userguide/dockervolumes/">
 	 *      https://docs.docker.com/engine/userguide/dockervolumes/</a>
 	 */
 	public static DataVolumeModel parseHostBinding(String volumeFrom) {
 		final DataVolumeModel model = new DataVolumeModel();
 		final String[] items = volumeFrom.split(SEPARATOR); // $NON-NLS-1$
-		// converts the host path to a valid Win32 path if Platform OS is Win32 
+		// converts the host path to a valid Win32 path if Platform OS is Win32
 		model.setHostPathMount(convertToWin32Path(Platform.getOS(), items[0]));
 		model.containerPath = items[1];
 		model.mountType = MountType.HOST_FILE_SYSTEM;
@@ -189,7 +189,7 @@ public class DataVolumeModel extends BaseDatabindingModel implements Comparable<
 	/**
 	 * Converts the given path to a portable form, replacing all "\" and ": "
 	 * with "/" if the given <code>os</code> is {@link Platform#OS_WIN32}.
-	 * 
+	 *
 	 * @param os
 	 *            the current OS
 	 * @param path

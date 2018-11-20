@@ -18,13 +18,13 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.Properties;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.pdom.db.ChunkCache;
 import org.eclipse.cdt.internal.core.pdom.db.DBProperties;
 import org.eclipse.cdt.internal.core.pdom.db.Database;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.Test;
 
 /**
  * Tests for the {@link DBProperties} class.

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -39,7 +39,7 @@ import org.junit.After;
 import org.junit.Before;
 
 /**
- * 
+ *
  */
 public class CommandControlTestsBase {
 
@@ -49,7 +49,7 @@ public class CommandControlTestsBase {
 	protected DsfSession fSession;
 	protected PDABackend fPDABackend;
 	protected PDACommandControl fCommandControl;
-	private BlockingQueue<Object> fEventsQueue = new LinkedBlockingQueue<Object>();
+	private BlockingQueue<Object> fEventsQueue = new LinkedBlockingQueue<>();
 
 	private BufferedReader fOutputReader;
 
@@ -62,7 +62,6 @@ public class CommandControlTestsBase {
 				fCommandControl.initialize(rm);
 			}
 		}
-		;
 
 		fExecutor = new DefaultDsfExecutor();
 		fSession = DsfSession.startSession(fExecutor, "PDA Test");
@@ -104,7 +103,6 @@ public class CommandControlTestsBase {
 				fCommandControl.shutdown(rm);
 			}
 		}
-		;
 
 		if (fExecutor != null) {
 			ShutdownCommandServiceQuery shutdownQuery = new ShutdownCommandServiceQuery();
@@ -118,7 +116,6 @@ public class CommandControlTestsBase {
 				fPDABackend.shutdown(rm);
 			}
 		}
-		;
 
 		if (fExecutor != null) {
 			ShutdownBackendServiceQuery shutdownQuery = new ShutdownBackendServiceQuery();

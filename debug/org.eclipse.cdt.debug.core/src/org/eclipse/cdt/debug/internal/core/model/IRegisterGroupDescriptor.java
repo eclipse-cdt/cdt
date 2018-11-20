@@ -38,10 +38,10 @@ public interface IRegisterGroupDescriptor {
 
 	/**
 	 * The id of the container this register group belongs to.
-	 * If null, the register group applies to the entire launch, 
-	 * otherwise it applies only to a given core, or process, within the launch. 
+	 * If null, the register group applies to the entire launch,
+	 * otherwise it applies only to a given core, or process, within the launch.
 	 */
 	default String getContainerId() {
 		return null;
-	};
+	}
 }

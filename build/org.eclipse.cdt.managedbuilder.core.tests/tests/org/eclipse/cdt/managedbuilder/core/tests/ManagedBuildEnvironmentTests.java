@@ -14,10 +14,6 @@
 
 package org.eclipse.cdt.managedbuilder.core.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 import org.eclipse.cdt.managedbuilder.core.IManagedProject;
@@ -27,6 +23,10 @@ import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentBuildPathsChangeListene
 import org.eclipse.cdt.managedbuilder.envvar.IEnvironmentVariableProvider;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  *
@@ -186,7 +186,7 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 	/*
 		public void testEnvSuppliers() {
 			doInit();
-	
+
 			IEnvironmentVariableSupplier[] arrSupSys = envProvider.getSuppliers(null);
 			assertEquals("System suppliers count not equal to 1", arrSupSys.length, 1); //$NON-NLS-1$
 			IBuildEnvironmentVariable[] a = arrSupSys[0].getVariables(null);
@@ -194,7 +194,7 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 			IBuildEnvironmentVariable[] b = envProvider.getVariables(null, false, false);
 			assertTrue(varListContainNames(a, b));
 			assertTrue(varListContainNames(b, a));
-	
+
 			IEnvironmentVariableSupplier[] arrSupWrk = envProvider.getSuppliers(worksp);
 			assertEquals("Workspace suppliers count not equal to 1", arrSupWrk.length, 1); //$NON-NLS-1$
 			a = arrSupWrk[0].getVariables(worksp);
@@ -202,15 +202,15 @@ public class ManagedBuildEnvironmentTests extends TestCase {
 			b = envProvider.getVariables(worksp, false, false);
 			assertTrue(varListContainNames(a, b));
 			assertTrue(varListContainNames(b, a));
-	
+
 			IEnvironmentVariableSupplier[] arrSupPro = envProvider.getSuppliers(mproj);
 			assertEquals("Project suppliers count not equal to 2", arrSupPro.length, 2); //$NON-NLS-1$
-	
+
 			b = envProvider.getVariables(mproj, false, false);
 			for (int k=0; k<arrSupPro.length; k++ ) {
 				assertTrue(varListContainNames(arrSupPro[k].getVariables(mproj), b));
 			}
-	
+
 			IConfiguration[] configs = mproj.getConfigurations();
 			for (int j=0; j<configs.length; j++) {
 				b = envProvider.getVariables(configs[j], false, false);

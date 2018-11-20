@@ -15,16 +15,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 /**
  * The label provider for the c model elements.
@@ -61,7 +59,7 @@ public class CElementLabelProvider extends LabelProvider {
 	 * Flag (bit mask) indicating that Complation Units, Class Files, Types, Declarations and Members
 	 * should be rendered qualified.
 	 * Examples: java.lang.String, java.util.Vector.size()
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public final static int SHOW_QUALIFIED = 0x400;
@@ -70,13 +68,13 @@ public class CElementLabelProvider extends LabelProvider {
 	 * Flag (bit mask) indicating that Compilation Units, Class Files, Types, Declarations and Members
 	 * should be rendered qualified. The qualification is appended
 	 * Examples: String - java.lang, size() - java.util.Vector
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public final static int SHOW_POST_QUALIFIED = 0x800;
 
 	/**
-	 * Constant (value <code>0</code>) indicating that the label should show 
+	 * Constant (value <code>0</code>) indicating that the label should show
 	 * the basic images only.
 	 */
 	public final static int SHOW_BASICS = 0x000;

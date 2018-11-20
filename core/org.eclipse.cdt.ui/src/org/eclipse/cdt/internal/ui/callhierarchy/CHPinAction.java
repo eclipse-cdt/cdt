@@ -7,24 +7,23 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Marc-Andre Laperle - Adapted to CDT from JDT
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.callhierarchy;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class CHPinAction extends Action {
 	private CHViewPart fView;
 
 	/**
 	 * Constructs a 'Pin Call Hierarchy view' action.
-	 * 
+	 *
 	 * @param view the Call Hierarchy view
 	 */
 	public CHPinAction(CHViewPart view) {

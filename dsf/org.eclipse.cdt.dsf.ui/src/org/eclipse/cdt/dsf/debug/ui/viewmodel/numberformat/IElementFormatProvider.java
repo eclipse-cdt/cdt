@@ -22,10 +22,10 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * Element format provider - an optional interface that provides individual element format
  * A view model provider (org.eclipse.cdt.dsf.ui.viewmodel.IVMProvider) can optionally implement this interface.
- * If there is a requirement to persist individual format settings, this provider can 
+ * If there is a requirement to persist individual format settings, this provider can
  * add an persistable (IPersistable) property to PresentationContext so that when presentation context
- * is invoked to persist its properties, the individual format settings are persisted as well.  
- *  
+ * is invoked to persist its properties, the individual format settings are persisted as well.
+ *
  * @since 2.2
  */
 public interface IElementFormatProvider {

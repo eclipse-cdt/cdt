@@ -70,33 +70,33 @@ public interface IResourceInfo extends IBuildObject {
 
 	/**
 	 * Sets the value of a boolean option for this resource configuration.
-	 * 
+	 *
 	 * @param parent The holder/parent of the option.
 	 * @param option The option to change.
 	 * @param value The value to apply to the option.
-	 * 
+	 *
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
 	 */
 	public IOption setOption(IHoldsOptions parent, IOption option, boolean value) throws BuildException;
 
 	/**
 	 * Sets the value of a string option for this resource configuration.
-	 * 
+	 *
 	 * @param parent The holder/parent of the option.
 	 * @param option The option that will be effected by change.
 	 * @param value The value to apply to the option.
-	 * 
+	 *
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
 	 */
 	public IOption setOption(IHoldsOptions parent, IOption option, String value) throws BuildException;
 
 	/**
 	 * Sets the value of a list option for this resource configuration.
-	 * 
+	 *
 	 * @param parent The holder/parent of the option.
 	 * @param option The option to change.
 	 * @param value The values to apply to the option.
-	 * 
+	 *
 	 * @return IOption The modified option.  This can be the same option or a newly created option.
 	 */
 	public IOption setOption(IHoldsOptions parent, IOption option, String[] value) throws BuildException;

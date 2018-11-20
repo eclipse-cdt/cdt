@@ -23,7 +23,7 @@ import org.eclipse.cdt.utils.coff.ReadMemoryAccess;
 
 /**
  * Representation of a HP-UX SOM binary format
- * 
+ *
  * @author vhirsl
  */
 public class SOM {
@@ -38,7 +38,7 @@ public class SOM {
 
 	/**
 	 * SOM Header record
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public static class FileHeader {
@@ -217,7 +217,7 @@ public class SOM {
 		public static final int NULL = 0; // Invalid symbol record
 		public static final int ABSOLUTE = 1; // Absolute constant
 		public static final int DATA = 2; // Normal initialized data
-		public static final int CODE = 3; // Unspecified code 
+		public static final int CODE = 3; // Unspecified code
 		public static final int PRI_PROG = 4; // Primary program entry point
 		public static final int SEC_PROG = 5; // Secondary program entry point
 		public static final int ENTRY = 6; // Any code entry point
@@ -474,7 +474,7 @@ public class SOM {
 			getRandomAccessFile();
 			rfile.seek(offset);
 			int numSymbols = getFileHeader().symbol_total;
-			ArrayList<Symbol> symList = new ArrayList<Symbol>(numSymbols);
+			ArrayList<Symbol> symList = new ArrayList<>(numSymbols);
 			for (int i = 0; i < numSymbols; ++i) {
 				Symbol v = new Symbol(rfile);
 				symList.add(v);

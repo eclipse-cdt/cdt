@@ -73,7 +73,7 @@ public class SetPathEntriesOperation extends CModelOperation {
 			IProjectDescription description = projectResource.getDescription();
 			IProject[] projectReferences = description.getReferencedProjects();
 
-			HashSet<String> oldReferences = new HashSet<String>(projectReferences.length);
+			HashSet<String> oldReferences = new HashSet<>(projectReferences.length);
 			for (IProject projectReference : projectReferences) {
 				String projectName = projectReference.getName();
 				oldReferences.add(projectName);

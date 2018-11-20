@@ -73,11 +73,11 @@ public class EnableDisableBreakpointRulerAction extends AbstractBreakpointRulerA
 				if (getBreakpoint().isEnabled()) {
 					setText(ActionMessages.getString("EnableDisableBreakpointRulerAction.Disable_Breakpoint_1") + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
 							CDebugUIUtils.formatKeyBindingString(SWT.MOD2,
-									ActionMessages.getString("CRulerToggleBreakpointAction_accelerator"))); //$NON-NLS-1$ 
+									ActionMessages.getString("CRulerToggleBreakpointAction_accelerator"))); //$NON-NLS-1$
 				} else {
 					setText(ActionMessages.getString("EnableDisableBreakpointRulerAction.Enable_Breakpoint_1") + "\t" + //$NON-NLS-1$ //$NON-NLS-2$
 							CDebugUIUtils.formatKeyBindingString(SWT.MOD2,
-									ActionMessages.getString("CRulerToggleBreakpointAction_accelerator"))); //$NON-NLS-1$ 
+									ActionMessages.getString("CRulerToggleBreakpointAction_accelerator"))); //$NON-NLS-1$
 				}
 			} catch (CoreException e) {
 				DebugPlugin.log(e);

@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 
 /**
  * Base interface for methods, also used for constructors.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -31,8 +31,8 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 
 	/**
 	 * Is this a destructor?
-	 * 
-	 * Returns true if its name starts with '~' 
+	 *
+	 * Returns true if its name starts with '~'
 	 */
 	public boolean isDestructor();
 
@@ -56,14 +56,14 @@ public interface ICPPMethod extends ICPPFunction, ICPPMember {
 
 	/**
 	 * Returns whether this method is declared override.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public boolean isOverride();
 
 	/**
 	 * Returns whether this method is declared final.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public boolean isFinal();

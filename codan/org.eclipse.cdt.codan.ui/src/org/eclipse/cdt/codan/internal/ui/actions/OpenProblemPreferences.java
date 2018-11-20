@@ -37,7 +37,7 @@ public class OpenProblemPreferences implements IObjectActionDelegate {
 	public void run(IAction action) {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
-			ArrayList<IProblem> list = new ArrayList<IProblem>();
+			ArrayList<IProblem> list = new ArrayList<>();
 			IResource resource = null;
 			for (Iterator<?> iterator = ss.iterator(); iterator.hasNext();) {
 				Object el = iterator.next();

@@ -47,42 +47,42 @@ public interface ICPPASTTemplateId extends ICPPASTName, IASTNameOwner {
 
 	/**
 	 * Returns the name of the template.
-	 * 
+	 *
 	 * @return {@code IASTName}
 	 */
 	public IASTName getTemplateName();
 
 	/**
 	 * Sets the name of the template.
-	 * 
+	 *
 	 * @param name {@code IASTName}
 	 */
 	public void setTemplateName(IASTName name);
 
 	/**
 	 * Adds template argument.
-	 * 
+	 *
 	 * @param typeId {@code IASTTypeId}
 	 */
 	public void addTemplateArgument(IASTTypeId typeId);
 
 	/**
 	 * Adds a template argument.
-	 * 
+	 *
 	 * @param expression {@code IASTExpression}
 	 */
 	public void addTemplateArgument(IASTExpression expression);
 
 	/**
 	 * Adds an ambiguity node for later resolution.
-	 * 
+	 *
 	 * @param ambiguity
 	 */
 	public void addTemplateArgument(ICPPASTAmbiguousTemplateArgument ambiguity);
 
 	/**
 	 * Returns all template arguments as nodes.
-	 * 
+	 *
 	 * @return nodes representing the template arguments
 	 */
 	public IASTNode[] getTemplateArguments();

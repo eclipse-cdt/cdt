@@ -30,10 +30,10 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Factory for obtaining instances of IIndexFileLocation for workspace and external files, and
- * some utility methods for going in the opposite direction. 
- * 
+ * some utility methods for going in the opposite direction.
+ *
  * @since 4.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

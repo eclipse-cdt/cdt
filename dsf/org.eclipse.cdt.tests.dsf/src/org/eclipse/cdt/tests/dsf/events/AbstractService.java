@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.osgi.framework.Filter;
 
 /**
  * Test service class used to test event behavior.  It has three types of events
- * and three methods to receive the events.  
+ * and three methods to receive the events.
  *
  */
 abstract public class AbstractService extends AbstractDsfService {

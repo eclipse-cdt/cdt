@@ -17,18 +17,17 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-
 public class ControlStatementsTabPage extends FormatterTabPage {
 
 	private final String PREVIEW = createPreviewHeader(FormatterMessages.ControlStatementsTabPage_preview_header)
-			+ "class Example {" + //$NON-NLS-1$	
+			+ "class Example {" + //$NON-NLS-1$
 			"  void bar() {" + //$NON-NLS-1$
 			"    do {} while (true);" + //$NON-NLS-1$
 			"    try {} catch (...) { }" + //$NON-NLS-1$
@@ -112,7 +111,7 @@ public class ControlStatementsTabPage extends FormatterTabPage {
 		createCheckboxPref(ifElseGroup, numColumns,
 				FormatterMessages.ControlStatementsTabPage_if_else_group_keep_else_if_on_one_line,
 				DefaultCodeFormatterConstants.FORMATTER_COMPACT_ELSE_IF, FALSE_TRUE);
-		//		createCheckboxPref(ifElseGroup, numColumns, FormatterMessages.ControlStatementsTabPage_if_else_group_keep_guardian_clause_on_one_line, DefaultCodeFormatterConstants.FORMATTER_KEEP_GUARDIAN_CLAUSE_ON_ONE_LINE, FALSE_TRUE); 
+		//		createCheckboxPref(ifElseGroup, numColumns, FormatterMessages.ControlStatementsTabPage_if_else_group_keep_guardian_clause_on_one_line, DefaultCodeFormatterConstants.FORMATTER_KEEP_GUARDIAN_CLAUSE_ON_ONE_LINE, FALSE_TRUE);
 	}
 
 	@Override

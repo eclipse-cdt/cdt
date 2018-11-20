@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface ICDescriptorOperation {
 	/**
 	 * Call-back method executed atomically on a ICDescriptor in a runnable.
-	 * 
+	 *
 	 * @see ICDescriptorManager#runDescriptorOperation(IProject, ICDescriptorOperation, IProgressMonitor)
 	 * @see ICDescriptorManager#runDescriptorOperation(IProject, ICProjectDescription, ICDescriptorOperation, IProgressMonitor)
 	 * @param descriptor

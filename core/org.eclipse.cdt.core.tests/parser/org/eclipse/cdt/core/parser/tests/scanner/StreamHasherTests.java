@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.scanner;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.parser.scanner.StreamHasher;
+
+import junit.framework.TestSuite;
 
 /**
  * Unit test for StreamHasher class.

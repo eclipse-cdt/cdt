@@ -21,10 +21,10 @@ import org.eclipse.core.resources.IProject;
 /**
  * Similar to CPElement. Describes discovered paths and symbols available
  * through DiscoveredPathInfo instead of CPathEntry.
- * 
+ *
  * @deprecated as of CDT 4.0. This class was used to set preferences/properties
  * for 3.X style projects.
- * 
+ *
  * @author vhirsl
  */
 @Deprecated
@@ -43,7 +43,7 @@ public class DiscoveredElement {
 	private String fEntry;
 	private int fEntryKind;
 	private boolean fRemoved;
-	private ArrayList<DiscoveredElement> fChildren = new ArrayList<DiscoveredElement>();
+	private ArrayList<DiscoveredElement> fChildren = new ArrayList<>();
 	private DiscoveredElement fParent;
 
 	public DiscoveredElement(IProject project, String entry, int kind, boolean removed, boolean system) {
@@ -171,7 +171,7 @@ public class DiscoveredElement {
 	}
 
 	/**
-	 * @return children of the discovered element 
+	 * @return children of the discovered element
 	 */
 	public DiscoveredElement[] getChildren() {
 		switch (fEntryKind) {
@@ -196,7 +196,7 @@ public class DiscoveredElement {
 	}
 
 	public void setChildren(DiscoveredElement[] children) {
-		fChildren = new ArrayList<DiscoveredElement>(Arrays.asList(children));
+		fChildren = new ArrayList<>(Arrays.asList(children));
 	}
 
 	public boolean delete() {

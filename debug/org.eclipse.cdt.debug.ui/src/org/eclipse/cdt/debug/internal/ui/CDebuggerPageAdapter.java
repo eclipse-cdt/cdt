@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * Migration from <code>AbstractLaunchConfigurationTab</code> to <code>ICDebuggerPage</code>.
- * 
+ *
  * @since 3.1
  */
 public class CDebuggerPageAdapter implements ICDebuggerPage {
@@ -33,8 +33,8 @@ public class CDebuggerPageAdapter implements ICDebuggerPage {
 	private ILaunchConfigurationTab fDelegate;
 	private String fDebuggerId;
 
-	/** 
-	 * Constructor for CDebuggerPageAdapter. 
+	/**
+	 * Constructor for CDebuggerPageAdapter.
 	 */
 	public CDebuggerPageAdapter(ILaunchConfigurationTab tab) {
 		fDelegate = tab;

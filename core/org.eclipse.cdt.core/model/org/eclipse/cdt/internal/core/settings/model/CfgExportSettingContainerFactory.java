@@ -54,7 +54,7 @@ public class CfgExportSettingContainerFactory extends CExternalSettingContainerF
 	private static final char DELIMITER = ';';
 
 	/** Cache the external settings exported by project configurations */
-	private static final ConcurrentHashMap<String, CExternalSetting[]> cachedSettings = new ConcurrentHashMap<String, CExternalSetting[]>();
+	private static final ConcurrentHashMap<String, CExternalSetting[]> cachedSettings = new ConcurrentHashMap<>();
 
 	private static CfgExportSettingContainerFactory fInstance;
 
@@ -152,7 +152,7 @@ public class CfgExportSettingContainerFactory extends CExternalSettingContainerF
 
 	public static Map<String, String> getReferenceMap(ICConfigurationDescription cfg) {
 		CContainerRef[] refs = CExternalSettingsManager.getInstance().getReferences(cfg, FACTORY_ID);
-		Map<String, String> map = new LinkedHashMap<String, String>();
+		Map<String, String> map = new LinkedHashMap<>();
 		for (int i = 0; i < refs.length; i++) {
 			try {
 				String[] r = parseId(refs[i].getContainerId());
@@ -166,7 +166,7 @@ public class CfgExportSettingContainerFactory extends CExternalSettingContainerF
 
 	public static void setReferenceMap(ICConfigurationDescription cfg, Map<String, String> map) {
 		Map<String, String> oldRefs = getReferenceMap(cfg);
-		Map<String, String> newRefs = new LinkedHashMap<String, String>(map);
+		Map<String, String> newRefs = new LinkedHashMap<>(map);
 
 		// We need to preserve order. The API we have with the external settings manager allows us to
 		// add and remove individual items.
@@ -283,7 +283,7 @@ public class CfgExportSettingContainerFactory extends CExternalSettingContainerF
 			return new String[0];
 		int deltaKind = delta.getDeltaKind();
 
-		Set<String> cfgIds = new HashSet<String>();
+		Set<String> cfgIds = new HashSet<>();
 		switch (deltaKind) {
 		case ICDescriptionDelta.ADDED:
 		case ICDescriptionDelta.REMOVED:

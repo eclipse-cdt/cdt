@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.parser.scanner;
 
 import java.util.List;
 
-/** 
+/**
  * Represents the include search path
  */
 public final class IncludeSearchPath {

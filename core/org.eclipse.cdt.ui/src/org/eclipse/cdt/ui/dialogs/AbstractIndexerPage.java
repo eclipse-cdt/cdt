@@ -18,6 +18,10 @@ package org.eclipse.cdt.ui.dialogs;
 
 import java.util.Properties;
 
+import org.eclipse.cdt.internal.core.model.CProject;
+import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.layout.PixelConverter;
@@ -34,13 +38,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.core.model.CProject;
-import org.eclipse.cdt.internal.core.pdom.indexer.IndexerPreferences;
-
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 
 /**
  * Configuration for indexer.
@@ -168,7 +165,7 @@ public abstract class AbstractIndexerPage extends AbstractCOptionPage {
 	}
 
 	/**
-	 * Use the properties to initialize the controls of the page. Fill in defaults 
+	 * Use the properties to initialize the controls of the page. Fill in defaults
 	 * for properties that are missing.
 	 * @since 4.0
 	 */

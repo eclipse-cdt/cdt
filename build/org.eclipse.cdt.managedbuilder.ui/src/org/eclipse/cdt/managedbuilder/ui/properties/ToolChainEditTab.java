@@ -275,7 +275,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 
 		c_toolchain.removeAll();
 		boolean isMng = cfg.getBuilder().isManagedBuildOn();
-		ArrayList<IToolChain> list = new ArrayList<IToolChain>();
+		ArrayList<IToolChain> list = new ArrayList<>();
 
 		IToolChain[] tcs = r_tcs;
 		if (b_dispCompatible.getSelection() && (ri instanceof IFolderInfo)) {
@@ -318,7 +318,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 			realBuilder = cfg.getBuilder();
 		int pos = -1;
 		c_builder.removeAll();
-		ArrayList<IBuilder> list = new ArrayList<IBuilder>();
+		ArrayList<IBuilder> list = new ArrayList<>();
 
 		IBuilder[] bs = r_bs;
 
@@ -443,7 +443,7 @@ public class ToolChainEditTab extends AbstractCBuildPropertyTab {
 
 	private boolean updateCompatibleTools(ITool real) {
 		boolean result = false;
-		ArrayList<ITool> list = new ArrayList<ITool>();
+		ArrayList<ITool> list = new ArrayList<>();
 		IFileInfoModification fim = (IFileInfoModification) mod;
 
 		if (real != null) { // Current tool exists

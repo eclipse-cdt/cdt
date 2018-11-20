@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.CCorePlugin;
 
 /**
  * Markers used by the C model.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -25,7 +25,7 @@ public interface ICModelMarker {
 
 	/**
 	 * C model problem marker type (value <code>"org.eclipse.cdt.core.problem"</code>).
-	 * This can be used to recognize those markers in the workspace that flag problems 
+	 * This can be used to recognize those markers in the workspace that flag problems
 	 * detected by the C compilers.
 	 */
 	public static final String C_MODEL_PROBLEM_MARKER = CCorePlugin.PLUGIN_ID + ".problem"; //$NON-NLS-1$
@@ -38,8 +38,8 @@ public interface ICModelMarker {
 	public static final String C_MODEL_MARKER_VARIABLE = "problem.variable"; //$NON-NLS-1$
 
 	/**
-	 * C model extension to the marker problem markers which may hold 
-	 * the path to the workspace external location of the file containing the problem 
+	 * C model extension to the marker problem markers which may hold
+	 * the path to the workspace external location of the file containing the problem
 	 */
 	public static final String C_MODEL_MARKER_EXTERNAL_LOCATION = "problem.externalLocation"; //$NON-NLS-1$
 
@@ -56,16 +56,16 @@ public interface ICModelMarker {
 
 	/**
 	 * PatheEtnry problem marker type (value <code>"org.eclipse.cdt.core.pathentry_problem"</code>).
-	 * This can be used to recognize those markers in the workspace that flag problems 
+	 * This can be used to recognize those markers in the workspace that flag problems
 	 * detected by the C tooling during pathEntry setting.
 	 */
 	public static final String PATHENTRY_PROBLEM_MARKER = CCorePlugin.PLUGIN_ID + ".pathentry_problem"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * PathEntry file format marker attribute (value <code>"PathEntryFileFormat"</code>).
 	 * Used only on pathentry store problem markers.
 	 * The value of this attribute is either "true" or "false".
-	 * 
+	 *
 	 */
 	public static final String PATHENTRY_FILE_FORMAT = "pathEntryFileFormat"; //$NON-NLS-1$
 

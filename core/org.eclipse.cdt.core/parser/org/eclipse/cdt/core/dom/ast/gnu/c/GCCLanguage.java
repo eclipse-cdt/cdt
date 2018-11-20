@@ -45,7 +45,7 @@ public class GCCLanguage extends AbstractCLikeLanguage {
 	protected static final GCCParserExtensionConfiguration C_GNU_PARSER_EXTENSION = GCCParserExtensionConfiguration
 			.getInstance();
 	// Must match the id in the extension
-	public static final String ID = CCorePlugin.PLUGIN_ID + ".gcc"; //$NON-NLS-1$ 
+	public static final String ID = CCorePlugin.PLUGIN_ID + ".gcc"; //$NON-NLS-1$
 
 	private static final GCCLanguage DEFAULT_INSTANCE = new GCCLanguage();
 

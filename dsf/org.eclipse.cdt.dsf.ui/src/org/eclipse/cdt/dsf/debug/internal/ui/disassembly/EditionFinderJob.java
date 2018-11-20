@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.disassembly;
 
+import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.internalError;
+
 import java.math.BigInteger;
 
 import org.eclipse.cdt.dsf.debug.internal.ui.disassembly.model.SourceFileInfo;
@@ -25,7 +27,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import static org.eclipse.cdt.debug.internal.ui.disassembly.dsf.DisassemblyUtils.internalError;
 
 /**
  * A job to find a suitable edition from the local history
@@ -40,7 +41,7 @@ class EditionFinderJob extends Job {
 
 	/**
 	 * Create a new edition finder for a file resource and address.
-	 * 
+	 *
 	 * @param sourceInfo  the file info containing the file resource for which to find an edition
 	 * @param address  address inside the module
 	 * @param disassemblyPart  the disassembly part where this job originated from

@@ -73,7 +73,7 @@ public class MakeProject implements ICOwner {
 	private String[] parseStringToArray(String syms) {
 		if (syms != null && syms.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(syms, ";"); //$NON-NLS-1$
-			ArrayList<String> list = new ArrayList<String>(tok.countTokens());
+			ArrayList<String> list = new ArrayList<>(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
 			}

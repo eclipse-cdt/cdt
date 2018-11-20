@@ -17,14 +17,12 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.service.prefs.BackingStoreException;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
 
 public class FormatterProfileStore extends ProfileStore {
 

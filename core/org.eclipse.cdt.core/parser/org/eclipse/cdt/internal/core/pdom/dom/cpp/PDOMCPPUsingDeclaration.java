@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.CoreException;
  * Represents "using" declaration in PDOM. A single "using" declaration resolving to multiple
  * objects, e.g. functions with the same name but different signatures, is represented by multiple
  * chained PDOMCPPUsingDeclaration records.
- * 
+ *
  * @see ICPPUsingDeclaration
  */
 class PDOMCPPUsingDeclaration extends PDOMCPPBinding implements ICPPUsingDeclaration {

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -26,7 +26,7 @@ import org.eclipse.debug.core.model.IWatchpoint;
 /**
  * A watchpoint.
  * <p>
- * This class is identical to the corresponding in PDA debugger implemented in 
+ * This class is identical to the corresponding in PDA debugger implemented in
  * org.eclipse.debug.examples.
  * </p>
  */
@@ -55,7 +55,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 	 * line number. The line number is 1-based (i.e. the first line of a
 	 * file is line number 1). The PDA VM uses 0-based line numbers,
 	 * so this line number translation is done at breakpoint install time.
-	 * 
+	 *
 	 * @param resource file on which to set the breakpoint
 	 * @param lineNumber 1-based line number of the breakpoint
 	 * @param functionName function name the variable is defined in
@@ -134,7 +134,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 
 	/**
 	 * Sets the variable and function names the watchpoint is set on.
-	 * 
+	 *
 	 * @param functionName function name
 	 * @param variableName variable name
 	 * @throws CoreException if an exception occurrs setting marker attribtues
@@ -146,7 +146,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 
 	/**
 	 * Returns the name of the variable this watchpoint is set on.
-	 * 
+	 *
 	 * @return the name of the variable this watchpoint is set on
 	 * @throws CoreException if unable to access the attribute
 	 */
@@ -156,7 +156,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 
 	/**
 	 * Returns the name of the function the variable associted with this watchpoint is defined in.
-	 * 
+	 *
 	 * @return the name of the function the variable associted with this watchpoint is defined in
 	 * @throws CoreException if unable to access the attribute
 	 */
@@ -166,7 +166,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 
 	/**
 	 * Sets the type of event that causes the last suspend event.
-	 * 
+	 *
 	 * @param description one of 'read' or 'write'
 	 */
 	public void setSuspendType(String description) {
@@ -175,7 +175,7 @@ public class PDAWatchpoint extends PDALineBreakpoint implements IWatchpoint {
 
 	/**
 	 * Returns the type of event that caused the last suspend.
-	 * 
+	 *
 	 * @return 'read', 'write', or <code>null</code> if undefined
 	 */
 	public String getSuspendType() {

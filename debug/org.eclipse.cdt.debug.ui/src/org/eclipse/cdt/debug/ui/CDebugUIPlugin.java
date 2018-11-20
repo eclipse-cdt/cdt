@@ -134,7 +134,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -144,7 +144,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
@@ -155,7 +155,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message to log
 	 */
@@ -183,7 +183,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	protected void initializeDebuggerPageMap() {
-		fDebuggerPageMap = new HashMap<String, IConfigurationElement>(10);
+		fDebuggerPageMap = new HashMap<>(10);
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(PLUGIN_ID,
 				CDEBUGGER_PAGE_EXTENSION_POINT_ID);
 		IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
@@ -218,7 +218,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the active workbench window
-	 * 
+	 *
 	 * @return the active workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -289,7 +289,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -337,7 +337,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -366,7 +366,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns an image descriptor for the image file at the given plug-in relative path
-	 * 
+	 *
 	 * @param path
 	 *            the path
 	 * @return the image descriptor
@@ -376,7 +376,7 @@ public class CDebugUIPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param key - key is usually plug-in relative path to image like icons/xxx.gif
 	 * @return Image loaded from key location or from registry cache, it will be stored in plug-in registry and disposed when plug-in unloads
 	 */

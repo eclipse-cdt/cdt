@@ -20,7 +20,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 
 /**
- * Used to scan and detect for SQL keywords  
+ * Used to scan and detect for SQL keywords
  */
 public class WordPartDetector {
 	String wordPart = ""; //$NON-NLS-1$
@@ -28,7 +28,7 @@ public class WordPartDetector {
 
 	/**
 	 * WordPartDetector.
-	 * @param viewer is a text viewer 
+	 * @param viewer is a text viewer
 	 * @param documentOffset into the SQL document
 	 */
 	public WordPartDetector(ITextViewer viewer, int documentOffset) {
@@ -36,7 +36,7 @@ public class WordPartDetector {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param doc
 	 * @param documentOffset
 	 */

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public class DisassemblyPreferenceConstants {
 	public static final String SYNC_ACTIVE_CONTEXT = "disassembly.syncActiveContext"; //$NON-NLS-1$
 
 	/**
-	 * 
+	 *
 	 */
 	private DisassemblyPreferenceConstants() {
 		// not intended to be subclassed or instantiated

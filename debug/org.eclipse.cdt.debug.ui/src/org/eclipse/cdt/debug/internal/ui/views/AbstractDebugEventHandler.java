@@ -39,7 +39,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 
 	/**
 	 * Constructs an event handler for the given view.
-	 * 
+	 *
 	 * @param view debug view
 	 */
 	public AbstractDebugEventHandler(AbstractDebugView view) {
@@ -98,7 +98,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	protected abstract void doHandleDebugEvents(DebugEvent[] events);
 
 	/**
-	 * Helper method for inserting the given element in the tree viewer - 
+	 * Helper method for inserting the given element in the tree viewer -
 	 * must be called in UI thread
 	 */
 	protected void insert(Object element) {
@@ -115,7 +115,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	}
 
 	/**
-	 * Helper method to remove the given element from the tree viewer - 
+	 * Helper method to remove the given element from the tree viewer -
 	 * must be called in UI thread.
 	 */
 	protected void remove(Object element) {
@@ -176,7 +176,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	/**
 	 * Returns the view this event handler is
 	 * updating.
-	 * 
+	 *
 	 * @return debug view
 	 */
 	protected AbstractDebugView getView() {
@@ -185,7 +185,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 
 	/**
 	 * Sets the view this event handler is updating.
-	 * 
+	 *
 	 * @param view debug view
 	 */
 	private void setView(AbstractDebugView view) {
@@ -193,9 +193,9 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	}
 
 	/**
-	 * Returns the viewer this event handler is 
+	 * Returns the viewer this event handler is
 	 * updating.
-	 * 
+	 *
 	 * @return viewer
 	 */
 	protected Viewer getViewer() {
@@ -205,7 +205,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	/**
 	 * Returns this event handler's viewer as a tree
 	 * viewer or <code>null</code> if none.
-	 * 
+	 *
 	 * @return this event handler's viewer as a tree
 	 * viewer or <code>null</code> if none
 	 */
@@ -219,7 +219,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	/**
 	 * Returns this event handler's viewer as a structured
 	 * viewer or <code>null</code> if none.
-	 * 
+	 *
 	 * @return this event handler's viewer as a structured
 	 * viewer or <code>null</code> if none
 	 */
@@ -233,7 +233,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 	/**
 	 * Returns whether this event handler's viewer is
 	 * currently available.
-	 * 
+	 *
 	 * @return whether this event handler's viewer is
 	 * currently available
 	 */
@@ -243,7 +243,7 @@ public abstract class AbstractDebugEventHandler implements IDebugEventSetListene
 
 	/**
 	 * Returns whether this event handler's view is currently visible.
-	 * 
+	 *
 	 * @return whether this event handler's view is currently visible
 	 */
 	protected boolean isViewVisible() {

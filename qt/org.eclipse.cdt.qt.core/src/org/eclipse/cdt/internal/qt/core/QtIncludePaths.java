@@ -258,7 +258,7 @@ public class QtIncludePaths extends LanguageSettingsSerializableProvider {
 			}
 		});
 
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>(files.length + 1);
+		List<ICLanguageSettingEntry> entries = new ArrayList<>(files.length + 1);
 		safeAdd(entries, qtInstallHeadersDir);
 		for (File file : files)
 			safeAdd(entries, file);

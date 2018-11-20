@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -26,14 +26,14 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 public class PDARegistersCommandResult extends PDACommandResult {
 
 	/**
-	 * Array of registers returned by the registers commands.  
+	 * Array of registers returned by the registers commands.
 	 */
 	final public PDARegister[] fRegisters;
 
 	PDARegistersCommandResult(String response) {
 		super(response);
 		StringTokenizer st = new StringTokenizer(response, "#");
-		List<PDARegister> regList = new ArrayList<PDARegister>();
+		List<PDARegister> regList = new ArrayList<>();
 
 		while (st.hasMoreTokens()) {
 			regList.add(new PDARegister(st.nextToken()));

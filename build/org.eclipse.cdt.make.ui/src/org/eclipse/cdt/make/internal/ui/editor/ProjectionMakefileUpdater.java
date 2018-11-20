@@ -169,7 +169,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private Map<MakefileProjectionAnnotation, Position> computeAdditions(IParent parent) {
-		Map<MakefileProjectionAnnotation, Position> map = new HashMap<MakefileProjectionAnnotation, Position>();
+		Map<MakefileProjectionAnnotation, Position> map = new HashMap<>();
 		computeAdditions(parent.getDirectives(), map);
 		return map;
 	}
@@ -242,9 +242,9 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			fCachedDocument = provider.getDocument(fEditor.getEditorInput());
 			fAllowCollapsing = false;
 
-			Map<MakefileProjectionAnnotation, Position> additions = new HashMap<MakefileProjectionAnnotation, Position>();
-			List<MakefileProjectionAnnotation> deletions = new ArrayList<MakefileProjectionAnnotation>();
-			List<MakefileProjectionAnnotation> updates = new ArrayList<MakefileProjectionAnnotation>();
+			Map<MakefileProjectionAnnotation, Position> additions = new HashMap<>();
+			List<MakefileProjectionAnnotation> deletions = new ArrayList<>();
+			List<MakefileProjectionAnnotation> updates = new ArrayList<>();
 
 			Map<MakefileProjectionAnnotation, Position> updated = computeAdditions((IParent) fInput);
 			Map<IDirective, List<MakefileProjectionAnnotation>> previous = createAnnotationMap(model);
@@ -306,8 +306,8 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 			return;
 		}
 
-		List<MakefileProjectionAnnotation> newDeletions = new ArrayList<MakefileProjectionAnnotation>();
-		List<MakefileProjectionAnnotation> newChanges = new ArrayList<MakefileProjectionAnnotation>();
+		List<MakefileProjectionAnnotation> newDeletions = new ArrayList<>();
+		List<MakefileProjectionAnnotation> newChanges = new ArrayList<>();
 
 		Iterator<MakefileProjectionAnnotation> deletionIterator = deletions.iterator();
 		outer: while (deletionIterator.hasNext()) {
@@ -369,7 +369,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 	}
 
 	private Map<IDirective, List<MakefileProjectionAnnotation>> createAnnotationMap(IAnnotationModel model) {
-		Map<IDirective, List<MakefileProjectionAnnotation>> map = new HashMap<IDirective, List<MakefileProjectionAnnotation>>();
+		Map<IDirective, List<MakefileProjectionAnnotation>> map = new HashMap<>();
 		Iterator<?> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
 			Object annotation = e.next();
@@ -377,7 +377,7 @@ public class ProjectionMakefileUpdater implements IProjectionListener {
 				MakefileProjectionAnnotation directive = (MakefileProjectionAnnotation) annotation;
 				List<MakefileProjectionAnnotation> list = map.get(directive.getElement());
 				if (list == null) {
-					list = new ArrayList<MakefileProjectionAnnotation>(2);
+					list = new ArrayList<>(2);
 					map.put(directive.getElement(), list);
 				}
 				list.add(directive);

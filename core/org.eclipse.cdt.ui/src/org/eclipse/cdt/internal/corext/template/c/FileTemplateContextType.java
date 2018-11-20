@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.corext.util.Messages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
@@ -34,7 +33,8 @@ import org.eclipse.jface.text.templates.TemplateVariable;
 import org.eclipse.jface.text.templates.TemplateVariableResolver;
 import org.eclipse.jface.text.templates.TemplateVariableType;
 
-import org.eclipse.cdt.internal.corext.util.Messages;
+import com.ibm.icu.text.DateFormat;
+import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * A generic template context type for file resources based on content-type.
@@ -196,7 +196,7 @@ public class FileTemplateContextType extends TemplateContextType {
 
 	@Override
 	protected void validateVariables(TemplateVariable[] variables) throws TemplateException {
-		ArrayList<String> required = new ArrayList<String>(5);
+		ArrayList<String> required = new ArrayList<>(5);
 		for (int i = 0; i < variables.length; i++) {
 			String type = variables[i].getType();
 			if (getResolver(type) == null) {

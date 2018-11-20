@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * This is for strings that fit inside a single chunk.
- * 
+ *
  * @author Doug Schaefer
  */
 public class ShortString implements IString {
@@ -244,12 +244,12 @@ public class ShortString implements IString {
 
 	/**
 	 * Compare characters case-sensitively, or case-insensitively.
-	 * 
+	 *
 	 * <b>Limitation</b> This only maps the range a-z,A-Z onto each other
 	 * @param a a character
 	 * @param b a character
 	 * @param caseSensitive whether to compare case-sensitively
-	 * @return 
+	 * @return
 	 * <ul>
 	 * <li>-1 if a < b
 	 * <li>0 if a == b
@@ -277,7 +277,7 @@ public class ShortString implements IString {
 
 	/* TODO - this is more correct than the above implementation, but we need to
 	 * benchmark first.
-	 * 
+	 *
 	 * public static int compareChars(char a, char b, boolean caseSensitive) {
 			if (caseSensitive) {
 				if (a < b)

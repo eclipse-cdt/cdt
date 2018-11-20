@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
  **********************************************************************/
@@ -18,6 +18,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.help.HelpSystem;
@@ -30,16 +36,8 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
-
 /**
- * 
+ *
  * @since 2.1
  */
 public class CHelpDisplayContext implements IContext {
@@ -72,7 +70,7 @@ public class CHelpDisplayContext implements IContext {
 
 	public CHelpDisplayContext(IContext context, final ITextEditor editor, String selected) throws CoreException {
 
-		List<IHelpResource> helpResources = new ArrayList<IHelpResource>();
+		List<IHelpResource> helpResources = new ArrayList<>();
 
 		ICHelpInvocationContext invocationContext = new ICHelpInvocationContext() {
 

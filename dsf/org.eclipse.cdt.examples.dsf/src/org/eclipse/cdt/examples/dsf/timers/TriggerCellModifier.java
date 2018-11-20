@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -42,14 +42,14 @@ public class TriggerCellModifier implements ICellModifier {
 
 	private final DsfSession fSession;
 
-	// Need to use the OSGi service tracker (instead of DsfServiceTracker), 
+	// Need to use the OSGi service tracker (instead of DsfServiceTracker),
 	// because it's being accessed on multiple threads.
 	@ThreadSafe
 	private ServiceTracker fServiceTracker;
 
 	/**
-	 * Constructor for the modifier requires a valid session in order to 
-	 * initialize the service tracker.  
+	 * Constructor for the modifier requires a valid session in order to
+	 * initialize the service tracker.
 	 * @param session DSF session this modifier will use.
 	 */
 	public TriggerCellModifier(DsfSession session) {
@@ -66,8 +66,8 @@ public class TriggerCellModifier implements ICellModifier {
 		if (!TimersViewColumnPresentation.COL_VALUE.equals(property))
 			return "";
 
-		// Get the context and the session.  If element is not an trigger 
-		// context or if the session is stale then bail out. 
+		// Get the context and the session.  If element is not an trigger
+		// context or if the session is stale then bail out.
 		TriggerDMContext triggerCtx = getAlarmDMC(element);
 		if (triggerCtx == null)
 			return "";
@@ -75,7 +75,7 @@ public class TriggerCellModifier implements ICellModifier {
 		if (session == null)
 			return "";
 
-		// Create the query to request the value from service.  
+		// Create the query to request the value from service.
 		GetValueQuery query = new GetValueQuery(triggerCtx);
 		try {
 			session.getExecutor().execute(query);
@@ -142,7 +142,7 @@ public class TriggerCellModifier implements ICellModifier {
 	}
 
 	/**
-	 * Need to dispose the cell modifier property because of the service 
+	 * Need to dispose the cell modifier property because of the service
 	 * tracker.
 	 */
 	@ThreadSafe
@@ -194,7 +194,7 @@ public class TriggerCellModifier implements ICellModifier {
 		@Override
 		protected void execute(final DataRequestMonitor<Integer> rm) {
 			// Guard against the session being disposed.  If session is disposed
-			// it could mean that the executor is shut-down, which in turn 
+			// it could mean that the executor is shut-down, which in turn
 			// could mean that we can't execute the "done" argument.
 			// In that case, cancel to notify waiting thread.
 			final DsfSession session = DsfSession.getSession(fDmc.getSessionId());

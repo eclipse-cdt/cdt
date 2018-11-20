@@ -30,7 +30,7 @@ import org.eclipse.core.runtime.PlatformObject;
 public class C99Function extends PlatformObject implements IC99Binding, IFunction, ITypeable {
 	private String name;
 	private IFunctionType type;
-	private List<IParameter> parameters = new ArrayList<IParameter>();
+	private List<IParameter> parameters = new ArrayList<>();
 
 	private boolean isAuto;
 	private boolean isExtern;

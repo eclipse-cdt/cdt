@@ -15,7 +15,7 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 /**
  * -gdb-set record full stop-at-limit [on | off]
  * @since 5.2
- * 
+ *
  */
 public class MIGDBSetRecordFullStopAtLimit extends MIGDBSet {
 	public MIGDBSetRecordFullStopAtLimit(ICommandControlDMContext ctx, boolean isSet) {

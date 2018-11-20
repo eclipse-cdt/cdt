@@ -20,17 +20,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.TextPresentation;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWorkbenchPartSite;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
@@ -49,21 +38,29 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTNamespaceDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVirtSpecifier;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.model.ASTCache;
 import org.eclipse.cdt.internal.core.parser.scanner.ASTPreprocessorName;
-
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
 import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
 import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.TextPresentation;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * Semantic highlighting reconciler - Background thread implementation.
  * Cloned from JDT.
- * 
+ *
  * @since 4.0
  */
 public class SemanticHighlightingReconciler implements ICReconcilingListener {
@@ -250,7 +247,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 		/**
 		 * Gets the location to highlight for a given node.
-		 * 
+		 *
 		 * @param node the node
 		 */
 		private IASTNodeLocation getLocationToHighlight(IASTNode node) {
@@ -268,7 +265,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			} else {
 				// Fallback in case no image location available.
 				// Only use the fallback for nodes that are not preprocessor nodes,
-				// because in the case of nested macro expansions, a preprocessor node 
+				// because in the case of nested macro expansions, a preprocessor node
 				// can have a node location that is not representative of its actual
 				// image; such nodes should have an image location (accessed via
 				// getImageLocation(), above) where appropriate.
@@ -287,7 +284,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 		/**
 		 * Highlights the given node location with the given highlighting.
-		 * 
+		 *
 		 * @param nodeLocation the node location to highlight
 		 * @param highlightingStyle the highlighting style to apply
 		 */
@@ -301,7 +298,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 
 		/**
 		 * Adds a position with the given range and highlighting iff it does not exist already.
-		 * 
+		 *
 		 * @param offset The range offset
 		 * @param length The range length
 		 * @param highlightingStyle The highlighting style
@@ -348,9 +345,9 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 	private HighlightingStyle[] fHighlightings;
 
 	/** Background job's added highlighted positions */
-	protected List<HighlightedPosition> fAddedPositions = new ArrayList<HighlightedPosition>();
+	protected List<HighlightedPosition> fAddedPositions = new ArrayList<>();
 	/** Background job's removed highlighted positions */
-	protected List<HighlightedPosition> fRemovedPositions = new ArrayList<HighlightedPosition>();
+	protected List<HighlightedPosition> fRemovedPositions = new ArrayList<>();
 	/** Number of removed positions */
 	protected int fNOfRemovedPositions;
 
@@ -455,7 +452,7 @@ public class SemanticHighlightingReconciler implements ICReconcilingListener {
 			CPPSemantics.popLookupPoint();
 		}
 		List<HighlightedPosition> oldPositions = fRemovedPositions;
-		List<HighlightedPosition> newPositions = new ArrayList<HighlightedPosition>(fNOfRemovedPositions);
+		List<HighlightedPosition> newPositions = new ArrayList<>(fNOfRemovedPositions);
 		for (int i = 0, n = oldPositions.size(); i < n; i++) {
 			HighlightedPosition current = oldPositions.get(i);
 			if (current != null)

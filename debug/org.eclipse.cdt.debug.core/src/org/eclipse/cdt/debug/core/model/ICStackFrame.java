@@ -26,7 +26,7 @@ public interface ICStackFrame
 
 	/**
 	 * Returns the address of this stack frame.
-	 * 
+	 *
 	 * @return the address of this stack frame
 	 */
 	public IAddress getAddress();
@@ -34,7 +34,7 @@ public interface ICStackFrame
 	/**
 	 * Returns the source file of this stack frame or <code>null</code>
 	 * if the source file is unknown.
-	 *  
+	 *
 	 * @return the source file of this stack frame
 	 */
 	public String getFile();
@@ -42,7 +42,7 @@ public interface ICStackFrame
 	/**
 	 * Returns the function of this stack frame or <code>null</code>
 	 * if the function is unknown.
-	 *  
+	 *
 	 * @return the function of this stack frame
 	 */
 	public String getFunction();
@@ -50,21 +50,21 @@ public interface ICStackFrame
 	/**
 	 * Returns the line number of this stack frame or <code>0</code>
 	 * if the line number is unknown.
-	 *  
+	 *
 	 * @return the line number of this stack frame
 	 */
 	public int getFrameLineNumber();
 
 	/**
 	 * Returns the level of this stack frame.
-	 * 
-	 * @return the level of this stack frame 
+	 *
+	 * @return the level of this stack frame
 	 */
 	public int getLevel();
 
 	/**
 	 * Evaluates the given expression in the context of this stack frame.
-	 * 
+	 *
 	 * @param expression expression to evaluate
 	 * @return the evaluation result
 	 * @throws DebugException if this method fails.
@@ -72,9 +72,9 @@ public interface ICStackFrame
 	public IValue evaluateExpression(String expression) throws DebugException;
 
 	/**
-	 * Evaluates the specified expression in the context of this stack frame 
+	 * Evaluates the specified expression in the context of this stack frame
 	 * and returns the evaluation result as a string.
-	 * 
+	 *
 	 * @param expression the expression to evaluate
 	 * @return the evaluation result
 	 * @throws DebugException on failure. Reasons include:
@@ -83,7 +83,7 @@ public interface ICStackFrame
 
 	/**
 	 * Returns whether this stack frame can currently evaluate an expression.
-	 * 
+	 *
 	 * @return whether this stack frame can currently evaluate an expression
 	 */
 	boolean canEvaluate();

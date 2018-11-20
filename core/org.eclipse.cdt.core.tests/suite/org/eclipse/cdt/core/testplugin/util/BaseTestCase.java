@@ -63,7 +63,7 @@ public class BaseTestCase extends TestCase {
 	private static final String INDEXER_TIMEOUT_PROPERTY = "indexer.timeout";
 	/**
 	 * Indexer timeout used by tests. To avoid this timeout expiring during debugging add
-	 * -Dindexer.timeout=some_large_number to VM arguments of the test launch configuration. 
+	 * -Dindexer.timeout=some_large_number to VM arguments of the test launch configuration.
 	 */
 	protected static final int INDEXER_TIMEOUT_SEC = Integer
 			.parseInt(System.getProperty(INDEXER_TIMEOUT_PROPERTY, DEFAULT_INDEXER_TIMEOUT_SEC));

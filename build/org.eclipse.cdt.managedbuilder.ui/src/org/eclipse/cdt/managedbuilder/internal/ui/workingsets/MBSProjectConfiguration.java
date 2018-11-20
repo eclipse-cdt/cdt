@@ -32,16 +32,16 @@ import org.eclipse.osgi.util.NLS;
 /**
  * A managed-build implementation of the working set project configuration. It
  * knows how to build the selected configuration without activating it.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 class MBSProjectConfiguration extends WorkingSetProjectConfiguration {
 
 	/**
 	 * Initializes me.
-	 * 
+	 *
 	 * @param parent
 	 *            my parent working set configuration
 	 */
@@ -57,12 +57,12 @@ class MBSProjectConfiguration extends WorkingSetProjectConfiguration {
 	/**
 	 * Builds the MBS configuration selected by the specified working set
 	 * project configuration.
-	 * 
+	 *
 	 * @param projectConfig
 	 *            a project configuration to build
 	 * @param monitor
 	 *            for reporting build progress
-	 * 
+	 *
 	 * @return the result of the MBS build
 	 */
 	static IStatus build(IProject project, ICConfigurationDescription config, IProgressMonitor monitor) {

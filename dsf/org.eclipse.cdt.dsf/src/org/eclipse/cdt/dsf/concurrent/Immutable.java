@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,13 +20,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation indicating that given class is immutable and thus thread-safe.  
+ * Annotation indicating that given class is immutable and thus thread-safe.
  * This annotation is not automatically inherited by sub-classes, since
  * sub-classes need to make sure that they are immutable as well.
  * <p>
- * Note: the runtime retention policy is there to allow automated testing 
+ * Note: the runtime retention policy is there to allow automated testing
  * and validation code.
- * 
+ *
  * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)

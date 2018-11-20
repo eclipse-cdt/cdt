@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -51,9 +53,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 public class CustomFiltersDialog extends SelectionDialog {
 
@@ -91,7 +90,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 		fEnabledFilterIds = enabledFilterIds;
 
 		fBuiltInFilters = FilterDescriptor.getFilterDescriptors(fViewId);
-		fFilterDescriptorChangeHistory = new Stack<FilterDescriptor>();
+		fFilterDescriptorChangeHistory = new Stack<>();
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
@@ -105,7 +104,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 
 	/**
 	 * Overrides method in Dialog
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(Composite)
 	 */
 	@Override
@@ -281,7 +280,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 	@Override
 	protected void okPressed() {
 		if (fBuiltInFilters != null) {
-			ArrayList<FilterDescriptor> result = new ArrayList<FilterDescriptor>();
+			ArrayList<FilterDescriptor> result = new ArrayList<>();
 			for (int i = 0; i < fBuiltInFilters.length; ++i) {
 				if (fCheckBoxList.getChecked(fBuiltInFilters[i]))
 					result.add(fBuiltInFilters[i]);
@@ -334,7 +333,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 	 */
 	public String[] getEnabledFilterIds() {
 		Object[] result = getResult();
-		Set<String> enabledIds = new HashSet<String>(result.length);
+		Set<String> enabledIds = new HashSet<>(result.length);
 		for (Object element : result)
 			enabledIds.add(((FilterDescriptor) element).getId());
 		return enabledIds.toArray(new String[enabledIds.size()]);
@@ -357,7 +356,7 @@ public class CustomFiltersDialog extends SelectionDialog {
 
 	private FilterDescriptor[] getEnabledFilterDescriptors() {
 		FilterDescriptor[] filterDescs = fBuiltInFilters;
-		List<FilterDescriptor> result = new ArrayList<FilterDescriptor>(filterDescs.length);
+		List<FilterDescriptor> result = new ArrayList<>(filterDescs.length);
 		List<String> enabledFilterIds = Arrays.asList(fEnabledFilterIds);
 		for (FilterDescriptor filterDesc : filterDescs) {
 			String id = filterDesc.getId();

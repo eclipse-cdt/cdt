@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.util;
 

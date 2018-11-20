@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,8 +20,6 @@ import static org.eclipse.cdt.internal.core.dom.lrparser.symboltable.CNamespace.
 
 import java.util.LinkedList;
 import java.util.List;
-
-import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.EScopeKind;
 import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
@@ -63,23 +61,25 @@ import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.ITypeable;
 import org.eclipse.cdt.internal.core.dom.lrparser.symboltable.C99SymbolTable;
 import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
+import lpg.lpgjavaruntime.IToken;
+
 /**
  * This class was an attempt at doing full binding resolution during the parse
  * as opposed to doing it after the parse as is normally done with the DOM parser.
- * 
- * 
+ *
+ *
  * TODO: token mapping so that this will work with UPC
  * TODO: what about function definitions, don't they count as declarations?
- * 
+ *
  * Try to resolve bindings without using the ASTStack, that way I can resolve bindings
  * without generating an AST. In the future I can remove this as a subclass of C99ParserAction.
- * 
+ *
  * TODO: if I'm calculating scopes then those scopes need to be linked to AST nodes
- * 
+ *
  * TODO: some language constructs are not handled yet: typeIds (casts), field designators
- * 
+ *
  * @author Mike Kucera
- * 
+ *
  * @deprecated Binding resolution is too hard, replacing with simpler C99TypedefTrackerParserAction
  */
 @SuppressWarnings("restriction")
@@ -92,20 +92,20 @@ public class C99ResolveParserAction {
 	// provides limited access to the token stream
 	private final ITokenStream parser;
 
-	// The symbolTable currently in use 
+	// The symbolTable currently in use
 	private C99SymbolTable symbolTable = C99SymbolTable.EMPTY_TABLE;
 
 	// A stack that keeps track of scopes in the symbol table, used to "close" scopes and to undo the opening of scopes
-	private final LinkedList<C99SymbolTable> symbolTableScopeStack = new LinkedList<C99SymbolTable>();
+	private final LinkedList<C99SymbolTable> symbolTableScopeStack = new LinkedList<>();
 
 	// A stack that keeps track of scopes that are set on bindings
-	private final LinkedList<IC99Scope> bindingScopeStack = new LinkedList<IC99Scope>();
+	private final LinkedList<IC99Scope> bindingScopeStack = new LinkedList<>();
 
 	// keeps track of nested declarations
-	private final LinkedList<DeclaratorFrame> declarationStack = new LinkedList<DeclaratorFrame>();
+	private final LinkedList<DeclaratorFrame> declarationStack = new LinkedList<>();
 
 	// keeps track of expression types
-	private final ScopedStack<IType> exprTypeStack = new ScopedStack<IType>();
+	private final ScopedStack<IType> exprTypeStack = new ScopedStack<>();
 
 	private TypeQualifiers typeQualifiers; // TODO: can this go in the declaration stack?
 
@@ -114,7 +114,7 @@ public class C99ResolveParserAction {
 	}
 
 	// "For every action there is an equal and opposite reaction." - Newton's third law
-	private final LinkedList<IUndoAction> undoStack = new LinkedList<IUndoAction>();
+	private final LinkedList<IUndoAction> undoStack = new LinkedList<>();
 
 	private interface IUndoAction {
 		void undo();
@@ -172,11 +172,11 @@ public class C99ResolveParserAction {
 
 	/**
 	 * Called from the grammar file in places where a scope is created.
-	 * 
+	 *
 	 * Scopes are created by compound statements, however special care
 	 * must also be taken with for loops because they may contain
 	 * declarations.
-	 * 
+	 *
 	 * TODO: scope object now need to be handled explicitly
 	 */
 	public void openSymbolScope() {
@@ -285,7 +285,7 @@ public class C99ResolveParserAction {
 			DebugUtil.printMethodTrace();
 
 		//		final IC99Scope undoScope = bindingScope;
-		//		
+		//
 		//		C99FunctionScope functionScope = new C99FunctionScope();
 		//		functionScope.setBodyScope(undoScope);
 		//		undoScope.setParent(functionScope);
@@ -384,7 +384,7 @@ public class C99ResolveParserAction {
 
 	/**
 	 * A labeled statement is creates an implicit declaration of the label identifier.
-	 * 
+	 *
 	 * TODO: a label has function scope, meaning the same label cannot be declared twice
 	 * in a function regardless of block scope.
 	 * TODO: labels can be implicitly declared, that is a goto can exist above the label
@@ -714,13 +714,13 @@ public class C99ResolveParserAction {
 	/**
 	 * This is a special case for the rule:
 	 *     parameter_declaration ::= declaration_specifiers
-	 *     
+	 *
 	 * In this case there is no declarator at all
-	 * 
+	 *
 	 * TODO: creating bindings that have no identifier seems really dumb,
 	 * why does it need to be done? Why not just have a null binding or
 	 * for that matter don't even have a name node
-	 * 
+	 *
 	 */
 	public IBinding consumeParameterDeclarationWithoutDeclarator() {
 		if (DEBUG)
@@ -781,7 +781,7 @@ public class C99ResolveParserAction {
 	/**
 	 * An abstract declarator used as part of an expression, eg) a cast.
 	 * Only need the type.
-	 * 
+	 *
 	 * TODO: this isn't enough, I need a binding for the abstract declarator
 	 * what I really need is a consumeDeclaratorCompleteTypeId similar to above
 	 */
@@ -995,7 +995,7 @@ public class C99ResolveParserAction {
 		if (DEBUG)
 			DebugUtil.printMethodTrace();
 
-		// If the symbol table isn't updated then its still ok to undo 
+		// If the symbol table isn't updated then its still ok to undo
 		// because setting symbolTable to oldTable will effectively be a no-op.
 		final C99SymbolTable oldTable = symbolTable;
 
@@ -1392,8 +1392,8 @@ public class C99ResolveParserAction {
 		return null;
 	}
 
-	// TODO In C a function name can be used without parenthesis, the result is the address of 
-	// the function (which is an int I think). This means an identifier that happens to be 
+	// TODO In C a function name can be used without parenthesis, the result is the address of
+	// the function (which is an int I think). This means an identifier that happens to be
 	// a function name should probably evaluate to an int, and then if it subsequently gets parsed
 	// as a function call we can look up its function type from the symbol table.
 	public void consumeExpressionFunctionCall(final boolean hasArgs) {
@@ -1614,7 +1614,7 @@ public class C99ResolveParserAction {
 	}
 
 	//	// TODO: expression lists are changing
-	//	public void consumeExpressionList(boolean baseCase) {		
+	//	public void consumeExpressionList(boolean baseCase) {
 	//		// This is a hack, the type of an expression
 	//		// list will be the first expression in the list.
 	//		if(!baseCase) {

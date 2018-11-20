@@ -109,12 +109,12 @@ public class ProjectIndexerIncludeResolutionHeuristics implements IIncludeFileRe
 	}
 
 	private IProject[] getOpenReferencedProjects(IProject prj) {
-		Set<IProject> result = new HashSet<IProject>();
+		Set<IProject> result = new HashSet<>();
 
 		if (prj.isOpen()) {
 			result.add(prj);
 
-			List<IProject> projectsToSearch = new ArrayList<IProject>();
+			List<IProject> projectsToSearch = new ArrayList<>();
 			projectsToSearch.add(prj);
 			for (int i = 0; i < projectsToSearch.size(); i++) {
 				IProject project = projectsToSearch.get(i);

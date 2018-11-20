@@ -41,9 +41,9 @@ public class LanguageMappingResolver {
 	 * If <code>fetchAll</code> is <code>true</code> all inherited language
 	 * mappings will be returned in order of precedence.  Otherwise, only the
 	 * effective language will be returned.
-	 * 
+	 *
 	 * This method will always return at least one mapping.
-	 * 
+	 *
 	 * @param project the project that contains the given file
 	 * @param filePath the path to the file
 	 * @param contentTypeId the content type of the file (optional)
@@ -55,7 +55,7 @@ public class LanguageMappingResolver {
 	public static LanguageMapping[] computeLanguage(IProject project, String filePath,
 			ICConfigurationDescription configuration, String contentTypeId, boolean fetchAll) throws CoreException {
 		LanguageManager manager = LanguageManager.getInstance();
-		List<LanguageMapping> inheritedLanguages = new LinkedList<LanguageMapping>();
+		List<LanguageMapping> inheritedLanguages = new LinkedList<>();
 
 		if (project != null) {
 			ProjectLanguageConfiguration mappings = manager.getLanguageConfiguration(project);

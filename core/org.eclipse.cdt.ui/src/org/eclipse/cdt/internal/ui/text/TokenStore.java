@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -18,6 +18,9 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
+import org.eclipse.cdt.ui.text.ITokenStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.StringConverter;
@@ -30,10 +33,6 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.IColorManager;
-import org.eclipse.cdt.ui.text.ITokenStore;
-
 /**
  * Maintains a pool of tokens identified by a String ID.
  * Supports styles per token.
@@ -44,7 +43,7 @@ public class TokenStore implements ITokenStore {
 	private IColorManager fColorManager;
 	private IPreferenceStore fPreferenceStore;
 
-	private Map<String, IToken> fTokenMap = new HashMap<String, IToken>();
+	private Map<String, IToken> fTokenMap = new HashMap<>();
 	private String[] fPropertyNamesColor;
 
 	private boolean fNeedsLazyColorLoading;
@@ -78,7 +77,7 @@ public class TokenStore implements ITokenStore {
 
 	/**
 	 * In the case where at the time of IToken construction, the Display was not
-	 * ready to construct colors. 
+	 * ready to construct colors.
 	 */
 	@Override
 	public void ensureTokensInitialised() {

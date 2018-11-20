@@ -11,8 +11,8 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Andy Jin - Hardware debugging UI improvements, bug 229946
- *     Anna Dushistova (MontaVista) - bug 241279 
- *              - Hardware Debugging: Host name or ip address not saving in 
+ *     Anna Dushistova (MontaVista) - bug 241279
+ *              - Hardware Debugging: Host name or ip address not saving in
  *                the debug configuration
  *     Andy Jin (QNX) - Added DSF debugging, bug 248593
  *     Bruce Griffith, Sage Electronic Engineering, LLC - bug 305943
@@ -274,7 +274,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		remoteConnectionParameters.setLayoutData(GridDataFactory.swtDefaults().span(2, 1).create());
 
 		//
-		//  Create entry fields for TCP/IP connections  
+		//  Create entry fields for TCP/IP connections
 		//
 
 		{
@@ -300,7 +300,7 @@ public class GDBJtagDSFDebuggerTab extends AbstractLaunchConfigurationTab {
 		}
 
 		//
-		//  Create entry fields for other types of connections  
+		//  Create entry fields for other types of connections
 		//
 
 		{

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -19,6 +19,8 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.ICharacterScanner;
@@ -27,13 +29,10 @@ import org.eclipse.jface.text.rules.IWordDetector;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.ui.IPropertyChangeParticipant;
-
 /**
  * Which words should be recognized as task tags is specified under {@link CCorePreferenceConstants#TODO_TASK_TAGS} as a
  * comma delimited list.
- * 
+ *
  * @see CCorePreferenceConstants#TODO_TASK_TAGS
  * @since 5.0
  */
@@ -56,7 +55,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 		/**
 		 * Uppercase words
 		 */
-		private Map<CharacterBuffer, IToken> fUppercaseWords = new HashMap<CharacterBuffer, IToken>();
+		private Map<CharacterBuffer, IToken> fUppercaseWords = new HashMap<>();
 		/**
 		 * <code>true</code> if task tag detection is case-sensitive.
 		 */
@@ -135,7 +134,7 @@ public final class TaskTagRule extends CombinedWordRule implements IPropertyChan
 	/**
 	 * Creates a new task tag rule
 	 * @param token the token to return for words recognized as task tags
-	 * @param defaultToken 
+	 * @param defaultToken
 	 * @param preferenceStore
 	 * @param corePreferenceStore
 	 */

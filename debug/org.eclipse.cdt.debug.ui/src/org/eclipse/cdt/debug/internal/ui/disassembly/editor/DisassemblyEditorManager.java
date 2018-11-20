@@ -56,9 +56,9 @@ public class DisassemblyEditorManager implements IWindowListener, IDisassemblyCo
 
 	public DisassemblyEditorManager() {
 		fDocumentProvider = new DisassemblyDocumentProvider();
-		fEditorParts = new HashMap<Object, IEditorPart>();
-		fOpenDisassemblyPolicy = new HashMap<Object, String>();
-		fSteppingModePolicy = new HashMap<Object, ISteppingModeTarget>();
+		fEditorParts = new HashMap<>();
+		fOpenDisassemblyPolicy = new HashMap<>();
+		fSteppingModePolicy = new HashMap<>();
 		CDebugUIPlugin.getDefault().getWorkbench().addWindowListener(this);
 		IWorkbenchWindow window = CDebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
 		if (window != null) {

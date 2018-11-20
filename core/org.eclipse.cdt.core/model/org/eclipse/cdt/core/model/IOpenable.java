@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 /**
  * An openable is an element that can be opened, saved, and closed.
  * An openable might or might not have an associated buffer.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -35,7 +35,7 @@ public interface IOpenable extends IBufferChangedListener {
 	public IBuffer getBuffer() throws CModelException;
 
 	/**
-	 * returns true if the associated buffer has some unsaved changes 
+	 * returns true if the associated buffer has some unsaved changes
 	 */
 	boolean hasUnsavedChanges() throws CModelException;
 
@@ -52,7 +52,7 @@ public interface IOpenable extends IBufferChangedListener {
 	boolean isOpen();
 
 	/**
-	 * Makes this element consistent with its underlying resource or buffer 
+	 * Makes this element consistent with its underlying resource or buffer
 	 * by updating the element's structure and properties as necessary.
 	 */
 	void makeConsistent(IProgressMonitor progress) throws CModelException;
@@ -68,7 +68,7 @@ public interface IOpenable extends IBufferChangedListener {
 
 	/**
 	 * Saves any changes in this element's buffer to its underlying resource
-	 * via a workspace resource operation. 
+	 * via a workspace resource operation.
 	 * <p>
 	 * The <code>force</code> parameter controls how this method deals with
 	 * cases where the workbench is not completely in sync with the local file system.

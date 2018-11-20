@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorExpression, IASTNameOwner {
 	/**
 	 * Was template token consumed?
-	 * 
+	 *
 	 * @param templateTokenConsumed
 	 *            boolean
 	 */
@@ -35,7 +35,7 @@ public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorE
 
 	/**
 	 * Was template token consumed?
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isTemplate();
@@ -48,7 +48,7 @@ public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorE
 
 	/**
 	 * Set the name.
-	 * 
+	 *
 	 * @param name
 	 *            <code>IASTName</code>
 	 */
@@ -56,7 +56,7 @@ public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorE
 
 	/**
 	 * Get the name.
-	 * 
+	 *
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getName();
@@ -68,7 +68,7 @@ public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorE
 
 	/**
 	 * Set initial value.
-	 * 
+	 *
 	 * @param expressionList
 	 *            <code>IASTExpression</code>
 	 */
@@ -77,7 +77,7 @@ public interface ICPPASTTypenameExpression extends ICPPASTSimpleTypeConstructorE
 
 	/**
 	 * Get initial value.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code>
 	 */
 	@Override

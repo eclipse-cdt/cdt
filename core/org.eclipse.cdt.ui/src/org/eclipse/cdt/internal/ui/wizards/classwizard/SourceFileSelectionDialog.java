@@ -15,6 +15,25 @@ package org.eclipse.cdt.internal.ui.wizards.classwizard;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementVisitor;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.util.CModelUtil;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CElementSorter;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -46,28 +65,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.dialogs.SelectionStatusDialog;
-
-import org.eclipse.cdt.utils.PathUtil;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementVisitor;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.ui.CElementSorter;
-
-import org.eclipse.cdt.internal.corext.util.CModelUtil;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
 
 public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
@@ -184,7 +181,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
-	 * 
+	 *
 	 * @param parent
 	 *            The parent shell for the dialog
 	 */
@@ -202,7 +199,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		fFileNameDialogField.setDialogFieldListener(fFieldsAdapter);
 		fFileNameDialogField.setLabelText(NewClassWizardMessages.SourceFileSelectionDialog_fileName_label);
 
-		setResult(new ArrayList<Object>(0));
+		setResult(new ArrayList<>(0));
 		setStatusLineAboveButtons(true);
 
 		int shellStyle = getShellStyle();
@@ -211,7 +208,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Sets the tree input.
-	 * 
+	 *
 	 * @param input
 	 *            the tree input.
 	 */
@@ -229,7 +226,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Updates the status line and the ok button according to the given status
-	 * 
+	 *
 	 * @param status status to apply
 	 */
 	@Override
@@ -240,9 +237,9 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Updates the status line and the ok button according to the status evaluate from
-	 * an array of status. The most severe error is taken.  In case that two status with 
+	 * an array of status. The most severe error is taken.  In case that two status with
 	 * the same severity exists, the status with lower index is taken.
-	 * 
+	 *
 	 * @param status the array of status
 	 */
 	protected void updateStatus(IStatus[] status) {
@@ -346,7 +343,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#open()
 	 */
 	@Override
@@ -374,7 +371,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#create()
 	 */
 	@Override
@@ -429,7 +426,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 	 * method requires that createContent has been called before this method is
 	 * call. Subclasses may override to change the maximum width for text
 	 * fields.
-	 * 
+	 *
 	 * @return the recommended maximum width for text fields.
 	 */
 	protected int getMaxFieldWidth() {
@@ -438,7 +435,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Creates the tree viewer.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @return the tree viewer
@@ -465,7 +462,7 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Returns the tree viewer.
-	 * 
+	 *
 	 * @return the tree viewer
 	 */
 	protected TreeViewer getTreeViewer() {

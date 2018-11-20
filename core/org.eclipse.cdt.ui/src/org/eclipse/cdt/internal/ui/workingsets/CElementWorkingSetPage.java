@@ -18,6 +18,20 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.ui.CElementGrouping;
+import org.eclipse.cdt.ui.CElementSorter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -46,29 +60,13 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CElementGrouping;
-import org.eclipse.cdt.ui.CElementSorter;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
-
 /**
- * The C element working set page allows the user to create 
+ * The C element working set page allows the user to create
  * and edit a C element working set.
  * <p>
  * Working set elements are presented as a C element tree.
  * </p>
- * 
+ *
  */
 public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPage {
 
@@ -177,7 +175,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		validateInput();
 
 		Dialog.applyDialogFont(composite);
-		// TODO Set help for the page 
+		// TODO Set help for the page
 		//		CUIHelp.setHelp(fTree, ICHelpContextIds.C_WORKING_SET_PAGE);
 	}
 
@@ -187,7 +185,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	@Override
 	public void finish() {
 		String workingSetName = fWorkingSetName.getText();
-		ArrayList<Object> elements = new ArrayList<Object>(10);
+		ArrayList<Object> elements = new ArrayList<>(10);
 		findCheckedElements(elements, fTree.getInput());
 		if (fWorkingSet == null) {
 			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
@@ -196,7 +194,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 		} else {
 			// Add inaccessible resources
 			IAdaptable[] oldItems = fWorkingSet.getElements();
-			HashSet<IProject> closedWithChildren = new HashSet<IProject>(elements.size());
+			HashSet<IProject> closedWithChildren = new HashSet<>(elements.size());
 			for (IAdaptable oldItem : oldItems) {
 				IResource oldResource = null;
 				if (oldItem instanceof IResource) {
@@ -228,7 +226,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 	/**
 	 * Called when the checked state of a tree item changes.
-	 * 
+	 *
 	 * @param event the checked state change event.
 	 */
 	void handleCheckStateChange(final CheckStateChangedEvent event) {
@@ -287,7 +285,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	}
 
 	/**
-	 * Sets the checked state of tree items based on the initial 
+	 * Sets the checked state of tree items based on the initial
 	 * working set, if any.
 	 */
 	private void initializeCheckedState() {
@@ -343,7 +341,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 					}
 				}
 				fTree.setCheckedElements(elements);
-				HashSet<Object> parents = new HashSet<Object>();
+				HashSet<Object> parents = new HashSet<>();
 				for (Object element : elements) {
 					if (isExpandable(element))
 						setSubtreeChecked(element, true, true);
@@ -383,11 +381,11 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 	/**
 	 * Sets the checked state of the container's members.
-	 * 
+	 *
 	 * @param parent the parent whose children should be checked/unchecked
-	 * @param state true=check all members in the container. false=uncheck all 
+	 * @param state true=check all members in the container. false=uncheck all
 	 * 	members in the container.
-	 * @param checkExpandedState true=recurse into sub-containers and set the 
+	 * @param checkExpandedState true=recurse into sub-containers and set the
 	 * 	checked state. false=only set checked state of members of this container
 	 */
 	private void setSubtreeChecked(Object parent, boolean state, boolean checkExpandedState) {
@@ -411,7 +409,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 	}
 
 	/**
-	 * Validates the working set name and the checked state of the 
+	 * Validates the working set name and the checked state of the
 	 * resource tree.
 	 */
 	void validateInput() {
@@ -451,7 +449,7 @@ public class CElementWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 	/**
 	 * Collects all checked elements of the given parent.
-	 * 
+	 *
 	 * @param checkedElements the output, list of checked elements
 	 * @param parent the parent to collect checked elements in
 	 */

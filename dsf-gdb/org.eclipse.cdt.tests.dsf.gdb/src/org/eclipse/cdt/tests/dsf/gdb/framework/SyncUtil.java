@@ -170,7 +170,7 @@ public class SyncUtil {
 
 	public static MIStoppedEvent step(final IExecutionDMContext dmc, final StepType stepType, boolean reverse,
 			int massagedTimeout) throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		if (!reverse) {
@@ -280,7 +280,7 @@ public class SyncUtil {
 
 	private static MIStoppedEvent resumeUntilStopped(final IExecutionDMContext dmc, int massagedTimeout)
 			throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
@@ -298,7 +298,7 @@ public class SyncUtil {
 
 	public static MIStoppedEvent resumeUntilStopped() throws Throwable {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
-		// Don't call resumeUtilStopped(int timeout) as this will duplicate the timeout massage 
+		// Don't call resumeUtilStopped(int timeout) as this will duplicate the timeout massage
 		return resumeUntilStopped(containerDmc, DefaultTimeouts.get(ETimeout.resumeUntilStopped));
 	}
 
@@ -308,7 +308,7 @@ public class SyncUtil {
 	}
 
 	public static MIRunningEvent resume(final IExecutionDMContext dmc, int massagedTimeout) throws Throwable {
-		final ServiceEventWaitor<MIRunningEvent> eventWaitor = new ServiceEventWaitor<MIRunningEvent>(fSession,
+		final ServiceEventWaitor<MIRunningEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIRunningEvent.class);
 
 		fRunControl.getExecutor().submit(new Runnable() {
@@ -378,7 +378,7 @@ public class SyncUtil {
 	// if there is a sleep in the code between the resume and the time
 	// it stops; this will give us plenty of time to call this method.
 	public static MIStoppedEvent waitForStop(int timeout) throws Throwable {
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		// Wait for the execution to suspend
@@ -394,7 +394,7 @@ public class SyncUtil {
 		// Note that if there were other breakpoints set ahead of this one,
 		// they will stop execution earlier than planned
 		addBreakpoint(location, true, timeout);
-		// Don't provide a timeout so we use the resume default timeout for this step 
+		// Don't provide a timeout so we use the resume default timeout for this step
 		// if a timeout value is provided via DefaultTimeouts the value will be massaged twice
 		return resumeUntilStopped();
 	}
@@ -584,7 +584,7 @@ public class SyncUtil {
 		 * Map of timeout enums to their <b>harcoded</b> default value )in
 		 * milliseconds). These can be individually overridden with a system
 		 * property.
-		 * 
+		 *
 		 * <p>
 		 * In practice, these operations are either very quick or the amount of
 		 * time is hard to predict (depends on what the test is doing). For ones
@@ -592,7 +592,7 @@ public class SyncUtil {
 		 * we allows 10 seconds, which is probably ample in most cases. Tests
 		 * can provide larger values as needed in specific SyncUtil calls.
 		 */
-		private static Map<ETimeout, Integer> sTimeouts = new HashMap<ETimeout, Integer>();
+		private static Map<ETimeout, Integer> sTimeouts = new HashMap<>();
 		static {
 			sTimeouts.put(ETimeout.addBreakpoint, 1000);
 			sTimeouts.put(ETimeout.deleteBreakpoint, 1000);
@@ -604,7 +604,7 @@ public class SyncUtil {
 			sTimeouts.put(ETimeout.resume, 1000);
 			sTimeouts.put(ETimeout.resumeUntilStopped, 10000); // 10 seconds
 			sTimeouts.put(ETimeout.runToLine, 10000); // 10 seconds
-			sTimeouts.put(ETimeout.runToLocation, 10000); // 10 seconds    		
+			sTimeouts.put(ETimeout.runToLocation, 10000); // 10 seconds
 			sTimeouts.put(ETimeout.step, 1000);
 			sTimeouts.put(ETimeout.waitForStop, 10000); // 10 seconds
 		}
@@ -614,7 +614,7 @@ public class SyncUtil {
 		 * doesn't specify one. We honor overrides specified via system
 		 * properties, as well as apply the multiplier that can also be
 		 * specified via a system property.
-		 * 
+		 *
 		 * @param timeout
 		 *            the timeout enum
 		 * @return the default value
@@ -649,15 +649,15 @@ public class SyncUtil {
 	/**
 	 * Utility method to return the container DM context. This can be used only by
 	 * tests that deal with a single heavyweight process. If more than one
-	 * process is available, this method will fail. 
-	 * 
+	 * process is available, this method will fail.
+	 *
 	 * <p>
 	 * This must NOT be called from the DSF executor.
-	 * 
+	 *
 	 * @return the process context
 	 * @throws InterruptedException
-	 * @throws TimeoutException 
-	 * @throws ExecutionException 
+	 * @throws TimeoutException
+	 * @throws ExecutionException
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
 	public static IContainerDMContext getContainerContext()
@@ -692,8 +692,8 @@ public class SyncUtil {
 
 	/**
 	 * Utility method to return all thread execution contexts.
-	 * @throws TimeoutException 
-	 * @throws ExecutionException 
+	 * @throws TimeoutException
+	 * @throws ExecutionException
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
 	public static IMIExecutionDMContext[] getExecutionContexts()
@@ -728,8 +728,8 @@ public class SyncUtil {
 
 	/**
 	 * Utility method to return a specific execution DM context.
-	 * @throws TimeoutException 
-	 * @throws ExecutionException 
+	 * @throws TimeoutException
+	 * @throws ExecutionException
 	 */
 	@ThreadSafeAndProhibitedFromDsfExecutor("fSession.getExecutor()")
 	public static IMIExecutionDMContext getExecutionContext(int threadIndex)
@@ -740,8 +740,8 @@ public class SyncUtil {
 		return threads[threadIndex];
 	}
 
-	/** 
-	 * Check if the restart operation is supported 
+	/**
+	 * Check if the restart operation is supported
 	 */
 	public static boolean canRestart() throws Exception {
 		final IContainerDMContext containerDmc = getContainerContext();
@@ -778,7 +778,7 @@ public class SyncUtil {
 		}
 
 		// Now wait for the stopped event of the restart
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		// Perform the restart
@@ -815,13 +815,13 @@ public class SyncUtil {
 					protected void handleCompleted() {
 						if (isSuccess()) {
 							IVariableDMContext[] varDmcs = getData();
-							final List<IVariableDMData> localsDMData = new ArrayList<IVariableDMData>();
+							final List<IVariableDMData> localsDMData = new ArrayList<>();
 							final CountingRequestMonitor crm = new CountingRequestMonitor(
 									ImmediateExecutor.getInstance(), rm) {
 								@Override
 								protected void handleSuccess() {
 									rm.done(localsDMData.toArray(new IVariableDMData[localsDMData.size()]));
-								};
+								}
 							};
 
 							for (IVariableDMContext varDmc : varDmcs) {
@@ -876,7 +876,7 @@ public class SyncUtil {
 
 			// Remove registers with empty names since the service also
 			// remove them. I don't know why GDB returns such empty names.
-			List<String> registerNames = new LinkedList<String>();
+			List<String> registerNames = new LinkedList<>();
 			for (String name : names) {
 				if (!name.isEmpty()) {
 					registerNames.add(name);
@@ -999,7 +999,7 @@ public class SyncUtil {
 
 	/**
 	 * Get the source using the {@link ISourceLookup} service.
-	 * 
+	 *
 	 * Wrapper around
 	 * {@link ISourceLookup#getSource(ISourceLookupDMContext, String, DataRequestMonitor)}
 	 */

@@ -56,9 +56,9 @@ public class Addr64 implements IAddress, Serializable {
 	}
 
 	/**
-	 * Create an address represented by long bits. 
+	 * Create an address represented by long bits.
 	 * Signed bit will be used as unsigned extension, if you don't want it mask it before passing here.
-	 * 
+	 *
 	 * @since 5.9
 	 */
 	public Addr64(long addr) {

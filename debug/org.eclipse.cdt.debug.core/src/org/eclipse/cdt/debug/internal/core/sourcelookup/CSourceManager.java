@@ -43,7 +43,7 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getLineNumber(IStackFrameInfo)
 	 */
 	@Override

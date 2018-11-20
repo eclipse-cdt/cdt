@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * Command to stop the tracing experiment
- * 
+ *
  * @since 2.1
  */
 public class GdbStopTracingCommand extends AbstractDebugCommand implements IStopTracingHandler {

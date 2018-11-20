@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
 
 /**
  * The Tests Runner provider plug-in to run tests with Qt Test library.
- * 
+ *
  * Configures the test module to output in XML format, parses the output and
  * provides the data for the Tests Runner Plug-in.
  */
@@ -37,7 +37,7 @@ public class QtTestsRunnerProvider implements ITestsRunnerProvider {
 	/**
 	 * Checks whether the specified path is "special" one ("initTestCase" or
 	 * "cleanupTestCase").
-	 * 
+	 *
 	 * @param testPath test path to check
 	 * @return true if the path is special and false otherwise
 	 */
@@ -53,7 +53,7 @@ public class QtTestsRunnerProvider implements ITestsRunnerProvider {
 
 	/**
 	 * Returns the count of not "special" test paths.
-	 * 
+	 *
 	 * @param testPaths test paths array
 	 * @return the count
 	 * @see isSpecialTestPath()

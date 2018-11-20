@@ -20,7 +20,7 @@ import org.eclipse.cdt.ui.templateengine.SimpleElementException;
  * to some of the methods. It provides definitions to those methods which
  * doesn't apply to InuputUIElement's. SimpleElementException is thrown from
  * these methods.
- * 
+ *
  */
 public abstract class InputUIElement extends UIElement {
 	public static final String INPUTTYPE = "input"; //$NON-NLS-1$
@@ -65,7 +65,7 @@ public abstract class InputUIElement extends UIElement {
 
 	/**
 	 * Overloaded from UIElement, It does not apply to InputUIElement
-	 * 
+	 *
 	 * @see UIElement
 	 * @param uiElement
 	 * @throws SimpleElementException
@@ -77,7 +77,7 @@ public abstract class InputUIElement extends UIElement {
 
 	/**
 	 * Overloaded from UIElement, It does not apply to InputUIElement
-	 * 
+	 *
 	 * @see UIElement
 	 */
 	@Override
@@ -87,7 +87,7 @@ public abstract class InputUIElement extends UIElement {
 
 	/**
 	 * Overloaded from UIElement, It does not apply to InputUIElement
-	 * 
+	 *
 	 * @see UIElement
 	 */
 	@Override

@@ -25,16 +25,16 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * <br>
  * This is
  * then resolved by retrieving a hex representation of -1 casted to the size of
- * a "char" 
+ * a "char"
  * <br>
- * <br>E.g. from GDB command line 
+ * <br>E.g. from GDB command line
  * <br>
- * > p/x (char)-1 <br> 
+ * > p/x (char)-1 <br>
  * > $7 = 0xffff <br>
- * 
+ *
  * <p>Since two hex characters are representing one octet, for the above example
  * this method should return 2</p>
- * 
+ *
  * @since 4.4
  */
 public class CLIAddressableSize extends MIInterpreterExecConsole<CLIAddressableSizeInfo> {

@@ -16,10 +16,9 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
-import org.eclipse.cdt.core.model.IPathEntry;
 
 /**
  * Viewer filter for archive selection dialogs. Archives are files with file extension '.so', '.dll' and '.a'. The filter is not

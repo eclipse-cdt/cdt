@@ -50,7 +50,7 @@ import org.eclipse.ui.IEditorPart;
  * source for the given stack frame. The image will be positioned based on stack
  * frame line number and character ranges.
  * </p>
- * 
+ *
  * @see org.eclipse.debug.ui.IInstructionPointerPresentation
  * @since 2.0
  */
@@ -58,7 +58,7 @@ public interface IInstructionPointerPresentation {
 	/**
 	 * Returns an annotation used for the specified stack frame in the specified
 	 * editor, or <code>null</code> if a default annotation should be used.
-	 * 
+	 *
 	 * @param editorPart the editor the debugger has opened
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source
@@ -70,7 +70,7 @@ public interface IInstructionPointerPresentation {
 	 * Returns an identifier of a <code>org.eclipse.ui.editors.annotationTypes</code> extension used for
 	 * the specified stack frame in the specified editor, or <code>null</code> if a default annotation
 	 * should be used.
-	 * 
+	 *
 	 * @param editorPart the editor the debugger has opened
 	 * @param frame the stack frame for which the debugger is displaying
 	 *  source

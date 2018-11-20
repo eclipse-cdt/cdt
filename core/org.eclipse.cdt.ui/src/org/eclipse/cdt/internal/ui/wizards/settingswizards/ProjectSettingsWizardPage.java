@@ -19,6 +19,17 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
+import org.eclipse.cdt.internal.ui.wizards.settingswizards.IProjectSettingsWizardPageStrategy.MessageType;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -48,19 +59,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.viewsupport.ListContentProvider;
-import org.eclipse.cdt.internal.ui.wizards.settingswizards.IProjectSettingsWizardPageStrategy.MessageType;
-
 /**
  * @since 5.1
  */
@@ -80,7 +78,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 	private IProject initialProject;
 
 	/**
-	 * 
+	 *
 	 * @param strategy
 	 * @param initialProject the initial project to be selected, may be null
 	 */
@@ -135,7 +133,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 
 	@Override
 	public List<ISettingsProcessor> getSelectedSettingsProcessors() {
-		List<ISettingsProcessor> selected = new ArrayList<ISettingsProcessor>();
+		List<ISettingsProcessor> selected = new ArrayList<>();
 		for (Object element : settingsViewer.getCheckedElements()) {
 			selected.add((ISettingsProcessor) element);
 		}
@@ -302,7 +300,7 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 	}
 
 	private static List<ICProject> getAllOpenCProjects() {
-		List<ICProject> projects = new ArrayList<ICProject>();
+		List<ICProject> projects = new ArrayList<>();
 		try {
 			for (ICProject project : CoreModel.getDefault().getCModel().getCProjects()) {
 				if (project.getProject().isOpen()) {
@@ -427,11 +425,11 @@ abstract public class ProjectSettingsWizardPage extends WizardPage implements IP
 	//		checkboxSelectGroup.setLayout(new GridLayout());
 	//		checkboxSelectGroup.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	//		checkboxSelectGroup.setFont(parent.getFont());
-	//		
+	//
 	//		final Button checkBox = new Button(checkboxSelectGroup, SWT.CHECK);
 	//		checkBox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	//		checkBox.setText(strategy.getMessage(CHECKBOX));
-	//		
+	//
 	//		checkBox.addSelectionListener(new SelectionAdapter() {
 	//			@Override public void widgetSelected(SelectionEvent e) {
 	//				strategy.handleCheckboxClick(ProjectSettingsWizardPage.this, checkBox.getSelection());

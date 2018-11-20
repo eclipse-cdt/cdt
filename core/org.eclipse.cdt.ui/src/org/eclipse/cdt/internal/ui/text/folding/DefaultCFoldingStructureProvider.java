@@ -29,32 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.projection.IProjectionListener;
-import org.eclipse.jface.text.source.projection.IProjectionPosition;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
-import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
-import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.ui.texteditor.IDocumentProvider;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTBreakStatement;
 import org.eclipse.cdt.core.dom.ast.IASTCaseStatement;
@@ -92,20 +66,43 @@ import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
+import org.eclipse.cdt.internal.core.model.ASTCache;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider.WAIT_FLAG;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
+import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
-
-import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-import org.eclipse.cdt.internal.core.model.ASTCache;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.ASTProvider.WAIT_FLAG;
-import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
-import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.projection.IProjectionListener;
+import org.eclipse.jface.text.source.projection.IProjectionPosition;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
+import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.ui.texteditor.IDocumentProvider;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Default implementation of a {@link ICFoldingStructureProvider}.
@@ -127,7 +124,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		}
 		private final Stack<StatementRegion> fStatements;
 		int fLevel = 0;
-		Stack<String> fScope = new Stack<String>();
+		Stack<String> fScope = new Stack<>();
 
 		private StatementVisitor(Stack<StatementRegion> statements) {
 			fStatements = statements;
@@ -338,7 +335,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		/**
 		 * Test whether the given ast contains one or more syntax errors.
-		 * 
+		 *
 		 * @param ast
 		 * @return <code>true</code> if the ast contains a syntax error
 		 */
@@ -375,7 +372,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		private ISourceReference fFirstType;
 		private boolean fHasHeaderComment;
-		private LinkedHashMap<CProjectionAnnotation, Position> fMap = new LinkedHashMap<CProjectionAnnotation, Position>();
+		private LinkedHashMap<CProjectionAnnotation, Position> fMap = new LinkedHashMap<>();
 		private IASTTranslationUnit fAST;
 
 		FoldingStructureComputationContext(IDocument document, ProjectionAnnotationModel model,
@@ -414,7 +411,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * <code>false</code> if not. This is usually <code>false</code> when updating the
 		 * folding structure while typing; it may be <code>true</code> when computing or restoring
 		 * the initial folding structure.
-		 * 
+		 *
 		 * @return <code>true</code> if newly created folding regions may be collapsed,
 		 *         <code>false</code> if not
 		 */
@@ -424,7 +421,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		/**
 		 * Returns the document which contains the code being folded.
-		 * 
+		 *
 		 * @return the document which contains the code being folded
 		 */
 		IDocument getDocument() {
@@ -439,7 +436,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		 * Adds a projection (folding) region to this context. The created annotation / position
 		 * pair will be added to the {@link ProjectionAnnotationModel} of the
 		 * {@link ProjectionViewer} of the editor.
-		 * 
+		 *
 		 * @param annotation the annotation to add
 		 * @param position the corresponding position
 		 */
@@ -476,7 +473,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		/**
 		 * Returns <code>true</code> if comments should be collapsed.
-		 * 
+		 *
 		 * @return <code>true</code> if comments should be collapsed
 		 */
 		public boolean collapseComments() {
@@ -485,7 +482,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		/**
 		 * Returns <code>true</code> if functions should be collapsed.
-		 * 
+		 *
 		 * @return <code>true</code> if functions should be collapsed
 		 */
 		public boolean collapseFunctions() {
@@ -494,7 +491,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		/**
 		 * Returns <code>true</code> if macros should be collapsed.
-		 * 
+		 *
 		 * @return <code>true</code> if macros should be collapsed
 		 */
 		public boolean collapseMacros() {
@@ -503,7 +500,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		/**
 		 * Returns <code>true</code> if methods should be collapsed.
-		 * 
+		 *
 		 * @return <code>true</code> if methods should be collapsed
 		 */
 		public boolean collapseMethods() {
@@ -512,7 +509,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		/**
 		 * Returns <code>true</code> if structures should be collapsed.
-		 * 
+		 *
 		 * @return <code>true</code> if structures should be collapsed
 		 */
 		public boolean collapseStructures() {
@@ -521,7 +518,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		/**
 		 * Returns <code>true</code> if inactive code should be collapsed.
-		 * 
+		 *
 		 * @return <code>true</code> if inactive code should be collapsed
 		 */
 		public boolean collapseInactiveCode() {
@@ -575,7 +572,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		//		public boolean isComment() {
 		//			return fCategory == COMMENT;
 		//		}
-		//		
+		//
 		//		public void setIsComment(boolean isComment) {
 		//			fCategory= isComment ? COMMENT : 0;
 		//		}
@@ -800,7 +797,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 		/**
 		 * Registers the listener with the viewer.
-		 * 
+		 *
 		 * @param viewer the viewer to register a listener with
 		 */
 		public ProjectionListener(ProjectionViewer viewer) {
@@ -960,7 +957,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 	/**
 	 * Returns <code>true</code> if the provider is installed, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @return <code>true</code> if the provider is installed, <code>false</code> otherwise
 	 */
 	protected final boolean isInstalled() {
@@ -1082,9 +1079,9 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			fSelectionListener = null;
 		}
 
-		Map<CProjectionAnnotation, Position> additions = new HashMap<CProjectionAnnotation, Position>();
-		List<CProjectionAnnotation> deletions = new ArrayList<CProjectionAnnotation>();
-		List<CProjectionAnnotation> updates = new ArrayList<CProjectionAnnotation>();
+		Map<CProjectionAnnotation, Position> additions = new HashMap<>();
+		List<CProjectionAnnotation> deletions = new ArrayList<>();
+		List<CProjectionAnnotation> updates = new ArrayList<>();
 
 		computeFoldingStructure(ctx);
 		Map<CProjectionAnnotation, Position> updated = ctx.fMap;
@@ -1186,8 +1183,8 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		if (deletions.isEmpty() || (additions.isEmpty() && changes.isEmpty()))
 			return;
 
-		List<CProjectionAnnotation> newDeletions = new ArrayList<CProjectionAnnotation>();
-		List<CProjectionAnnotation> newChanges = new ArrayList<CProjectionAnnotation>();
+		List<CProjectionAnnotation> newDeletions = new ArrayList<>();
+		List<CProjectionAnnotation> newChanges = new ArrayList<>();
 
 		Iterator<CProjectionAnnotation> deletionIterator = deletions.iterator();
 		while (deletionIterator.hasNext()) {
@@ -1247,7 +1244,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * If a match is found, the annotation gets removed from
 	 * <code>annotations</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param tuple the tuple for which we want to find a match
 	 * @param annotations collection of
 	 *        <code>CProjectionAnnotation</code>
@@ -1280,7 +1277,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		boolean includeBranches = fPreprocessorBranchFoldingEnabled && ctx.fAST != null;
 		boolean includeStmts = fStatementsFoldingEnabled && ctx.fAST != null;
 		boolean includeCModel = ctx.fAST != null || !(fPreprocessorBranchFoldingEnabled || fStatementsFoldingEnabled);
-		Map<Object, List<Tuple>> map = new HashMap<Object, List<Tuple>>();
+		Map<Object, List<Tuple>> map = new HashMap<>();
 		ProjectionAnnotationModel model = ctx.getModel();
 		Iterator<?> e = model.getAnnotationIterator();
 		while (e.hasNext()) {
@@ -1307,7 +1304,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 				if (include || position.length < 5) {
 					List<Tuple> list = map.get(cAnnotation.getElement());
 					if (list == null) {
-						list = new ArrayList<Tuple>(2);
+						list = new ArrayList<>(2);
 						map.put(cAnnotation.getElement(), list);
 					}
 					list.add(new Tuple(cAnnotation, position));
@@ -1399,12 +1396,12 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 	/**
 	 * Computes folding structure of statements for the given AST.
-	 * 
+	 *
 	 * @param ast
 	 * @param ctx
 	 */
 	private void computeStatementFoldingStructure(IASTTranslationUnit ast, FoldingStructureComputationContext ctx) {
-		final Stack<StatementRegion> iral = new Stack<StatementRegion>();
+		final Stack<StatementRegion> iral = new Stack<>();
 		ast.accept(new StatementVisitor(iral));
 		while (!iral.empty()) {
 			StatementRegion mr = iral.pop();
@@ -1422,7 +1419,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * computes the folding structure for: preprocessor branches for the given
 	 * AST. Also, it computes statements folding (if/else do/while for and
 	 * switch)
-	 * 
+	 *
 	 * @param ast
 	 * @param ctx
 	 */
@@ -1444,13 +1441,13 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 	/**
 	 * Computes folding structure for preprocessor branches for the given AST.
-	 * 
+	 *
 	 * @param ast
 	 * @param ctx
 	 */
 	private void computePreprocessorFoldingStructure(IASTTranslationUnit ast, FoldingStructureComputationContext ctx) {
-		List<Branch> branches = new ArrayList<Branch>();
-		Stack<Branch> branchStack = new Stack<Branch>();
+		List<Branch> branches = new ArrayList<>();
+		Stack<Branch> branchStack = new Stack<>();
 
 		IASTPreprocessorStatement[] preprocStmts = ast.getAllPreprocessorStatements();
 
@@ -1515,7 +1512,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 			branches.add(branch);
 		}
 
-		Map<String, Counter> keys = new HashMap<String, Counter>(branches.size());
+		Map<String, Counter> keys = new HashMap<>(branches.size());
 		for (Branch branch : branches) {
 			IRegion aligned = alignRegion(branch, ctx, branch.fInclusive);
 			if (aligned != null) {
@@ -1538,7 +1535,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 	/**
 	 * Compute a key for recognizing an annotation based on the given position.
-	 * 
+	 *
 	 * @param pos
 	 * @param ctx
 	 * @return a key to recognize an annotation position
@@ -1554,10 +1551,10 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 
 	/**
 	 * Compute folding structure based on partioning information.
-	 * 
+	 *
 	 * @param partitions  array of document partitions
 	 * @param ctx  the folding structure context
-	 * @throws BadLocationException 
+	 * @throws BadLocationException
 	 */
 	private void computeFoldingStructure(ITypedRegion[] partitions, FoldingStructureComputationContext ctx)
 			throws BadLocationException {
@@ -1567,7 +1564,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 		int startLine = -1;
 		int endLine = -1;
 		boolean startLineIsDocComment = false;
-		List<Tuple> comments = new ArrayList<Tuple>();
+		List<Tuple> comments = new ArrayList<>();
 		ModifiableRegion commentRange = new ModifiableRegion();
 		for (ITypedRegion partition : partitions) {
 			boolean singleLine = false;
@@ -1691,7 +1688,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * <li>multiline macro definitions</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param element the C element to compute the folding structure for
 	 * @param ctx the computation context
 	 */
@@ -1748,7 +1745,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * element that implements the source reference. Any preceding regions describe comments
 	 * of that element.
 	 * </p>
-	 * 
+	 *
 	 * @param reference a C element that is a source reference
 	 * @param ctx the folding context
 	 * @return the regions to be folded
@@ -1768,7 +1765,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * Creates a comment folding position from an
 	 * {@link #alignRegion(IRegion, DefaultCFoldingStructureProvider.FoldingStructureComputationContext, boolean) aligned}
 	 * region.
-	 * 
+	 *
 	 * @param aligned an aligned region
 	 * @return a folding position corresponding to <code>aligned</code>
 	 */
@@ -1783,7 +1780,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * Creates a folding position that remembers its element from an
 	 * {@link #alignRegion(IRegion, DefaultCFoldingStructureProvider.FoldingStructureComputationContext, boolean) aligned}
 	 * region.
-	 * 
+	 *
 	 * @param aligned an aligned region
 	 * @param element the element to remember
 	 * @return a folding position corresponding to <code>aligned</code>
@@ -1798,7 +1795,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * end of the document. <code>null</code> is returned if <code>region</code> is
 	 * <code>null</code> itself or does not comprise at least one line delimiter, as a single line
 	 * cannot be folded.
-	 * 
+	 *
 	 * @param region the region to align, may be <code>null</code>
 	 * @param ctx the folding context
 	 * @return a region equal or greater than <code>region</code> that is aligned with line
@@ -1815,7 +1812,7 @@ public class DefaultCFoldingStructureProvider implements ICFoldingStructureProvi
 	 * end of the document. <code>null</code> is returned if <code>region</code> is
 	 * <code>null</code> itself or does not comprise at least one line delimiter, as a single line
 	 * cannot be folded.
-	 * 
+	 *
 	 * @param region the region to align, may be <code>null</code>
 	 * @param ctx the folding context
 	 * @param inclusive include line of end offset

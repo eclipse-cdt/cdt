@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -127,8 +127,8 @@ public class EventTest {
 	}
 
 	/**
-	 * Tests dispatching event 1.  The goal of the test is to make sure that 
-	 * recipients are called in the correct order.   
+	 * Tests dispatching event 1.  The goal of the test is to make sure that
+	 * recipients are called in the correct order.
 	 */
 	@Test
 	public void event1Test() throws ExecutionException, InterruptedException {
@@ -185,7 +185,7 @@ public class EventTest {
 			}
 		}).get();
 
-		// Ditto when firing the event from service 4 
+		// Ditto when firing the event from service 4
 		fService1.fEvent1RecipientNumber = fService2.fEvent1RecipientNumber = fService3.fEvent1RecipientNumber = fService4.fEvent1RecipientNumber = 0;
 
 		fService4.dispatchEvent1();
@@ -203,9 +203,9 @@ public class EventTest {
 	}
 
 	/**
-	 * Tests dispatching event 2.  The goal of the test is to make sure that 
+	 * Tests dispatching event 2.  The goal of the test is to make sure that
 	 * recipients are called in the correct order, and that the other events
-	 * are not registered.   
+	 * are not registered.
 	 */
 	@Test
 	public void event2Test() throws ExecutionException, InterruptedException {
@@ -227,7 +227,7 @@ public class EventTest {
 	 * Tests dispatching event 2. The goal of the test is to make sure that both
 	 * event 2 and even 3 recipients are called for this event, since Event3
 	 * derives from Event1. <br>
-	 * 
+	 *
 	 * Note: When a single listener object has more than one method that that
 	 * matches the event, both methods will be called. But there is currently no
 	 * guaranteed order in which they should be called.

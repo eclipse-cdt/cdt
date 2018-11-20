@@ -50,11 +50,11 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 	/**
 	 * Convert a local (workspace) path into the remote equivalent. If the local path is not
 	 * absolute, then do nothing.
-	 * 
+	 *
 	 * e.g. Suppose the local path is /u/local_user/workspace/local_project/subdir1/subdir2
 	 *      Suppose the remote project location is /home/remote_user/remote_project
 	 *      Then the resulting path will be /home/remote_user/remote_project/subdir1/subdir2
-	 * 
+	 *
 	 * @param localPath absolute local path in the workspace
 	 * @param remote remote project
 	 * @return remote path that is the equivalent of the local path
@@ -66,11 +66,11 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 	/**
 	 * Convert a local (workspace) path into the remote equivalent. If the local path is not
 	 * absolute, then do nothing.
-	 * 
+	 *
 	 * e.g. Suppose the local path is /u/local_user/workspace/local_project/subdir1/subdir2
 	 *      Suppose the remote project location is /home/remote_user/remote_project
 	 *      Then the resulting path will be /home/remote_user/remote_project/subdir1/subdir2
-	 * 
+	 *
 	 * @param localPath absolute local path in the workspace
 	 * @param remote remote project
 	 * @return remote path that is the equivalent of the local path
@@ -151,7 +151,7 @@ public class RemoteCommandLauncher implements ICommandLauncher {
 			fLocalLauncher = localLauncher;
 		}
 		if (getProject() != null) {
-			IRemoteResource remRes = (IRemoteResource) getProject().getAdapter(IRemoteResource.class);
+			IRemoteResource remRes = getProject().getAdapter(IRemoteResource.class);
 			if (remRes != null) {
 				URI uri = remRes.getActiveLocationURI();
 				IRemoteServicesManager remoteServicesManager = Activator.getService(IRemoteServicesManager.class);

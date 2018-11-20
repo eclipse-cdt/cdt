@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
@@ -56,20 +56,20 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * A helper class for View Model Node implementations that support elements 
- * to be formatted using different number formats.  This object can be 
+ * A helper class for View Model Node implementations that support elements
+ * to be formatted using different number formats.  This object can be
  * instantiated by a VM node to retrieve formatted values from a given service
- * using given DMC type.  
+ * using given DMC type.
  * <p>
  * Note: This class is a replacement for the {@link FormattedValueVMUtil#updateFormattedValues(IPropertiesUpdate[], IFormattedValues, Class, RequestMonitor)}
  * static method.  This new implementation retrieves cached values if they are
- * available in the VM Cache. 
+ * available in the VM Cache.
  * </p>
- * 
+ *
  * @see FormattedValueVMUtil
  * @see org.eclipse.cdt.dsf.ui.viewmodel.properties.IElementPropertiesProvider
  * @see org.eclipse.cdt.dsf.debug.service.IFormattedValues
- * 
+ *
  * @since 2.0
  */
 public class FormattedValueRetriever {
@@ -118,7 +118,7 @@ public class FormattedValueRetriever {
 	}
 
 	/**
-	 * Creates an OSGI service filter for the given service type in a given 
+	 * Creates an OSGI service filter for the given service type in a given
 	 * DSF session.
 	 */
 	private static Filter createFilter(DsfSession session, Class<?> serviceClass) {
@@ -135,33 +135,33 @@ public class FormattedValueRetriever {
 	}
 
 	/**
-	 * This method fills in the formatted value properties in the given array 
-	 * of property update objects using data retrieved from the given 
-	 * formatted values service.  
+	 * This method fills in the formatted value properties in the given array
+	 * of property update objects using data retrieved from the given
+	 * formatted values service.
 	 * <p>
 	 * Note: The node parameter must return a <code>ICachingVMProviderExtension2</code>
 	 * through its {@link IVMNode#getVMProvider()} method.
-	 * 
-	 * @param node This method also takes an <code>IVMNode</code> parameter 
-	 * which allows for retrieving the format value data from the View Model 
-	 * cache.  If the needed value property is cached already, the cached 
-	 * value will be used otherwise the properties will be retrieved from the 
-	 * service.   
-	 * 
-	 * @param updates The array of updates to fill in information to.  This  
-	 * update is used to retrieve the data model context and to write the 
-	 * properties into. Implementation will not directly mark these updates 
+	 *
+	 * @param node This method also takes an <code>IVMNode</code> parameter
+	 * which allows for retrieving the format value data from the View Model
+	 * cache.  If the needed value property is cached already, the cached
+	 * value will be used otherwise the properties will be retrieved from the
+	 * service.
+	 *
+	 * @param updates The array of updates to fill in information to.  This
+	 * update is used to retrieve the data model context and to write the
+	 * properties into. Implementation will not directly mark these updates
 	 * complete, but contribute towards that end by marking [monitor] complete.
-	 * 
+	 *
 	 * @param service The service to be used to retrieve the values from.
-	 * 
+	 *
 	 * @param dmcType The class type of the data model context.  Some updates
 	 * can contain multiple formatted data data model contexts, and this
-	 * method assures that there is no ambiguity in which context should be 
+	 * method assures that there is no ambiguity in which context should be
 	 * used.
-	 * 
+	 *
 	 * @param rm Request monitor used to signal completion of work
-	 * 
+	 *
 	 * @since 2.2
 	 */
 	@ConfinedToDsfExecutor("node.getExecutor()")
@@ -204,7 +204,7 @@ public class FormattedValueRetriever {
 															availableFormatsMap = getData();
 														}
 														// Retrieve the formatted values now that we have the available formats (where needed).
-														// Note that we are passing off responsibility of our parent monitor  
+														// Note that we are passing off responsibility of our parent monitor
 														doUpdateWithAvailableFormats(updates, availableFormatsMap,
 																elementFormatMap, rm);
 													}
@@ -242,12 +242,12 @@ public class FormattedValueRetriever {
 			}
 			if (active != null) {
 				if (cachedMap == null) {
-					cachedMap = new HashMap<IPropertiesUpdate, String>(updates.length * 4 / 3);
+					cachedMap = new HashMap<>(updates.length * 4 / 3);
 				}
 				cachedMap.put(update, active);
 			} else {
 				if (outstanding == null) {
-					outstanding = new HashSet<IPropertiesUpdate>(updates.length * 4 / 3);
+					outstanding = new HashSet<>(updates.length * 4 / 3);
 				}
 				outstanding.add(update);
 			}
@@ -258,7 +258,7 @@ public class FormattedValueRetriever {
 			return;
 		}
 		if (cachedMap == null) {
-			cachedMap = new HashMap<IPropertiesUpdate, String>(updates.length * 4 / 3);
+			cachedMap = new HashMap<>(updates.length * 4 / 3);
 		}
 		final Map<IPropertiesUpdate, String> elementFormatMap = Collections.synchronizedMap(cachedMap);
 		rm.setData(elementFormatMap);
@@ -287,10 +287,10 @@ public class FormattedValueRetriever {
 	}
 
 	/**
-	 * Retrieves the <code>PROP_FORMATTED_VALUE_AVAILABLE_FORMATS</code> 
-	 * property for each update and returns it in a map.  The returned 
-	 * map may be <code>null</code> if no cache data is available. 
-	 * 
+	 * Retrieves the <code>PROP_FORMATTED_VALUE_AVAILABLE_FORMATS</code>
+	 * property for each update and returns it in a map.  The returned
+	 * map may be <code>null</code> if no cache data is available.
+	 *
 	 * @since 2.2
 	 */
 	private Map<IPropertiesUpdate, String[]> calcCachedAvailableFormatsMap(IPropertiesUpdate updates[]) {
@@ -303,7 +303,7 @@ public class FormattedValueRetriever {
 				// of whether we need to call the service for data.
 				if (availableFormats != null || !isAvailableFormatsPropertyNeeded(update)) {
 					if (cachedAvailableFormatsMap == null) {
-						cachedAvailableFormatsMap = new HashMap<IPropertiesUpdate, String[]>(updates.length * 4 / 3);
+						cachedAvailableFormatsMap = new HashMap<>(updates.length * 4 / 3);
 					}
 					cachedAvailableFormatsMap.put(update, availableFormats);
 					continue;
@@ -314,15 +314,15 @@ public class FormattedValueRetriever {
 	}
 
 	/**
-	 * Generates a list of updates which still need the 
+	 * Generates a list of updates which still need the
 	 * <code>PROP_FORMATTED_VALUE_AVAILABLE_FORMATS</code> property.
-	 * 
+	 *
 	 * @since 2.2
 	 */
 	private List<IPropertiesUpdate> calcOutstandingAvailableFormatsUpdates(IPropertiesUpdate[] updates,
 			Map<IPropertiesUpdate, String[]> cachedAvailableFormatsMap) {
 		if (cachedAvailableFormatsMap != null) {
-			List<IPropertiesUpdate> outstandingUpdates = new ArrayList<IPropertiesUpdate>(
+			List<IPropertiesUpdate> outstandingUpdates = new ArrayList<>(
 					updates.length - cachedAvailableFormatsMap.size());
 			for (IPropertiesUpdate update : updates) {
 				if (!cachedAvailableFormatsMap.containsKey(update)) {
@@ -338,11 +338,11 @@ public class FormattedValueRetriever {
 	/**
 	 * Method to retrieve available formats for each update's element (if
 	 * needed). The result is returned in a map and in the
-	 * update object (if requested). 
+	 * update object (if requested).
 	 * <p>
-	 * Note that we use a synchronized map because it's updated by a request 
+	 * Note that we use a synchronized map because it's updated by a request
 	 * monitor with an ImmediateExecutor.
-	 * 
+	 *
 	 * @since 2.2
 	 */
 	@ConfinedToDsfExecutor("service.getExecutor()")
@@ -379,7 +379,7 @@ public class FormattedValueRetriever {
 						@Override
 						protected void handleCompleted() {
 							if (isSuccess()) {
-								// Set the result (available formats) into the update object if it was requested 
+								// Set the result (available formats) into the update object if it was requested
 								if (update.getProperties().contains(PROP_AVAILABLE_FORMATS)) {
 									update.setProperty(PROP_AVAILABLE_FORMATS, getData());
 								}
@@ -405,28 +405,28 @@ public class FormattedValueRetriever {
 	}
 
 	/**
-	 * This method continues retrieving formatted value properties.  It is 
-	 * called once the available formats are calculated for each requested 
+	 * This method continues retrieving formatted value properties.  It is
+	 * called once the available formats are calculated for each requested
 	 * update.
-	 * 
-	 * @param availableFormatsMap Prior to calling this method, the caller 
+	 *
+	 * @param availableFormatsMap Prior to calling this method, the caller
 	 * queries (where necessary) the formats supported by the element in each
-	 * update, and it puts that information in this map. If an entry in 
-	 * [updates] does not appear in this map, it means that its view-model 
-	 * element doesn't support any formats (very unlikely), or that the 
-	 * available formats aren't necessary to service the properties specified 
+	 * update, and it puts that information in this map. If an entry in
+	 * [updates] does not appear in this map, it means that its view-model
+	 * element doesn't support any formats (very unlikely), or that the
+	 * available formats aren't necessary to service the properties specified
 	 * in the update
-	 * 
+	 *
 	 * @since 2.2
 	 */
 	@ConfinedToDsfExecutor("fNode.getExecutor()")
 	private void doUpdateWithAvailableFormats(IPropertiesUpdate updates[],
 			final Map<IPropertiesUpdate, String[]> availableFormatsMap,
 			final Map<IPropertiesUpdate, String> elementFormatMap, final RequestMonitor rm) {
-		final List<IPropertiesUpdate> outstandingUpdates = new ArrayList<IPropertiesUpdate>(updates.length);
-		final Map<IPropertiesUpdate, List<String>> requestedFormatsMap = new HashMap<IPropertiesUpdate, List<String>>(
+		final List<IPropertiesUpdate> outstandingUpdates = new ArrayList<>(updates.length);
+		final Map<IPropertiesUpdate, List<String>> requestedFormatsMap = new HashMap<>(
 				updates.length * 4 / 3);
-		final Map<IPropertiesUpdate, String> activeFormatsMap = new HashMap<IPropertiesUpdate, String>(
+		final Map<IPropertiesUpdate, String> activeFormatsMap = new HashMap<>(
 				updates.length * 4 / 3);
 
 		for (final IPropertiesUpdate update : updates) {
@@ -499,14 +499,14 @@ public class FormattedValueRetriever {
 	}
 
 	/**
-	 * Retrieves the specified formatted values from the service. 
-	 * 
-	 * @param requestedFormatsMap Map containing the formats to be retrieved 
+	 * Retrieves the specified formatted values from the service.
+	 *
+	 * @param requestedFormatsMap Map containing the formats to be retrieved
 	 * and filled in for each given update.
 	 * @param activeFormatsMap Map containing the active format for each given
-	 * update.  The active format value needs to be set in the update using the 
+	 * update.  The active format value needs to be set in the update using the
 	 * special property <code>PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE</code>.
-	 * 
+	 *
 	 * @since 2.2
 	 */
 	@ConfinedToDsfExecutor("service.getExecutor()")
@@ -531,7 +531,7 @@ public class FormattedValueRetriever {
 				final FormattedValueDMContext formattedValueDmc = service.getFormattedValueContext(dmc,
 						requestedFormat);
 				service.getFormattedExpressionValue(formattedValueDmc,
-						// Here also use the ViewerDataRequestMonitor in order to propagate the update's cancel request. 
+						// Here also use the ViewerDataRequestMonitor in order to propagate the update's cancel request.
 						// However, when operation is complete, call the counting RM's done().
 						// Use an immediate executor to avoid the possibility of a rejected execution exception.
 						new ViewerDataRequestMonitor<FormattedValueDMData>(ImmediateExecutor.getInstance(), update) {
@@ -546,7 +546,7 @@ public class FormattedValueRetriever {
 								// Note: we must not call the update's done method, instead call counting RM done.
 								countingRm.done();
 
-							};
+							}
 						});
 				count++;
 			}
@@ -557,16 +557,16 @@ public class FormattedValueRetriever {
 	/**
 	 * Determine the 'active' value format. It is the view preference if
 	 * and only if the element supports it. Otherwise it is the first
-	 * format supported by the element.  
+	 * format supported by the element.
 	 * <p>
-	 * Note: If the availableFormatsMap doesn't contain the available formats  
-	 * for the given update, it means the update doesn't request any properties 
+	 * Note: If the availableFormatsMap doesn't contain the available formats
+	 * for the given update, it means the update doesn't request any properties
 	 * which requires the active format to be calculated.
-	 * 
-	 * @param update Properties update to calculate the active format for.  
+	 *
+	 * @param update Properties update to calculate the active format for.
 	 * @param availableFormatsMap The map of available formats.
 	 * @param elementFormatMap The map of element active format.
-	 * @return The active format, or null if active format not requested in 
+	 * @return The active format, or null if active format not requested in
 	 * update.
 	 */
 	private String calcActiveFormat(IPropertiesUpdate update, String preferredFormat,
@@ -587,8 +587,8 @@ public class FormattedValueRetriever {
 	}
 
 	/**
-	 * Returns <code>true</code> if the given availableFormats array contains 
-	 * the given format. 
+	 * Returns <code>true</code> if the given availableFormats array contains
+	 * the given format.
 	 */
 	private boolean isFormatAvailable(String format, String[] availableFormats) {
 		for (String availableFormat : availableFormats) {
@@ -608,7 +608,7 @@ public class FormattedValueRetriever {
 	 */
 	private List<String> calcRequestedFormats(IPropertiesUpdate update, String activeFormat,
 			String[] availableFormats) {
-		List<String> requestedFormats = new ArrayList<String>(10);
+		List<String> requestedFormats = new ArrayList<>(10);
 
 		boolean activeFormatValueHandled = false; // have we come across a specific format request that is the active format?
 
@@ -630,7 +630,7 @@ public class FormattedValueRetriever {
 					continue;
 				}
 			} else {
-				// the additional iteration to handle the active format 
+				// the additional iteration to handle the active format
 				nextFormat = activeFormat;
 				activeFormatValueHandled = true;
 			}
@@ -640,10 +640,10 @@ public class FormattedValueRetriever {
 	}
 
 	/**
-	 * Writes the given formatted property value into the update.  It also 
+	 * Writes the given formatted property value into the update.  It also
 	 * writes the active format property if needed.
 	 * <p>
-	 * If the given property value is null, this method writes an error status 
+	 * If the given property value is null, this method writes an error status
 	 * instead.
 	 */
 	private void setUpdateFormatProperty(IPropertiesUpdate update, String activeFormat, String format, Object value) {
@@ -700,9 +700,9 @@ public class FormattedValueRetriever {
 	}
 
 	/**
-	 * Extracts the formatted data DMC from the update.  If update doesn't 
-	 * contain DMC-based elemtn, it writes an error to the update and returns 
-	 * <code>null</code>. 
+	 * Extracts the formatted data DMC from the update.  If update doesn't
+	 * contain DMC-based elemtn, it writes an error to the update and returns
+	 * <code>null</code>.
 	 */
 	private IFormattedDataDMContext getFormattedDataDMContext(IPropertiesUpdate update) {
 		IFormattedDataDMContext dmc = null;

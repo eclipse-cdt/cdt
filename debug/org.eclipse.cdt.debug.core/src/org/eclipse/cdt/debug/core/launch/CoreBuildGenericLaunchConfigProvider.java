@@ -19,7 +19,7 @@ import org.eclipse.launchbar.core.target.ILaunchTargetManager;
 
 /**
  * Core launch configuration provider used by generic target types.
- * 
+ *
  * @since 8.3
  */
 public class CoreBuildGenericLaunchConfigProvider extends AbstractLaunchConfigProvider {

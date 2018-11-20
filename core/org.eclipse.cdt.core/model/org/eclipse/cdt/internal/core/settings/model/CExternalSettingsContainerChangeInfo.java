@@ -34,7 +34,7 @@ public class CExternalSettingsContainerChangeInfo {
 	//	private ExtSettingsDelta[] fDeltas;
 
 	CExternalSettingsContainerChangeInfo(int flags, CContainerRef cr,
-			//			CExternalSettingsContainer container, 
+			//			CExternalSettingsContainer container,
 			String oldId/*,
 						ExtSettingsDelta[] deltas*/
 	) {

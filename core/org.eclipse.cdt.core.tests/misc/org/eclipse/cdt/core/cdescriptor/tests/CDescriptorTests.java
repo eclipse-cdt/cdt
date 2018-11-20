@@ -21,9 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.CDescriptorEvent;
 import org.eclipse.cdt.core.CProjectNature;
@@ -46,6 +43,9 @@ import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.junit.Assert;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class CDescriptorTests extends BaseTestCase {
 	static String projectId = CTestPlugin.PLUGIN_ID + ".TestProject";

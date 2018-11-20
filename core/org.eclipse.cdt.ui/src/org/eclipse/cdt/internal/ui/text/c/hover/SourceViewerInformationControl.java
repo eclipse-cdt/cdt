@@ -15,6 +15,14 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -50,16 +58,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.cdt.ui.CDTUITools;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
 
 /**
  * Source viewer based implementation of <code>IInformationControl</code>.
@@ -265,7 +263,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 	/**
 	 * Returns <code>null</code> if {@link SWT#COLOR_INFO_BACKGROUND} is visibly distinct from the
 	 * default source text color. Otherwise, returns the editor background color.
-	 * 
+	 *
 	 * @param display the display
 	 * @return an RGB or <code>null</code>
 	 */
@@ -500,7 +498,7 @@ public class SourceViewerInformationControl implements IInformationControl, IInf
 
 	/**
 	 * Adds the internal trimmings to the given trim of the shell.
-	 * 
+	 *
 	 * @param trim the shell's trim, will be updated
 	 * @since 5.0
 	 */

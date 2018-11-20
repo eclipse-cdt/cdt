@@ -7,13 +7,16 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -90,7 +93,7 @@ public class DsfQueryTests {
 			@Override
 			protected void execute(DataRequestMonitor<Integer> rm) {
 				rm.setStatus(new Status(IStatus.ERROR, DsfTestPlugin.PLUGIN_ID, IDsfStatusConstants.INTERNAL_ERROR,
-						error_message, null)); //$NON-NLS-1$
+						error_message, null));
 				rm.done();
 			}
 		};
@@ -279,7 +282,7 @@ public class DsfQueryTests {
 		drm.setData(Integer.valueOf(1));
 		rmHolder[0].done();
 
-		// Try to retrieve data again, it should still result in 
+		// Try to retrieve data again, it should still result in
 		// cancellation exception.
 		try {
 			q.get();

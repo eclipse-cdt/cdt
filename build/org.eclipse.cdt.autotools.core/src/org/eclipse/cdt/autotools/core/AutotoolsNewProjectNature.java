@@ -176,7 +176,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method for adding an autotools nature to a project.
-	 * 
+	 *
 	 * @param proj the project to add the autotools nature to.
 	 * @param monitor a progress monitor to indicate the duration of the operation, or
 	 * <code>null</code> if progress reporting is not required.
@@ -187,7 +187,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method for adding a nature to a project.
-	 * 
+	 *
 	 * @param proj the project to add the nature to.
 	 * @param natureId the id of the nature to assign to the project
 	 * @param monitor a progress monitor to indicate the duration of the operation, or
@@ -209,10 +209,10 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method to remove the autotools nature from a project.
-	 * 
+	 *
 	 * @param project to remove the autotools nature from
-	 * @param mon progress monitor to indicate the duration of the operation, or 
-	 * <code>null</code> if progress reporting is not required. 
+	 * @param mon progress monitor to indicate the duration of the operation, or
+	 * <code>null</code> if progress reporting is not required.
 	 * @throws CoreException
 	 */
 	public static void removeAutotoolsNature(IProject project, IProgressMonitor mon) throws CoreException {
@@ -221,10 +221,10 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method to remove the old autotools nature from a project.
-	 * 
+	 *
 	 * @param project to remove the old autotools nature from
-	 * @param mon progress monitor to indicate the duration of the operation, or 
-	 * <code>null</code> if progress reporting is not required. 
+	 * @param mon progress monitor to indicate the duration of the operation, or
+	 * <code>null</code> if progress reporting is not required.
 	 * @throws CoreException
 	 */
 	public static void removeOldAutotoolsNature(IProject project, IProgressMonitor mon) throws CoreException {
@@ -233,7 +233,7 @@ public class AutotoolsNewProjectNature implements IProjectNature {
 
 	/**
 	 * Utility method for removing a project nature from a project.
-	 * 
+	 *
 	 * @param proj the project to remove the nature from
 	 * @param natureId the nature id to remove
 	 * @param monitor a progress monitor to indicate the duration of the operation, or

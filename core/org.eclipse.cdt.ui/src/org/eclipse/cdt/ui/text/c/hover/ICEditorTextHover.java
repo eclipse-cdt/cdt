@@ -30,7 +30,7 @@ public interface ICEditorTextHover extends ITextHover {
 
 	/**
 	 * Sets the editor on which the hover is shown.
-	 * 
+	 *
 	 * @param editor the editor on which the hover popup should be shown
 	 */
 	void setEditor(IEditorPart editor);

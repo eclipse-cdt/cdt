@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Freescale Semiconductor - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.osgi.framework.InvalidSyntaxException;
 /**
  * This service differs from the other three in that when it registers itself as
  * an event listener with the dsf session, it specifies a services filter.
- * 
+ *
  */
 public class Service4 extends AbstractService {
 	Service4(DsfSession session) {

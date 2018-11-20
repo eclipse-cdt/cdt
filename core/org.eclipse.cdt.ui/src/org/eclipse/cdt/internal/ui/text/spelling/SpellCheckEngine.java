@@ -28,6 +28,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.text.spelling.engine.DefaultSpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.LocaleSensitiveSpellDictionary;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.PersistentSpellDictionary;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -35,15 +42,6 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.text.spelling.engine.DefaultSpellChecker;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckEngine;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.LocaleSensitiveSpellDictionary;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.PersistentSpellDictionary;
 
 /**
  * Spell check engine for C/C++ source spell checking.
@@ -94,11 +92,11 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 			return fgLocalesWithInstalledDictionaries = Collections.emptySet();
 		}
 
-		fgLocalesWithInstalledDictionaries = new HashSet<Locale>();
+		fgLocalesWithInstalledDictionaries = new HashSet<>();
 		int fileNameCount = fileNames.length;
 		for (int i = 0; i < fileNameCount; i++) {
 			String fileName = fileNames[i];
-			int localeEnd = fileName.indexOf(".dictionary"); //$NON-NLS-1$ 
+			int localeEnd = fileName.indexOf(".dictionary"); //$NON-NLS-1$
 			if (localeEnd > 1) {
 				String localeName = fileName.substring(0, localeEnd);
 				int languageEnd = localeName.indexOf('_');
@@ -217,13 +215,13 @@ public class SpellCheckEngine implements ISpellCheckEngine, IPropertyChangeListe
 	}
 
 	/** The registered locale insensitive dictionaries */
-	private Set<ISpellDictionary> fGlobalDictionaries = new HashSet<ISpellDictionary>();
+	private Set<ISpellDictionary> fGlobalDictionaries = new HashSet<>();
 
 	/** The spell checker for fLocale */
 	private ISpellChecker fChecker = null;
 
 	/** The registered locale sensitive dictionaries */
-	private Map<Locale, ISpellDictionary> fLocaleDictionaries = new HashMap<Locale, ISpellDictionary>();
+	private Map<Locale, ISpellDictionary> fLocaleDictionaries = new HashMap<>();
 
 	/** The user dictionary */
 	private ISpellDictionary fUserDictionary = null;

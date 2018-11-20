@@ -56,7 +56,7 @@ public class ASTInternal {
 		if (binding instanceof ICInternalBinding) {
 			return ((ICInternalBinding) binding).getDefinition();
 		}
-		CCorePlugin.log("ASTInternal.getDefinitionOfBinding() called for binding of type " + //$NON-NLS-1$ 
+		CCorePlugin.log("ASTInternal.getDefinitionOfBinding() called for binding of type " + //$NON-NLS-1$
 				binding.getClass().getName());
 		assert false;
 		return null;

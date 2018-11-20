@@ -40,12 +40,12 @@ public class QObject implements IQObject {
 		this.name = pdomQObject.getName();
 		this.pdomQObject = pdomQObject;
 
-		List<IQMethod> baseSlots = new ArrayList<IQMethod>();
-		List<IQMethod> baseSignals = new ArrayList<IQMethod>();
-		List<IQMethod> baseInvokables = new ArrayList<IQMethod>();
-		List<IQProperty> baseProps = new ArrayList<IQProperty>();
+		List<IQMethod> baseSlots = new ArrayList<>();
+		List<IQMethod> baseSignals = new ArrayList<>();
+		List<IQMethod> baseInvokables = new ArrayList<>();
+		List<IQProperty> baseProps = new ArrayList<>();
 
-		this.bases = new ArrayList<IQObject>();
+		this.bases = new ArrayList<>();
 		for (QtPDOMQObject base : pdomQObject.findBases()) {
 			QObject baseQObj = new QObject(qtIndex, cdtIndex, base);
 			this.bases.add(baseQObj);
@@ -57,9 +57,9 @@ public class QObject implements IQObject {
 
 		this.classInfos = pdomQObject.getClassInfos();
 
-		List<IQMethod> slots = new ArrayList<IQMethod>();
-		List<IQMethod> signals = new ArrayList<IQMethod>();
-		List<IQMethod> invokables = new ArrayList<IQMethod>();
+		List<IQMethod> slots = new ArrayList<>();
+		List<IQMethod> signals = new ArrayList<>();
+		List<IQMethod> invokables = new ArrayList<>();
 		for (QtPDOMQMethod pdom : pdomQObject.getChildren(QtPDOMQMethod.class))
 			switch (pdom.getKind()) {
 			case Slot:
@@ -79,11 +79,11 @@ public class QObject implements IQObject {
 		this.signals = QObjectMembers.create(signals, baseSignals);
 		this.invokables = QObjectMembers.create(invokables, baseInvokables);
 
-		this.enums = new ArrayList<IQEnum>();
+		this.enums = new ArrayList<>();
 		for (QtPDOMQEnum pdom : pdomQObject.getChildren(QtPDOMQEnum.class))
 			this.enums.add(new QEnum(pdom.getName(), pdom.isFlag(), pdom.getEnumerators()));
 
-		List<IQProperty> props = new ArrayList<IQProperty>();
+		List<IQProperty> props = new ArrayList<>();
 		for (QtPDOMProperty pdom : pdomQObject.getChildren(QtPDOMProperty.class)) {
 			QProperty qProp = new QProperty(this, pdom.getType(), pdom.getName());
 			for (QtPDOMProperty.Attribute attr : pdom.getAttributes())
@@ -92,7 +92,7 @@ public class QObject implements IQObject {
 		}
 		this.properties = QObjectMembers.create(props, baseProps);
 
-		this.qmlRegistrations = new ArrayList<IQmlRegistration>();
+		this.qmlRegistrations = new ArrayList<>();
 		for (QtPDOMQmlRegistration pdom : QtPDOMQmlRegistration.findFor(pdomQObject))
 			this.qmlRegistrations.add(QmlRegistration.create(qtIndex, pdom));
 	}

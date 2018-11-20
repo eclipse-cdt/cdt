@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Append the contents to the file. 
+ * Append the contents to the file.
  */
 public class Append extends ProcessRunner {
 

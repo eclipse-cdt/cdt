@@ -19,14 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Region;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTComment;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -42,7 +34,6 @@ import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
 import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
@@ -52,6 +43,13 @@ import org.eclipse.cdt.internal.core.util.TextUtil;
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
 import org.eclipse.cdt.internal.corext.codemanipulation.InclusionContext;
 import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Region;
 
 public class IncludeUtil {
 	/** Not instantiatable. All methods are static. */
@@ -173,7 +171,7 @@ public class IncludeUtil {
 				includeOffset = 0;
 			}
 			if (!topCommentSkipped) {
-				// Skip the first comment block near the top of the file. 
+				// Skip the first comment block near the top of the file.
 				includeOffset = skipStandaloneCommentBlock(contents, includeOffset, maxSafeOffset, ast.getComments(),
 						commentMap);
 			}

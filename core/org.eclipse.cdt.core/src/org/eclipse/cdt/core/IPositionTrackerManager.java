@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IPath;
  * offsets from a file previously stored on disk to the offset in the current document
  * for the file.
  * @since 4.0
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -32,7 +32,7 @@ public interface IPositionTrackerManager {
 	/**
 	 * Returns the position converter suitable for mapping character offsets of the
 	 * given translation unit to the current version of it.
-	 * 
+	 *
 	 * @param tu a translation unit for which the position adapter is requested.
 	 * @param timestamp identifies the version of the file stored on disk.
 	 * @return the requested position converter or <code>null</code>.
@@ -42,7 +42,7 @@ public interface IPositionTrackerManager {
 	/**
 	 * Returns the position converter suitable for mapping character offsets of the
 	 * given file/timestamp to the current version of it.
-	 * 
+	 *
 	 * @param file a file for which the position adapter is requested.
 	 * @param timestamp identifies the version of the file stored on disk.
 	 * @return the requested position converter or <code>null</code>.
@@ -54,7 +54,7 @@ public interface IPositionTrackerManager {
 	 * given external file/timestamp to the current version of it. <p>
 	 * The method can be used for resources by supplying the <b>full path</b>. However,
 	 * it does not work if you supply the location of a resource.
-	 * 
+	 *
 	 * @param fullPathOrExternalLocation an external location for which the position adapter is requested.
 	 * @param timestamp identifies the version of the file stored on disk.
 	 * @return the requested position converter or <code>null</code>.
@@ -65,7 +65,7 @@ public interface IPositionTrackerManager {
 	 * Returns the position tracker suitable for mapping character offsets of the
 	 * given external file/timestamp to the current version of it. <p>
 	 * The method cannot be used for resources that are part of the workspace.
-	 * 
+	 *
 	 * @param externalLocation an external location for which the position adapter is requested.
 	 * @param timestamp identifies the version of the file stored on disk.
 	 * @return the requested position converter or <code>null</code>.

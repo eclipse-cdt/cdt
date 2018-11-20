@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -103,6 +103,7 @@ class SessionAdapterSet {
 
 		// Initialize debug model provider
 		fDebugModelProvider = new IDebugModelProvider() {
+			@Override
 			public String[] getModelIdentifiers() {
 				return new String[] { PDAPlugin.ID_PDA_DEBUG_MODEL };
 			}

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Nathan Ridge - Initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 /**
  * A virt-specifier at the end of a function declaration.
  * There are two virt-specifiers, 'final' and 'override'.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  * @since 5.7
@@ -38,7 +38,7 @@ public interface ICPPASTVirtSpecifier extends IASTNode {
 
 	/**
 	 * Return the kind of this virt-specifier.
-	 * The kind is either 'final' or 'override'. 
+	 * The kind is either 'final' or 'override'.
 	 */
 	SpecifierKind getKind();
 

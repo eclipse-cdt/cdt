@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterNamesInfo
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  *     -data-list-register-names [ ( REGNO )+ ]
  *
  *   Show a list of register names for the current target.  If no

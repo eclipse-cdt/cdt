@@ -190,7 +190,7 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 
 	/** A soft reference to the read-only project description
 	 *  Volatile provides a memory barrier in Java 5+ */
-	private volatile Reference<ICProjectDescription> fProjectDescription = new SoftReference<ICProjectDescription>(
+	private volatile Reference<ICProjectDescription> fProjectDescription = new SoftReference<>(
 			null);
 	/** The last modification stamp of the .cproject project description file */
 	private volatile long projectModificaitonStamp = IResource.NULL_STAMP;
@@ -379,14 +379,14 @@ public class XmlProjectDescriptionStorage extends AbstractCProjectDescriptionSto
 		ICProjectDescription oldDes = fProjectDescription.get();
 		if (des != null) {
 			if (project.exists() && project.isOpen()) {
-				fProjectDescription = new SoftReference<ICProjectDescription>(des);
+				fProjectDescription = new SoftReference<>(des);
 			} else {
 				IStatus status = new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, -1,
 						SettingsModelMessages.getString("CProjectDescriptionManager.16"), null); //$NON-NLS-1$
 				CCorePlugin.log(new CoreException(status));
 			}
 		} else {
-			fProjectDescription = new SoftReference<ICProjectDescription>(null);
+			fProjectDescription = new SoftReference<>(null);
 		}
 
 		LanguageSettingsProvidersSerializer.reRegisterListeners(oldDes, fProjectDescription.get());

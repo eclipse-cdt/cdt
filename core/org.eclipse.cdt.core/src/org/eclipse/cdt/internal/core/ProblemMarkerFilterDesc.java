@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /**
- * The purpose of ProblemMarkerFilterDesc is to manage information about 
+ * The purpose of ProblemMarkerFilterDesc is to manage information about
  * one instance ProblemMarkerFilter extension point.
  */
 class ProblemMarkerFilterDesc {
@@ -64,13 +64,13 @@ class ProblemMarkerFilterDesc {
 	private String id;
 
 	/**
-	 * 
+	 *
 	 */
 	private IProblemMarkerFilter filter;
 
 	/**
 	 * Filter that accept any marker.
-	 * 
+	 *
 	 */
 	private static final IProblemMarkerFilter NULL_FILTER = new IProblemMarkerFilter() {
 
@@ -83,7 +83,7 @@ class ProblemMarkerFilterDesc {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param element configuration element with optional enablementExpression
 	 */
 	ProblemMarkerFilterDesc(IConfigurationElement element) {
@@ -114,7 +114,7 @@ class ProblemMarkerFilterDesc {
 
 	/**
 	 * Evaluate enablement expression
-	 * 
+	 *
 	 * @param project project for which we had to evaluate the expression
 	 * @return value of enablement expression
 	 */

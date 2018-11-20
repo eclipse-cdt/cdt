@@ -122,7 +122,7 @@ public class OptionEnablementExpression extends AndExpression {
 	}
 
 	public String[] convertToList(String value, String delimiter) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		int delLength = delimiter.length();
 		int valLength = value.length();
 
@@ -178,8 +178,8 @@ public class OptionEnablementExpression extends AndExpression {
 		return checkFlags(flags) ? evaluate(rcInfo, holder, option) : bDefault;
 	}
 
-	/*	public boolean evaluate(IBuildObject configuration, 
-	        IHoldsOptions holder, 
+	/*	public boolean evaluate(IBuildObject configuration,
+	        IHoldsOptions holder,
 	        IOption option) {
 			if(getChildren().length == 0)
 				return false;
@@ -194,8 +194,8 @@ public class OptionEnablementExpression extends AndExpression {
 		return fEnablementFlags;
 	}
 
-	/*	public boolean performAdjustment(IBuildObject configuration, 
-	        IHoldsOptions holder, 
+	/*	public boolean performAdjustment(IBuildObject configuration,
+	        IHoldsOptions holder,
 	        IOption option,
 	        boolean extensionAdjustment){
 			boolean adjusted = false;

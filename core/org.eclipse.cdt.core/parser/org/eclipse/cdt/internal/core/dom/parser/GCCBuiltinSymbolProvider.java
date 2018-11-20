@@ -66,7 +66,7 @@ public class GCCBuiltinSymbolProvider implements IBuiltinBindingsProvider {
 	public static final ASTNodeProperty BUILTIN_GCC_SYMBOL = new ASTNodeProperty(
 			"GCCBuiltinSymbolProvider.BUILTIN_GCC_SYMBOL - built-in GCC symbol"); //$NON-NLS-1$
 
-	private static final Map<String, char[]> CHAR_ARRAYS = new HashMap<String, char[]>();
+	private static final Map<String, char[]> CHAR_ARRAYS = new HashMap<>();
 
 	private IBinding[] fBindings;
 	private IScope fScope;

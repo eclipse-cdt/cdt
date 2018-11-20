@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -28,23 +28,23 @@ import org.eclipse.core.runtime.IStatus;
  * allows setting a different status result for each property.  This allows
  * for better interpretation of status by the client of the update.
  * <p>
- * This status class derives from MultiStatus class such that the status 
- * objects for each property can be accessed through the standard 
- * {@link #getChildren()} method.  Also, multiple properties can reference 
+ * This status class derives from MultiStatus class such that the status
+ * objects for each property can be accessed through the standard
+ * {@link #getChildren()} method.  Also, multiple properties can reference
  * the same status object, meaning that the number of properties returned
- * by {@link #getProperties()} may be greater than the status objects 
+ * by {@link #getProperties()} may be greater than the status objects
  * returned by <code>getChildren()</code>.
  * <p>
- * The properties status object does not have its own message, severity, 
- * error status or exception.  All these attributes are calculated from 
- * the child status objects.  If the status has more than one status child, 
+ * The properties status object does not have its own message, severity,
+ * error status or exception.  All these attributes are calculated from
+ * the child status objects.  If the status has more than one status child,
  * the String returned by {@link #getMessage()} is: "Multiple errors reported".
- * 
+ *
  * @since 2.2
  */
 public class PropertiesUpdateStatus extends DsfMultiStatus {
 
-	final private Map<String, IStatus> fPropertiesStatus = new HashMap<String, IStatus>(1);
+	final private Map<String, IStatus> fPropertiesStatus = new HashMap<>(1);
 	private boolean fFirstStatusSet;
 
 	public PropertiesUpdateStatus() {
@@ -59,7 +59,7 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
 	}
 
 	/**
-	 * Returns an additional status for the given property in a property 
+	 * Returns an additional status for the given property in a property
 	 * update.  Returned value may be <code>null</code> if no additional
 	 * status is given.
 	 */
@@ -98,20 +98,20 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
 	}
 
 	/**
-	 * Merges data in the new status into the base status data, and returns the 
+	 * Merges data in the new status into the base status data, and returns the
 	 * resulting status. Only properties specified in the given set are merged.
 	 * <p>
-	 * The new status is considered to be more up to date than the base 
-	 * status and its data overrides the base status .  If the base status 
-	 * holds an error for a given property, which is found in the 
-	 * given set, and the new status does not, then the base error status is 
-	 * removed. 
+	 * The new status is considered to be more up to date than the base
+	 * status and its data overrides the base status .  If the base status
+	 * holds an error for a given property, which is found in the
+	 * given set, and the new status does not, then the base error status is
+	 * removed.
 	 *
-	 * @param baseStatus Properties into which the new status properties will 
-	 * be merged. 
-	 * @param newStatus Properties status to merge. 
+	 * @param baseStatus Properties into which the new status properties will
+	 * be merged.
+	 * @param newStatus Properties status to merge.
 	 * @param properties The properties to consider in the new status.
-	 * @return Resulting merged status object. 
+	 * @return Resulting merged status object.
 	 */
 	public static PropertiesUpdateStatus mergePropertiesStatus(PropertiesUpdateStatus baseStatus,
 			PropertiesUpdateStatus newStatus, Set<String> properties) {
@@ -119,7 +119,7 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
 		// Copy the property status map from the base status.
 		mergedStatus.fPropertiesStatus.putAll(baseStatus.fPropertiesStatus);
 
-		// Add in the property statuses from the new status, but only for the 
+		// Add in the property statuses from the new status, but only for the
 		// specified properties.
 		for (String property : properties) {
 			IStatus propertyStatus = newStatus.getStatus(property);
@@ -130,17 +130,17 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
 			}
 		}
 
-		// Children of merged status should contain all statuses that are found in the fPropertiesStatus map, but 
+		// Children of merged status should contain all statuses that are found in the fPropertiesStatus map, but
 		// without duplicates.
-		Set<IStatus> children = new HashSet<IStatus>(
+		Set<IStatus> children = new HashSet<>(
 				(baseStatus.getChildren().length + newStatus.getChildren().length) * 4 / 3);
 		children.addAll(mergedStatus.fPropertiesStatus.values());
 		for (IStatus child : children) {
 			mergedStatus.add(child);
 		}
 
-		// Merged status should contain all children statuses that were added without a corresponding property to the 
-		// base status and to the new status. 
+		// Merged status should contain all children statuses that were added without a corresponding property to the
+		// base status and to the new status.
 		Collection<IStatus> baseStatusPropertyChildren = baseStatus.fPropertiesStatus.values();
 		for (IStatus baseStatusChild : baseStatus.getChildren()) {
 			if (!baseStatusPropertyChildren.contains(baseStatusChild)) {
@@ -216,10 +216,10 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
 			return false;
 		}
 		return s1.getMessage().equals(s2.getMessage());
-	};
+	}
 
 	/**
-	 * Convenience method that returns and optionally creates a properties 
+	 * Convenience method that returns and optionally creates a properties
 	 * update status object for the given update.
 	 */
 	public static PropertiesUpdateStatus getPropertiesStatus(IPropertiesUpdate update) {
@@ -237,7 +237,7 @@ public class PropertiesUpdateStatus extends DsfMultiStatus {
 	}
 
 	/**
-	 * Convenience method that returns and optionally creates a properties 
+	 * Convenience method that returns and optionally creates a properties
 	 * update status object for the given update.
 	 */
 	public static PropertiesUpdateStatus makePropertiesStatus(IStatus updateStatus) {

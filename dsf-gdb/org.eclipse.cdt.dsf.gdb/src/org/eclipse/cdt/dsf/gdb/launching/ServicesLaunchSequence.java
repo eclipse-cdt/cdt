@@ -7,11 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Nokia 			  - created GDBBackend service. Sep. 2008
- *     IBM Corporation 
+ *     IBM Corporation
  *     Ericsson           - Support for Tracing Control service
  *     Marc Khouzam (Ericsson) - Start IGDBHardware service for the multicore visualizer (Bug 335027)
  *******************************************************************************/
@@ -32,8 +32,8 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
 import org.eclipse.cdt.dsf.debug.service.ISourceLookup.ISourceLookupDMContext;
 import org.eclipse.cdt.dsf.debug.service.IStack;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService;
-import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS;
 import org.eclipse.cdt.dsf.gdb.internal.service.IGDBFocusSynchronizer;
+import org.eclipse.cdt.dsf.gdb.service.IGDBHardwareAndOS;
 import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl;
 import org.eclipse.cdt.dsf.mi.service.CSourceLookup;
 import org.eclipse.cdt.dsf.mi.service.IMIBackend;
@@ -116,13 +116,13 @@ public class ServicesLaunchSequence extends Sequence {
 	}, new Step() {
 		@Override
 		public void execute(final RequestMonitor requestMonitor) {
-			// Create the low-level breakpoint service 
+			// Create the low-level breakpoint service
 			fLaunch.getServiceFactory().createService(IBreakpoints.class, fSession).initialize(requestMonitor);
 		}
 	}, new Step() {
 		@Override
 		public void execute(final RequestMonitor requestMonitor) {
-			// Create high-level breakpoint service and install breakpoints 
+			// Create high-level breakpoint service and install breakpoints
 			// for the GDB debug context.
 			fLaunch.getServiceFactory().createService(MIBreakpointsManager.class, fSession).initialize(requestMonitor);
 		}

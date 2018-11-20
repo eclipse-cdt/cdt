@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems, Inc. - extended implementation
@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Opens a dialog so that the user can enter the maximum length in characters that
  * the detail pane should display.
- * 
+ *
  * @see DetailPaneMaxLengthDialog
  * @since 3.0
  */

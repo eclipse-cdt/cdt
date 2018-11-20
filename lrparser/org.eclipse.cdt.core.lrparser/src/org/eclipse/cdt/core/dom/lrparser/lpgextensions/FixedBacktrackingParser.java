@@ -21,7 +21,6 @@ import lpg.lpgjavaruntime.IntTuple;
 import lpg.lpgjavaruntime.Monitor;
 import lpg.lpgjavaruntime.NotBacktrackParseTableException;
 import lpg.lpgjavaruntime.ParseTable;
-import lpg.lpgjavaruntime.PrsStream;
 import lpg.lpgjavaruntime.RuleAction;
 import lpg.lpgjavaruntime.Stacks;
 import lpg.lpgjavaruntime.TokenStream;
@@ -132,7 +131,7 @@ public class FixedBacktrackingParser extends Stacks {
 	// When max_error is < 0, the number of error token recoveries is unlimited.
 	// Also, such recoveries only require one token to be parsed beyond the recovery point.
 	// (normally two tokens beyond the recovery point must be parsed)
-	// Thus, a negative max_error_count should be used when error productions are used to 
+	// Thus, a negative max_error_count should be used when error productions are used to
 	// skip tokens.
 	//
 	public Object parse(int max_error_count) throws BadParseException {
@@ -144,7 +143,7 @@ public class FixedBacktrackingParser extends Stacks {
 		skipTokens = max_error_count < 0;
 
 		//
-		// The tuple tokens will eventually contain the sequence 
+		// The tuple tokens will eventually contain the sequence
 		// of tokens that resulted in a successful parse. We leave
 		// it up to the "Stream" implementer to define the predecessor
 		// of the first token as he sees fit.

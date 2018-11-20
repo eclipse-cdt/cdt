@@ -25,7 +25,7 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 
 /**
  * Common Navigator action provider for the C-search sub menus.
- * 
+ *
  * @see org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup
  */
 public class CNavigatorSearchActionProvider extends CommonActionProvider {

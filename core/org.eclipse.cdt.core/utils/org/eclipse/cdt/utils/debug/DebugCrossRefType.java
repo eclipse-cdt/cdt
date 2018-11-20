@@ -16,7 +16,7 @@ package org.eclipse.cdt.utils.debug;
 
 /**
  * DebugCrossRefType
- *  
+ *
  */
 public class DebugCrossRefType extends DebugDerivedType {
 
@@ -24,7 +24,7 @@ public class DebugCrossRefType extends DebugDerivedType {
 	String xName;
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugCrossRefType(DebugType type, String name, String xName) {
 		super(type);

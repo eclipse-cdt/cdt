@@ -16,28 +16,27 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.viewsupport.CustomBuildSettingsDecorator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.viewsupport.CustomBuildSettingsDecorator;
-
 /**
  * A CImageDescriptor consists of a base image and several adornments. The adornments
  * are computed according to the flags either passed during creation or set via the method
- * <code>setAdornments</code>. 
+ * <code>setAdornments</code>.
  * </p>
  * It is guaranteed that objects that conform to this interface are also instances of type
  * <code>ImageDescriptor</code>
  * </p>
- * <b>Note:</b> This class/interface is part of an interim API that is still under development 
+ * <b>Note:</b> This class/interface is part of an interim API that is still under development
  * and expected to change before reaching stability.
  * </p>
- * 
- * @since 2.0 
+ *
+ * @since 2.0
  */
 public class CElementImageDescriptor extends CompositeImageDescriptor {
 
@@ -53,7 +52,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/** Flag to render the static adornment */
 	public final static int STATIC = 0x008;
 
-	/**  
+	/**
 	 * @deprecated flag never had an effect
 	 */
 	@Deprecated
@@ -65,14 +64,14 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 	/** Flag to render the error adornment */
 	public final static int ERROR = 0x040;
 
-	/**  
-	 * @deprecated flag never had an effect 
+	/**
+	 * @deprecated flag never had an effect
 	 */
 	@Deprecated
 	public final static int OVERRIDES = 0x080;
 
-	/**  
-	 * @deprecated flag never had an effect 
+	/**
+	 * @deprecated flag never had an effect
 	 */
 	@Deprecated
 	public final static int IMPLEMENTS = 0x100;
@@ -121,7 +120,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Create a new CElementImageDescriptor.
-	 * 
+	 *
 	 * @param baseImage an image descriptor used as the base image
 	 * @param flags flags indicating which adornments are to be rendered. See <code>setAdornments</code>
 	 * 	for valid values.
@@ -139,9 +138,9 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Sets the descriptors adornments. Valid values are: <code>ABSTRACT</code>, <code>FINAL</code>,
-	 * </code>STATIC<code>, </code>WARNING<code>, 
+	 * </code>STATIC<code>, </code>WARNING<code>,
 	 * </code>ERROR<code>, or any combination of those.
-	 * 
+	 *
 	 * @param adornments the image descritpors adornments
 	 */
 	public void setAdornments(int adornments) {
@@ -151,7 +150,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Returns the current adornments.
-	 * 
+	 *
 	 * @return the current adornments
 	 */
 	public int getAdronments() {
@@ -160,7 +159,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Sets the size of the image created by calling <code>createImage()</code>.
-	 * 
+	 *
 	 * @param size the size of the image returned from calling <code>createImage()</code>
 	 */
 	public void setImageSize(Point size) {
@@ -171,7 +170,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 
 	/**
 	 * Returns the size of the image created by calling <code>createImage()</code>.
-	 * 
+	 *
 	 * @return the size of the image created by calling <code>createImage</code>
 	 */
 	public Point getImageSize() {
@@ -282,7 +281,7 @@ public class CElementImageDescriptor extends CompositeImageDescriptor {
 		//			data= CPluginImages.DESC_OVR_IMPLEMENTS.getImageData();
 		//			x-= data.width;
 		//			drawImage(data, x, size.y - data.height);
-		//		}		
+		//		}
 	}
 
 	private void drawTopLeft() {

@@ -24,9 +24,9 @@ import junit.framework.Assert;
  * Helper class for accessing classes and members which cannot
  * be accessed using standard Java access control like private
  * or package visible elements.
- * 
+ *
  * <p>Copied from JDT.</p>
- * 
+ *
  * @since 4.0
  */
 public class Accessor extends Assert {
@@ -40,7 +40,7 @@ public class Accessor extends Assert {
 	 * Creates an accessor for the given <code>instance</code> and its
 	 * <code>class</code>. Only non-inherited members that particular
 	 * <code>class</code> can be accessed.
-	 * 
+	 *
 	 * @param instance the instance
 	 */
 	public Accessor(Object instance) {
@@ -52,7 +52,7 @@ public class Accessor extends Assert {
 	/**
 	 * Creates an accessor for the given <code>class</code>.
 	 * Only static members of that particular <code>class</code> can be accessed.
-	 * 
+	 *
 	 * @param clazz the class
 	 */
 	public Accessor(Class<?> clazz) {
@@ -65,7 +65,7 @@ public class Accessor extends Assert {
 	 * Creates an accessor for the given <code>instance</code> and
 	 * <code>class</code>. Only non-inherited members that particular
 	 * <code>class</code> can be accessed.
-	 * 
+	 *
 	 * @param instance the instance
 	 * @param clazz the class
 	 */
@@ -80,7 +80,7 @@ public class Accessor extends Assert {
 	 * Creates an accessor for the given <code>instance</code> and
 	 * <code>class</code>. Only non-inherited members that particular
 	 * <code>class</code> can be accessed.
-	 * 
+	 *
 	 * @param instance the instance
 	 * @param className the name of the class
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
@@ -106,7 +106,7 @@ public class Accessor extends Assert {
 	 * arguments they must all be instanc eof Object. Use
 	 * {@link #Accessor(String, ClassLoader, Class[], Object[])} if this
 	 * is not the case.</p>
-	 * 
+	 *
 	 * @param className the name of the class
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
 	 * @param constructorArgs the constructor arguments which must all be instance of Object
@@ -117,7 +117,7 @@ public class Accessor extends Assert {
 
 	/**
 	 * Creates an accessor for the given class.
-	 * 
+	 *
 	 * @param className the name of the class
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
 	 * @param constructorTypes the types of the constructor arguments
@@ -159,7 +159,7 @@ public class Accessor extends Assert {
 	 * <p>
 	 * This constructor is used to access static stuff.
 	 * </p>
-	 * 
+	 *
 	 * @param className the name of the class
 	 * @param classLoader the class loader to use i.e. <code>getClass().getClassLoader()</code>
 	 */
@@ -176,7 +176,7 @@ public class Accessor extends Assert {
 	/**
 	 * Invokes the method with the given method name and no arguments.
 	 * <p>
-	 * 
+	 *
 	 * @param methodName the method name
 	 * @return the method return value
 	 */
@@ -191,7 +191,7 @@ public class Accessor extends Assert {
 	 * arguments all those arguments must be instance of Object. Use
 	 * {@link #invoke(String, Class[], Object[])} if this
 	 * is not the case.</p>
-	 * 
+	 *
 	 * @param methodName the method name
 	 * @param arguments the method arguments which must all be instance of Object
 	 * @return the method return value
@@ -202,7 +202,7 @@ public class Accessor extends Assert {
 
 	/**
 	 * Invokes the method with the given method name and arguments.
-	 * 
+	 *
 	 * @param methodName the method name
 	 * @param types the argument types
 	 * @param arguments the method arguments
@@ -232,8 +232,8 @@ public class Accessor extends Assert {
 	}
 
 	/**
-	 * Assigns the given value to the field with the given name. 
-	 * 
+	 * Assigns the given value to the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @param value the value to assign to the field
 	 */
@@ -249,8 +249,8 @@ public class Accessor extends Assert {
 	}
 
 	/**
-	 * Assigns the given value to the field with the given name. 
-	 * 
+	 * Assigns the given value to the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @param value the value to assign to the field
 	 */
@@ -266,8 +266,8 @@ public class Accessor extends Assert {
 	}
 
 	/**
-	 * Assigns the given value to the field with the given name. 
-	 * 
+	 * Assigns the given value to the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @param value the value to assign to the field
 	 */
@@ -283,8 +283,8 @@ public class Accessor extends Assert {
 	}
 
 	/**
-	 * Returns the value of the field with the given name. 
-	 * 
+	 * Returns the value of the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @return the value of the field
 	 */
@@ -302,8 +302,8 @@ public class Accessor extends Assert {
 	}
 
 	/**
-	 * Returns the value of the field with the given name. 
-	 * 
+	 * Returns the value of the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @return the value of the field
 	 */
@@ -321,8 +321,8 @@ public class Accessor extends Assert {
 	}
 
 	/**
-	 * Returns the value of the field with the given name. 
-	 * 
+	 * Returns the value of the field with the given name.
+	 *
 	 * @param fieldName the field name
 	 * @return the value of the field
 	 */

@@ -155,7 +155,7 @@ public class QObjectConnectCompletion {
 	private static int[] computeCommaPositions(String code) {
 		final int length = code.length();
 		int pos = 0;
-		List<Integer> positions = new ArrayList<Integer>();
+		List<Integer> positions = new ArrayList<>();
 		positions.add(-1);
 		while (pos < length && pos != -1) {
 			char ch = code.charAt(pos);
@@ -207,7 +207,7 @@ public class QObjectConnectCompletion {
 		if (qobj == null)
 			return null;
 
-		Collection<QObjectConnectCompletion> completions = new ArrayList<QObjectConnectCompletion>();
+		Collection<QObjectConnectCompletion> completions = new ArrayList<>();
 		String raw = arg.getRawSignature();
 		if (raw.startsWith(QtKeywords.SIGNAL))
 			for (IQMethod method : qobj.getSignals().withoutOverrides())
@@ -304,7 +304,7 @@ public class QObjectConnectCompletion {
 		if (qtProposals == null || qtProposals.isEmpty())
 			return null;
 
-		Collection<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		Collection<ICompletionProposal> proposals = new ArrayList<>();
 		for (QObjectConnectCompletion qtProposal : qtProposals)
 			qtProposal.addProposals(proposals, context);
 		return proposals;

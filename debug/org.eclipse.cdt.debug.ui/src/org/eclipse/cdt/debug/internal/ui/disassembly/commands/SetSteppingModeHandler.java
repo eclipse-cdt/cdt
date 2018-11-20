@@ -34,7 +34,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.menus.UIElement;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.disassembly.commands.SetSteppingModeHandler: 
+ * org.eclipse.cdt.debug.internal.ui.disassembly.commands.SetSteppingModeHandler:
  * //TODO Add description.
  */
 public class SetSteppingModeHandler extends AbstractHandler implements IElementUpdater {

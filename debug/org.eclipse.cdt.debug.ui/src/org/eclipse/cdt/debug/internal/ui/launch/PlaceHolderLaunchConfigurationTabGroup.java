@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
  * via the launchConfigurationTabGroups extension-point. Thus we just provide an
  * empty array of tab objects. The platform will add the ones declared in the
  * extension.
- * 
+ *
  * @since 6.0
  */
 public class PlaceHolderLaunchConfigurationTabGroup extends AbstractLaunchConfigurationTabGroup {

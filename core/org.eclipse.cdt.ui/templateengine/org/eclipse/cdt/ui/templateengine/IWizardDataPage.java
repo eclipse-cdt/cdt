@@ -20,7 +20,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 /**
  * IWizardDataPage is a page which can participate in a custom project template
  * wizard sequence.
- * 
+ *
  * @since 4.0
  */
 public interface IWizardDataPage extends IWizardPage {

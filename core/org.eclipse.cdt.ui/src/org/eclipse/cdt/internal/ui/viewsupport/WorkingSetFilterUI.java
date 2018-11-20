@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -28,11 +29,9 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 
-import org.eclipse.cdt.core.model.ICElement;
-
 /**
  * Wraps {@link WorkingSetFilterActionGroup} and handles the property changed
- * events 
+ * events
  */
 public abstract class WorkingSetFilterUI {
 	private IPropertyChangeListener fWorkingSetListener;
@@ -170,7 +169,7 @@ public abstract class WorkingSetFilterUI {
 
 	public List<String> getRecent() {
 		IWorkingSet[] workingSets = fWSManager.getRecentWorkingSets();
-		ArrayList<String> result = new ArrayList<String>(workingSets.length);
+		ArrayList<String> result = new ArrayList<>(workingSets.length);
 		for (int i = 0; i < workingSets.length; i++) {
 			result.add(workingSets[i].getName());
 		}

@@ -15,6 +15,9 @@ package org.eclipse.cdt.ui.dialogs;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
@@ -38,15 +41,10 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
-
 /**
  * @deprecated as of CDT 4.0. This Block was used for New Project Wizard
  * for 3.X style projects.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 @Deprecated
@@ -82,7 +80,7 @@ public class ReferenceBlock extends AbstractCOptionPage {
 			public Object[] getChildren(Object element) {
 				if (!(element instanceof IWorkspace))
 					return new Object[0];
-				ArrayList<IProject> aList = new ArrayList<IProject>(15);
+				ArrayList<IProject> aList = new ArrayList<>(15);
 				final IProject[] projects = ((IWorkspace) element).getRoot().getProjects();
 				for (int i = 0; i < projects.length; i++) {
 					if (CoreModel.hasCNature(projects[i])) {

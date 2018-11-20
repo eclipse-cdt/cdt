@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * This is a simple declaration which contains a sequence of declSpecifiers
  * followed by a list of declarators.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -41,14 +41,14 @@ public interface IASTSimpleDeclaration extends IASTDeclaration, IASTAttributeOwn
 	/**
 	 * This returns the object representing the declSpecifiers for this
 	 * declaration.
-	 * 
+	 *
 	 * @return the declSpecifier object
 	 */
 	public IASTDeclSpecifier getDeclSpecifier();
 
 	/**
 	 * Set the decl specifier.
-	 * 
+	 *
 	 * @param declSpec
 	 *            <code>IASTDeclSpecifier</code>
 	 */
@@ -56,14 +56,14 @@ public interface IASTSimpleDeclaration extends IASTDeclaration, IASTAttributeOwn
 
 	/**
 	 * This returns the list of declarators in this declaration.
-	 * 
+	 *
 	 * @return <code>IASTDeclarator []</code>
 	 */
 	public IASTDeclarator[] getDeclarators();
 
 	/**
 	 * Add a declarator.
-	 * 
+	 *
 	 * @param declarator
 	 *            <code>IASTDeclarator</code>
 	 */

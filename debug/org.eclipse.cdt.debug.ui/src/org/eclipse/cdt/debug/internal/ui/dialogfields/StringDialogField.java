@@ -83,7 +83,7 @@ public class StringDialogField extends DialogField {
 		return true;
 	}
 
-	// ------- ui creation			
+	// ------- ui creation
 
 	/**
 	 * Creates or returns the created text control.
@@ -131,7 +131,7 @@ public class StringDialogField extends DialogField {
 		}
 	}
 
-	// ------ text access 
+	// ------ text access
 
 	/**
 	 * Gets the text. Can not be <code>null</code>

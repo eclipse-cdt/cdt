@@ -34,7 +34,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class DebugEventFilterService {
 
 	/**
-	 * A debug context event listen that provides filter support 
+	 * A debug context event listen that provides filter support
 	 * for the pinned debug context.
 	 */
 	private class DebugEventFilter implements IDebugContextListener {
@@ -52,7 +52,7 @@ public class DebugEventFilterService {
 		public void debugContextChanged(DebugContextEvent event) {
 			ISelection eventContext = event.getContext();
 			if (eventContext instanceof IStructuredSelection) {
-				List<Object> filteredContextList = new ArrayList<Object>();
+				List<Object> filteredContextList = new ArrayList<>();
 				List<?> eventContextList = ((IStructuredSelection) eventContext).toList();
 				for (Object o : eventContextList) {
 					if (fProvider.isPinnedTo(o)) {
@@ -74,7 +74,7 @@ public class DebugEventFilterService {
 	}
 
 	private static DebugEventFilterService INSTANCE;
-	private Map<IWorkbenchPart, DebugEventFilter> fFilterMap = new HashMap<IWorkbenchPart, DebugEventFilter>();
+	private Map<IWorkbenchPart, DebugEventFilter> fFilterMap = new HashMap<>();
 
 	private DebugEventFilterService() {
 	}
@@ -86,9 +86,9 @@ public class DebugEventFilterService {
 	}
 
 	/**
-	 * Add debug event filter for the provided part and filter debug context change 
+	 * Add debug event filter for the provided part and filter debug context change
 	 * event for the provided debug context.
-	 * 
+	 *
 	 * @param part the part to filter debug context change event.
 	 * @param debugContext the debug context that filter should stick to.
 	 * @return the debug context provider that handles the filtering.
@@ -119,7 +119,7 @@ public class DebugEventFilterService {
 
 	/**
 	 * Remove debug event filter for the provided part.
-	 * 
+	 *
 	 * @param part the workbench part.
 	 */
 	public void removeDebugEventFilter(IWorkbenchPart part) {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -80,7 +80,7 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 								request.setEnabled(false);
 							} else {
 								request.setEnabled(getData());
-								;
+
 							}
 							request.done();
 						}
@@ -169,11 +169,11 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 				if (DsfSession.isSessionActive(fSession.getId())) {
 					DsfSession.removeSessionEndedListener(endedListener);
 
-					// Marking the request as cancelled will prevent the removal of 
+					// Marking the request as cancelled will prevent the removal of
 					// the launch from the Debug view in case of "Terminate and Remove".
 					// This is important for multi-process sessions when "Terminate and Remove"
 					// is applied to one of the running processes. In this case the selected
-					// process will be terminated but the associated launch will not be removed 
+					// process will be terminated but the associated launch will not be removed
 					// from the Debug view.
 					request.setStatus(Status.CANCEL_STATUS);
 					request.done();
@@ -184,7 +184,7 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 
 	private void getContainerDMContexts(Object[] elements, final DataRequestMonitor<IContainerDMContext[]> rm) {
 		GdbLaunch launch = null;
-		final Set<IContainerDMContext> contDmcs = new HashSet<IContainerDMContext>();
+		final Set<IContainerDMContext> contDmcs = new HashSet<>();
 		for (Object obj : elements) {
 			if (obj instanceof GdbLaunch) {
 				launch = (GdbLaunch) obj;
@@ -226,7 +226,7 @@ public class GdbDisconnectCommand implements IDisconnectHandler {
 												rm.setData(contDmcs.toArray(new IContainerDMContext[contDmcs.size()]));
 											}
 											rm.done();
-										};
+										}
 									});
 						} else {
 							rm.setStatus(new Status(IStatus.ERROR, GdbUIPlugin.PLUGIN_ID, "Service is not available.")); //$NON-NLS-1$

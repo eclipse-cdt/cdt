@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.ui.text;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -26,8 +27,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedRegion;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Utility methods for heuristic based C manipulations in an incomplete C source file.
@@ -964,7 +963,7 @@ public final class CHeuristicScanner implements Symbols {
 
 	/**
 	 * Returns <code>true</code> if <code>region</code> contains <code>position</code>.
-	 * 
+	 *
 	 * @param region a region
 	 * @param position an offset
 	 * @return <code>true</code> if <code>region</code> contains <code>position</code>
@@ -1019,22 +1018,22 @@ public final class CHeuristicScanner implements Symbols {
 	 * <code>new</code> keyword. The <code>start</code> must be at the end of the type name, and
 	 * before any generic signature or constructor parameter list. The heuristic will return
 	 * <code>true</code> if <code>start</code> is at the following positions (|):
-	 * 
+	 *
 	 * <pre>
 	 *  new std::vector&lt;std::string&gt;|(10)
 	 *  new str_vector |(10)
 	 *  new / * comment * / str_vector |(10)
 	 * </pre>
-	 * 
+	 *
 	 * but not the following:
-	 * 
+	 *
 	 * <pre>
 	 *  new std::vector&lt;std::string&gt;(10)|
 	 *  new std::vector&lt;std::string&gt;|(10)
 	 *  new vector (10)|
 	 *  vector |(10)
 	 * </pre>
-	 * 
+	 *
 	 * @param start the position where the type name of the class instance creation supposedly ends
 	 * @param bound the first position in <code>fDocument</code> to not consider any more, with
 	 *        <code>bound</code> &lt; <code>start</code>, or <code>UNBOUND</code>
@@ -1058,9 +1057,9 @@ public final class CHeuristicScanner implements Symbols {
 
 	/**
 	 * Returns <code>true</code> if the document, when scanned backwards from <code>start</code>
-	 * appears to contain a field reference, i.e. a (optional) name preceded by a <code>.</code> 
+	 * appears to contain a field reference, i.e. a (optional) name preceded by a <code>.</code>
 	 * or <code>-&gt;</code> or <code>::</code>.
-	 * 
+	 *
 	 * @param start the position after the field reference operator.
 	 * @param bound the first position in <code>fDocument</code> to not consider any more, with
 	 *        <code>bound</code> &lt; <code>start</code>, or <code>UNBOUND</code>
@@ -1085,7 +1084,7 @@ public final class CHeuristicScanner implements Symbols {
 	/**
 	 * Returns <code>true</code> if the document, when scanned backwards from <code>start</code>
 	 * appears to be a composite type (class, struct, union) or enum definition. Examples:
-	 * 
+	 *
 	 * <pre>
 	 * class A {
 	 * struct A {
@@ -1093,7 +1092,7 @@ public final class CHeuristicScanner implements Symbols {
 	 * class A : virtual public B, protected C&lt;T&gt; {
 	 * enum E {
 	 * </pre>
-	 * 
+	 *
 	 * @param start the position of the opening brace.
 	 * @param bound the first position in <code>fDocument</code> to not consider any more, with
 	 *        <code>bound</code> &lt; <code>start</code>, or <code>UNBOUND</code>
@@ -1209,7 +1208,7 @@ public final class CHeuristicScanner implements Symbols {
 
 	/**
 	 *  A simplified interface to CHeuristicScanner's
-	 *  nextToken() and previousToken() methods. 
+	 *  nextToken() and previousToken() methods.
 	 */
 	public static class TokenStream {
 		private CHeuristicScanner fScanner;

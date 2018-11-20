@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
  */
 public interface IScannerConfigBuilderInfo2Set {
 	/**
-	 * 
+	 *
 	 * @return InfoContext - to IScannerConfigBuilderInfo2 map
 	 */
 	Map<InfoContext, IScannerConfigBuilderInfo2> getInfoMap();

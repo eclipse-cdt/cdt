@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Marc Khouzam (Ericsson) - Initial API and implementation 
+ *     Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -19,8 +19,8 @@ import org.eclipse.cdt.debug.core.model.ICBreakpoint;
 import org.eclipse.cdt.dsf.concurrent.ImmediateRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
-import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
 import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContext;
+import org.eclipse.cdt.dsf.debug.service.IDsfBreakpointExtension;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IStartedDMEvent;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
@@ -33,7 +33,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 
 /**
  * Version of BreakpointsManager for GDB version starting with 7.0.
- * 
+ *
  * @since 4.7
  */
 public class GDBBreakpointsManager_7_0 extends MIBreakpointsManager {

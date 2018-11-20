@@ -14,7 +14,6 @@
 package org.eclipse.cdt.internal.ui.text;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.reconciler.DirtyRegion;

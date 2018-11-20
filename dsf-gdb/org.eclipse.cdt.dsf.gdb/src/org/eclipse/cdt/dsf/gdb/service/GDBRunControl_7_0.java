@@ -7,12 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson		      - Modified for additional functionality
  *     Ericsson           - Version 7.0
- *     Nokia              - create and use backend service. 
+ *     Nokia              - create and use backend service.
  *     Ericsson           - Added IReverseControl support
  *     Marc Khouzam (Ericsson) - Added IReverseModeChangedDMEvent (Bug 399163)
  *     Marc Khouzam (Ericsson) - Started inheriting from GDBRunControl (Bug 405123)
@@ -84,9 +84,9 @@ public class GDBRunControl_7_0 extends GDBRunControl implements IReverseRunContr
 	 */
 	private boolean fRunControlOperationsEnabled = true;
 
-	/** 
+	/**
 	 * Indicates if reverse debugging is supported for the currend debug session.
-	 * @since 5.0 
+	 * @since 5.0
 	 */
 	public boolean getReverseSupported() {
 		return fReverseSupported;
@@ -201,7 +201,7 @@ public class GDBRunControl_7_0 extends GDBRunControl implements IReverseRunContr
 
 		if (stepType == StepType.STEP_RETURN) {
 
-			// Check the stuff we know first, before going to the backend for 
+			// Check the stuff we know first, before going to the backend for
 			// stack info
 			if (!fReverseModeEnabled || !doCanResume(context)) {
 				rm.setData(false);

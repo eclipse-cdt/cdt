@@ -36,7 +36,7 @@ public class StartOrRestartProcessSequence_7_12 extends StartOrRestartProcessSeq
 	}
 
 	/**
-	 * Initialize the members of the StartOrRestartProcessSequence_7_12 class. 
+	 * Initialize the members of the StartOrRestartProcessSequence_7_12 class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */
 	@Override
@@ -50,7 +50,7 @@ public class StartOrRestartProcessSequence_7_12 extends StartOrRestartProcessSeq
 				fReverseService = tracker.getService(GDBRunControl_7_12.class);
 				tracker.dispose();
 				rm.done();
-			};
+			}
 		});
 	}
 
@@ -59,12 +59,12 @@ public class StartOrRestartProcessSequence_7_12 extends StartOrRestartProcessSeq
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Need to insert reverse mode off before ordering the reverse start at a specified location
 			orderList.add(orderList.indexOf("stepCreateConsole") + 1, "stepSetReverseOff2"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			// Order the activation of reverse debugging before starting the program, it will be executed once the 
+			// Order the activation of reverse debugging before starting the program, it will be executed once the
 			// program stops at the specified location.
 			orderList.add(orderList.indexOf("stepSetReverseOff2") + 1, "stepSetReverseModeAtLocation"); //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -80,7 +80,7 @@ public class StartOrRestartProcessSequence_7_12 extends StartOrRestartProcessSeq
 	}
 
 	/**
-	 * Request the enabling of reverse debugging, it will be applied once the program 
+	 * Request the enabling of reverse debugging, it will be applied once the program
 	 * stops at the breakpoint inserted for reverse debugging
 	 */
 	@Execute

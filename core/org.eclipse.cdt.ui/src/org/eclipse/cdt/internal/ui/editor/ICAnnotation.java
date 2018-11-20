@@ -23,7 +23,7 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  *
  * Interface of annotations representing markers
  * and problems.
- * 
+ *
  * @see org.eclipse.core.resources.IMarker
  * @see org.eclipse.cdt.core.parser.IProblem
  */
@@ -45,20 +45,20 @@ public interface ICAnnotation {
 	boolean isMarkedDeleted();
 
 	/**
-	 * @see org.eclipse.jface.text.source.Annotation#getText() 
+	 * @see org.eclipse.jface.text.source.Annotation#getText()
 	 */
 	String getText();
 
 	/**
 	 * Returns whether this annotation is overlaid.
-	 * 
+	 *
 	 * @return <code>true</code> if overlaid
 	 */
 	boolean hasOverlay();
 
 	/**
 	 * Returns the overlay of this annotation.
-	 * 
+	 *
 	 * @return the annotation's overlay
 	 */
 	ICAnnotation getOverlay();
@@ -66,7 +66,7 @@ public interface ICAnnotation {
 	/**
 	 * Returns an iterator for iterating over the
 	 * annotation which are overlaid by this annotation.
-	 * 
+	 *
 	 * @return an iterator over the overlaid annotations
 	 */
 	Iterator<ICAnnotation> getOverlaidIterator();
@@ -74,7 +74,7 @@ public interface ICAnnotation {
 	/**
 	 * Adds the given annotation to the list of
 	 * annotations which are overlaid by this annotations.
-	 *  
+	 *
 	 * @param annotation	the problem annotation
 	 */
 	void addOverlaid(ICAnnotation annotation);
@@ -82,7 +82,7 @@ public interface ICAnnotation {
 	/**
 	 * Removes the given annotation from the list of
 	 * annotations which are overlaid by this annotation.
-	 *  
+	 *
 	 * @param annotation	the problem annotation
 	 */
 	void removeOverlaid(ICAnnotation annotation);
@@ -90,7 +90,7 @@ public interface ICAnnotation {
 	/**
 	 * Tells whether this annotation is a problem
 	 * annotation.
-	 * 
+	 *
 	 * @return <code>true</code> if it is a problem annotation
 	 */
 	boolean isProblem();
@@ -108,9 +108,9 @@ public interface ICAnnotation {
 	/**
 	 * Returns the marker type associated to this problem or <code>null<code> if no marker type
 	 * can be evaluated. See also {@link org.eclipse.cdt.ui.text.IProblemLocation#getMarkerType()}.
-	 * 
+	 *
 	 * @return the type of the marker which would be associated to the problem or
-	 * <code>null<code> if no marker type can be evaluated. 
+	 * <code>null<code> if no marker type can be evaluated.
 	 */
 	String getMarkerType();
 }

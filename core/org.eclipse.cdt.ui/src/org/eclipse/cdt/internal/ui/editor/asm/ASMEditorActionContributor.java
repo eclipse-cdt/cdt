@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
+import org.eclipse.cdt.internal.ui.editor.TogglePresentationAction;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.editors.text.TextEditorActionContributor;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import org.eclipse.cdt.internal.ui.editor.TogglePresentationAction;
 
 public class ASMEditorActionContributor extends TextEditorActionContributor {
 

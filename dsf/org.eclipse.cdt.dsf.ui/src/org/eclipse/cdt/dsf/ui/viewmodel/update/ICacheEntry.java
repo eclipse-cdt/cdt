@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,29 +21,29 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Cache entry in a caching VM provider.
- * 
- * @see ICachingVMProvider  
+ *
+ * @see ICachingVMProvider
  * @see ICachingVMProviderExtension2
- * 
+ *
  * @since 2.2
  */
 @ConfinedToDsfExecutor("")
 public interface ICacheEntry {
 
 	/**
-	 * The VM node that this cache entry is for. This parameter is part of the 
+	 * The VM node that this cache entry is for. This parameter is part of the
 	 * key to finding the cache entry.
 	 */
 	public IVMNode getNode();
 
 	/**
-	 * The viewer input object that this cache entry is for.  This parameter 
+	 * The viewer input object that this cache entry is for.  This parameter
 	 * is part of the key to finding the cache entry.
 	 */
 	public Object getViewerInput();
 
 	/**
-	 * The element path that this cache entry is for.  This parameter is part 
+	 * The element path that this cache entry is for.  This parameter is part
 	 * of the key to finding the cache entry.
 	 */
 	public TreePath getElementPath();
@@ -57,37 +57,37 @@ public interface ICacheEntry {
 	public boolean isDirty();
 
 	/**
-	 * Returns the a flag indicating whether the element pointing to this entry 
-	 * has children.  Returns <code>null</code> if this value is not known by 
-	 * cache. 
+	 * Returns the a flag indicating whether the element pointing to this entry
+	 * has children.  Returns <code>null</code> if this value is not known by
+	 * cache.
 	 */
 	public Boolean getHasChildren();
 
 	/**
 	 * Returns the count of children for the element belonging to this entry.
-	 * Returns <code>null</code> if this value is not known by cache. 
+	 * Returns <code>null</code> if this value is not known by cache.
 	 */
 	public Integer getChildCount();
 
 	/**
 	 * Returns a map of children of the element belonging to this entry.
-	 * The returned map contains integer keys which are indexes of the 
+	 * The returned map contains integer keys which are indexes of the
 	 * element's children.  The values in the map are the child element.
-	 * Returns <code>null</code> if this value is not known by cache. 
+	 * Returns <code>null</code> if this value is not known by cache.
 	 */
 	public Map<Integer, Object> getChildren();
 
 	/**
 	 * Returns map of properties of the element belonging to this entry.
-	 * Returns <code>null</code> if this value is not known by cache. 
+	 * Returns <code>null</code> if this value is not known by cache.
 	 */
 	public Map<String, Object> getProperties();
 
 	/**
-	 * Returns the archived map of properties of the element belong to this 
+	 * Returns the archived map of properties of the element belong to this
 	 * entry.  The archived properties are properties which were saved when
 	 * the cache was last flushed, as indicated by the cache's active update
-	 * policy. Returns <code>null</code> if this value is not known by cache. 
+	 * policy. Returns <code>null</code> if this value is not known by cache.
 	 */
 	public Map<String, Object> getArchiveProperties();
 }

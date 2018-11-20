@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A request monitor which uses a progress monitor as a parent.  When the parent
- * progress monitor is canceled, the request monitor will also be canceled, 
+ * progress monitor is canceled, the request monitor will also be canceled,
  * although the cancellation listeners will not be called.
- * 
+ *
  * @since 1.1
  */
 public class RequestMonitorWithProgress extends RequestMonitor {

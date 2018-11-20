@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - Adapted for CDT
@@ -19,6 +19,27 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.parser.FileContent;
+import org.eclipse.cdt.core.parser.IParserLogService;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.parser.ScannerInfo;
+import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
+import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.AbstractPositionCollector;
+import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
+import org.eclipse.cdt.ui.text.ISemanticToken;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -33,34 +54,10 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.parser.FileContent;
-import org.eclipse.cdt.core.parser.IParserLogService;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IncludeFileContentProvider;
-import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.parser.ScannerInfo;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-import org.eclipse.cdt.ui.text.ISemanticToken;
-
-import org.eclipse.cdt.internal.core.parser.scanner.CharArray;
-import org.eclipse.cdt.internal.core.parser.scanner.InternalFileContent;
-
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingReconciler.AbstractPositionCollector;
-import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
-
 /**
  * Semantic highlighting manager.
  * Cloned from JDT.
- * 
+ *
  * @since 4.0
  */
 public class SemanticHighlightingManager implements IPropertyChangeListener {
@@ -326,7 +323,7 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 	/**
 	 * Installs the semantic highlighting on the given source viewer infrastructure.
 	 * No reconciliation will be performed.
-	 * 
+	 *
 	 * This is used for highlighting the code in the previewer window in the preferences.
 	 *
 	 * @param sourceViewer the source viewer
@@ -415,13 +412,13 @@ public class SemanticHighlightingManager implements IPropertyChangeListener {
 		return adjustedPositions.toArray(new HighlightedPosition[adjustedPositions.size()]);
 	}
 
-	// A custom version of the highlighting for external SDK functions, for use 
+	// A custom version of the highlighting for external SDK functions, for use
 	// by the previewer. Just highlights names that match a hardcoded list of
 	// SDK functions that appear in the previewer code.
 	private static class PreviewerExternalSDKHighlighting extends SemanticHighlightingWithOwnPreference {
 		static private final Set<String> fHarcodedSDKFunctions;
 		static {
-			fHarcodedSDKFunctions = new HashSet<String>();
+			fHarcodedSDKFunctions = new HashSet<>();
 			fHarcodedSDKFunctions.add("fprintf"); //$NON-NLS-1$
 			// add others as necessary
 		}

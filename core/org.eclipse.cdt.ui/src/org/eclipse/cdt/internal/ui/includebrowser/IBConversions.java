@@ -16,6 +16,10 @@ package org.eclipse.cdt.internal.ui.includebrowser;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
@@ -23,11 +27,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.editors.text.ILocationProvider;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModelUtil;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 public class IBConversions {
 
@@ -61,7 +60,7 @@ public class IBConversions {
 	public static ISelection nodeSelectionToRepresentedTUSelection(ISelection sel) {
 		if (sel instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) sel;
-			ArrayList<ITranslationUnit> tus = new ArrayList<ITranslationUnit>();
+			ArrayList<ITranslationUnit> tus = new ArrayList<>();
 			for (Iterator<?> iter = ssel.iterator(); iter.hasNext();) {
 				Object obj = iter.next();
 				if (obj instanceof IBNode) {

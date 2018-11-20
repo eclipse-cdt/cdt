@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.ast2;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.ParserLanguage;
+
+import junit.framework.TestSuite;
 
 public class ASTCPPSpecDefectTests extends AST2TestBase {
 
@@ -53,7 +53,7 @@ public class ASTCPPSpecDefectTests extends AST2TestBase {
 	//	void f0(int);
 	//
 	//	void test() {
-	//		fp(f0);  
+	//		fp(f0);
 	//	}
 	public void test33_ADLForOverloadSet_324842() throws Exception {
 		parseAndCheckBindings();

@@ -91,8 +91,8 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 	// The data model for the selected session, or null if no session is
 	// selected.
 	private SessionOSData fSessionData;
-	private Map<String, SessionOSData> fSessionDataCache = new HashMap<String, SessionOSData>();
-	// The data presently shown by table viewer. 
+	private Map<String, SessionOSData> fSessionDataCache = new HashMap<>();
+	// The data presently shown by table viewer.
 	private OSData fTableShownData = null;
 	// The data which was used to populate column selector menu
 	private OSData fMenuShownData = null;
@@ -112,7 +112,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 	private Action fRefreshAction;
 
 	// Map from resource class name to table column layout.
-	private Map<String, ColumnLayout> fColumnLayouts = new HashMap<String, ColumnLayout>();
+	private Map<String, ColumnLayout> fColumnLayouts = new HashMap<>();
 
 	private ColumnLayout fColumnLayout = null;
 
@@ -553,7 +553,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 		fViewer.getTable().setEnabled(true);
 
 		if (fViewer.getContentProvider() == null) {
-			ContentLabelProviderWrapper<OSData> wrapper = new ContentLabelProviderWrapper<OSData>(data);
+			ContentLabelProviderWrapper<OSData> wrapper = new ContentLabelProviderWrapper<>(data);
 			fViewer.setContentProvider(wrapper);
 			fViewer.setLabelProvider(wrapper);
 		} else {
@@ -664,7 +664,7 @@ public class OSResourcesView extends ViewPart implements DsfSession.SessionEnded
 				return fDirection * (v1.compareTo(v2));
 			}
 		}
-	};
+	}
 
 	@Override
 	public void setFocus() {

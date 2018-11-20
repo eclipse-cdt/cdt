@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Ericsson - Adapted for DSF
@@ -51,7 +51,7 @@ public class MIMixedInstruction implements IMixedInstruction {
 
 	/**
 	 *  Parse the mixed instruction result. It has the following 3 fields:
-	 *  
+	 *
 	 *      line="31",
 	 *      file="/dir1/dir2/basics.c",
 	 *      line_asm_insn=[
@@ -62,7 +62,7 @@ public class MIMixedInstruction implements IMixedInstruction {
 	 *          ]
 	 */
 	private void parse(MITuple tuple) {
-		List<MIInstruction> instructions = new ArrayList<MIInstruction>();
+		List<MIInstruction> instructions = new ArrayList<>();
 		MIResult[] results = tuple.getMIResults();
 		for (int i = 0; i < results.length; i++) {
 			String var = results[i].getVariable();

@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * A dialog for management of working set configurations. These collect the selection of project
  * configurations for the member projects of the working sets into named presets.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public class WorkingSetConfigurationDialog extends TrayDialog {
@@ -37,7 +37,7 @@ public class WorkingSetConfigurationDialog extends TrayDialog {
 
 	/**
 	 * Initializes me with my shell.
-	 * 
+	 *
 	 * @param shell
 	 */
 	public WorkingSetConfigurationDialog(Shell shell) {
@@ -46,7 +46,7 @@ public class WorkingSetConfigurationDialog extends TrayDialog {
 
 	/**
 	 * Initializes me with my shell provider.
-	 * 
+	 *
 	 * @param parentShell
 	 */
 	public WorkingSetConfigurationDialog(IShellProvider parentShell) {

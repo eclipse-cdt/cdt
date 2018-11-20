@@ -38,7 +38,7 @@ class OSData extends LabelProvider implements ITableLabelProvider, IStructuredCo
 		this.data = data;
 		determineColumnTypes();
 
-		remap = new ArrayList<Integer>(data.getColumnNames().length);
+		remap = new ArrayList<>(data.getColumnNames().length);
 		for (int i = 0; i < data.getColumnNames().length; ++i)
 			remap.add(i);
 

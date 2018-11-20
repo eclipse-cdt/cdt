@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
 public class BreakpointsChangedEvent {
 	public enum Type {
 		ADDED, REMOVED, CHANGED
-	};
+	}
 
 	private final Type fType;
 	private final IBreakpoint[] fBreakpoints;

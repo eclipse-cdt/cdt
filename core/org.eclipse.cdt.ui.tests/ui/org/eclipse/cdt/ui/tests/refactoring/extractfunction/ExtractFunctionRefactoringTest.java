@@ -19,14 +19,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.NameInformation;
 import org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionInformation;
 import org.eclipse.cdt.internal.ui.refactoring.extractfunction.ExtractFunctionRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
 import junit.framework.Test;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.Label;
 
 /**
  * Composite to show problem launchPref
- * 
+ *
  */
 public class LaunchingTabComposite extends Composite {
 	private LaunchModesPropertyPage page;

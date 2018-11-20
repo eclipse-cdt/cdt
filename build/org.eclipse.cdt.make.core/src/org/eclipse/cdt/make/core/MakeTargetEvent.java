@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IProject;
 /**
  * This class represents an event sent when the set of Make Target items
  * in Make Targets View has changed.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -52,7 +52,7 @@ public class MakeTargetEvent extends EventObject {
 	 * @param source - the object on which the Event initially occurred.
 	 * @param type - event type (e.g. TARGET_ADD, TARGET_CHANGED)
 	 * @param targets - array of MakeTargets
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public MakeTargetEvent(Object source, int type, IMakeTarget[] targets) {
@@ -78,7 +78,7 @@ public class MakeTargetEvent extends EventObject {
 
 	/**
 	 * @return the first target (for compatibility with old method).
-	 * 
+	 *
 	 * @deprecated Use getTargets() instead.
 	 */
 	@Deprecated
@@ -88,7 +88,7 @@ public class MakeTargetEvent extends EventObject {
 
 	/**
 	 * @return MakeTargets passed in this event.
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public IMakeTarget[] getTargets() {

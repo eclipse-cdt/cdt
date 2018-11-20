@@ -17,6 +17,10 @@ package org.eclipse.cdt.internal.ui.text;
 
 import static org.eclipse.cdt.internal.ui.text.CHeuristicScanner.NOT_FOUND;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
@@ -27,12 +31,6 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 /**
  * Uses the {@link org.eclipse.cdt.internal.ui.text.CHeuristicScanner} to
@@ -930,7 +928,7 @@ public final class CIndenter {
 		MATCH_BRACE,
 		/**
 		 * The position of the matching parenthesis should be returned instead of doing code
-		 * analysis. 
+		 * analysis.
 		 */
 		MATCH_PAREN,
 		/**
@@ -1220,7 +1218,7 @@ public final class CIndenter {
 
 	/**
 	 * Test whether the colon at the current position marks a case statement
-	 * 
+	 *
 	 * @return <code>true</code> if this looks like a case statement
 	 */
 	private boolean looksLikeCaseStatement() {
@@ -1255,7 +1253,7 @@ public final class CIndenter {
 
 	/**
 	 * Test whether the colon at the current position marks a type inheritance decl.
-	 * 
+	 *
 	 * @return <code>true</code> if this looks like a type inheritance decl.
 	 */
 	private boolean looksLikeTypeInheritanceDecl() {
@@ -1279,7 +1277,7 @@ public final class CIndenter {
 
 	/**
 	 * Test whether the colon at the current position marks a constructor initializer list.
-	 * 
+	 *
 	 * @return <code>true</code> if this looks like a constructor initializer list.
 	 */
 	private boolean looksLikeConstructorInitializer() {
@@ -1327,7 +1325,7 @@ public final class CIndenter {
 
 	/**
 	 * Test whether the left brace at the current position marks an enum decl.
-	 * 
+	 *
 	 * @return <code>true</code> if this looks like an enum decl.
 	 */
 	private boolean looksLikeEnumDeclaration() {
@@ -1349,7 +1347,7 @@ public final class CIndenter {
 
 	/**
 	 * Test whether the colon at the current position marks an access specifier.
-	 * 
+	 *
 	 * @return <code>true</code> if current position marks an access specifier
 	 */
 	private boolean isAccessSpecifier() {
@@ -1717,7 +1715,7 @@ public final class CIndenter {
 						fIndent = fPrefs.prefContinuationIndent;
 					} else {
 						fAlign = fScanner.findNonWhitespaceForwardInAnyPartition(lineOffset, bound);
-						// If the reference line starts with a colon, skip the colon.  
+						// If the reference line starts with a colon, skip the colon.
 						if (peekToken(fAlign) == Symbols.TokenCOLON) {
 							fAlign = fScanner.findNonWhitespaceForwardInAnyPartition(fAlign + 1, bound);
 						}
@@ -2141,7 +2139,7 @@ public final class CIndenter {
 
 	/**
 	 * Skips scope qualifiers of identifiers.
-	 * 
+	 *
 	 * @return <code>true</code> if a qualifier was encountered, the last token
 	 *         will be an IDENT.
 	 */
@@ -2316,7 +2314,7 @@ public final class CIndenter {
 	 * header (i.e. a type name (potentially qualified) and a new keyword). The heuristic calls
 	 * <code>nextToken</code> and expects a possibly qualified identifier (type name) and a new
 	 * keyword
-	 * 
+	 *
 	 * @return <code>true</code> if the current position looks like a anonymous type declaration
 	 *         header.
 	 */

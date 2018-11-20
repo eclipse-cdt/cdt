@@ -123,7 +123,7 @@ public class MIParser {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public MIResultRecord parseMIResultRecord(String line) {
 		StringBuffer buffer = new StringBuffer(line);
@@ -266,7 +266,7 @@ public class MIParser {
 	 * Extract the MI Result comma seperated responses.
 	 */
 	private MIResult[] processMIResults(FSB buffer) {
-		List<MIResult> aList = new ArrayList<MIResult>();
+		List<MIResult> aList = new ArrayList<>();
 		MIResult result = processMIResult(buffer);
 		if (result != null) {
 			aList.add(result);
@@ -340,8 +340,8 @@ public class MIParser {
 	 */
 	private MIValue processMITuple(FSB buffer) {
 		MITuple tuple = new MITuple();
-		List<MIValue> valueList = new ArrayList<MIValue>();
-		List<MIResult> resultList = new ArrayList<MIResult>();
+		List<MIValue> valueList = new ArrayList<>();
+		List<MIResult> resultList = new ArrayList<>();
 		// Catch closing '}'
 		while (buffer.length() > 0 && buffer.charAt(0) != '}') {
 			// Try for the DsfMIValue first
@@ -374,8 +374,8 @@ public class MIParser {
 	 */
 	private MIValue processMIList(FSB buffer) {
 		MIList list = new MIList();
-		List<MIValue> valueList = new ArrayList<MIValue>();
-		List<MIResult> resultList = new ArrayList<MIResult>();
+		List<MIValue> valueList = new ArrayList<>();
+		List<MIResult> resultList = new ArrayList<>();
 		// catch closing ']'
 		while (buffer.length() > 0 && buffer.charAt(0) != ']') {
 			// Try for the DsfMIValue first
@@ -477,13 +477,13 @@ public class MIParser {
 		return true;
 	}
 
-	/** 
+	/**
 	 * Fast String Buffer class. MIParser does a lot
 	 * of deleting off the front of a string, that's clearly
-	 * an order N operation for StringBuffer which makes 
+	 * an order N operation for StringBuffer which makes
 	 * the MIParser an order N^2 operation. There are "issues"
 	 * with this for large arrays. Use of FSB rather than String
-	 * Buffer makes MIParser N rather than N^2 because FSB can 
+	 * Buffer makes MIParser N rather than N^2 because FSB can
 	 * delete from the front in constant time.
 	 */
 	public class FSB {

@@ -65,7 +65,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 	class ProblemsCheckStateProvider implements ICheckStateProvider {
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jface.viewers.ICheckStateProvider#isChecked(java.lang
 		 * .Object)
@@ -92,7 +92,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see
 		 * org.eclipse.jface.viewers.ICheckStateProvider#isGrayed(java.lang.
 		 * Object)
@@ -386,7 +386,7 @@ public class ProblemsTreeEditor extends CheckedTreeEditor {
 		if (SINGLE_PLACEHOLDER_ONLY.equals(messagePattern)) {
 			message = EMPTY_STRING;
 		} else if (messagePattern != null) {
-			message = MessageFormat.format(messagePattern, "X", "Y", "Z"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+			message = MessageFormat.format(messagePattern, "X", "Y", "Z"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 		return message;
 	}

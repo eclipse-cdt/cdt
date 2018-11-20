@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,14 +17,14 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
- * Resumes the execution of a single thread.  Can be issued only if the virtual 
+ * Resumes the execution of a single thread.  Can be issued only if the virtual
  * machine is running.
- * 
+ *
  * <pre>
  *    C: resume {thread_id}
  *    R: ok
  *    E: resumed {thread_id} client
- *    
+ *
  * Errors:
  *    error: invalid thread
  *    error: cannot resume thread when vm is suspended

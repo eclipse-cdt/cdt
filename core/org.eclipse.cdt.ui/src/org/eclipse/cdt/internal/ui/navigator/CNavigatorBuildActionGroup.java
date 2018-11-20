@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.ui.navigator;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.cview.BuildGroup;
+import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -33,9 +35,6 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.BuildAction;
 import org.eclipse.ui.ide.IDEActionFactory;
 import org.eclipse.ui.navigator.ICommonMenuConstants;
-
-import org.eclipse.cdt.internal.ui.cview.BuildGroup;
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
 
 /**
  * Common Navigator compatible clone of {@link org.eclipse.cdt.internal.ui.cview.BuildGroup}.

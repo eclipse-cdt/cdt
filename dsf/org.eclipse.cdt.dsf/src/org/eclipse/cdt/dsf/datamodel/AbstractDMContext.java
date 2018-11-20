@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,19 +19,19 @@ import org.eclipse.cdt.dsf.service.IDsfService;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Base implementation of the IDMContext interface.  There are two pieces of 
+ * Base implementation of the IDMContext interface.  There are two pieces of
  * functionality here: <br>
  * 1) The {@link #getAdapter(Class)} implementation which retrieves model
  * adapters registered with the session. <br>
  * 2) Methods to help compare DM Contexts.  <br>
  * <p>
- * Note: The {@link #equals(Object)} and {@link #hashCode()} methods are 
- * made abstract to force the deriving classes to provide a proper 
- * implementation.  Data Model Context objects are meant to be used as handles, 
- * therefore a proper equals implementation is critical. 
+ * Note: The {@link #equals(Object)} and {@link #hashCode()} methods are
+ * made abstract to force the deriving classes to provide a proper
+ * implementation.  Data Model Context objects are meant to be used as handles,
+ * therefore a proper equals implementation is critical.
  * </p>
  * @param <V> Data Model data type that this context is for.
- * 
+ *
  * @since 1.0
  */
 @Immutable
@@ -39,7 +39,7 @@ abstract public class AbstractDMContext extends PlatformObject implements IDMCon
 	private final DsfSession fSession;
 	private final IDMContext[] fParents;
 
-	/** 
+	/**
 	 * Main constructor provides all data needed to implement the <code>IDMContext</code>
 	 * interface.
 	 * @since 2.2
@@ -62,7 +62,7 @@ abstract public class AbstractDMContext extends PlatformObject implements IDMCon
 		this(DsfSession.getSession(fSessionId), parents);
 	}
 
-	/** 
+	/**
 	 * Should be used by the deriving class to compare the basic context object
 	 * information.
 	 * @param other the other service to compare to
@@ -130,19 +130,19 @@ abstract public class AbstractDMContext extends PlatformObject implements IDMCon
 	}
 
 	/**
-	 * Overrides the standard platform getAdapter to provide session-specific 
+	 * Overrides the standard platform getAdapter to provide session-specific
 	 * adapters.
 	 * <p>
-	 * ModelContext is intended to be used in views, which call the 
-	 * contexts.getAdapter() method to retrieve model-specific content and 
+	 * ModelContext is intended to be used in views, which call the
+	 * contexts.getAdapter() method to retrieve model-specific content and
 	 * label providers.  But since many different sessions could be active
-	 * at the same time, each requiring different content providers, the 
-	 * standard platform <code>IAdapterManager</code> is not sufficient in 
-	 * handling adapters for the model context object.  This is because 
-	 * <code>IAdapterManager</code> uses only the class of the adaptable to 
-	 * select the correct adapter factory, while for model context, the 
-	 * session is equally important. 
-	 * @see org.eclipse.runtime.IAdapterManager 
+	 * at the same time, each requiring different content providers, the
+	 * standard platform <code>IAdapterManager</code> is not sufficient in
+	 * handling adapters for the model context object.  This is because
+	 * <code>IAdapterManager</code> uses only the class of the adaptable to
+	 * select the correct adapter factory, while for model context, the
+	 * session is equally important.
+	 * @see org.eclipse.runtime.IAdapterManager
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
@@ -155,14 +155,14 @@ abstract public class AbstractDMContext extends PlatformObject implements IDMCon
 	}
 
 	/**
-	 * Deriving classes must implement proper equals and hashCode operations 
+	 * Deriving classes must implement proper equals and hashCode operations
 	 * based on context data.
 	 */
 	@Override
 	abstract public boolean equals(Object obj);
 
 	/**
-	 * Deriving classes must implement proper equals and hashCode operations 
+	 * Deriving classes must implement proper equals and hashCode operations
 	 * based on context data.
 	 */
 	@Override

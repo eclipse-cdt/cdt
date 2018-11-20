@@ -32,7 +32,7 @@ public class DbgTcmUtil {
 	public static final class DbgException extends RuntimeException {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 

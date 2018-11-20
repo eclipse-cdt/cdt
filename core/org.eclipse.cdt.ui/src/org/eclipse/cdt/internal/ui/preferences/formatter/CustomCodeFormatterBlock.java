@@ -19,6 +19,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -35,14 +41,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
 
 /**
  * Allows to choose the formatter in a combo box.
@@ -120,7 +118,7 @@ public class CustomCodeFormatterBlock extends Observable {
 
 	/**
 	 * Returns the currently selected formatter id.
-	 * 
+	 *
 	 * @return the selected formatter id or {@code null} if the default is selected.
 	 */
 	public String getFormatterId() {

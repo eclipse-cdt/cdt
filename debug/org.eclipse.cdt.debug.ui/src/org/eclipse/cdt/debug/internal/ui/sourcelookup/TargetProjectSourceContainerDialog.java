@@ -69,7 +69,7 @@ public class TargetProjectSourceContainerDialog extends SelectionDialog {
 
 	/**
 	 * Returns whether the user has selected to add referenced projects.
-	 * 
+	 *
 	 * @return whether the user has selected to add referenced projects
 	 */
 	public boolean isAddReferencedProjects() {

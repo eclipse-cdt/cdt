@@ -21,6 +21,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
+import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -39,21 +51,6 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IInclude;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
-import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
-
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 /**
  * A proposal computer for include directives.
@@ -74,7 +71,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 			CContentAssistInvocationContext cContext = (CContentAssistInvocationContext) context;
 			if (inIncludeDirective(cContext)) {
 				// add include file proposals
-				proposals = new ArrayList<ICompletionProposal>();
+				proposals = new ArrayList<>();
 				try {
 					addInclusionProposals(cContext, proposals);
 				} catch (Exception exc) {
@@ -107,7 +104,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 
 	/**
 	 * Test whether the invocation offset is inside the file name part if an include directive.
-	 * 
+	 *
 	 * @param context  the invocation context
 	 * @return <code>true</code> if the invocation offset is inside or before the directive keyword
 	 */
@@ -160,7 +157,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 		PotentialInclude[] potentialIncludes = collectIncludeFiles(tu, prefixPath, angleBrackets);
 		if (potentialIncludes.length > 0) {
 			IInclude[] includes = tu.getIncludes();
-			Set<String> alreadyIncluded = new HashSet<String>();
+			Set<String> alreadyIncluded = new HashSet<>();
 			for (IInclude includeDirective : includes) {
 				alreadyIncluded.add(includeDirective.getElementName());
 			}
@@ -194,7 +191,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 
 	/**
 	 * Collect potential include files for the given translation unit.
-	 * 
+	 *
 	 * @param tu  the translation unit to include the file
 	 * @param prefixPath  the path part to match the sub-directory and file name
 	 * @param angleBrackets  whether angle brackets enclose the include file name
@@ -254,7 +251,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 
 	/**
 	 * Collect include files from the given file system directory.
-	 * 
+	 *
 	 * @param tu  the translation unit to include the file
 	 * @param directory  the file system path of the directory
 	 * @param prefixPath  the path part to match the sub-directory and file name
@@ -313,7 +310,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 
 	/**
 	 * Collect include files from the given resource container.
-	 * 
+	 *
 	 * @param tu  the translation unit to include the file
 	 * @param parent  the resource container
 	 * @param prefixPath  the path part to match the sub-directory and file name
@@ -371,7 +368,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 
 	/**
 	 * Compute the file name portion in an incomplete include directive.
-	 * 
+	 *
 	 * @param context
 	 * @return the file name portion including the opening bracket or quote
 	 * @throws BadLocationException
@@ -392,7 +389,7 @@ public class InclusionProposalComputer implements ICompletionProposalComputer {
 
 	/**
 	 * Compute base relevance depending on quality of name / prefix match.
-	 * 
+	 *
 	 * @param prefix  the completion pefix
 	 * @param match  the matching identifier
 	 * @return a relevance value inidicating the quality of the name match

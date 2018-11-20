@@ -7,14 +7,11 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage;
@@ -23,6 +20,9 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.DOMLocationTests;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestSuite;
 
 @SuppressWarnings("restriction")
 public class LRDOMLocationTests extends DOMLocationTests {
@@ -71,7 +71,7 @@ public class LRDOMLocationTests extends DOMLocationTests {
 		}
 
 	}
-	//    
+	//
 	//    @Override
 	//	public void test162180_3() throws Exception {
 	//    	try {
@@ -80,7 +80,7 @@ public class LRDOMLocationTests extends DOMLocationTests {
 	//    	}
 	//    	catch(AssertionFailedError e) {}
 	//    }
-	//    
+	//
 	//    @Override
 	//	public void testBug86698_2() throws Exception { // I don't think C++ supports nested functions
 	//    	try {
@@ -89,8 +89,8 @@ public class LRDOMLocationTests extends DOMLocationTests {
 	//    	}
 	//    	catch(AssertionFailedError e) {}
 	//    }
-	//    
-	//    
+	//
+	//
 	//    @Override
 	//	public void testBug120607() throws Exception { // #assert and #unassert are gcc extensions
 	//    	try {

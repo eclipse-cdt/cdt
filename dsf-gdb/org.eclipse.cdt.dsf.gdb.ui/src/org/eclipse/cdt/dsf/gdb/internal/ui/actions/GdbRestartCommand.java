@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Navid Mehregani (TI) - Bug 289526 - Migrate the Restart feature to the new one, as supported by the platform
@@ -112,7 +112,7 @@ public class GdbRestartCommand implements IRestartHandler {
 								@Override
 								protected void handleCompleted() {
 									request.done();
-								};
+								}
 							});
 				} else {
 					request.done();

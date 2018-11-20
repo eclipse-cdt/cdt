@@ -34,7 +34,7 @@ public class LaunchConfigAffinityExtensionPoint {
 	/**
 	 * Returns all launch configuration type IDs registered via the extension
 	 * point.
-	 * 
+	 *
 	 * @param ids
 	 *            Caller provides the collection. We just add to it. We do not
 	 *            clear it. Caller can provide any type of collection.

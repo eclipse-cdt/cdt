@@ -34,10 +34,10 @@ import org.eclipse.osgi.util.NLS;
  * full GDB console support.  It achieves this by launching GDB in CLI mode
  * in a special console widget and then connecting to GDB via MI by telling GDB to
  * open a new MI console.  The rest of the DSF-GDB support then stays the same.
- * 
+ *
  * If we are unable to create a PTY, we then revert to the previous behavior of
  * the base class.
- * 
+ *
  * @since 5.2
  */
 public class GDBBackend_7_12 extends GDBBackend {
@@ -94,7 +94,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 			return super.getMIOutputStream();
 		}
 		return fMIPty.getOutputStream();
-	};
+	}
 
 	@Override
 	public InputStream getMIInputStream() {
@@ -102,7 +102,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 			return super.getMIInputStream();
 		}
 		return fMIPty.getInputStream();
-	};
+	}
 
 	@Override
 	public InputStream getMIErrorStream() {
@@ -110,7 +110,7 @@ public class GDBBackend_7_12 extends GDBBackend {
 			return super.getMIErrorStream();
 		}
 		return fDummyErrorStream;
-	};
+	}
 
 	@Override
 	protected String[] getDebuggerCommandLine() {
@@ -141,15 +141,15 @@ public class GDBBackend_7_12 extends GDBBackend {
 				// if an extender has removed it, we shouldn't add it again.
 				// Once we no longer extends the deprecated getGDBCommandLineArray() and simply
 				// create the full commandLine here, we should put it
-				//				// Use the --nx option to avoid reading the gdbinit file here. 
-				//				// The gdbinit file is read explicitly in the FinalLaunchSequence to make 
+				//				// Use the --nx option to avoid reading the gdbinit file here.
+				//				// The gdbinit file is read explicitly in the FinalLaunchSequence to make
 				//				// it easier to customize.
 				//				"--nx", //$NON-NLS-1$
 
 				// Force a CLI console since the originalCommandLine
 				// probably specified "-i mi" or "--interpreter mi"
-				// Once we no longer extend the deprecated 
-				// getGDBCommandLineArray() and simply create the full 
+				// Once we no longer extend the deprecated
+				// getGDBCommandLineArray() and simply create the full
 				// commandLine here, we could remove this parameter
 				"--interpreter", "console", //$NON-NLS-1$ //$NON-NLS-2$
 

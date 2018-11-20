@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2013 Alena Laskavaia 
+ * Copyright (c) 2009, 2013 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -51,7 +51,7 @@ public class CxxModelsCache implements ICodanDisposable {
 	CxxModelsCache(ITranslationUnit tu) {
 		this.tu = tu;
 		this.file = tu != null ? (IFile) tu.getResource() : null;
-		cfgmap = new WeakHashMap<IASTFunctionDefinition, IControlFlowGraph>(0);
+		cfgmap = new WeakHashMap<>(0);
 	}
 
 	CxxModelsCache(IASTTranslationUnit ast) {
@@ -114,7 +114,7 @@ public class CxxModelsCache implements ICodanDisposable {
 
 	/**
 	 * Returns the index that can be safely used for reading until the cache is disposed.
-	 * 
+	 *
 	 * @return The index.
 	 */
 	public synchronized IIndex getIndex() throws CoreException, OperationCanceledException {

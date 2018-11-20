@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Nathan Ridge - Initial API and implementation
  *******************************************************************************/
@@ -15,9 +15,9 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Represents an alignment specifier.
- * 
+ *
  * Grammatically, this is a decl-specifier in C and an attribute-specifier in C++.
- * 
+ *
  * Possible forms are:
  *   C++:
  *     alignas(<type-id>)

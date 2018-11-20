@@ -20,14 +20,14 @@ public interface ICBuildCommandLauncher {
 
 	/**
 	 * Get registered CBuildConfiguration
-	 * 
+	 *
 	 * @return ICBuildConfiguration or null
 	 */
 	public ICBuildConfiguration getBuildConfiguration();
 
 	/**
 	 * Register a CBuildConfiguration for this command launcher
-	 * 
+	 *
 	 * @param config - CBuildConfiguration to register
 	 */
 	public void setBuildConfiguration(ICBuildConfiguration config);

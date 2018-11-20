@@ -21,6 +21,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -51,15 +58,6 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.NewFolderDialog;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICExclusionPatternPathEntry;
-import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.ui.CDTSharedImages;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * CLocationTab implements common features for "Source Location" and "Output Location"
@@ -305,7 +303,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 
 		setAllVisible(true, null);
 
-		src = new ArrayList<_Entry>();
+		src = new ArrayList<>();
 		_Entry selectedSourcePath = null;
 		for (ICExclusionPatternPathEntry e : getEntries(cfgd)) {
 			_Entry entry = new _Entry(e);
@@ -357,7 +355,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 	}
 
 	private String[] getProjectDialog(Shell shell) {
-		Set<IPath> set = new HashSet<IPath>(src.size());
+		Set<IPath> set = new HashSet<>(src.size());
 		for (_Entry e : src)
 			set.add(e.getPath());
 
@@ -533,7 +531,7 @@ public abstract class CLocationTab extends AbstractCPropertyTab {
 			if (page.getElement() instanceof IFolder) {
 				IFolder folder = (IFolder) page.getElement();
 
-				List<Holder> list = new ArrayList<Holder>();
+				List<Holder> list = new ArrayList<>();
 				list.add(new Holder(folder));
 				for (IContainer parentFolder = folder
 						.getParent(); parentFolder instanceof IFolder; parentFolder = parentFolder.getParent()) {

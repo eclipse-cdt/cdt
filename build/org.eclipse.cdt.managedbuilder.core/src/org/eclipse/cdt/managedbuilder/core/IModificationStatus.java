@@ -42,7 +42,7 @@ public interface IModificationStatus extends IStatus {
 	public static final int TOOLS_DONT_SUPPORT_MANAGED_BUILD = 1 << 4;
 
 	/**
-	 * 
+	 *
 	 * @return Map containing property Id to property Value associations.
 	 * If value is not null then the given value is not supported
 	 * If Value is not null then the fiven property is not supported
@@ -50,7 +50,7 @@ public interface IModificationStatus extends IStatus {
 	Map<String, String> getUnsupportedProperties();
 
 	/**
-	 * 
+	 *
 	 * @return Map containing property Id to property Value associations.
 	 * If value is not null then the given value is not supported
 	 * If Value is not null then the fiven property is not supported
@@ -58,7 +58,7 @@ public interface IModificationStatus extends IStatus {
 	Map<String, String> getUnsupportedRequiredProperties();
 
 	/**
-	 * 
+	 *
 	 * @return Set containing undefined property IDs
 	 */
 	Set<String> getUndefinedProperties();

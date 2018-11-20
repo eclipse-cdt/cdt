@@ -20,9 +20,9 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * New interface to replace IScannerConfigBuildInfo
  * Persisted in .cdtproject file
- * 
+ *
  * @author vhirsl
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -42,7 +42,7 @@ public interface IScannerConfigBuilderInfo2 {
 
 	List<String> getProfileIdList();
 
-	// SCD profile - buildOutputProvider options 
+	// SCD profile - buildOutputProvider options
 	boolean isBuildOutputFileActionEnabled();
 
 	void setBuildOutputFileActionEnabled(boolean enable);

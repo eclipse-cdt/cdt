@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.CDTPrefUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -36,18 +38,15 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.XMLMemento;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.CDTPrefUtil;
-
 /**
  * The purveyor of working set configurations. It provides a current view of the {@linkplain IWorkingSetProxy
  * working set configurations} defined in the workspace, as well as a working-copy
  * {@linkplain WorkspaceSnapshot snapshot} of the same for making modifications.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public class WorkingSetConfigurationManager {
 
@@ -91,7 +90,7 @@ public class WorkingSetConfigurationManager {
 
 	/**
 	 * Obtains the default working set configuration manager.
-	 * 
+	 *
 	 * @return the working set configuration manager
 	 */
 	public static WorkingSetConfigurationManager getDefault() {
@@ -115,7 +114,7 @@ public class WorkingSetConfigurationManager {
 	 * Obtains the current immutable view of the specified working set's configurations. These configurations
 	 * may be {@linkplain IWorkingSetConfiguration#activate() activated} to apply their settings to the
 	 * workspace, but they cannot be modified.
-	 * 
+	 *
 	 * @param name
 	 *            the name of the working set to retrieve
 	 * @return the named working set, or <code>null</code> if there is none available by that name
@@ -128,7 +127,7 @@ public class WorkingSetConfigurationManager {
 	 * Obtains the current immutable view of all available working set configurations. These configurations
 	 * may be {@linkplain IWorkingSetConfiguration#activate() activated} to apply their settings to the
 	 * workspace, but they cannot be modified.
-	 * 
+	 *
 	 * @return the working set configurations
 	 */
 	public Collection<IWorkingSetProxy> getWorkingSets() {
@@ -138,7 +137,7 @@ public class WorkingSetConfigurationManager {
 	/**
 	 * Creates a new mutable snapshot of the current working set configurations. This snapshot accepts
 	 * modifications and can be {@linkplain WorkspaceSnapshot#save() saved} to persist the changes.
-	 * 
+	 *
 	 * @return a working-copy of the working set configurations
 	 */
 	public WorkspaceSnapshot createWorkspaceSnapshot() {
@@ -154,7 +153,7 @@ public class WorkingSetConfigurationManager {
 	 * </p>
 	 */
 	private void load() {
-		workingSets = new java.util.HashMap<String, IWorkingSetProxy>();
+		workingSets = new java.util.HashMap<>();
 
 		for (IMemento next : store.getChildren(KEY_WORKING_SET)) {
 			WorkingSetProxy ws = new WorkingSetProxy();
@@ -181,7 +180,7 @@ public class WorkingSetConfigurationManager {
 
 	/**
 	 * Saves the working set configurations to storage.
-	 * 
+	 *
 	 * @param snapshot
 	 *            the snapshot to save
 	 */
@@ -197,7 +196,7 @@ public class WorkingSetConfigurationManager {
 
 	/**
 	 * Records the specified memento as our new store and asynchronously saves it in a job.
-	 * 
+	 *
 	 * @param memento
 	 *            the new store
 	 */
@@ -243,7 +242,7 @@ public class WorkingSetConfigurationManager {
 
 	/**
 	 * Gets the file in which we persist the working set configurations.
-	 * 
+	 *
 	 * @return the file store
 	 */
 	private File getStorage() {
@@ -254,7 +253,7 @@ public class WorkingSetConfigurationManager {
 	/**
 	 * Loads the working set configurations from storage. For compatibility, if the XML file is not available,
 	 * we load from the old preference setting format.
-	 * 
+	 *
 	 * @return the working set configuration store
 	 */
 	private IMemento loadMemento() {
@@ -292,7 +291,7 @@ public class WorkingSetConfigurationManager {
 			result = XMLMemento.createWriteRoot(TYPE_WORKING_SET_CONFIGS);
 
 			// collect the unordered entries by working set
-			Map<String, IMemento> configMap = new HashMap<String, IMemento>();
+			Map<String, IMemento> configMap = new HashMap<>();
 			for (String next : configSetStrings) {
 				String[] bits = next.split(" "); //$NON-NLS-1$
 
@@ -332,9 +331,9 @@ public class WorkingSetConfigurationManager {
 	 * A working set manager listener that tracks name changes and removals of working sets to keep our
 	 * configurations in synch as much as possible. It updates the memento store directly in response to
 	 * changes in the working sets.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	private class WorkingSetChangeTracker extends java.util.IdentityHashMap<IWorkingSet, String>

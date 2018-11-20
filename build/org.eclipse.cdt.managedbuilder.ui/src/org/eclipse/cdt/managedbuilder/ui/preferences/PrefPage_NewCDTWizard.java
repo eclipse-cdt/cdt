@@ -21,7 +21,7 @@ import org.eclipse.cdt.ui.newui.ICPropertyTab;
 
 /**
  * @since 5.1
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 
 /**
  * Common interface that represents all MI and CLI event/command processors.
- * 
+ *
  * @since 4.1
  */
 public interface IEventProcessor extends IEventListener, ICommandListener {

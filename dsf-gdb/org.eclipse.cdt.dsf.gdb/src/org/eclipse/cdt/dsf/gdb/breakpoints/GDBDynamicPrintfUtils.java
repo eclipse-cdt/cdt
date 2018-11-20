@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *   Marc Khouzam (Ericsson) - Support Dynamic Printf (Bug 400628)
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Utility methods to help deal with Dynamic Printf logic.
- * 
+ *
  * @since 4.4
  */
 public class GDBDynamicPrintfUtils {

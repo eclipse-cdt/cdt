@@ -77,7 +77,7 @@ public class PDOMDependencyCalculator implements IManagedDependencyCalculator {
 						if (files.length > 0) {
 							IIndexInclude[] includes = index.findIncludes(files[0], IIndex.DEPTH_INFINITE);
 
-							List<IPath> list = new ArrayList<IPath>();
+							List<IPath> list = new ArrayList<>();
 							for (IIndexInclude inc : includes) {
 								if (inc.isResolved()) {
 									list.add(IndexLocationFactory.getAbsolutePath(inc.getIncludesLocation()));

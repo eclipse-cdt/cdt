@@ -996,7 +996,7 @@ public class TemplateArgumentDeduction {
 				if (!verifyNonDeduced)
 					return true; // An unknown type may match anything.
 
-				// Verify that the resolved binding matches the argument type. 
+				// Verify that the resolved binding matches the argument type.
 				InstantiationContext context = new InstantiationContext(fDeducedArgs);
 				IBinding binding = CPPTemplates.resolveUnknown((ICPPUnknownBinding) p, context);
 				if (binding instanceof ICPPUnknownBinding)

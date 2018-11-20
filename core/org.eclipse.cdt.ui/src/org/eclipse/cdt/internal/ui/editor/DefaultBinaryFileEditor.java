@@ -17,6 +17,15 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import org.eclipse.cdt.core.IBinaryParser;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.IGnuToolFactory;
+import org.eclipse.cdt.utils.Objdump;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
@@ -41,17 +50,6 @@ import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.IGnuToolFactory;
-import org.eclipse.cdt.utils.Objdump;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-
 /**
  * A readonly editor to view binary files. This default implementation displays the GNU objdump output of the
  * binary as plain text. If no objdump output can be obtained, the binary content is displayed.
@@ -67,7 +65,7 @@ public class DefaultBinaryFileEditor extends AbstractTextEditor implements IReso
 
 		/**
 		 * Create an editor input from the given binary.
-		 * 
+		 *
 		 * @param binary
 		 */
 		public BinaryFileEditorInput(IBinary binary) {

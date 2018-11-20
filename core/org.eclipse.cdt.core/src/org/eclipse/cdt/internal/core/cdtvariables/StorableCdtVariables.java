@@ -43,7 +43,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 
 	private HashMap<String, ICdtVariable> getMap() {
 		if (fMacros == null)
-			fMacros = new HashMap<String, ICdtVariable>();
+			fMacros = new HashMap<>();
 		return fMacros;
 	}
 
@@ -58,7 +58,7 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 	}
 
 	public StorableCdtVariables(ICdtVariable vars[], boolean readOnly) {
-		fMacros = new HashMap<String, ICdtVariable>(vars.length);
+		fMacros = new HashMap<>(vars.length);
 		for (ICdtVariable var : vars) {
 			addMacro(var);
 		}
@@ -183,8 +183,8 @@ public class StorableCdtVariables implements IStorableCdtVariables {
 			deleteAll();
 		else {
 			if (getMap().size() != 0) {
-				Set<String> existing = new HashSet<String>();
-				Set<String> macroNames = new HashSet<String>();
+				Set<String> existing = new HashSet<>();
+				Set<String> macroNames = new HashSet<>();
 
 				for (ICdtVariable m : getMap().values()) {
 					existing.add(m.getName());

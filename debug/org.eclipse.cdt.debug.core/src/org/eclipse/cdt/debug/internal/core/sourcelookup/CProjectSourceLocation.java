@@ -49,7 +49,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Locates source elements in a C/C++ project. Returns instances of <code>IFile</code>.
- * 
+ *
  * @since Sep 23, 2002
  */
 public class CProjectSourceLocation implements IProjectSourceLocation {
@@ -62,8 +62,8 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	 */
 	private IProject fProject;
 	private IResource[] fFolders;
-	private HashMap<String, Object> fCache = new HashMap<String, Object>(20);
-	private HashSet<String> fNotFoundCache = new HashSet<String>(20);
+	private HashMap<String, Object> fCache = new HashMap<>(20);
+	private HashSet<String> fNotFoundCache = new HashSet<>(20);
 	private boolean fGenerated = true;
 	private boolean fSearchForDuplicateFiles = false;
 
@@ -115,7 +115,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 
 	/**
 	 * Sets the project in which source elements will be searched for.
-	 * 
+	 *
 	 * @param project the project
 	 */
 	private void setProject(IProject project) {
@@ -124,7 +124,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 
 	/**
 	 * Returns the project associated with this source location.
-	 * 
+	 *
 	 * @return project
 	 */
 	@Override
@@ -138,7 +138,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	}
 
 	private Object findFileByAbsolutePath(File file) {
-		LinkedList<IFile> list = new LinkedList<IFile>();
+		LinkedList<IFile> list = new LinkedList<>();
 		if (file.exists()) {
 			IPath path = new Path(file.getAbsolutePath());
 			IFile[] wsFiles = ResourceLookup.findFilesForLocation(path);
@@ -155,7 +155,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 
 	private Object findFileByRelativePath(String fileName) {
 		IResource[] folders = getFolders();
-		LinkedList<IFile> list = new LinkedList<IFile>();
+		LinkedList<IFile> list = new LinkedList<>();
 		for (int i = 0; i < folders.length; ++i) {
 			if (list.size() > 0 && !searchForDuplicateFiles())
 				break;
@@ -297,7 +297,7 @@ public class CProjectSourceLocation implements IProjectSourceLocation {
 	}
 
 	private void initializeFolders() {
-		final LinkedList<IResource> list = new LinkedList<IResource>();
+		final LinkedList<IResource> list = new LinkedList<>();
 		if (getProject() != null && getProject().exists()) {
 			list.add(getProject());
 			try {

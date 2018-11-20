@@ -20,6 +20,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 
+import org.eclipse.cdt.core.resources.ExclusionInstance;
+import org.eclipse.cdt.core.resources.ExclusionType;
+import org.eclipse.cdt.core.resources.RefreshExclusion;
+import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
+import org.eclipse.cdt.ui.resources.Messages;
+import org.eclipse.cdt.ui.resources.RefreshExclusionContributor;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -41,28 +47,20 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.CheckedTreeSelectionDialog;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.cdt.core.resources.ExclusionInstance;
-import org.eclipse.cdt.core.resources.ExclusionType;
-import org.eclipse.cdt.core.resources.RefreshExclusion;
-import org.eclipse.cdt.ui.resources.Messages;
-import org.eclipse.cdt.ui.resources.RefreshExclusionContributor;
-
-import org.eclipse.cdt.internal.core.resources.ResourceExclusion;
-
 /**
  * <strong>EXPERIMENTAL</strong>. This class or interface has been added as part of a work in progress. There
  * is no guarantee that this API will work or that it will remain the same. Please do not use this API without
  * consulting with the CDT team.
- * 
+ *
  * @author vkong
  * @since 5.3
- * 
+ *
  */
 public class ResourceExclusionContributor extends RefreshExclusionContributor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.resources.RefreshExclusionContributor#createExclusion()
 	 */
 	@Override
@@ -77,7 +75,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.ui.resources.RefreshExclusionContributor#createProperiesUI(org.eclipse.swt.widgets.
 	 * Composite, org.eclipse.cdt.core.resources.RefreshExclusion)
@@ -105,8 +103,8 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 		gridData.minimumWidth = 275;
 		exceptionsList.setLayoutData(gridData);
 
-		final HashMap<String, ExclusionInstance> exclusionInstanceStrings = new LinkedHashMap<String, ExclusionInstance>();
-		final HashMap<String, Object> exclusionInstanceResources = new LinkedHashMap<String, Object>();
+		final HashMap<String, ExclusionInstance> exclusionInstanceStrings = new LinkedHashMap<>();
+		final HashMap<String, Object> exclusionInstanceResources = new LinkedHashMap<>();
 
 		java.util.List<ExclusionInstance> exclusionInstances = exclusion.getExclusionInstances();
 
@@ -139,7 +137,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
@@ -158,7 +156,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 									IContainer container = (IContainer) parentElement;
 									if (container.isAccessible()) {
 										try {
-											java.util.List<IResource> children = new ArrayList<IResource>();
+											java.util.List<IResource> children = new ArrayList<>();
 											IResource[] members = container.members();
 											for (int i = 0; i < members.length; i++) {
 												if (members[i].getType() == IResource.FOLDER) {
@@ -210,7 +208,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 					Object[] selection = dialog.getResult();
 					exceptionsList.removeAll();
 					exclusionInstanceResources.clear();
-					final HashMap<String, ExclusionInstance> oldExclusionInstanceStrings = new LinkedHashMap<String, ExclusionInstance>(
+					final HashMap<String, ExclusionInstance> oldExclusionInstanceStrings = new LinkedHashMap<>(
 							exclusionInstanceStrings);
 					exclusionInstanceStrings.clear();
 
@@ -262,7 +260,7 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see
 			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */

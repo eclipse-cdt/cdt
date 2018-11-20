@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Nokia - create and use backend service. 
+ *     Nokia - create and use backend service.
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.pda.util;
 
@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.Launch;
 
 /**
- * 
+ *
  */
 public class Launching {
 
@@ -38,7 +38,6 @@ public class Launching {
 				fBackendService.initialize(rm);
 			}
 		}
-		;
 
 		fBackendService = new PDABackend(session, launch, pdaProgram);
 		InitializeBackendServiceQuery initQuery = new InitializeBackendServiceQuery();

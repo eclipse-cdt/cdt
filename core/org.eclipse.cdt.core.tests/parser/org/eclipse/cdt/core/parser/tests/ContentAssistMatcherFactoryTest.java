@@ -15,10 +15,10 @@
 
 package org.eclipse.cdt.core.parser.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
+
+import junit.framework.TestCase;
 
 public class ContentAssistMatcherFactoryTest extends TestCase {
 

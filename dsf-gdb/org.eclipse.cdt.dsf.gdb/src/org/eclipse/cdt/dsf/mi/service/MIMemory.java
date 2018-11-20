@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson AB - expanded from initial stub
@@ -113,7 +113,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	private boolean fDataReadMemoryBytes;
 
 	/**
-	 *  Constructor 
+	 *  Constructor
 	 */
 	public MIMemory(DsfSession session) {
 		super(session);
@@ -157,7 +157,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 
 		register(new String[] { MIMemory.class.getName(), IMemory.class.getName() }, new Hashtable<String, String>());
 
-		fMemoryCaches = new HashMap<IMemoryDMContext, MIMemoryCache>();
+		fMemoryCaches = new HashMap<>();
 
 		getSession().addServiceEventListener(this, null);
 
@@ -304,7 +304,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	}
 
 	///////////////////////////////////////////////////////////////////////
-	// Back-end functions 
+	// Back-end functions
 	///////////////////////////////////////////////////////////////////////
 
 	/**
@@ -314,7 +314,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	 * @param wordSize
 	 * @param wordCount in addressable units
 	 * @param drm
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	protected void readMemoryBlock(IDMContext dmc, IAddress address, final long offset, final int wordSize,
@@ -339,8 +339,8 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		} else {
 			if (wordSize != 1) {
 				//The word-size is specified within the resulting command data-read-memory
-				//The word-size is defined in bytes although in the MI interface it's not clear if the meaning is 
-				//octets or system dependent bytes (minimum addressable memory). 
+				//The word-size is defined in bytes although in the MI interface it's not clear if the meaning is
+				//octets or system dependent bytes (minimum addressable memory).
 				//As this command is deprecated there is no good reason to augment the support for word sizes != 1
 				drm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED,
 						DATA_WRITE_MEMORY_16_NOT_SUPPORTED, null));
@@ -394,13 +394,13 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 	 * @param wordCount in addressable units
 	 * @param buffer
 	 * @param rm
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	protected void writeMemoryBlock(final IDMContext dmc, final IAddress address, final long offset, final int wordSize,
 			final int wordCount, final byte[] buffer, final RequestMonitor rm) {
 		if (fDataReadMemoryBytes) {
-			// Use -data-write-memory-bytes for performance, 
+			// Use -data-write-memory-bytes for performance,
 			fCommandCache.execute(
 					fCommandFactory.createMIDataWriteMemoryBytes(dmc, address.add(offset).toString(),
 							(buffer.length == wordCount * wordSize) ? buffer
@@ -409,8 +409,8 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		} else {
 			if (wordSize != 1) {
 				//The word-size is specified within the resulting command data-write-memory
-				//The word-size is defined in bytes although in the MI interface it's not clear if the meaning is 
-				//octets or system dependent bytes (minimum addressable memory). 
+				//The word-size is defined in bytes although in the MI interface it's not clear if the meaning is
+				//octets or system dependent bytes (minimum addressable memory).
 				//As this command is deprecated there is no good reason to augment the support for word sizes != 1
 				rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, REQUEST_FAILED,
 						DATA_WRITE_MEMORY_16_NOT_SUPPORTED, null));
@@ -450,7 +450,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 			IMemoryDMContext memoryDMC = DMContexts.getAncestorOfType(e.getDMContext(), IMemoryDMContext.class);
 			// It is the memory context we want to clear, not only the context that resumed.  The resumed context
 			// is probably a thread but that running thread could have changed any memory within the memory
-			// context.	    	
+			// context.
 			if (memoryDMC != null) {
 				fCommandCache.reset(memoryDMC);
 
@@ -587,7 +587,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				}
 			}
 
-			// Put at the end of the list and merge if necessary 
+			// Put at the end of the list and merge if necessary
 			addLast(block);
 			compact(size() - 1);
 			return true;
@@ -665,11 +665,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		/**
 		 *  This function walks the address-sorted memory block list to identify
 		 *  the 'missing' blocks (i.e. the holes) that need to be fetched on the target.
-		 * 
+		 *
 		 *  The idea is fairly simple but an illustration could perhaps help.
 		 *  Assume the cache holds a number of cached memory blocks with gaps i.e.
 		 *  there is un-cached memory areas between blocks A, B and C:
-		 * 
+		 *
 		 *        +---------+      +---------+      +---------+
 		 *        +    A    +      +    B    +      +    C    +
 		 *        +---------+      +---------+      +---------+
@@ -680,14 +680,14 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		 *   [g---+---------+------+---------+------+---------+----]
 		 *        :         :      :         :      :         :
 		 *        :   [h]   :      :   [i----+--]   :         :
-		 * 
-		 * 
+		 *
+		 *
 		 *  We have the following cases to consider.The requested block [a-i] either:
-		 * 
+		 *
 		 *  [1] Fits entirely before A, in one of the gaps, or after C
 		 *      with no overlap and no contiguousness (e.g. [a], [b], [c] and [d])
 		 *      -> Add the requested block to the list of blocks to fetch
-		 * 
+		 *
 		 *  [2] Starts before an existing block but overlaps part of it, possibly
 		 *      spilling in the gap following the cached block (e.g. [e], [f] and [g])
 		 *      -> Determine the length of the missing part (< count)
@@ -697,23 +697,23 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		 *         - Count reduced by cached block length (possibly becoming negative, e.g. [e])
 		 *      At this point, the updated requested block starts just beyond the cached block
 		 *      for the next iteration.
-		 * 
+		 *
 		 *  [3] Starts at or into an existing block and overlaps part of it ([h] and [i])
 		 *      -> Update the requested block for the next iteration:
 		 *         - Start address to point just after the end of the cached block
 		 *         - Count reduced by length to end of cached block (possibly becoming negative, e.g. [h])
 		 *      At this point, the updated requested block starts just beyond the cached block
 		 *      for the next iteration.
-		 * 
+		 *
 		 *  We iterate over the cached blocks list until there is no entry left or until
 		 *  the remaining requested block count is <= 0, meaning the result list contains
 		 *  only the sub-blocks needed to fill the gap(s), if any.
-		 * 
+		 *
 		 *  (As is often the case, it takes much more typing to explain it than to just do it :-)
 		 *
 		 *  What is missing is a parameter that indicates the minimal block size that is worth fetching.
-		 *  This is target-specific and straight in the realm of the coalescing function... 
-		 *  
+		 *  This is target-specific and straight in the realm of the coalescing function...
+		 *
 		 * @param reqBlockStart The address of the requested block
 		 * @param count Its length
 		 * @return A list of the sub-blocks to fetch in order to fill enough gaps in the memory cache
@@ -722,7 +722,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		private List<MemoryBlock> getListOfMissingBlocks(IAddress reqBlockStart, int wordCount, int wordSize) {
 			int octetCount = wordCount * wordSize;
 
-			LinkedList<MemoryBlock> list = new LinkedList<MemoryBlock>();
+			LinkedList<MemoryBlock> list = new LinkedList<>();
 			ListIterator<MemoryBlock> it = fMemoryBlockList.listIterator();
 
 			// Look for holes in the list of memory blocks
@@ -771,7 +771,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		 *  This function walks the address-sorted memory block list to get the
 		 *  cached memory bytes (possibly from multiple contiguous blocks).
 		 *  This function is called *after* the missing blocks have been read from
-		 *  the back end i.e. the requested memory is all cached. 
+		 *  the back end i.e. the requested memory is all cached.
 		 *
 		 *  Again, this is fairly simple. As we loop over the address-ordered list,
 		 *  There are really only 2 cases:
@@ -805,14 +805,14 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 				IAddress cachedBlockStart = cachedBlock.fAddress;
 				IAddress cachedBlockEnd = cachedBlock.fAddress.add(cachedBlock.fLengthInAddressableUnits);
 
-				// Case where the cached block overlaps completely the requested memory block  
+				// Case where the cached block overlaps completely the requested memory block
 				if (cachedBlockStart.distanceTo(reqBlockStart).longValue() >= 0
 						&& reqBlockEnd.distanceTo(cachedBlockEnd).longValue() >= 0) {
 					int pos = (int) cachedBlockStart.distanceTo(reqBlockStart).longValue() * wordSize;
 					System.arraycopy(cachedBlock.fBlock, pos, resultBlock, 0, count);
 				}
 
-				// Case where the beginning of the cached block is within the requested memory block  
+				// Case where the beginning of the cached block is within the requested memory block
 				else if (reqBlockStart.distanceTo(cachedBlockStart).longValue() >= 0
 						&& cachedBlockStart.distanceTo(reqBlockEnd).longValue() > 0) {
 					int pos = (int) reqBlockStart.distanceTo(cachedBlockStart).longValue() * wordSize;
@@ -820,7 +820,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 					System.arraycopy(cachedBlock.fBlock, 0, resultBlock, pos, length);
 				}
 
-				// Case where the end of the cached block is within the requested memory block  
+				// Case where the end of the cached block is within the requested memory block
 				else if (cachedBlockStart.distanceTo(reqBlockStart).longValue() >= 0
 						&& reqBlockStart.distanceTo(cachedBlockEnd).longValue() > 0) {
 					int pos = (int) cachedBlockStart.distanceTo(reqBlockStart).longValue() * wordSize;
@@ -834,7 +834,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		/**
 		 *  This function walks the address-sorted memory block list and updates
 		 *  the content with the actual memory just read from the target.
-		 * 
+		 *
 		 * @param modBlockStart
 		 * @param wordCount - Number of addressable units
 		 * @param modBlock
@@ -852,11 +852,11 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 
 				// For now, we only bother to update bytes already cached.
 				// Note: In a better implementation (v1.1), we would augment
-				// the cache with the missing memory blocks since we went 
+				// the cache with the missing memory blocks since we went
 				// through the pains of reading them in the first place.
 				// (this is left as an exercise to the reader :-)
 
-				// Case where the modified block is completely included in the cached block  
+				// Case where the modified block is completely included in the cached block
 				if (cachedBlockStart.distanceTo(modBlockStart).longValue() >= 0
 						&& modBlockEnd.distanceTo(cachedBlockEnd).longValue() >= 0) {
 					int pos = (int) cachedBlockStart.distanceTo(modBlockStart).longValue() * wordSize;
@@ -870,7 +870,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 					System.arraycopy(modBlock, pos, cachedBlock.fBlock, 0, (int) cachedBlock.fLengthInOctets);
 				}
 
-				// Case where the beginning of the modified block is within the cached block  
+				// Case where the beginning of the modified block is within the cached block
 				else if (cachedBlockStart.distanceTo(modBlockStart).longValue() >= 0
 						&& modBlockStart.distanceTo(cachedBlockEnd).longValue() > 0) {
 					int pos = (int) cachedBlockStart.distanceTo(modBlockStart).longValue() * wordSize;
@@ -878,7 +878,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 					System.arraycopy(modBlock, 0, cachedBlock.fBlock, pos, length);
 				}
 
-				// Case where the end of the modified block is within the cached block  
+				// Case where the end of the modified block is within the cached block
 				else if (cachedBlockStart.distanceTo(modBlockEnd).longValue() > 0
 						&& modBlockEnd.distanceTo(cachedBlockEnd).longValue() >= 0) {
 					int pos = (int) modBlockStart.distanceTo(cachedBlockStart).longValue() * wordSize;
@@ -898,7 +898,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 		 */
 		public void getMemory(IMemoryDMContext memoryDMC, final IAddress address, final int wordSize,
 				final int wordCount, final DataRequestMonitor<MemoryByte[]> drm) {
-			// Determine the number of read requests to issue 
+			// Determine the number of read requests to issue
 			List<MemoryBlock> missingBlocks = getListOfMissingBlocks(address, wordCount, wordSize);
 			int numberOfRequests = missingBlocks.size();
 
@@ -950,7 +950,7 @@ public class MIMemory extends AbstractDsfService implements IMemory, ICachingSer
 						@Override
 						protected void handleSuccess() {
 							// Clear the command cache (otherwise we can't guarantee
-							// that the subsequent memory read will be correct) 
+							// that the subsequent memory read will be correct)
 							fCommandCache.reset();
 
 							// Re-read the modified memory block to asynchronously update of the memory cache

@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2012 QNX Software Systems and others.
- * 
+ *
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,15 +41,15 @@ public class CBreakpointUIContributionFactory {
 	protected ArrayList<ICBreakpointsUIContribution> contributions;
 
 	private CBreakpointUIContributionFactory() {
-		contributions = new ArrayList<ICBreakpointsUIContribution>();
+		contributions = new ArrayList<>();
 		loadSubtypeContributions();
 	}
 
 	/**
 	 * Calculates the breakpoint contributions for the given breakpoint.
-	 * 
+	 *
 	 * @param breakpoint Breakpoint to find UI contributions for.
-	 * @return non-null array of ICBreakpointsUIContribution 
+	 * @return non-null array of ICBreakpointsUIContribution
 	 * @throws CoreException if cannot get marker attributes from bearkpoint
 	 */
 	public ICBreakpointsUIContribution[] getBreakpointUIContributions(IBreakpoint breakpoint) throws CoreException {
@@ -67,10 +67,10 @@ public class CBreakpointUIContributionFactory {
 
 	/**
 	 * Calculates the breakpoint contributions for the given breakpoint.
-	 * 
+	 *
 	 * @param breakpoint Breakpoint to find UI contributions for.
 	 * @param attributes Attributes of the breakpoint
-	 * @return non-null array of ICBreakpointsUIContribution 
+	 * @return non-null array of ICBreakpointsUIContribution
 	 * @throws CoreException if cannot get marker attributes from bearkpoint
 	 * @since 7.2
 	 */
@@ -92,14 +92,14 @@ public class CBreakpointUIContributionFactory {
 
 	/**
 	 * Calculates the breakpoint UI contributions for the given breakpoint.
-	 * 
-	 * @param debugModelId The debug model ID of the active debug context for 
+	 *
+	 * @param debugModelId The debug model ID of the active debug context for
 	 * which to calculate contributions.
 	 * @param breakpoint Breakpoint to find UI contributions for.
 	 * @param markerType Marker type of the breakpoint.
 	 * @param attributes Attributes of the breakpoint
-	 * @return non-null array of ICBreakpointsUIContribution 
-	 * @throws CoreException 
+	 * @return non-null array of ICBreakpointsUIContribution
+	 * @throws CoreException
 	 * @throws CoreException if cannot get marker attributes from berakpoint
 	 */
 	public ICBreakpointsUIContribution[] getBreakpointUIContributions(String debugModelId, String markerType,
@@ -111,16 +111,16 @@ public class CBreakpointUIContributionFactory {
 
 	/**
 	 * Calculates the breakpoint UI contributions for the given breakpoint.
-	 * 
-	 * @param debugModelId The debug model IDs of the active debug context for 
+	 *
+	 * @param debugModelId The debug model IDs of the active debug context for
 	 * which to calculate contributions.
 	 * @param breakpoint Breakpoint to find UI contributions for.
 	 * @param markerType Marker type of the breakpoint.
 	 * @param attributes Attributes of the breakpoint
-	 * @return non-null array of ICBreakpointsUIContribution 
-	 * @throws CoreException 
+	 * @return non-null array of ICBreakpointsUIContribution
+	 * @throws CoreException
 	 * @throws CoreException if cannot get marker attributes from berakpoint
-	 * 
+	 *
 	 * @since 7.2
 	 */
 	public ICBreakpointsUIContribution[] getBreakpointUIContributions(String[] debugModelIds, String markerType,
@@ -129,7 +129,7 @@ public class CBreakpointUIContributionFactory {
 		if (debugModelIds != null) {
 			debugModelIdsList = Arrays.asList(debugModelIds);
 		}
-		ArrayList<ICBreakpointsUIContribution> list = new ArrayList<ICBreakpointsUIContribution>();
+		ArrayList<ICBreakpointsUIContribution> list = new ArrayList<>();
 		for (ICBreakpointsUIContribution con : contributions) {
 			try {
 				if (con.getDebugModelId() == null

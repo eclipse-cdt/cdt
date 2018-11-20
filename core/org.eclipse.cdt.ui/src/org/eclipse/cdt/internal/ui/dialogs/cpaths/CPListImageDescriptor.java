@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 public class CPListImageDescriptor extends CompositeImageDescriptor {
 

@@ -14,16 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.filewizard;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.wizards.NewElementWizard;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.wizards.NewElementWizard;
 
 public abstract class AbstractFileCreationWizard extends NewElementWizard {
 	protected AbstractFileCreationWizardPage fPage;

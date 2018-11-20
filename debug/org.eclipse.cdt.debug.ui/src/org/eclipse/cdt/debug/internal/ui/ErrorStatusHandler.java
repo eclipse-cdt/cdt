@@ -37,7 +37,7 @@ public class ErrorStatusHandler implements IStatusHandler {
 				IDebugTarget target = ((IDebugElement) source).getDebugTarget();
 				title = target.getName();
 			} else {
-				// Source is sometimes an action delegate instance. Can't gather 
+				// Source is sometimes an action delegate instance. Can't gather
 				// anything useful from it. Use a generic title
 				title = CDebugUIMessages.getString("ErrorStatusHandler.1"); //$NON-NLS-1$
 			}

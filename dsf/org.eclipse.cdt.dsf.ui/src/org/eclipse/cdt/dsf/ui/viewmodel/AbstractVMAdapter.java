@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -38,11 +38,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
-/** 
+/**
  * Base implementation for View Model Adapters.  The implementation uses
- * its own single-thread executor for communicating with providers and 
- * layout nodes. 
- * 
+ * its own single-thread executor for communicating with providers and
+ * layout nodes.
+ *
  * @since 1.0
  */
 @ThreadSafe
@@ -54,7 +54,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter {
 			.synchronizedMap(new HashMap<IPresentationContext, IVMProvider>());
 
 	/**
-	 * Constructor for the View Model session.  It is tempting to have the 
+	 * Constructor for the View Model session.  It is tempting to have the
 	 * adapter register itself here with the session as the model adapter, but
 	 * that would mean that the adapter might get accessed on another thread
 	 * even before the deriving class is fully constructed.  So it it better
@@ -84,7 +84,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	@Override
@@ -118,7 +118,7 @@ abstract public class AbstractVMAdapter implements IVMAdapter {
 
 	/**
 	 * @return whether this VM adapter is disposed.
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public boolean isDisposed() {
@@ -223,11 +223,11 @@ abstract public class AbstractVMAdapter implements IVMAdapter {
 
 	/**
 	 * Dispatch given event to VM providers interested in events.
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	protected final void handleEvent(final Object event) {
-		final List<IVMEventListener> eventListeners = new ArrayList<IVMEventListener>();
+		final List<IVMEventListener> eventListeners = new ArrayList<>();
 
 		aboutToHandleEvent(event);
 
@@ -274,9 +274,9 @@ abstract public class AbstractVMAdapter implements IVMAdapter {
 
 	/**
 	 * Given event is about to be handled.
-	 * 
+	 *
 	 * @param event
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	protected void aboutToHandleEvent(final Object event) {
@@ -284,9 +284,9 @@ abstract public class AbstractVMAdapter implements IVMAdapter {
 
 	/**
 	 * Given event has been processed by all VM event listeners.
-	 * 
+	 *
 	 * @param event
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	protected void doneHandleEvent(final Object event) {

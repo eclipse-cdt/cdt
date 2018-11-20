@@ -51,10 +51,10 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param request
-	 * @return set of IExecutionDMContext if: 
-	 * 		- all elements are from a DSF session. 
+	 * @return set of IExecutionDMContext if:
+	 * 		- all elements are from a DSF session.
 	 * 		- all elements are from the same DSF session.
 	 */
 	protected IExecutionDMContext[] getDMContexts(IDebugCommandRequest request) {
@@ -74,7 +74,7 @@ public abstract class DsfDebugViewLayoutCommand implements IDebugCommandHandler 
 				return EMPTY_ARRAY;
 			}
 
-			// make sure all elements are from the same DSF session. 
+			// make sure all elements are from the same DSF session.
 			if (sessionId == null) {
 				sessionId = dmContext.getSessionId();
 			} else {

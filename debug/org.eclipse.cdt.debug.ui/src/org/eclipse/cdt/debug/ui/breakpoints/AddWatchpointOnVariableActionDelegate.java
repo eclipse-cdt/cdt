@@ -23,10 +23,10 @@ import org.eclipse.jface.viewers.TreeSelection;
 
 /**
  * Invoked when user right clicks on an element in the Variables or Expressions
- * view and selects 'Add Watchpoint (C/C++)'  Clients can register this action for 
- * their specific element type which adapts to {@link ICWatchpointTarget}. 
- * 
- * 
+ * view and selects 'Add Watchpoint (C/C++)'  Clients can register this action for
+ * their specific element type which adapts to {@link ICWatchpointTarget}.
+ *
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 7.2
  */
@@ -54,11 +54,11 @@ public class AddWatchpointOnVariableActionDelegate extends AddWatchpointActionDe
 		public void setCanCreate(boolean value) {
 			fCanCreate = value;
 		}
-	};
+	}
 
 	/**
 	 * Record the target variable/expression
-	 * 
+	 *
 	 * @see org.eclipse.ui.actions.ActionDelegate#selectionChanged(org.eclipse.jface.action.IAction,
 	 *      org.eclipse.jface.viewers.ISelection)
 	 */

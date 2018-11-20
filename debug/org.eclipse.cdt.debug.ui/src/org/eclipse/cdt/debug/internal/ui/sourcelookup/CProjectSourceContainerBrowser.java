@@ -51,7 +51,7 @@ public class CProjectSourceContainerBrowser extends AbstractSourceContainerBrows
 			ProjectSourceContainerDialog dialog = new ProjectSourceContainerDialog(shell, input, contentProvider,
 					labelProvider, SourceLookupUIMessages.projectSelection_chooseLabel);
 			if (dialog.open() == Window.OK) {
-				ArrayList<ISourceContainer> res = new ArrayList<ISourceContainer>();
+				ArrayList<ISourceContainer> res = new ArrayList<>();
 				for (Object element : dialog.getResult()) {
 					if (!(element instanceof IProject))
 						continue;

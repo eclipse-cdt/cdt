@@ -24,6 +24,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
+import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
+import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
+import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -51,27 +70,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsBroadcastingProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsEditableProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvider;
-import org.eclipse.cdt.core.language.settings.providers.ILanguageSettingsProvidersKeeper;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsBaseProvider;
-import org.eclipse.cdt.core.language.settings.providers.LanguageSettingsManager;
-import org.eclipse.cdt.core.language.settings.providers.ScannerDiscoveryLegacySupport;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.AbstractCPropertyTab;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
-import org.eclipse.cdt.internal.ui.newui.StatusMessageLine;
 
 /**
  * This tab presents language settings entries categorized by language
@@ -118,7 +116,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 	private static final String CLEAR_STR = Messages.LanguageSettingsProviderTab_Clear;
 
-	private Map<String, List<ILanguageSettingsProvider>> initialProvidersMap = new HashMap<String, List<ILanguageSettingsProvider>>();
+	private Map<String, List<ILanguageSettingsProvider>> initialProvidersMap = new HashMap<>();
 
 	/**
 	 * Label provider for language settings providers displayed by this tab.
@@ -207,7 +205,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				}
 
 				// convert to modifiable list
-				entriesList = new ArrayList<ICLanguageSettingEntry>(entriesList);
+				entriesList = new ArrayList<>(entriesList);
 
 				if (builtInCheckBox.getSelection() == false) {
 					for (Iterator<ICLanguageSettingEntry> iter = entriesList.iterator(); iter.hasNext();) {
@@ -773,7 +771,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		if (entries == null) {
 			entries = getSettingEntriesUpResourceTree(provider);
 		}
-		entries = new ArrayList<ICLanguageSettingEntry>(entries);
+		entries = new ArrayList<>(entries);
 		return entries;
 	}
 
@@ -804,7 +802,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		List<ILanguageSettingsProvider> initialProviders = initialProvidersMap.get(cfgDescription.getId());
 		if (initialProviders.contains(provider)) {
-			List<ILanguageSettingsProvider> providers = new ArrayList<ILanguageSettingsProvider>(
+			List<ILanguageSettingsProvider> providers = new ArrayList<>(
 					((ILanguageSettingsProvidersKeeper) cfgDescription).getLanguageSettingProviders());
 			int pos = providers.indexOf(provider);
 			if (pos >= 0) {
@@ -885,7 +883,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	private void clearProvider(ILanguageSettingsProvider provider) {
 		if (provider != null) {
 			String providerId = provider.getId();
-			List<ICLanguageSettingEntry> empty = new ArrayList<ICLanguageSettingEntry>();
+			List<ICLanguageSettingEntry> empty = new ArrayList<>();
 			saveEntries(provider, empty);
 			updateTreeForEntries(providerId, null);
 		}
@@ -1004,7 +1002,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 	 * Get list of providers to display in the settings entry tree.
 	 */
 	private List<ILanguageSettingsProvider> getProviders(String languageSettingId) {
-		List<ILanguageSettingsProvider> itemsList = new LinkedList<ILanguageSettingsProvider>();
+		List<ILanguageSettingsProvider> itemsList = new LinkedList<>();
 		IResource rc = getResource();
 		ICConfigurationDescription cfgDescription = getConfigurationDescription();
 		if (rc != null && cfgDescription instanceof ILanguageSettingsProvidersKeeper) {
@@ -1027,7 +1025,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 	/**
 	 * Re-reads and refreshes the entries tree.
-	 * 
+	 *
 	 * @param selectedProviderId - provider of the entry to select after update.
 	 *    If the entry is {@code null} the provider itself will be selected.
 	 * @param selectedEntry - entry to select in the tree after update.
@@ -1085,7 +1083,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 
 		// Use a TreeMap to sort the languages by name.
 		// For each name we keep a list of ids in case of name overlap.
-		Map<String, List<String>> map = new TreeMap<String, List<String>>();
+		Map<String, List<String>> map = new TreeMap<>();
 		for (String langId : languageIds) {
 			ILanguage language = LanguageManager.getInstance().getLanguage(langId);
 
@@ -1095,7 +1093,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 				continue;
 			List<String> langIds = map.get(langName);
 			if (langIds == null) {
-				langIds = new ArrayList<String>();
+				langIds = new ArrayList<>();
 				map.put(langName, langIds);
 			}
 			langIds.add(langId);
@@ -1192,7 +1190,7 @@ public class LanguageSettingsEntriesTab extends AbstractCPropertyTab {
 			IResource rc = getResource();
 			List<ILanguageSettingsProvider> oldProviders = ((ILanguageSettingsProvidersKeeper) cfgDescription)
 					.getLanguageSettingProviders();
-			List<ILanguageSettingsProvider> newProviders = new ArrayList<ILanguageSettingsProvider>(
+			List<ILanguageSettingsProvider> newProviders = new ArrayList<>(
 					oldProviders.size());
 
 			// clear entries for a given resource for all languages where applicable

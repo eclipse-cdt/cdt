@@ -171,7 +171,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Returns the working directory specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @deprecated Should use getWorkingDirectory()
 	 * @param configuration
 	 *            launch configuration
@@ -188,7 +188,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Returns the working directory specified by the given launch
 	 * configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the working directory specified by the given launch
@@ -205,7 +205,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * configuration. Returns <code>null</code> if a working directory is not
 	 * specified. If specified, the working is verified to point to an existing
 	 * directory in the local file system.
-	 * 
+	 *
 	 * @param configuration launch configuration
 	 * @return an absolute path to a directory in the local file system, or
 	 * <code>null</code> if unspecified
@@ -228,7 +228,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Throws a core exception with an error status object built from the given
 	 * message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message
 	 *            the status message
 	 * @param exception
@@ -306,7 +306,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * Assigns a default source locator to the given launch if a source locator
 	 * has not yet been assigned to it, and the associated launch configuration
 	 * does not specify a source locator.
-	 * 
+	 *
 	 * @param launch
 	 *            launch object
 	 * @param configuration
@@ -343,7 +343,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	/**
 	 * Returns the program arguments as a String.
-	 * 
+	 *
 	 * @return the program arguments as a String
 	 */
 	public String getProgramArguments(ILaunchConfiguration config) throws CoreException {
@@ -352,7 +352,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	/**
 	 * Returns the program arguments as an array of individual arguments.
-	 * 
+	 *
 	 * @return the program arguments as an array of individual arguments
 	 */
 	public String[] getProgramArgumentsArray(ILaunchConfiguration config) throws CoreException {
@@ -426,7 +426,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * Verifies the working directory specified by the given launch
 	 * configuration exists, and returns the working directory, or
 	 * <code>null</code> if none is specified.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return the working directory specified by the given launch
@@ -471,7 +471,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	/**
 	 * Recursively creates a set of projects referenced by the current project
-	 * 
+	 *
 	 * @param proj
 	 *            The current project
 	 * @param referencedProjSet
@@ -495,7 +495,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * creates a list of project ordered by their build order from an unordered
 	 * list of projects.
-	 * 
+	 *
 	 * @param resourceCollection
 	 *            The list of projects to sort.
 	 * @return A new list of projects, ordered by build order.
@@ -537,7 +537,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Builds the current project and all of it's prerequisite projects if
 	 * necessary. Respects specified build order if any exists.
-	 * 
+	 *
 	 * @param configuration
 	 *            the configuration being launched
 	 * @param mode
@@ -610,10 +610,10 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Sets up a project for building by making sure the active configuration is set to the configuration chosen to
 	 * be built before the launch.
-	 * 
+	 *
 	 * If the configuration to be built before launch was set to be automatically discovered, it is set to the unique
 	 * build configuration for the project that outputs to the directory containing the program to be launched.
-	 * 
+	 *
 	 * @param configuration The launch configuration being launched.
 	 * @param buildProject The project to be build before the launch configuration is launched.
 	 */
@@ -652,7 +652,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 	 * Searches for compile errors in the current project and any of its
 	 * prerequisite projects. If any compile errors, give the user a chance to
 	 * abort the launch and correct the errors.
-	 * 
+	 *
 	 * @param configuration
 	 * @param mode
 	 * @param monitor
@@ -762,7 +762,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	/**
 	 * Searches for compile errors in the specified project
-	 * 
+	 *
 	 * @param proj
 	 *            The project to search
 	 * @return true if compile errors exist, otherwise false
@@ -785,7 +785,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -841,7 +841,8 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 		Status status = new Status(IStatus.ERROR, getPluginID(),
 				ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_BINARY,
 				LaunchMessages.AbstractCLaunchDelegate_Program_is_not_a_recognized_executable + " " //$NON-NLS-1$
-						+ exePath.toOSString(), exception);
+						+ exePath.toOSString(),
+				exception);
 		throw new CoreException(status);
 	}
 
@@ -946,7 +947,7 @@ abstract public class AbstractCLaunchDelegate extends LaunchConfigurationDelegat
 
 	/**
 	 * Returns the default process attribute map for C/C++ processes.
-	 * 
+	 *
 	 * @return default process attribute map for C/C++ processes
 	 */
 	protected Map getDefaultProcessMap() {

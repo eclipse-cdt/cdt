@@ -47,7 +47,7 @@ import org.osgi.framework.Version;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class UpdateManagedProjectManager {
-	static private ThreadLocal<Map<String, UpdateManagedProjectManager>> fThreadInfo = new ThreadLocal<Map<String, UpdateManagedProjectManager>>();
+	static private ThreadLocal<Map<String, UpdateManagedProjectManager>> fThreadInfo = new ThreadLocal<>();
 	static private IOverwriteQuery fBackupFileOverwriteQuery = null;
 	static private IOverwriteQuery fOpenQuestionQuery = null;
 	static private IOverwriteQuery fUpdateProjectQuery = null;
@@ -109,7 +109,7 @@ public class UpdateManagedProjectManager {
 	static private Map<String, UpdateManagedProjectManager> getManagerMap(boolean create) {
 		Map<String, UpdateManagedProjectManager> map = fThreadInfo.get();
 		if (map == null && create) {
-			map = new HashMap<String, UpdateManagedProjectManager>();
+			map = new HashMap<>();
 			fThreadInfo.set(map);
 		}
 		return map;
@@ -157,7 +157,7 @@ public class UpdateManagedProjectManager {
 	/*
 	 *  Creates a back-up file. This method is useful for the vendor who wants
 	 *  to create a backup of '.cdtbuild' file before project conversion.
-	
+
 	 * @param settingsFile
 	 * @param suffix
 	 * @param monitor
@@ -198,12 +198,11 @@ public class UpdateManagedProjectManager {
 				if (query != null)
 					shouldUpdate = ProjectConverter.getBooleanFromQueryAnswer(query.queryOverwrite(dstFile.getName()));
 				else
-					shouldUpdate = ProjectConverter
-							.openQuestion(fProject, "UpdateManagedProjectManager.0", //$NON-NLS-1$
-									ConverterMessages.getResourceString("UpdateManagedProjectManager.0"), //$NON-NLS-1$
-									ConverterMessages.getFormattedString("UpdateManagedProjectManager.1", //$NON-NLS-1$
-											new String[] { dstFile.getName(), project.getName() }),
-									fOpenQuestionQuery, false);
+					shouldUpdate = ProjectConverter.openQuestion(fProject, "UpdateManagedProjectManager.0", //$NON-NLS-1$
+							ConverterMessages.getResourceString("UpdateManagedProjectManager.0"), //$NON-NLS-1$
+							ConverterMessages.getFormattedString("UpdateManagedProjectManager.1", //$NON-NLS-1$
+									new String[] { dstFile.getName(), project.getName() }),
+							fOpenQuestionQuery, false);
 
 				if (shouldUpdate) {
 					dstFile.delete();
@@ -334,7 +333,8 @@ public class UpdateManagedProjectManager {
 						ConverterMessages.getResourceString("UpdateManagedProjectManager.3"), //$NON-NLS-1$
 						ConverterMessages.getFormattedString("UpdateManagedProjectManager.4", //$NON-NLS-1$
 								new String[] { fProject.getName(), version.toString(),
-										ManagedBuildManager.getBuildInfoVersion().toString() }), fOpenQuestionQuery, false);
+										ManagedBuildManager.getBuildInfoVersion().toString() }),
+						fOpenQuestionQuery, false);
 
 			if (!shouldUpdate) {
 				fIsInfoReadOnly = true;

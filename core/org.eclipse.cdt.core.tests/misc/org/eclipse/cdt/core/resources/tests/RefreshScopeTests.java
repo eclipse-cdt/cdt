@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,10 +18,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -48,6 +44,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * @author crecoskie
@@ -111,7 +111,7 @@ public class RefreshScopeTests extends TestCase {
 		 *    		folder 4
 		 *    		folder 5
 		 *    	folder 6
-		 * 
+		 *
 		 */
 		final IFolder folder1 = project.getFolder("folder1");
 		fFolder1 = folder1;
@@ -154,7 +154,7 @@ public class RefreshScopeTests extends TestCase {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		manager.clearAllData();
 
-		// TEST 1: 
+		// TEST 1:
 		// add resource "folder1" under config1.
 		manager.addResourceToRefresh(fProject, config1, fFolder1);
 		// now, check that it was added.
@@ -225,7 +225,7 @@ public class RefreshScopeTests extends TestCase {
 		RefreshScopeManager manager = RefreshScopeManager.getInstance();
 		manager.clearAllData();
 
-		HashMap<IResource, List<RefreshExclusion>> config1_resourceMap = new HashMap<IResource, List<RefreshExclusion>>();
+		HashMap<IResource, List<RefreshExclusion>> config1_resourceMap = new HashMap<>();
 		config1_resourceMap.put(fFolder1, new LinkedList<RefreshExclusion>());
 		config1_resourceMap.put(fFolder2, new LinkedList<RefreshExclusion>());
 		manager.setResourcesToExclusionsMap(fProject, config1, config1_resourceMap);
@@ -438,7 +438,7 @@ public class RefreshScopeTests extends TestCase {
 		 *    		folder 4 - exclude
 		 *    		folder 5 - include
 		 *    	folder 6 - exclude
-		 * 
+		 *
 		 */
 
 		ResourceExclusion exclusion1 = new ResourceExclusion();

@@ -47,7 +47,7 @@ public class CModelException extends CoreException {
 
 	/**
 	 * Creates a C model exception for the given <code>CoreException</code>.
-	 * Equivalent to 
+	 * Equivalent to
 	 * <code>CModelException(exception,ICModelStatusConstants.CORE_EXCEPTION</code>.
 	 *
 	 * @param exception the <code>CoreException</code>

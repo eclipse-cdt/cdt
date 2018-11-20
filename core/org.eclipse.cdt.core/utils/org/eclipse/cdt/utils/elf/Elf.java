@@ -18,6 +18,14 @@ import static org.eclipse.cdt.internal.core.ByteUtils.makeInt;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeLong;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
 
+import java.io.EOFException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel.MapMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
@@ -28,14 +36,6 @@ import org.eclipse.cdt.utils.Addr64;
 import org.eclipse.cdt.utils.Addr64Factory;
 import org.eclipse.cdt.utils.ERandomAccessFile;
 import org.eclipse.cdt.utils.debug.dwarf.DwarfReader;
-
-import java.io.EOFException;
-import java.io.IOException;
-import java.nio.ByteBuffer;
-import java.nio.channels.FileChannel.MapMode;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
 
 public class Elf {
 	public final static int ELF32_ADDR_SIZE = 4;
@@ -646,7 +646,7 @@ public class Elf {
 			return new Dynamic[0];
 		}
 		section.makeSureNotCompressed();
-		ArrayList<Dynamic> dynList = new ArrayList<Dynamic>();
+		ArrayList<Dynamic> dynList = new ArrayList<>();
 		efile.seek(section.sh_offset);
 		int off = 0;
 		// We must assume the section is a table ignoring the sh_entsize as it
@@ -1007,7 +1007,7 @@ public class Elf {
 	public Section[] getSections(int type) throws IOException {
 		if (sections == null)
 			getSections();
-		ArrayList<Section> slist = new ArrayList<Section>();
+		ArrayList<Section> slist = new ArrayList<>();
 		for (int i = 0; i < sections.length; i++) {
 			if (sections[i].sh_type == type)
 				slist.add(sections[i]);
@@ -1084,7 +1084,7 @@ public class Elf {
 			numSyms = (int) section.sh_size / (int) section.sh_entsize;
 		}
 		section.makeSureNotCompressed();
-		ArrayList<Symbol> symList = new ArrayList<Symbol>(numSyms);
+		ArrayList<Symbol> symList = new ArrayList<>(numSyms);
 		long offset = section.sh_offset;
 		for (int c = 0; c < numSyms; offset += section.sh_entsize, c++) {
 			efile.seek(offset);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -19,16 +19,14 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.WordRule;
-
 import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
 import org.eclipse.cdt.ui.text.AbstractCScanner;
 import org.eclipse.cdt.ui.text.ICColorConstants;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-
-import org.eclipse.cdt.internal.ui.text.util.CWordDetector;
+import org.eclipse.jface.text.rules.IRule;
+import org.eclipse.jface.text.rules.IToken;
+import org.eclipse.jface.text.rules.WordRule;
 
 /**
  * A C/C++ code scanner.
@@ -43,7 +41,7 @@ public final class CCodeScanner extends AbstractCScanner {
 
 	/**
 	 * Creates a C/C++ code scanner.
-	 * @param factory 
+	 * @param factory
 	 * @param keywords  the keywords defined by the language dialect
 	 */
 	public CCodeScanner(ITokenStoreFactory factory, ICLanguageKeywords keywords) {
@@ -57,7 +55,7 @@ public final class CCodeScanner extends AbstractCScanner {
 	 */
 	protected List<IRule> createRules() {
 
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 		IToken token;
 
 		token = getToken(ICColorConstants.C_DEFAULT);

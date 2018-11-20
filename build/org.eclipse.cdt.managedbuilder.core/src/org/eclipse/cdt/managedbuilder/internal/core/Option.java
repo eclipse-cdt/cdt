@@ -232,7 +232,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			categoryId = option.categoryId;
 		}
 		if (option.builtIns != null) {
-			builtIns = new ArrayList<OptionStringValue>(option.builtIns);
+			builtIns = new ArrayList<>(option.builtIns);
 		}
 		if (option.browseType != null) {
 			browseType = option.browseType;
@@ -247,9 +247,9 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			resourceFilter = option.resourceFilter;
 		}
 		if (option.applicableValuesList != null) {
-			applicableValuesList = new ArrayList<String>(option.applicableValuesList);
-			commandsMap = new HashMap<String, String>(option.commandsMap);
-			namesMap = new HashMap<String, String>(option.namesMap);
+			applicableValuesList = new ArrayList<>(option.applicableValuesList);
+			commandsMap = new HashMap<>(option.commandsMap);
+			namesMap = new HashMap<>(option.namesMap);
 		}
 		if (option.treeRoot != null) {
 			treeRoot = new TreeRoot((TreeRoot) option.treeRoot);
@@ -296,13 +296,13 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			case UNDEF_MACRO_FILES:
 				if (option.value != null) {
 					@SuppressWarnings("unchecked")
-					ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(
+					ArrayList<OptionStringValue> list = new ArrayList<>(
 							(ArrayList<OptionStringValue>) option.value);
 					value = list;
 				}
 				if (option.defaultValue != null) {
 					@SuppressWarnings("unchecked")
-					ArrayList<OptionStringValue> list = new ArrayList<OptionStringValue>(
+					ArrayList<OptionStringValue> list = new ArrayList<>(
 							(ArrayList<OptionStringValue>) option.defaultValue);
 					defaultValue = list;
 				}
@@ -602,7 +602,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 						ICStorageElement configElement = configNode;
 						String optId = SafeStringInterner.safeIntern(configElement.getAttribute(ID));
 						if (i == 0) {
-							applicableValuesList = new ArrayList<String>();
+							applicableValuesList = new ArrayList<>();
 							if (defaultValue == null) {
 								defaultValue = optId; //  Default value to be overridden is default is specified
 							}
@@ -650,8 +650,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 				//  Note:  These string-list options do not load either the "value" or
 				//         "defaultValue" attributes.  Instead, the ListOptionValue children
 				//         are loaded in the value field.
-				List<OptionStringValue> vList = new ArrayList<OptionStringValue>();
-				List<OptionStringValue> biList = new ArrayList<OptionStringValue>();
+				List<OptionStringValue> vList = new ArrayList<>();
+				List<OptionStringValue> biList = new ArrayList<>();
 				configElements = element.getChildren();
 				for (ICStorageElement veNode : configElements) {
 					if (veNode.getName().equals(LIST_VALUE)) {
@@ -1473,7 +1473,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	private Map<String, String> getCommandMap() {
 		if (commandsMap == null) {
-			commandsMap = new HashMap<String, String>();
+			commandsMap = new HashMap<>();
 		}
 		return commandsMap;
 	}
@@ -1516,7 +1516,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 	 */
 	private Map<String, String> getNameMap() {
 		if (namesMap == null) {
-			namesMap = new HashMap<String, String>();
+			namesMap = new HashMap<>();
 		}
 		return namesMap;
 	}
@@ -1794,7 +1794,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return null;
 		}
 
-		List<String> valueList = new ArrayList<String>(list.size());
+		List<String> valueList = new ArrayList<>(list.size());
 		for (int i = 0; i < list.size(); i++) {
 			OptionStringValue el = list.get(i);
 			valueList.add(el.getValue());
@@ -1807,7 +1807,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			return null;
 		}
 
-		List<OptionStringValue> lvList = new ArrayList<OptionStringValue>(list.size());
+		List<OptionStringValue> lvList = new ArrayList<>(list.size());
 		for (int i = 0; i < list.size(); i++) {
 			String v = list.get(i);
 			lvList.add(new OptionStringValue(v, builtIn));
@@ -2034,7 +2034,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			if (value == null) {
 				this.value = null;
 			} else {
-				this.value = new ArrayList<OptionStringValue>(Arrays.asList(value));
+				this.value = new ArrayList<>(Arrays.asList(value));
 			}
 		} else {
 			throw new BuildException(ManagedMakeMessages.getResourceString("Option.error.bad_value_type")); //$NON-NLS-1$
@@ -2255,7 +2255,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					for (int i = 0; i < enumElements.length; ++i) {
 						String optId = SafeStringInterner.safeIntern(enumElements[i].getAttribute(ID));
 						if (i == 0) {
-							applicableValuesList = new ArrayList<String>();
+							applicableValuesList = new ArrayList<>();
 							if (defaultValue == null) {
 								defaultValue = optId; //  Default value to be overridden if default is specified
 							}
@@ -2278,7 +2278,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					if (treeRootConfigs != null && treeRootConfigs.length == 1) {
 						IManagedConfigElement treeRootConfig = treeRootConfigs[0];
 						treeRoot = new TreeRoot(treeRootConfig, element, getParent() instanceof IToolChain);
-						applicableValuesList = new ArrayList<String>();
+						applicableValuesList = new ArrayList<>();
 						iterateOnTree(treeRoot, new ITreeNodeIterator() {
 
 							@Override
@@ -2317,8 +2317,8 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 					IManagedConfigElement[] vElements = element.getChildren(LIST_VALUE);
 					for (IManagedConfigElement vElement : vElements) {
 						if (vList == null) {
-							vList = new ArrayList<OptionStringValue>();
-							builtIns = new ArrayList<OptionStringValue>();
+							vList = new ArrayList<>();
+							builtIns = new ArrayList<>();
 						}
 						OptionStringValue ve = new OptionStringValue(vElement);
 						if (ve.isBuiltIn()) {
@@ -2774,7 +2774,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 
 			IManagedConfigElement[] treeChildren = element.getChildren(TREE_VALUE);
 			if (treeChildren != null && treeChildren.length > 0) {
-				children = new ArrayList<IOption.ITreeOption>();
+				children = new ArrayList<>();
 				for (IManagedConfigElement configElement : treeChildren) {
 					children.add(new TreeOption(configElement, this, readTool));
 				}
@@ -2791,7 +2791,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 			this.parent = parent;
 
 			if (clone.children != null) {
-				children = new ArrayList<IOption.ITreeOption>();
+				children = new ArrayList<>();
 				for (ITreeOption cloneChild : clone.children) {
 					children.add(new TreeOption((TreeOption) cloneChild, this));
 				}
@@ -2808,7 +2808,7 @@ public class Option extends BuildObject implements IOption, IBuildPropertiesRest
 		public ITreeOption addChild(String id, String name) {
 			ITreeOption option = new TreeOption(id, name, this);
 			if (children == null) {
-				children = new ArrayList<IOption.ITreeOption>();
+				children = new ArrayList<>();
 			}
 			children.add(0, option);
 			return option;

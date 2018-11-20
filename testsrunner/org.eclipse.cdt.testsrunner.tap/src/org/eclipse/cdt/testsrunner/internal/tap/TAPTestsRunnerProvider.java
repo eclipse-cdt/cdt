@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Anton Gorenkov 
+ * Copyright (c) 2011, 2015 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,7 +33,7 @@ import org.eclipse.cdt.testsrunner.model.TestingException;
 /**
  * The Tests Runner provider plug-in to run tests with the Test Anything
  * Protocol.
- * 
+ *
  * <p>
  * Parses the standard output of an application for TAP conforming output.
  *
@@ -41,18 +41,18 @@ import org.eclipse.cdt.testsrunner.model.TestingException;
  * The YAML output isn't parsed, but logged like any unknown output. As an
  * unofficial extension, any lines with gcc compatible diagnostic output of the
  * kind
- * 
+ *
  * <pre>
  * &lt;filename&gt;: (error|warning|info): ...
  * &lt;filename&gt;:&lt;line&gt;: (error|warning|info): ...</pre>
- * 
+ *
  * <p>
- * will be reported with the correct level and location. 
+ * will be reported with the correct level and location.
  *
  * <p>
  * As with the Boost test runner, the <tt>stdout</tt> buffering might delay
  * test output if not disabled by
- * 
+ *
  * <pre>
  * setvbuf(stdout, NULL, _IONBF, 0);</pre>
  */
@@ -89,7 +89,7 @@ public class TAPTestsRunnerProvider implements ITestsRunnerProvider {
 	@Override
 	public void run(ITestModelUpdater modelUpdater, InputStream inputStream) throws TestingException {
 		// The TAP is really has lots of optional data and supports the most
-		// bare minimum possible for test output 
+		// bare minimum possible for test output
 
 		try {
 			// The TAP version may only be specified on the first line
@@ -131,7 +131,7 @@ public class TAPTestsRunnerProvider implements ITestsRunnerProvider {
 					// but we may have a message as to why we had to skip these
 					// tests, which we don't have if the test has completed
 					// without a matching number of test results to the
-					// planned number of tests  
+					// planned number of tests
 					if (m.group("skip") != null) { //$NON-NLS-1$
 						String message = m.group("message"); //$NON-NLS-1$
 						for (; currentTestNumber <= plannedCount; currentTestNumber += 1) {

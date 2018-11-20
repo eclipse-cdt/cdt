@@ -818,7 +818,7 @@ public class CDataUtil {
 
 			for (int i = 0; i < includeList.size(); i++) {
 				ICSourceEntry oldEntry = includeList.get(i);
-				List<IPath> tmp = new ArrayList<IPath>(1);
+				List<IPath> tmp = new ArrayList<>(1);
 				tmp.add(path);
 				ICSourceEntry newEntry = addExcludePaths(oldEntry, tmp, true);
 				if (newEntry != null)

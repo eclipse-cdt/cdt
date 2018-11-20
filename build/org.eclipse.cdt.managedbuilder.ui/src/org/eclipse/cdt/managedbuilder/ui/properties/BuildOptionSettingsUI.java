@@ -48,13 +48,13 @@ import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 import org.eclipse.cdt.managedbuilder.macros.BuildMacroException;
 import org.eclipse.cdt.managedbuilder.macros.IBuildMacroProvider;
 import org.eclipse.cdt.ui.newui.AbstractPage;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
@@ -99,7 +99,7 @@ import org.eclipse.ui.dialogs.PatternFilter;
  * Option settings page in project properties Build Settings under Tool Settings tab.
  */
 public class BuildOptionSettingsUI extends AbstractToolSettingUI {
-	private Map<String, FieldEditor> fieldsMap = new HashMap<String, FieldEditor>();
+	private Map<String, FieldEditor> fieldsMap = new HashMap<>();
 	private IOptionCategory category;
 	private IHoldsOptions optionHolder;
 	/** Option Holders involved */
@@ -107,7 +107,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 	/** The index of the current IHoldsOptions in ohs */
 	private int curr = -1;
 	private Map<String, CustomFieldEditorDescriptor> customFieldEditorDescriptorIndex;
-	private Map<FieldEditor, Composite> fieldEditorsToParentMap = new HashMap<FieldEditor, Composite>();
+	private Map<FieldEditor, Composite> fieldEditorsToParentMap = new HashMap<>();
 	/** True if the user selected "Display tool option tips at a fixed location" in Preferences */
 	private boolean displayFixedTip;
 	/** type of mouse action the displayFixedTip responds to.
@@ -206,7 +206,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 			 * which contain the option category and accept the input type
 			 * of this option holder.
 			 */
-			ArrayList<IHoldsOptions> lst = new ArrayList<IHoldsOptions>();
+			ArrayList<IHoldsOptions> lst = new ArrayList<>();
 			if (optionHolder instanceof ITool) {
 				String ext = ((ITool) optionHolder).getDefaultInputExtension();
 				for (int i = 0; i < ris.length; i++) {
@@ -417,7 +417,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 							// in the plugin.xml file) in the UI Combobox. This refrains the user from selecting an
 							// invalid value and avoids issuing an error message.
 							String[] enumNames = opt.getApplicableValues();
-							Vector<String> enumValidList = new Vector<String>();
+							Vector<String> enumValidList = new Vector<>();
 							for (int i = 0; i < enumNames.length; ++i) {
 								if (opt.getValueHandler().isEnumValueAppropriate(config, opt.getOptionHolder(), opt,
 										opt.getValueHandlerExtraArgument(), enumNames[i])) {
@@ -564,7 +564,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		if (this.customFieldEditorDescriptorIndex != null)
 			return;
 
-		this.customFieldEditorDescriptorIndex = new HashMap<String, CustomFieldEditorDescriptor>();
+		this.customFieldEditorDescriptorIndex = new HashMap<>();
 
 		IExtensionPoint ep = Platform.getExtensionRegistry()
 				.getExtensionPoint(ManagedBuilderUIPlugin.getUniqueIdentifier() + ".buildDefinitionsUI"); //$NON-NLS-1$
@@ -977,7 +977,7 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 		boolean selectNewEnum = true;
 		boolean selectDefault = false;
 
-		Vector<String> enumValidList = new Vector<String>();
+		Vector<String> enumValidList = new Vector<>();
 		for (int i = 0; i < enumNames.length; ++i) {
 			if (opt.getValueHandler().isEnumValueAppropriate(config, opt.getOptionHolder(), opt,
 					opt.getValueHandlerExtraArgument(), enumNames[i])) {
@@ -1166,14 +1166,14 @@ public class BuildOptionSettingsUI extends AbstractToolSettingUI {
 						if (children == null)
 							return null;
 
-						List<ITreeOption> childrenList = new ArrayList<ITreeOption>(Arrays.asList(children));
+						List<ITreeOption> childrenList = new ArrayList<>(Arrays.asList(children));
 
 						// Check if any of the children has empty name
 						List<ITreeOption> toRemove = null;
 						for (ITreeOption child : children) {
 							if (child.getName() == null || child.getName().trim().length() == 0) {
 								if (toRemove == null) {
-									toRemove = new ArrayList<ITreeOption>();
+									toRemove = new ArrayList<>();
 								}
 								toRemove.add(child);
 							}

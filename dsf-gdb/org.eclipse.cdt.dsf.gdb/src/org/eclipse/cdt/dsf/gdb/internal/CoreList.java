@@ -46,20 +46,20 @@ public class CoreList {
 		fCoreFileName = fileName;
 	}
 
-	/** 
+	/**
 	 * Alternate constructor - info comes from IResourcesInformation object,
-	 *  that was obtained from GDB 
+	 *  that was obtained from GDB
 	 */
 	public CoreList(IResourcesInformation info) {
 		fResourcesInfo = info;
 	}
 
 	/** Returns the list of cores. The core information will only
-	 *  be parsed once and the result cached. To force a re-parse,  
+	 *  be parsed once and the result cached. To force a re-parse,
 	 *  one must create a new CoreList object. */
 	public ICoreInfo[] getCoreList() {
 
-		// already parsed info? 
+		// already parsed info?
 		if (fCoreList != null) {
 			return fCoreList;
 		}
@@ -74,12 +74,12 @@ public class CoreList {
 	/**
 	 * This method will only parse /proc/cpuinfo once and cache
 	 * the result.  To force a re-parse, one must create a new
-	 * CoreList object. 
+	 * CoreList object.
 	 */
 	private void getCoreListFromFile() {
 		File cpuInfo = new File(fCoreFileName);
 
-		Vector<ICoreInfo> coreInfo = new Vector<ICoreInfo>();
+		Vector<ICoreInfo> coreInfo = new Vector<>();
 		BufferedReader reader = null;
 		try {
 			String processorId = null;
@@ -134,7 +134,7 @@ public class CoreList {
 	}
 
 	private void getCoreListFromResourceInfo() {
-		Vector<ICoreInfo> coreInfo = new Vector<ICoreInfo>();
+		Vector<ICoreInfo> coreInfo = new Vector<>();
 
 		int processorIdIndex = -1;
 		int physicalIdIndex = -1;

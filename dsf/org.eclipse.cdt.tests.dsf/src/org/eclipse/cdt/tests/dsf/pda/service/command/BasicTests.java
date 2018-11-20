@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * 
+ *
  */
 public class BasicTests extends CommandControlTestsBase {
 
@@ -61,10 +61,10 @@ public class BasicTests extends CommandControlTestsBase {
 
 		class CommandListener implements ICommandListener {
 
-			List<CommandInfo> fDoneCommands = new LinkedList<CommandInfo>();
-			List<CommandInfo> fQueuedCommands = new LinkedList<CommandInfo>();
-			List<CommandInfo> fRemovedCommands = new LinkedList<CommandInfo>();
-			List<CommandInfo> fSentCommands = new LinkedList<CommandInfo>();
+			List<CommandInfo> fDoneCommands = new LinkedList<>();
+			List<CommandInfo> fQueuedCommands = new LinkedList<>();
+			List<CommandInfo> fRemovedCommands = new LinkedList<>();
+			List<CommandInfo> fSentCommands = new LinkedList<>();
 
 			@Override
 			public void commandDone(ICommandToken token, ICommandResult result) {

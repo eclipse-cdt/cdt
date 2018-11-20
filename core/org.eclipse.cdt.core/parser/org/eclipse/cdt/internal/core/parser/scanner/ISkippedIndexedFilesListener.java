@@ -23,7 +23,7 @@ public interface ISkippedIndexedFilesListener {
 
 	/**
 	 * Notifies the listeners that an include file has been skipped.
-	 * @param offset offset at which the file is included (see {@link ASTNode#getOffset()} 
+	 * @param offset offset at which the file is included (see {@link ASTNode#getOffset()}
 	 * @param fileContent information about the skipped file.
 	 */
 	void skippedFile(int offset, InternalFileContent fileContent);

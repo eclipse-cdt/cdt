@@ -37,10 +37,12 @@ public class XlcCPPASTVectorTypeSpecifier extends CPPASTSimpleDeclSpecifier impl
 		return copy(copy, style);
 	}
 
+	@Override
 	public boolean isPixel() {
 		return isPixel;
 	}
 
+	@Override
 	public void setPixel(boolean isPixel) {
 		this.isPixel = isPixel;
 	}

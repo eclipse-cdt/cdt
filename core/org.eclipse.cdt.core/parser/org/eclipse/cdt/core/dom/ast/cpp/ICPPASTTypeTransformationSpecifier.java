@@ -17,10 +17,10 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUnaryTypeTransformation.Operator;
 
 /**
- * A decl-specifier that represents the application of an intrinsic type 
+ * A decl-specifier that represents the application of an intrinsic type
  * transformation operator like __underlying_type(T). Intrinsic operators
  * of this form take a type as input, and evaluate to a type.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.6

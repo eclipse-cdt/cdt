@@ -27,7 +27,7 @@ public class CModelInfo extends OpenableInfo {
 	Object[] nonCResources = null;
 
 	/**
-	 * Constructs a new C Model Info 
+	 * Constructs a new C Model Info
 	 */
 	protected CModelInfo(CElement element) {
 		super(element);

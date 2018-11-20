@@ -37,7 +37,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	/**
 	 * Creates a new working copy manager that co-operates with the given
 	 * compilation unit document provider.
-	 * 
+	 *
 	 * @param provider the provider
 	 */
 	public WorkingCopyManager(IMakefileDocumentProvider provider) {

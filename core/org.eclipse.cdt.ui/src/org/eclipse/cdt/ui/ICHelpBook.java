@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  **********************************************************************/
 package org.eclipse.cdt.ui;

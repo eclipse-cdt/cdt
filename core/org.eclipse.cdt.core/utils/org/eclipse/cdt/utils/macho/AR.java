@@ -56,7 +56,7 @@ public class AR {
 	}
 
 	/**
-	 * The <code>ARHeader</code> class is used to store the per-object file 
+	 * The <code>ARHeader</code> class is used to store the per-object file
 	 *  archive headers.  It can also create an Mach-O object for inspecting
 	 *  the object file data.
 	 */
@@ -73,13 +73,13 @@ public class AR {
 
 		/**
 		 * Look up the name stored in the archive's string table based
-		 * on the offset given. 
+		 * on the offset given.
 		 *
 		 * Maintains <code>efile</code> file location.
 		 *
-		 * @param offset 
+		 * @param offset
 		 *    Offset into the string table for first character of the name.
-		 * @throws IOException 
+		 * @throws IOException
 		 *    <code>offset</code> not in string table bounds.
 		 */
 		//		private String nameFromStringTable(long offset) throws IOException {
@@ -101,11 +101,11 @@ public class AR {
 		//		}
 
 		/**
-		 * Creates a new archive header object.  
+		 * Creates a new archive header object.
 		 *
 		 * Assumes that efile is already at the correct location in the file.
 		 *
-		 * @throws IOException 
+		 * @throws IOException
 		 *    There was an error processing the header data from the file.
 		 */
 		public ARHeader() throws IOException {
@@ -188,9 +188,9 @@ public class AR {
 		/**
 		 *  Create an new MachO object for the object file.
 		 *
-		 * @throws IOException 
+		 * @throws IOException
 		 *    Not a valid MachO object file.
-		 * @return A new MachO object.  
+		 * @return A new MachO object.
 		 * @see MachO#MachO( String, long )
 		 */
 		public long getObjectDataOffset() throws IOException {
@@ -221,7 +221,7 @@ public class AR {
 	}
 
 	/**
-	 *  Creates a new <code>AR</code> object from the contents of 
+	 *  Creates a new <code>AR</code> object from the contents of
 	 *  the given file.
 	 *
 	 *  @param filename The file to process.
@@ -242,7 +242,7 @@ public class AR {
 		if (headers != null)
 			return;
 
-		Vector<ARHeader> v = new Vector<ARHeader>();
+		Vector<ARHeader> v = new Vector<>();
 		try {
 			//
 			// Check for EOF condition
@@ -272,8 +272,8 @@ public class AR {
 
 	/**
 	 *  Get an array of all the object file headers for this archive.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 *    Unable to process the archive file.
 	 * @return An array of headers, one for each object within the archive.
 	 * @see ARHeader
@@ -291,7 +291,7 @@ public class AR {
 	}
 
 	public String[] extractFiles(String outdir, String[] names) throws IOException {
-		Vector<String> names_used = new Vector<String>();
+		Vector<String> names_used = new Vector<>();
 		String object_name;
 		int count;
 

@@ -15,6 +15,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -26,18 +30,13 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateTranslator;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 /**
  * A context for C/C++.
  */
 public class CContext extends TranslationUnitContext {
 	/**
 	 * Creates a C/C++ code template context.
-	 * 
+	 *
 	 * @param type the context type
 	 * @param document the document
 	 * @param completionOffset the completion position within the document
@@ -51,7 +50,7 @@ public class CContext extends TranslationUnitContext {
 
 	/**
 	 * Creates a C/C++ code template context.
-	 * 
+	 *
 	 * @param type the context type.
 	 * @param document the document.
 	 * @param completionPosition the completion position within the document

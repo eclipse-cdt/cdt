@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 Alena Laskavaia 
+ * Copyright (c) 2010, 2014 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,7 +44,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 
 	/**
 	 * Get marker associated with this provider
-	 * 
+	 *
 	 * @return
 	 */
 	public IMarker getMarker() {
@@ -53,7 +53,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 
 	/**
 	 * Convenience method to return marker message
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getProblemMessage() {
@@ -63,7 +63,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 
 	/**
 	 * Convenience method to return codan problem id
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getProblemId() {
@@ -74,7 +74,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	/**
 	 * return true if provider can provide details for given marker (previously
 	 * set by setMarker)
-	 * 
+	 *
 	 * @param id - id of the problem
 	 * @return true if details are available for given marker
 	 */
@@ -83,7 +83,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	/**
 	 * Returns problem arguments by index (set by checker when reporting
 	 * problem)
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public String getProblemArgument(int index) {
@@ -93,7 +93,7 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	/**
 	 * Return the arguments of a problem that checker passed to "reportProblem"
 	 * method
-	 * 
+	 *
 	 * @param marker - problem marker
 	 * @return problem arguments, can not be null. Can be 0 sized array.
 	 * @since 2.0
@@ -137,10 +137,10 @@ public abstract class AbstractCodanProblemDetailsProvider {
 	 * Ampersand (&) should be escape because
 	 * it is interpreted as mnemonic for control navigation (can use
 	 * espaceForLink method).
-	 * 
+	 *
 	 * Default implementation return desciption of codan problem. <br>
 	 * This method intended to be overriden by the client.
-	 * 
+	 *
 	 */
 	public String getStyledProblemDescription() {
 		String id = getProblemId();

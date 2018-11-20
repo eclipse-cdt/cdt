@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  * 	   Sergey Prigogin (Google)
@@ -15,8 +15,8 @@
 package org.eclipse.cdt.internal.ui.text.correction;
 
 /**
- * Correction proposals implement this interface to by invokable by a command. 
- * (e.g. keyboard shortcut) 
+ * Correction proposals implement this interface to by invokable by a command.
+ * (e.g. keyboard shortcut)
  */
 public interface ICommandAccess {
 

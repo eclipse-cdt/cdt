@@ -87,13 +87,13 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 
 	public LinkedHashMap<String, Boolean> getDiscoveredIncludePaths() {
 		if (discoveredPaths == null) {
-			return new LinkedHashMap<String, Boolean>();
+			return new LinkedHashMap<>();
 		}
-		return new LinkedHashMap<String, Boolean>(discoveredPaths);
+		return new LinkedHashMap<>(discoveredPaths);
 	}
 
 	public synchronized void setDiscoveredIncludePaths(LinkedHashMap<String, Boolean> paths) {
-		discoveredPaths = new LinkedHashMap<String, Boolean>(paths);
+		discoveredPaths = new LinkedHashMap<>(paths);
 		createPathLists();
 	}
 
@@ -119,13 +119,13 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 
 	public LinkedHashMap<String, SymbolEntry> getDiscoveredSymbolDefinitions() {
 		if (discoveredSymbols == null) {
-			return new LinkedHashMap<String, SymbolEntry>();
+			return new LinkedHashMap<>();
 		}
-		return new LinkedHashMap<String, SymbolEntry>(discoveredSymbols);
+		return new LinkedHashMap<>(discoveredSymbols);
 	}
 
 	public synchronized void setDiscoveredSymbolDefinitions(LinkedHashMap<String, SymbolEntry> symbols) {
-		discoveredSymbols = new LinkedHashMap<String, SymbolEntry>(symbols);
+		discoveredSymbols = new LinkedHashMap<>(symbols);
 		createSymbolsLists();
 	}
 
@@ -184,28 +184,28 @@ public class DiscoveredScannerInfo implements IScannerInfo {
 
 	private List<String> getActivePathList() {
 		if (activePaths == null) {
-			activePaths = new ArrayList<String>();
+			activePaths = new ArrayList<>();
 		}
 		return activePaths;
 	}
 
 	private List<String> getRemovedPathList() {
 		if (removedPaths == null) {
-			removedPaths = new ArrayList<String>();
+			removedPaths = new ArrayList<>();
 		}
 		return removedPaths;
 	}
 
 	private List<String> getActiveSymbolsList() {
 		if (activeSymbols == null) {
-			activeSymbols = new ArrayList<String>();
+			activeSymbols = new ArrayList<>();
 		}
 		return activeSymbols;
 	}
 
 	private List<String> getRemovedSymbolsList() {
 		if (removedSymbols == null) {
-			removedSymbols = new ArrayList<String>();
+			removedSymbols = new ArrayList<>();
 		}
 		return removedSymbols;
 	}

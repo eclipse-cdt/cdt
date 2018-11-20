@@ -31,7 +31,7 @@ import org.eclipse.ui.console.TextConsole;
 
 /**
  * An action to save the gdb traces. Inspired by MiConsoleSaveAction
- * 
+ *
  * @since 2.1
  */
 public class ConsoleSaveAction extends Action {
@@ -64,7 +64,7 @@ public class ConsoleSaveAction extends Action {
 
 	/**
 	 * Save the content from the tracing console to a file
-	 * 
+	 *
 	 * @param fileName The fileName of the File to save to
 	 */
 	protected void saveContent(String fileName) {

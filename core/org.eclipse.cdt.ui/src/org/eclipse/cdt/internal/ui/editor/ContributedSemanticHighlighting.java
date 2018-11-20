@@ -13,6 +13,13 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ISemanticHighlighter;
+import org.eclipse.cdt.ui.text.ISemanticToken;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
@@ -23,14 +30,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.swt.graphics.RGB;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ISemanticHighlighter;
-import org.eclipse.cdt.ui.text.ISemanticToken;
 
 public class ContributedSemanticHighlighting extends SemanticHighlightingWithOwnPreference {
 

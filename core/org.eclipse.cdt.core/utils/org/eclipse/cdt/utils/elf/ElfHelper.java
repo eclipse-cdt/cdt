@@ -23,7 +23,7 @@ import org.eclipse.cdt.utils.elf.Elf.Symbol;
 /**
  * <code>ElfHelper</code> is a wrapper class for the <code>Elf</code> class
  * to provide higher level API for sorting/searching the ELF data.
- * 
+ *
  * @see Elf
  */
 public class ElfHelper {
@@ -88,7 +88,7 @@ public class ElfHelper {
 	/**
 	 * Create a new <code>ElfHelper</code> using an existing <code>Elf</code>
 	 * object.
-	 * 
+	 *
 	 * @param elf
 	 *            An existing Elf object to wrap.
 	 * @throws IOException
@@ -100,7 +100,7 @@ public class ElfHelper {
 
 	/**
 	 * Create a new <code>ElfHelper</code> based on the given filename.
-	 * 
+	 *
 	 * @param filename
 	 *            The file to use for creating a new Elf object.
 	 * @throws IOException
@@ -113,7 +113,7 @@ public class ElfHelper {
 
 	/**
 	 * Create a new <code>ElfHelper</code> based on the given filename.
-	 * 
+	 *
 	 * @param filename
 	 *            The file to use for creating a new Elf object.
 	 * @throws IOException
@@ -130,7 +130,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getExternalFunctions() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -153,7 +153,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getExternalObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -176,7 +176,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getUndefined() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 
@@ -190,7 +190,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getLocalFunctions() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -213,7 +213,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getLocalObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -236,7 +236,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Symbol[] getCommonObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadSymbols();
 		loadSections();
@@ -255,7 +255,7 @@ public class ElfHelper {
 	}
 
 	public Elf.Dynamic[] getNeeded() throws IOException {
-		Vector<Dynamic> v = new Vector<Dynamic>();
+		Vector<Dynamic> v = new Vector<>();
 
 		loadDynamics();
 

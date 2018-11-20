@@ -19,10 +19,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.IProblem;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.correction.CCorrectionProcessor;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionContext;
+import org.eclipse.cdt.internal.ui.text.correction.ProblemLocation;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistProposal;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.RenameRefactoringProposal;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.TUCorrectionProposal;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.IInvocationContext;
+import org.eclipse.cdt.ui.text.IProblemLocation;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -38,24 +51,9 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.ui.PartInitException;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.IInvocationContext;
-import org.eclipse.cdt.ui.text.IProblemLocation;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.correction.CCorrectionProcessor;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionContext;
-import org.eclipse.cdt.internal.ui.text.correction.ProblemLocation;
-import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistProposal;
-import org.eclipse.cdt.internal.ui.text.correction.proposals.RenameRefactoringProposal;
-import org.eclipse.cdt.internal.ui.text.correction.proposals.TUCorrectionProposal;
+import junit.extensions.TestSetup;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class AssistQuickFixTest extends BaseUITestCase {
 	private static final Class<AssistQuickFixTest> THIS = AssistQuickFixTest.class;
@@ -151,7 +149,7 @@ public class AssistQuickFixTest extends BaseUITestCase {
 
 	private static final List<ICCompletionProposal> collectCorrections(CorrectionContext context,
 			Class<?>[] filteredTypes) throws CoreException {
-		List<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+		List<ICCompletionProposal> proposals = new ArrayList<>();
 		IStatus status = CCorrectionProcessor.collectCorrections(context, new IProblemLocation[0], proposals);
 		assertStatusOk(status);
 
@@ -185,7 +183,7 @@ public class AssistQuickFixTest extends BaseUITestCase {
 
 	private static final ArrayList<ICCompletionProposal> collectAssists(CorrectionContext context,
 			Class<?>[] filteredTypes) throws CoreException {
-		ArrayList<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+		ArrayList<ICCompletionProposal> proposals = new ArrayList<>();
 		IStatus status = CCorrectionProcessor.collectAssists(context, new IProblemLocation[0], proposals);
 		assertStatusOk(status);
 

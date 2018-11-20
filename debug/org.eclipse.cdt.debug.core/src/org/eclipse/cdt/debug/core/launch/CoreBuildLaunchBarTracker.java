@@ -42,7 +42,7 @@ import org.eclipse.launchbar.core.target.ILaunchTarget;
 /**
  * A launchbar listener that attempts to set the active core build configuration
  * on the project adapted from the launch descriptor.
- * 
+ *
  * @since 8.3
  */
 public class CoreBuildLaunchBarTracker implements ILaunchBarListener {

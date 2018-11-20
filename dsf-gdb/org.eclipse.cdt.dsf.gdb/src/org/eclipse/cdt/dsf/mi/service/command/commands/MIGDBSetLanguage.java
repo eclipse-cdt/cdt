@@ -17,7 +17,7 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 
 /**
- * 
+ *
  *     -gdb-set language
  *
  * @since 4.3

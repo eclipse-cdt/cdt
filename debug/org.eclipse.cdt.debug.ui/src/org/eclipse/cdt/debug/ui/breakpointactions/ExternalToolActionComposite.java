@@ -53,7 +53,7 @@ public class ExternalToolActionComposite extends Composite {
 
 		/**
 		 * Creates a new plug-in contribution for the given type
-		 * 
+		 *
 		 * @param type
 		 *            the launch configuration type
 		 */
@@ -63,7 +63,7 @@ public class ExternalToolActionComposite extends Composite {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.IPluginContribution#getLocalId()
 		 */
 		@Override
@@ -73,7 +73,7 @@ public class ExternalToolActionComposite extends Composite {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.ui.IPluginContribution#getPluginId()
 		 */
 		@Override
@@ -124,7 +124,7 @@ public class ExternalToolActionComposite extends Composite {
 
 	/**
 	 * Create the composite
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 * @param page

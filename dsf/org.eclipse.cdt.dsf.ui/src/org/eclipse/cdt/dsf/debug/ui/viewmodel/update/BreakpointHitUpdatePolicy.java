@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -27,20 +27,20 @@ public class BreakpointHitUpdatePolicy extends DebugManualUpdatePolicy {
 	public static String BREAKPOINT_HIT_UPDATE_POLICY_ID = "org.eclipse.cdt.dsf.debug.ui.viewmodel.update.breakpointHitUpdatePolicy"; //$NON-NLS-1$
 
 	/**
-	 * Creates a breakpoint hit update policy for debug views. 
+	 * Creates a breakpoint hit update policy for debug views.
 	 */
 	public BreakpointHitUpdatePolicy() {
 		super();
 	}
 
 	/**
-	 * Creates a breakpoint hit update policy for debug views for models that 
-	 * retrieve multiple formatted values for each view entry.  The given 
+	 * Creates a breakpoint hit update policy for debug views for models that
+	 * retrieve multiple formatted values for each view entry.  The given
 	 * prefixes distinguish the formatted values properties from each other.
-	 * 
+	 *
 	 * @see FormattedValueRetriever
 	 * @see FormattedValueVMUtil#getPropertyForFormatId(String, String)
-	 * 
+	 *
 	 * @param prefixes Prefixes to use when flushing the active formatted value
 	 * from VM cache.
 	 */

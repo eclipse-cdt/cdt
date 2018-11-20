@@ -30,12 +30,12 @@ import org.eclipse.cdt.internal.core.lrparser.xlc.c.XlcCParser;
 import org.eclipse.core.resources.IProject;
 
 /**
- * 
+ *
  * @author Mike Kucera
  */
 public class XlcCLanguage extends GCCLanguage {
 
-	public static final String ID = "org.eclipse.cdt.core.lrparser.xlc.c"; //$NON-NLS-1$ 
+	public static final String ID = "org.eclipse.cdt.core.lrparser.xlc.c"; //$NON-NLS-1$
 
 	private static XlcCLanguage DEFAULT = new XlcCLanguage();
 
@@ -53,6 +53,7 @@ public class XlcCLanguage extends GCCLanguage {
 				index, properties);
 	}
 
+	@Override
 	public String getId() {
 		return ID;
 	}

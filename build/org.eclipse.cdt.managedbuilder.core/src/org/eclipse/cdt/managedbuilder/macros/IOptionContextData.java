@@ -10,7 +10,7 @@
  *
  * Contributors:
  * Intel Corporation - Initial API and implementation
- * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability) 
+ * Miwako Tokugawa (Intel Corporation) - bug 222817 (OptionCategoryApplicability)
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.macros;
 
@@ -20,7 +20,7 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 
 /**
  * This interface is used to represent an option context data
- *  
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -28,28 +28,28 @@ import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 public interface IOptionContextData {
 	/**
 	 * Returns an option
-	 * 
+	 *
 	 * @return IOption, could be {@code null}
 	 */
 	public IOption getOption();
 
 	/**
 	 * Returns an option category
-	 * 
+	 *
 	 * @return IOptionCategory, could be {@code null}
-	 * 
+	 *
 	 * @since 8.0
 	 */
 	public IOptionCategory getOptionCategory();
 
 	/**
-	 * Returns IBuildObject that represents the option holder. 
-	 * For the backward compatibility MBS will also support the cases 
-	 * when this method returns either an IToolChain or IResourceConfiguration. 
-	 * In this case MBS will try to obtain the option holder automatically, 
-	 * but it might fail in case the tool-chain/resource configuration contains 
+	 * Returns IBuildObject that represents the option holder.
+	 * For the backward compatibility MBS will also support the cases
+	 * when this method returns either an IToolChain or IResourceConfiguration.
+	 * In this case MBS will try to obtain the option holder automatically,
+	 * but it might fail in case the tool-chain/resource configuration contains
 	 * more than one tools with the same super-class
-	 * 
+	 *
 	 * @return IBuildObject
 	 */
 	public IBuildObject getParent();

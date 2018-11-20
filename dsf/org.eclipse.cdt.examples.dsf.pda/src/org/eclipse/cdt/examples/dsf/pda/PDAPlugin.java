@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -56,7 +56,7 @@ public class PDAPlugin extends Plugin {
 	private static BundleContext fContext;
 
 	/**
-	 * Unique identifier for the PDA debug model (value 
+	 * Unique identifier for the PDA debug model (value
 	 * <code>pda.debugModel</code>).
 	 */
 	public static final String ID_PDA_DEBUG_MODEL = "org.eclipse.cdt.examples.dsf.pda.debugModel";
@@ -70,7 +70,7 @@ public class PDAPlugin extends Plugin {
 	/**
 	 * Launch configuration attribute key. Value is a path to a perl
 	 * program. The path is a string representing a full path
-	 * to a perl program in the workspace. 
+	 * to a perl program in the workspace.
 	 */
 	public static final String ATTR_PDA_PROGRAM = ID_PDA_DEBUG_MODEL + ".ATTR_PDA_PROGRAM";
 
@@ -162,11 +162,11 @@ public class PDAPlugin extends Plugin {
 		}
 	}
 
-	/** 
-	 * Shuts down any active launches.  We must shutdown any active sessions 
+	/**
+	 * Shuts down any active launches.  We must shutdown any active sessions
 	 * and services associated with this plugin before this plugin is stopped.
 	 * Any attempts to use the plugins {@link BundleContext} after the plugin
-	 * is shut down will result in exceptions. 
+	 * is shut down will result in exceptions.
 	 */
 	private void shutdownActiveLaunches() {
 		for (ILaunch launch : DebugPlugin.getDefault().getLaunchManager().getLaunches()) {
@@ -188,8 +188,8 @@ public class PDAPlugin extends Plugin {
 					break;
 				}
 
-				// The Query.get() method is a synchronous call which blocks until the 
-				// query completes.  
+				// The Query.get() method is a synchronous call which blocks until the
+				// query completes.
 				try {
 					launchShutdownQuery.get();
 				} catch (InterruptedException e) {

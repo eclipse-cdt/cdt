@@ -20,6 +20,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
@@ -44,17 +53,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
-import org.eclipse.cdt.internal.ui.wizards.ICDTCommonProjectWizard;
 
 public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 		implements IExecutableExtension, IWizardWithMemory, ICDTCommonProjectWizard {
@@ -402,7 +400,7 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 		String[] contentTypeIds = getContentTypeIDs();
 		if (contentTypeIds.length > 0) {
 			IContentTypeManager manager = Platform.getContentTypeManager();
-			List<String> languageIDs = new ArrayList<String>();
+			List<String> languageIDs = new ArrayList<>();
 			for (int i = 0; i < contentTypeIds.length; ++i) {
 				IContentType contentType = manager.getContentType(contentTypeIds[i]);
 				if (null != contentType) {
@@ -427,7 +425,7 @@ public abstract class CDTCommonProjectWizard extends BasicNewResourceWizard
 		String[] contentTypeIds = getContentTypeIDs();
 		if (contentTypeIds.length > 0) {
 			IContentTypeManager manager = Platform.getContentTypeManager();
-			List<String> extensions = new ArrayList<String>();
+			List<String> extensions = new ArrayList<>();
 			for (int i = 0; i < contentTypeIds.length; ++i) {
 				IContentType contentType = manager.getContentType(contentTypeIds[i]);
 				if (null != contentType) {

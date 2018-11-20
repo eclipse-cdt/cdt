@@ -99,7 +99,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	private static final char[] ONE = "1".toCharArray(); //$NON-NLS-1$
 
 	// Standard built-ins
-	private static final ObjectStyleMacro __CDT_PARSER__ = new ObjectStyleMacro("__CDT_PARSER__".toCharArray(), //$NON-NLS-1$ 
+	private static final ObjectStyleMacro __CDT_PARSER__ = new ObjectStyleMacro("__CDT_PARSER__".toCharArray(), //$NON-NLS-1$
 			Integer.toString(getCDTVersion()).toCharArray());
 	private static final ObjectStyleMacro __cplusplus = new ObjectStyleMacro("__cplusplus".toCharArray(), //$NON-NLS-1$
 			"201103L".toCharArray()); //$NON-NLS-1$
@@ -132,7 +132,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	 * Returns an integer, suitable for use as a macro value, representing the current
 	 * version of the CDT feature, composited into a single number.
 	 * For example, version 9.2.1 would be composited into 90201.
-	 * Used as the value of the __CDT_PARSER__ macro.  
+	 * Used as the value of the __CDT_PARSER__ macro.
 	 */
 	public static int getCDTVersion() {
 		Version version = CCorePlugin.getCDTFeatureVersion();
@@ -458,7 +458,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 	}
 
 	/**
-	 * Returns include search path for a given current directory and a IScannerInfo. 
+	 * Returns include search path for a given current directory and a IScannerInfo.
 	 * @param directory the current directory
 	 * @param info scanner information, or {@code null} if not available
 	 * @return the include search path
@@ -1348,7 +1348,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		}
 
 		// Now we need to search for the file on the include search path.
-		// If this is a include_next directive then the search starts with the directory 
+		// If this is a include_next directive then the search starts with the directory
 		// in the search path after the one where the current file was found.
 		IncludeSearchPathElement searchAfter = null;
 		if (includeNext && currentFile != null) {
@@ -1689,7 +1689,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 		boolean includeNext = includeType == IPreprocessorDirective.ppInclude_next;
 		final String includeDirective = new String(headerName);
 		if (!active) {
-			// Inactive include 
+			// Inactive include
 			String path = null;
 			boolean isHeuristic = false;
 			IFileNomination nominationDelegate = null;
@@ -2290,7 +2290,7 @@ public class CPreprocessor implements ILexerLog, IScanner, IAdaptable {
 			// Whether support for these is activated depends on the scanner extension
 			// configuration, so check it and report support accordingly.
 			// Note also that having a keyword for it doesn't necessarily mean we fully
-			// support it. For example, currently we have a keyword 
+			// support it. For example, currently we have a keyword
 			// GCCKeywords.cp__has_nothrown_assign, but we don't support evaluation of
 			// this trait at the semantics level, so we don't report support for it.
 			// missing: has_nothrow_assign

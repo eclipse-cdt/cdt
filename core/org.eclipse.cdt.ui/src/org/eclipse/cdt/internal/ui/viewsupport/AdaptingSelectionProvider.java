@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 
 /**
  * A selection provider that adapts the elements of structured selections
- * to a requested type. 
+ * to a requested type.
  * @author markus.schorn@windriver.com
  */
 public class AdaptingSelectionProvider implements ISelectionProvider, ISelectionChangedListener {
@@ -47,7 +47,7 @@ public class AdaptingSelectionProvider implements ISelectionProvider, ISelection
 		if (selection != null) {
 			if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
-				ArrayList<Object> adapted = new ArrayList<Object>();
+				ArrayList<Object> adapted = new ArrayList<>();
 				for (Iterator<?> iter = ss.iterator(); iter.hasNext();) {
 					Object elem = adaptElem(iter.next());
 					if (elem != null) {

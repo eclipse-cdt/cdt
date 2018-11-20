@@ -15,19 +15,17 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 
 /**
  * Block for C/C++ Include Paths and Symbols page for 3.X projects.
@@ -107,7 +105,7 @@ public class NewIncludesSymbolsTabBlock extends AbstractPathOptionBlock implemen
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener#statusChanged(org.eclipse.core.runtime.IStatus)
 	 */
 	@Override

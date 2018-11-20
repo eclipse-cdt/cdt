@@ -19,9 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.internal.core.resources.ResourceLookup;
 import org.eclipse.core.resources.IFile;
@@ -33,6 +30,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class ResourceLookupTests extends BaseTestCase {
 	public static Test suite() {

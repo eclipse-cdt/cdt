@@ -39,11 +39,11 @@ import org.eclipse.osgi.util.NLS;
  * is intended to be used when debugging information produced by the C/C++ compiler contains paths
  * to the source and header files relative to the directory where the compiler is run from.
  * The assumption is that all files under a source folder are compiled relative to that folder.
- * 
+ *
  * Source elements returned from <code>findSourceElements(...)</code> are instances of
  * <code>LocalFileStorage</code>.
  * <p>
- * Clients may instantiate this class. 
+ * Clients may instantiate this class.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -62,7 +62,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 
 	/**
 	 * Constructs a source folder relative path source container.
-	 * 
+	 *
 	 * @param project the project to search for source in. A {@code null} project indicates
 	 * 		the the project from the launch configuration should be used.
 	 * @param referenced whether referenced projects should be considered
@@ -149,7 +149,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 			if (isSearchReferencedProjects()) {
 				IProject[] projects = SourceUtils.getAllReferencedProjects(fProject);
 				ISourceContainer[] folders = createCompilationDirectoryContainers(fProject);
-				List<ISourceContainer> containers = new ArrayList<ISourceContainer>(folders.length + projects.length);
+				List<ISourceContainer> containers = new ArrayList<>(folders.length + projects.length);
 				for (ISourceContainer folder : folders) {
 					containers.add(folder);
 				}
@@ -171,7 +171,7 @@ public class SourceFoldersRelativePathSourceContainer extends CompositeSourceCon
 	private ISourceContainer[] createCompilationDirectoryContainers(IProject project) throws CoreException {
 		ICProject cProject = CModelManager.getDefault().create(project);
 		ISourceRoot[] roots = cProject.getAllSourceRoots();
-		List<ISourceContainer> list = new ArrayList<ISourceContainer>(roots.length);
+		List<ISourceContainer> list = new ArrayList<>(roots.length);
 		for (ISourceRoot root : roots) {
 			IContainer folder = root.getResource();
 			ISourceContainer container = new CompilationDirectorySourceContainer(folder.getLocation(), false);

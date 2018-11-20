@@ -176,7 +176,7 @@ public class TeamPDOMExportOperation implements IWorkspaceRunnable {
 
 	private void createChecksums(ICProject cproject, PDOM pdom, File target, IProgressMonitor monitor)
 			throws CoreException {
-		HashSet<String> fullPaths = new HashSet<String>();
+		HashSet<String> fullPaths = new HashSet<>();
 		try {
 			pdom.acquireReadLock();
 		} catch (InterruptedException e) {

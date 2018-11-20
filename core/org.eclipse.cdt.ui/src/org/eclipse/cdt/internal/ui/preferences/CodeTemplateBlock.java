@@ -32,6 +32,23 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
+import org.eclipse.cdt.internal.corext.util.Messages;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
+import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.PixelConverter;
@@ -60,26 +77,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
-import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
-import org.eclipse.cdt.internal.corext.util.Messages;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.template.TemplateVariableProcessor;
-import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
 
 /**
  */
@@ -353,7 +350,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 				PreferencesMessages.CodeTemplateBlock_templates_import_button,
 				PreferencesMessages.CodeTemplateBlock_templates_export_button,
 				PreferencesMessages.CodeTemplateBlock_templates_exportall_button };
-		fCodeTemplateTree = new TreeListDialogField<Object>(adapter, buttonLabels, new CodeTemplateLabelProvider());
+		fCodeTemplateTree = new TreeListDialogField<>(adapter, buttonLabels, new CodeTemplateLabelProvider());
 		fCodeTemplateTree.setDialogFieldListener(adapter);
 		fCodeTemplateTree.setLabelText(PreferencesMessages.CodeTemplateBlock_templates_label);
 		fCodeTemplateTree.setViewerComparator(adapter);
@@ -470,7 +467,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 
 	protected TemplatePersistenceData[] getCodeTemplatesOfCategory(boolean isComment) {
-		ArrayList<TemplatePersistenceData> res = new ArrayList<TemplatePersistenceData>();
+		ArrayList<TemplatePersistenceData> res = new ArrayList<>();
 		TemplatePersistenceData[] templates = fTemplateStore.getTemplateData();
 		for (TemplatePersistenceData curr : templates) {
 			boolean isUserAdded = curr.getId() == null;
@@ -489,7 +486,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 
 	protected TemplatePersistenceData[] getTemplatesOfContextType(String contextTypeId) {
-		ArrayList<TemplatePersistenceData> res = new ArrayList<TemplatePersistenceData>();
+		ArrayList<TemplatePersistenceData> res = new ArrayList<>();
 		TemplatePersistenceData[] templates = fTemplateStore.getTemplateData();
 		for (TemplatePersistenceData curr : templates) {
 			if (contextTypeId.equals(curr.getTemplate().getContextTypeId())) {
@@ -517,7 +514,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 
 	protected TemplateContextType[] getFileTemplateContextTypes() {
 		Iterator<?> iter = getFileTemplateContextRegistry().contextTypes();
-		ArrayList<TemplateContextType> result = new ArrayList<TemplateContextType>();
+		ArrayList<TemplateContextType> result = new ArrayList<>();
 		while (iter.hasNext()) {
 			TemplateContextType contextType = (TemplateContextType) iter.next();
 			if (getTemplatesOfContextType(contextType).length > 0) {
@@ -722,7 +719,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 	}
 
 	private void export(List<Object> selected) {
-		Set<Object> datas = new HashSet<Object>();
+		Set<Object> datas = new HashSet<>();
 		for (int i = 0; i < selected.size(); i++) {
 			Object curr = selected.get(i);
 			if (curr instanceof TemplatePersistenceData) {
@@ -785,7 +782,7 @@ public class CodeTemplateBlock extends OptionsConfigurationBlock {
 					try {
 						output.close();
 					} catch (IOException e2) {
-						// ignore 
+						// ignore
 					}
 				}
 				openWriteErrorDialog();

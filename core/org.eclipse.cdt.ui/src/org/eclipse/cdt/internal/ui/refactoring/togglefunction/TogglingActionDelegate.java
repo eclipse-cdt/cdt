@@ -1,20 +1,22 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -23,13 +25,10 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * Represents the interface between the user who invokes the action and the
  * actual refactoring mechanism. Starts the ToggleRefactoringRunner.
- * 
+ *
  * Order of execution is: constructor, init, selectionChanged, run
  */
 public class TogglingActionDelegate implements IWorkbenchWindowActionDelegate {

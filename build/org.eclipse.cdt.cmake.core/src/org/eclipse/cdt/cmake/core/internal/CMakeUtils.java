@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Red Hat Inc. - initial version
  *******************************************************************************/
 package org.eclipse.cdt.cmake.core.internal;
@@ -21,7 +21,7 @@ public class CMakeUtils {
 
 	/**
 	 * Parse a string containing environment variables into individual VAR=VALUE pairs.
-	 * 
+	 *
 	 * @param envString - String to parse
 	 * @return List of var=value Strings
 	 */

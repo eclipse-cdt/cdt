@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.IAsmLabel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -27,6 +25,8 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+
+import junit.framework.Test;
 
 /**
  * Tests for the default assembly model builder.

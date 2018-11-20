@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.ui.language;
 import java.util.Collections;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -29,10 +31,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.model.LanguageManager;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 
 public class WorkspaceContentTypeMappingDialog extends ContentTypeMappingDialog {
 	private Set<String> fFilteredContentTypes;

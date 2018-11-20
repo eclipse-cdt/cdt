@@ -27,7 +27,7 @@ public interface ISteppingModeTarget {
 
 	/**
 	 * Sets whether the instruction stepping are enabled in this debug target.
-	 * 
+	 *
 	 * @param enabled whether the instruction stepping are enabled in this debug target
 	 */
 	void enableInstructionStepping(boolean enabled);
@@ -35,7 +35,7 @@ public interface ISteppingModeTarget {
 	/**
 	 * Returns whether the instruction stepping are currently enabled in this
 	 * debug target.
-	 * 
+	 *
 	 * @return whether the instruction stepping are currently enabled in this
 	 * debug target
 	 */

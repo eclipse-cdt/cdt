@@ -14,6 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.IAction;
@@ -31,15 +38,6 @@ import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 /**
  * @author dsteffle
@@ -150,7 +148,7 @@ public class ShowInDOMViewAction extends ActionDelegate implements IEditorAction
 				return location.toOSString();
 			}
 		}
-		ILocationProvider locationProvider = (ILocationProvider) input.getAdapter(ILocationProvider.class);
+		ILocationProvider locationProvider = input.getAdapter(ILocationProvider.class);
 		if (locationProvider != null) {
 			IPath location = locationProvider.getPath(input);
 			if (location != null) {

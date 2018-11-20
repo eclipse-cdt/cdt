@@ -16,11 +16,11 @@ package org.eclipse.cdt.ui.actions;
 /**
  * Action ids for standard actions, for groups in the menu bar, and
  * for actions in context menus of CDT views.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 2.0
  */
@@ -75,7 +75,7 @@ public class CdtActionConstants {
 	 */
 	public static final String CONTENT_ASSIST = "org.eclipse.cdt.ui.actions.ContentAssist"; //$NON-NLS-1$
 
-	// Source menu	
+	// Source menu
 
 	/**
 	 * Source menu: name of standard Comment global action
@@ -99,7 +99,7 @@ public class CdtActionConstants {
 	/**
 	 * Source menu: name of standard Block Comment global action
 	 * (value <code>"org.eclipse.cdt.ui.actions.AddBlockComment"</code>).
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String ADD_BLOCK_COMMENT = "org.eclipse.cdt.ui.actions.AddBlockComment"; //$NON-NLS-1$
@@ -107,7 +107,7 @@ public class CdtActionConstants {
 	/**
 	 * Source menu: name of standard Block Uncomment global action
 	 * (value <code>"org.eclipse.cdt.ui.actions.RemoveBlockComment"</code>).
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String REMOVE_BLOCK_COMMENT = "org.eclipse.cdt.ui.actions.RemoveBlockComment"; //$NON-NLS-1$
@@ -320,13 +320,13 @@ public class CdtActionConstants {
 	/**
 	 * Refactor menu: name of standard Toggle Function global action (value
 	 * <code>"org.eclipse.cdt.ui.actions.ExtractMethod"</code>).
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public static final String TOGGLE_FUNCTION = "org.eclipse.cdt.ui.actions.ToggleFunction"; //$NON-NLS-1$
 
 	/**
-	 * Refactor menu: name of standard Inline global action 
+	 * Refactor menu: name of standard Inline global action
 	 * (value <code>"org.eclipse.cdt.ui.actions.Inline"</code>).
 	 */
 	public static final String INLINE = "org.eclipse.cdt.ui.actions.Inline"; //$NON-NLS-1$
@@ -493,5 +493,5 @@ public class CdtActionConstants {
 	 * Search menu: name of standard Find exception occurrences global action (value
 	 * <code>"org.eclipse.cdt.ui.actions.ExceptionOccurrences"</code>).
 	 */
-	public static final String FIND_EXCEPTION_OCCURRENCES = "org.eclipse.cdt.ui.actions.ExceptionOccurrences"; //$NON-NLS-1$		
+	public static final String FIND_EXCEPTION_OCCURRENCES = "org.eclipse.cdt.ui.actions.ExceptionOccurrences"; //$NON-NLS-1$
 }

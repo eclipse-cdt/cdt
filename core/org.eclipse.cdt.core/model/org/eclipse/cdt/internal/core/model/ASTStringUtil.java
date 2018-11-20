@@ -89,7 +89,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 
 /**
  * This is a utility class to help convert AST elements to strings.
- * 
+ *
  * @see org.eclipse.cdt.core.dom.ast.ASTTypeUtil
  */
 public class ASTStringUtil {
@@ -98,9 +98,9 @@ public class ASTStringUtil {
 	private static final String[] EMPTY_STRING_ARRAY = {};
 
 	/**
-	 * Return the qualified name if the given <code>IASTName</code> 
+	 * Return the qualified name if the given <code>IASTName</code>
 	 * is an <code>ICPPASTQualifiedName</code>, otherwise a simple name is returned.
-	 * 
+	 *
 	 * @param name
 	 * @return a (possibly) qualified name
 	 */
@@ -110,7 +110,7 @@ public class ASTStringUtil {
 
 	/**
 	 * Return the non-qualified name.
-	 * 
+	 *
 	 * @param name
 	 * @return a non-qualified name
 	 */
@@ -127,7 +127,7 @@ public class ASTStringUtil {
 
 	/**
 	 * Compute a signature string including parameters, but without initializers.
-	 * 
+	 *
 	 * @param declSpecifier
 	 * @param declarator
 	 * @return the signature string
@@ -140,7 +140,7 @@ public class ASTStringUtil {
 
 	/**
 	 * Compute the return-type string for a function declarator.
-	 * 
+	 *
 	 * @param declSpecifier
 	 * @param fdecl
 	 * @return the return type string
@@ -154,7 +154,7 @@ public class ASTStringUtil {
 
 	/**
 	 * Get the signatures of the function parameter declarations.
-	 * 
+	 *
 	 * @param functionDeclarator
 	 * @return the parameter signature array
 	 */
@@ -194,7 +194,7 @@ public class ASTStringUtil {
 
 	/**
 	 * Convert the given template parameters into a string array.
-	 * 
+	 *
 	 * @param templateParams
 	 * @return a string array of template parameters
 	 */
@@ -223,7 +223,7 @@ public class ASTStringUtil {
 	}
 
 	/**
-	 * Joins strings together using a given delimiter. 
+	 * Joins strings together using a given delimiter.
 	 * @param strings the strings to join.
 	 * @param delimiter the delimiter that is put between the strings when joining them.
 	 * @return the joined string.
@@ -1050,7 +1050,7 @@ public class ASTStringUtil {
 
 	/**
 	 * Returns the String representation of the IASTUnaryExpression's operator.
-	 * 
+	 *
 	 * @param ue
 	 * @return the String representation of the IASTUnaryExpression's operator
 	 */
@@ -1184,7 +1184,7 @@ public class ASTStringUtil {
 
 	/**
 	 * Returns the String representation of the pack expansion expression.
-	 * @param buffer 
+	 * @param buffer
 	 */
 	private static StringBuilder appendPackExpansionExpression(StringBuilder buffer,
 			ICPPASTPackExpansionExpression expression) {

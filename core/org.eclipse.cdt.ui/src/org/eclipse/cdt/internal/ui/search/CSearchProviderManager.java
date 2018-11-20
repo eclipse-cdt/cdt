@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.ui.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.extensions.IExternalSearchProvider;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -23,9 +25,6 @@ import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.extensions.IExternalSearchProvider;
 
 /**
  * Maintains a list of extensions implementing the org.eclipse.cdt.ui.externalSearchProviders
@@ -44,7 +43,7 @@ public class CSearchProviderManager {
 
 	public List<IExternalSearchProvider> getExternalSearchProviders() {
 		if (externalSearchProviders == null) {
-			externalSearchProviders = new ArrayList<IExternalSearchProvider>();
+			externalSearchProviders = new ArrayList<>();
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint indexProviderPoint = registry.getExtensionPoint(SEARCH_PROVIDERS);
 			for (IExtension extension : indexProviderPoint.getExtensions()) {

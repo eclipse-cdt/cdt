@@ -1743,9 +1743,9 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	  operator int() &;
 	//	  operator int() &&;
 	//	};
-	//	
+	//
 	//	void waldo(int);
-	//	
+	//
 	//	int main() {
 	//	  S s;
 	//	  waldo(s);  // ERROR
@@ -8938,7 +8938,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	  int b;
 	//	};
 	//
-	//	A<B> waldo({{0}, {0}});	
+	//	A<B> waldo({{0}, {0}});
 	public void testListInitialization_458679() throws Exception {
 		parseAndCheckImplicitNameBindings();
 	}
@@ -10239,7 +10239,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//
 	//	auto (*y1)() -> int(*)();
 	//	int (*(*y2)())();
-	//	
+	//
 	//	auto (*z1)() -> auto(*)() -> int(*)();
 	//	int (*(*(*z2)())())();
 	public void testTrailingReturnTypeInFunctionPointer() throws Exception {
@@ -10903,7 +10903,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	namespace B {
 	//		template <typename T>
 	//		void foo(T);
-	//		
+	//
 	//		struct S {};
 	//	}
 	//
@@ -12212,14 +12212,14 @@ public class AST2CPPTests extends AST2CPPTestBase {
 		parseAndCheckImplicitNameBindings();
 	}
 
-	//	constexpr int lambdas_supported = 
+	//	constexpr int lambdas_supported =
 	//	#if __has_feature(cxx_lambdas)
 	//		1;
 	//	#else
 	//		0;
 	//	#endif
 	//
-	//	constexpr int generic_lambdas_supported = 
+	//	constexpr int generic_lambdas_supported =
 	//	#if __has_feature(cxx_generic_lambdas)
 	//		1;
 	//	#else
@@ -12287,7 +12287,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	struct C : A {
 	//		C() {}
 	//	};
-	//	
+	//
 	//	struct D : virtual A, virtual B {
 	//		D() {}
 	//	};
@@ -12765,7 +12765,7 @@ public class AST2CPPTests extends AST2CPPTestBase {
 	//	struct MyStruct {
 	//	    unsigned i;
 	//	};
-	//	
+	//
 	//	auto myFunA() -> struct MyStruct {
 	//	    return {5};
 	//	};

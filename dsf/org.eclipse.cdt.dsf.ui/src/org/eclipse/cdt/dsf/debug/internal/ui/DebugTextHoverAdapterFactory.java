@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 
 /**
  * Adapter factory adapting an {@link IDMVMContext} to an {@link ICEditorTextHover}.
- * 
+ *
  * @since 2.1
  */
 public class DebugTextHoverAdapterFactory implements IAdapterFactory {

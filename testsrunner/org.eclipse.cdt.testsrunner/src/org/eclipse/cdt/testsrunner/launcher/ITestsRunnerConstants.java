@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2012 Anton Gorenkov 
+ * Copyright (c) 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0

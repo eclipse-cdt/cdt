@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface for {@link MakeTargetManager} handling make target items in Make Targets View.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -51,10 +51,10 @@ public interface IMakeTargetManager {
 	 * All previous targets for the container are replaced upon success and if
 	 * failure occurs, an exception is thrown and the previous set of targets
 	 * for the container are unchanged.
-	 * 
+	 *
 	 * @param container to set targets for or null if project should be used
 	 * @param targets array
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void setTargets(IContainer container, IMakeTarget[] targets) throws CoreException;

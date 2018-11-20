@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems, Inc. - extended implementation
@@ -102,7 +102,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IPropertyChangeListener {
 
 	/**
-	 * The <code>IWorkbenchPartSite</code> that the details area (and the 
+	 * The <code>IWorkbenchPartSite</code> that the details area (and the
 	 * variables view) belongs to.
 	 */
 	private IWorkbenchPartSite fWorkbenchPartSite;
@@ -111,12 +111,12 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	 * Map of actions. Keys are strings, values
 	 * are <code>IAction</code>.
 	 */
-	private Map<String, IAction> fActionMap = new HashMap<String, IAction>();
+	private Map<String, IAction> fActionMap = new HashMap<>();
 
 	/**
 	 * Collection to track actions that should be updated when selection occurs.
 	 */
-	private List<String> fSelectionActions = new ArrayList<String>();
+	private List<String> fSelectionActions = new ArrayList<>();
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.IDetailPane#init(org.eclipse.ui.IWorkbenchPartSite)
@@ -129,7 +129,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 
 	/**
 	 * Adds an action to the Map storing actions.  Removes it if action is null.
-	 * 
+	 *
 	 * @param actionID The ID of the action, used as the key in the Map
 	 * @param action The action associated with the ID
 	 */
@@ -145,7 +145,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	 * Adds the given action to the global action handler for the ViewSite.
 	 * A call to <code>updateActionBars()</code> must be called after changes
 	 * to propagate changes through the workbench.
-	 * 
+	 *
 	 * @param actionID The ID of the action
 	 * @param action The action to be set globally
 	 */
@@ -155,9 +155,9 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 
 	/**
 	 * Adds the given action to the list of actions that will be updated when
-	 * <code>updateSelectionDependentActions()</code> is called.  If the string 
+	 * <code>updateSelectionDependentActions()</code> is called.  If the string
 	 * is null it will not be added to the list.
-	 * 
+	 *
 	 * @param actionID The ID of the action which should be updated
 	 */
 	protected void setSelectionDependantAction(String actionID) {
@@ -167,7 +167,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 
 	/**
 	 * Gets the action out of the map, casts it to an <code>IAction</code>
-	 * 
+	 *
 	 * @param actionID  The ID of the action to find
 	 * @return The action associated with the ID or null if none is found.
 	 */
@@ -179,7 +179,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	 * Calls the update method of the action with the given action ID.
 	 * The action must exist in the action map and must be an instance of
 	 * </code>IUpdate</code>
-	 * 
+	 *
 	 * @param actionId The ID of the action to update
 	 */
 	protected void updateAction(String actionId) {
@@ -190,9 +190,9 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	}
 
 	/**
-	 * Iterates through the list of selection dependent actions and 
+	 * Iterates through the list of selection dependent actions and
 	 * updates them.  Use <code>setSelectionDependentAction(String actionID)</code>
-	 * to add an action to the list.  The action must have been added to the known 
+	 * to add an action to the list.  The action must have been added to the known
 	 * actions map by calling <code>setAction(String actionID, IAction action)</code>
 	 * before it can be updated by this method.
 	 */
@@ -206,7 +206,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	/**
 	 * Gets the view site for this view.  May be null if this detail pane
 	 * is not part of a view.
-	 * 
+	 *
 	 * @return The site for this view or <code>null</code>
 	 */
 	protected IViewSite getViewSite() {
@@ -220,7 +220,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	/**
 	 * Gets the workbench part site for this view.  May be null if this detail pane
 	 * is not part of a view.
-	 * 
+	 *
 	 * @return The workbench part site or <code>null</code>
 	 */
 	protected IWorkbenchPartSite getWorkbenchPartSite() {
@@ -229,7 +229,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 
 	/**
 	 * Returns whether this detail pane is being displayed in a view with a workbench part site.
-	 * 
+	 *
 	 * @return whether this detail pane is being displayed in a view with a workbench part site.
 	 */
 	protected boolean isInView() {
@@ -310,7 +310,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 					display = PlatformUI.getWorkbench().getDisplay();
 				}
 				final Executor executor = SimpleDisplayExecutor.getSimpleDisplayExecutor(display);
-				Set<String> properties = new HashSet<String>(1);
+				Set<String> properties = new HashSet<>(1);
 				properties.add(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
 				propertiesProvider
 						.update(new IPropertiesUpdate[] { new VMPropertiesUpdate(properties, path, fViewerInput,
@@ -322,7 +322,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 										if (fMonitor.isCanceled())
 											return;
 
-										Set<String> properties = new HashSet<String>(1);
+										Set<String> properties = new HashSet<>(1);
 										properties.add(IElementPropertiesProvider.PROP_NAME);
 										final String[] formats = (String[]) getData()
 												.get(IDebugVMConstants.PROP_FORMATTED_VALUE_AVAILABLE_FORMATS);
@@ -386,7 +386,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 																}
 
 																detailComputed(null, finalResult.toString());
-															};
+															}
 														}) });
 									}
 								}) });
@@ -456,7 +456,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	}
 
 	/**
-	 * The model presentation used to produce the string details for a 
+	 * The model presentation used to produce the string details for a
 	 * selected variable.
 	 */
 	private String fDebugModelIdentifier;
@@ -498,7 +498,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 
 	/**
 	 * Creates the text viewer in the given parent composite
-	 * 
+	 *
 	 * @param parent Parent composite to create the text viewer in
 	 */
 	private void createTextViewer(Composite parent) {
@@ -574,7 +574,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	private void createActions() {
 
 		TextViewerAction textAction = new TextViewerAction(fTextViewer, ITextOperationTarget.SELECT_ALL);
-		textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
+		textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction,
 				IDsfDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
@@ -622,7 +622,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	/**
 	* Adds items to the detail pane's context menu including any extension defined
 	* actions.
-	* 
+	*
 	* @param menu The menu to add the item to.
 	*/
 	protected void fillDetailContextMenu(IMenuManager menu) {
@@ -712,7 +712,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	@Override
 	public void dispose() {
@@ -810,7 +810,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	/**
 	 * Returns the identifier of the debug model being displayed
 	 * in this view, or <code>null</code> if none.
-	 * 
+	 *
 	 * @return debug model identifier
 	 */
 	protected String getDebugModel() {
@@ -820,7 +820,7 @@ public class NumberFormatDetailPane implements IDetailPane2, IAdaptable, IProper
 	/**
 	 * Sets the identifier of the debug model being displayed
 	 * in this view, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param id debug model identifier of the type of debug
 	 *  elements being displayed in this view
 	 */

@@ -224,7 +224,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 
 	private void resumeContainerContextExe() throws InterruptedException, ExecutionException, TimeoutException {
 
-		final ServiceEventWaitor<IResumedDMEvent> resumedWaitor = new ServiceEventWaitor<IResumedDMEvent>(
+		final ServiceEventWaitor<IResumedDMEvent> resumedWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), IResumedDMEvent.class);
 
 		Query<Void> query = new Query<Void>() {
@@ -262,13 +262,13 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 	 * environment e.g. Linux with GDB 7.12 This test case forces the use of the Basic console which triggers
 	 * async mode off, and will cause the program interrupt via the CLI (rather than MI -exec-interrupt which
 	 * is used with async mode)
-	 * 
+	 *
 	 * Note: This test case uses a modified Test Backend service which is instrumented before test execution,
 	 * see initializeLaunchAttributes
 	 */
 	private void interruptRunningTargetExe()
 			throws InterruptedException, Exception, ExecutionException, TimeoutException {
-		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(
+		ServiceEventWaitor<ISuspendedDMEvent> suspendedEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ISuspendedDMEvent.class);
 
 		Query<MIInfo> requestSuspend = new Query<MIInfo>() {
@@ -323,7 +323,7 @@ public class MIModifiedServicesTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Validate that with the basic console, interrupting a running target does work.
-	 * This would not be feasible to test with our standard services. 
+	 * This would not be feasible to test with our standard services.
 	 * This test case forces the use of the Basic console by using a test IGDBBackEnd service.
 	 */
 	@Test

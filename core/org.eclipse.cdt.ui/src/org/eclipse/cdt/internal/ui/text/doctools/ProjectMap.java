@@ -18,6 +18,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICStorageElement;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -26,12 +31,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICStorageElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-
 /**
  * A ProjectMap is an internal abstraction which
  * <ul>
@@ -39,7 +38,7 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
  * <li>Manages persistence of these mappings to the .cproject file.
  * </ul>
  * for a particular {@link IProject}
- * 
+ *
  * @since 5.0
  */
 class ProjectMap {
@@ -62,7 +61,7 @@ class ProjectMap {
 			fMap = load(project);
 		} catch (CoreException ce) {
 			CUIPlugin.log(ce);
-			fMap = new HashMap<IPath, String>();
+			fMap = new HashMap<>();
 		}
 		fProject = project;
 	}
@@ -70,7 +69,7 @@ class ProjectMap {
 	/**
 	 * Returns the id of the doc comment owner mapped to the resource specified, or null
 	 * if no owner is mapped within this project. Ownership is inherited from parents and
-	 *  may be overridden. 
+	 *  may be overridden.
 	 * @param resource
 	 * @return possibly null
 	 */
@@ -117,7 +116,7 @@ class ProjectMap {
 	}
 
 	private static Map<IPath, String> load(IProject project) throws CoreException {
-		Map<IPath, String> result = new HashMap<IPath, String>();
+		Map<IPath, String> result = new HashMap<>();
 		ICProjectDescription pd = CCorePlugin.getDefault().getProjectDescription(project, false);
 		if (pd != null) {
 			ICStorageElement element = pd.getStorage(ATTRVAL_STORAGEID, false);

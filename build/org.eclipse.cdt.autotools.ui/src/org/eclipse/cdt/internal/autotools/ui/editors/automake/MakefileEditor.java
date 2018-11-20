@@ -246,7 +246,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 
 	/**
 	 * Returns the find/replace document adapter.
-	 * 
+	 *
 	 * @return the find/replace document adapter.
 	 */
 	private FindReplaceDocumentAdapter getFindRepalceDocumentAdapter() {
@@ -309,7 +309,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	/**
 	 * Adds the given listener.
 	 * Has no effect if an identical listener was not already registered.
-	 * 
+	 *
 	 * @param listener	The reconcile listener to be added
 	 * @since 3.0
 	 */
@@ -322,7 +322,7 @@ public class MakefileEditor extends TextEditor implements ISelectionChangedListe
 	/**
 	 * Removes the given listener.
 	 * Has no effect if an identical listener was not already registered.
-	 * 
+	 *
 	 * @param listener	the reconcile listener to be removed
 	 * @since 3.0
 	 */

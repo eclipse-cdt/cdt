@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -150,7 +150,7 @@ public class MemberFunctionTests extends TestBase {
 	//		int x;
 	//		int y;
 	//	};
-	//	
+	//
 	//	constexpr S s{3, 5};
 	//	constexpr int f() { return s.getY(); }
 
@@ -167,7 +167,7 @@ public class MemberFunctionTests extends TestBase {
 	//	private:
 	//		int x;
 	//		int y;
-	//	};	
+	//	};
 	//	constexpr S s{3, 5};
 
 	//	constexpr int x = s.getY();

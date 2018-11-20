@@ -19,6 +19,15 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.cview.CViewMessages;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -48,20 +57,9 @@ import org.eclipse.ui.navigator.CommonDropAdapter;
 import org.eclipse.ui.navigator.CommonDropAdapterAssistant;
 import org.eclipse.ui.part.ResourceTransfer;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.ui.cview.CViewMessages;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-
 /**
  * A Common Navigator drop adapter assistant handling dropping of <code>ICElement</code>s.
- * 
+ *
  * @see org.eclipse.cdt.internal.ui.cview.SelectionTransferDropAdapter
  */
 public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
@@ -113,8 +111,8 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 				}
 				if (FileTransfer.getInstance().isSupportedType(currentTransfer)) {
 					final String[] names = (String[]) data;
-					// Run the import operation asynchronously. 
-					// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
+					// Run the import operation asynchronously.
+					// Otherwise the drag source (e.g., Windows Explorer) will be blocked
 					// while the operation executes. Fixes bug 35796.
 					Display.getCurrent().asyncExec(new Runnable() {
 						@Override
@@ -128,7 +126,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 					return performResourceCopy(dropAdapter, getShell(), resources);
 				} else {
 					ReadOnlyStateChecker checker = new ReadOnlyStateChecker(getShell(), "Move Resource Action", //$NON-NLS-1$
-							"Move Resource Action");//$NON-NLS-1$	
+							"Move Resource Action");//$NON-NLS-1$
 					resources = checker.checkReadOnlyResources(resources);
 					MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(getShell());
 					operation.copyResources(resources, destination);
@@ -431,7 +429,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 			return null;
 		}
 		List<?> elements = ((IStructuredSelection) selection).toList();
-		List<Object> resources = new ArrayList<Object>(elements.size());
+		List<Object> resources = new ArrayList<>(elements.size());
 		for (Object element : elements) {
 			if (element instanceof ITranslationUnit) {
 				continue;
@@ -484,7 +482,7 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	/**
 	 * Returns the resource selection from the LocalSelectionTransfer.
-	 * 
+	 *
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources() {
@@ -498,11 +496,11 @@ public class CNavigatorDropAdapterAssistant extends CommonDropAdapterAssistant {
 
 	/**
 	 * Returns the resource selection from the LocalSelectionTransfer.
-	 * 
+	 *
 	 * @return the resource selection from the LocalSelectionTransfer
 	 */
 	private IResource[] getSelectedResources(IStructuredSelection selection) {
-		ArrayList<Object> selectedResources = new ArrayList<Object>();
+		ArrayList<Object> selectedResources = new ArrayList<>();
 
 		for (Iterator<?> i = selection.iterator(); i.hasNext();) {
 			Object o = i.next();

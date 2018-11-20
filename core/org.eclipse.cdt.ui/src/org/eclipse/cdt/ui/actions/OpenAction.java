@@ -15,6 +15,18 @@ package org.eclipse.cdt.ui.actions;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.ICStatusConstants;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.ActionUtil;
+import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
@@ -32,31 +44,17 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IEditorStatusLine;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.ICStatusConstants;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.actions.ActionUtil;
-import org.eclipse.cdt.internal.ui.actions.OpenActionUtil;
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-
 /**
  * This action opens a Java editor on a Java element or file.
  * <p>
  * The action is applicable to selections containing elements of
  * type <code>ICompilationUnit</code>, <code>IMember</code>
  * or <code>IFile</code>.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
- * </p> 
- * 
+ * </p>
+ *
  * @since 2.0
  */
 public class OpenAction extends SelectionDispatchAction {
@@ -66,7 +64,7 @@ public class OpenAction extends SelectionDispatchAction {
 	 * Creates a new <code>OpenAction</code>. The action requires
 	 * that the selection provided by the site's selection provider is of type <code>
 	 * org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param site the site providing context information for this action
 	 */
 	public OpenAction(IWorkbenchSite site) {
@@ -79,7 +77,7 @@ public class OpenAction extends SelectionDispatchAction {
 
 	/**
 	 * Note: This constructor is for internal use only. Clients should not call this constructor.
-	 * 
+	 *
 	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public OpenAction(CEditor editor) {

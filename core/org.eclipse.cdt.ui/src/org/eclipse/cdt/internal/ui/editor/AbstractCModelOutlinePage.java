@@ -17,6 +17,32 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.CollapseAllAction;
+import org.eclipse.cdt.internal.ui.cview.SelectionTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.cview.SelectionTransferDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
+import org.eclipse.cdt.internal.ui.dnd.DelegatingDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;
+import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IncludesGrouping;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.action.Action;
@@ -63,34 +89,6 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IncludesGrouping;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.actions.AbstractToggleLinkingAction;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.actions.CollapseAllAction;
-import org.eclipse.cdt.internal.ui.cview.SelectionTransferDragAdapter;
-import org.eclipse.cdt.internal.ui.cview.SelectionTransferDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
-import org.eclipse.cdt.internal.ui.dnd.DelegatingDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;
-import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
 
 /**
  * Abstract outline page based on CModel.
@@ -215,7 +213,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 	/**
 	 * This action toggles macro grouping.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	protected static class MacroGroupingAction extends Action {
@@ -245,7 +243,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	/**
 	 * This action toggles whether this C Outline page links
 	 * its selection to the active editor.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public class ToggleLinkingAction extends AbstractToggleLinkingAction {
@@ -573,7 +571,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 
 	/**
 	 * Register actions to the action bars.
-	 * 
+	 *
 	 * @param actionBars
 	 */
 	protected void registerActionBars(IActionBars actionBars) {
@@ -742,7 +740,7 @@ public abstract class AbstractCModelOutlinePage extends Page
 	}
 
 	/**
-	 * Set the current input to the content provider.  
+	 * Set the current input to the content provider.
 	 * @param unit
 	 */
 	public void setInput(ITranslationUnit unit) {

@@ -192,7 +192,7 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 	@Override
 	public String[] getBuildPaths(IConfiguration configuration, int buildPathType) {
 		ITool tools[] = configuration.getFilteredTools();
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		for (ITool tool : tools) {
 			IEnvVarBuildPath pathDescriptors[] = tool.getEnvVarBuildPaths();
@@ -237,7 +237,7 @@ public class EnvironmentVariableProvider implements IEnvironmentVariableProvider
 	 */
 	private List<IEnvironmentBuildPathsChangeListener> getListeners() {
 		if (fListeners == null)
-			fListeners = new ArrayList<IEnvironmentBuildPathsChangeListener>();
+			fListeners = new ArrayList<>();
 		return fListeners;
 	}
 

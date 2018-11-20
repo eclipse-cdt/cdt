@@ -22,7 +22,7 @@ import org.eclipse.debug.core.model.ILineBreakpoint;
  */
 public interface ICLineBreakpoint extends ICBreakpoint, ILineBreakpoint {
 
-	/** 
+	/**
 	 * Breakpoint marker type for this breakpoint type.
 	 * @since 7.2
 	 */
@@ -33,18 +33,18 @@ public interface ICLineBreakpoint extends ICBreakpoint, ILineBreakpoint {
 	 * execution at (value <code>"org.eclipse.cdt.debug.core.function"</code>).
 	 * This attribute is a <code>String</code>.
 	 */
-	public static final String FUNCTION = "org.eclipse.cdt.debug.core.function"; //$NON-NLS-1$	
+	public static final String FUNCTION = "org.eclipse.cdt.debug.core.function"; //$NON-NLS-1$
 
 	/**
 	 * Breakpoint attribute storing the address this breakpoint suspends
 	 * execution at (value <code>"org.eclipse.cdt.debug.core.address"</code>).
 	 * This attribute is a <code>String</code>.
 	 */
-	public static final String ADDRESS = "org.eclipse.cdt.debug.core.address"; //$NON-NLS-1$	
+	public static final String ADDRESS = "org.eclipse.cdt.debug.core.address"; //$NON-NLS-1$
 
 	/**
 	 * Returns the address this breakpoint suspends execution at.
-	 * 
+	 *
 	 * @return the address this breakpoint suspends execution at
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 * underlying marker
@@ -53,7 +53,7 @@ public interface ICLineBreakpoint extends ICBreakpoint, ILineBreakpoint {
 
 	/**
 	 * Sets the address this breakpoint suspends execution at.
-	 * 
+	 *
 	 * @param address the address this breakpoint suspends execution at
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 * underlying marker
@@ -62,7 +62,7 @@ public interface ICLineBreakpoint extends ICBreakpoint, ILineBreakpoint {
 
 	/**
 	 * Returns the function this breakpoint suspends execution in.
-	 * 
+	 *
 	 * @return the function this breakpoint suspends execution in
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -71,7 +71,7 @@ public interface ICLineBreakpoint extends ICBreakpoint, ILineBreakpoint {
 
 	/**
 	 * Sets the function this breakpoint suspends execution in.
-	 * 
+	 *
 	 * @param function the function this breakpoint suspends execution in
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -80,7 +80,7 @@ public interface ICLineBreakpoint extends ICBreakpoint, ILineBreakpoint {
 
 	/**
 	 * Returns the source file (if available) of this breakpoint.
-	 *  
+	 *
 	 * @return the source file of this breakpoint
 	 * @throws CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker

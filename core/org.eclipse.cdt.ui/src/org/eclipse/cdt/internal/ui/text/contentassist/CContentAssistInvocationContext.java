@@ -19,13 +19,6 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.ui.IEditorPart;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
@@ -46,21 +39,26 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.IToken;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.text.Symbols;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.cdt.ui.text.contentassist.ICEditorContentAssistInvocationContext;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.Symbols;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.ui.IEditorPart;
 
 /**
  * Describes the context of a content assist invocation in a C/C++ editor.
  * <p>
  * Clients may instantiate. A client that created a context is responsible for its disposal.
  * </p>
- * 
+ *
  * @since 4.0
  */
 public class CContentAssistInvocationContext extends ContentAssistInvocationContext
@@ -92,7 +90,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 			if (result != getInvocationOffset()) {
 				// If guessCompletionPosition() chose a parse offset that's different
 				// from the invocation offset, we are proposing completions for a name
-				// that's not right under the cursor, and so we just want to show 
+				// that's not right under the cursor, and so we just want to show
 				// context information.
 				fIsContextInformationStyle = true;
 			}
@@ -143,31 +141,31 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 
 	/**
 	 * Choose a better completion node based on information in the AST.
-	 * 
+	 *
 	 * Currently, this makes an adjustment in one case: if the completion node is
 	 * an empty name at the top level of one of the initializers of an initializer
 	 * list that may be a constructor call, the completion name is adjusted to
 	 * instead be the name preceding the initializer list (which will either name
 	 * the type being constructed, or a variable of that type). This allows us to
 	 * offer completions for the constructors of this type.
-	 * 
+	 *
 	 * Currently we handle initializer lists in three contexts:
 	 *   1) simple declaration
 	 *   2) simple type constructor expression
 	 *   3) constructor chain initializer
-	 *   
+	 *
 	 * TODO: Handle the additional context of a return-expression:
 	 *         S foo() {
 	 *           return {...};  // can invoke S constructor with args inside {...}
-	 *         }	 
-	 * 
+	 *         }
+	 *
 	 * Note that for constructor calls with () rather than {} syntax, we
 	 * accomplish the same goal by different means: in getParseOffset(), we choose
 	 * a parse offset that will give us the desired completion node to begin with.
 	 * We can't do this with the {} syntax, because in getParseOffset() we don't
 	 * have an AST yet (the choice is made using CHeuristicScanner), and we cannot
-	 * distinguish other uses of {} from the desired ones. 
-	 * 
+	 * distinguish other uses of {} from the desired ones.
+	 *
 	 * @param completionName the initial completion name, based on the parse offset
 	 *                       chosen using CHeuristicScanner
 	 * @return the adjusted completion name, if different from the initial completion
@@ -375,7 +373,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 
 	/**
 	 * Creates a new context.
-	 * 
+	 *
 	 * @param viewer the viewer used by the editor
 	 * @param offset the invocation offset
 	 * @param editor the editor that content assist is invoked in
@@ -399,7 +397,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 
 	/**
 	 * Creates a new context.
-	 * 
+	 *
 	 * @param unit the translation unit in <code>document</code>
 	 */
 	public CContentAssistInvocationContext(final ITranslationUnit unit, boolean isCompletion) {
@@ -419,7 +417,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	/**
 	 * Returns the translation unit that content assist is invoked in, <code>null</code> if there
 	 * is none.
-	 * 
+	 *
 	 * @return the translation unit that content assist is invoked in, possibly <code>null</code>
 	 */
 	@Override
@@ -431,7 +429,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	/**
 	 * Returns the project of the translation unit that content assist is invoked in,
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @return the current C project, possibly <code>null</code>
 	 */
 	@Override
@@ -488,7 +486,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	/**
 	 * Try to find a sensible completion position backwards in case the given offset
 	 * is inside a function call argument list or in template arguments.
-	 * 
+	 *
 	 * @param contextPosition  the starting position
 	 * @return a sensible completion offset
 	 */
@@ -542,7 +540,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 	/**
 	 * Try to find the smallest offset inside the opening parenthesis of a function call
 	 * argument list.
-	 * 
+	 *
 	 * @return the offset of the function call parenthesis plus 1 or -1 if the invocation
 	 *     offset is not inside a function call (or similar)
 	 */
@@ -575,7 +573,7 @@ public class CContentAssistInvocationContext extends ContentAssistInvocationCont
 
 	/**
 	 * Get the editor content assist is invoked in.
-	 * 
+	 *
 	 * @return the editor, may be <code>null</code>
 	 */
 	@Override

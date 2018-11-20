@@ -397,7 +397,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				int lastSeparatorIndex = gdbCommand.lastIndexOf(File.separator);
 				if (lastSeparatorIndex != -1) {
 					String cmd = gdbCommand.substring(0, lastSeparatorIndex);
-					// remove double quotes, since they interfere with 
+					// remove double quotes, since they interfere with
 					// "setFilterPath()" below
 					cmd = cmd.replaceAll("\\\"", ""); //$NON-NLS-1$//$NON-NLS-2$
 					dialog.setFilterPath(cmd);
@@ -406,7 +406,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 				if (res == null) {
 					return;
 				}
-				// path contains space(s)? 
+				// path contains space(s)?
 				if (res.contains(" ")) { //$NON-NLS-1$
 					// surround it in double quotes
 					res = '"' + res + '"';

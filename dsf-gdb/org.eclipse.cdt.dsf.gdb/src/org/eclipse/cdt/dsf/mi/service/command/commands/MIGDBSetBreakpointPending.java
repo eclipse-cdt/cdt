@@ -16,16 +16,16 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
- * 
+ *
  * -gdb-set breakpoint pending [on | off]
- * 
+ *
  * This command should be used to make breakpoints/tracepoints that are created
  * using a CLI command to be set as potentially pending breakpoints in GDB.
- * 
+ *
  * Available with GDB 6.1
- * 
+ *
  * @since 4.0
- * 
+ *
  */
 public class MIGDBSetBreakpointPending extends MIGDBSet {
 	public MIGDBSetBreakpointPending(ICommandControlDMContext ctx, boolean enable) {

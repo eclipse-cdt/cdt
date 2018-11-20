@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson           - Updated to support Move-To-Line
@@ -29,7 +29,7 @@ import org.eclipse.debug.core.model.ISuspendResume;
 /**
  * Adapter factory for Run-To-Line, Move-To-Line
  * and Resume-At-Line
- * 
+ *
  * @since 2.1
  */
 public class SuspendResumeAdapterFactory implements IAdapterFactory {

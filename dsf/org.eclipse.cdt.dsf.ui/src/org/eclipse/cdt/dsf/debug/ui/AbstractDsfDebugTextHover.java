@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Nokia Corporation - initial API and implementation
  *     Wind River Systems - Added support for advanced expression hover
@@ -23,8 +23,8 @@ import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Query;
 import org.eclipse.cdt.dsf.debug.internal.ui.ExpressionInformationControlCreator;
 import org.eclipse.cdt.dsf.debug.service.IExpressions;
-import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IFormattedValues;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMContext;
 import org.eclipse.cdt.dsf.debug.service.IFormattedValues.FormattedValueDMData;
 import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
@@ -44,7 +44,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 
 /**
  * An implementation of AbstractDebugTextHover using DSF services
- * 
+ *
  * @since 2.1
  */
 abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover implements ITextHoverExtension2 {
@@ -184,7 +184,7 @@ abstract public class AbstractDsfDebugTextHover extends AbstractDebugTextHover i
 
 	/**
 	 * Create an information control creator for the "advanced" hover.
-	 * Called by {@link #getHoverControlCreator()} when {@link #useExpressionExplorer()} 
+	 * Called by {@link #getHoverControlCreator()} when {@link #useExpressionExplorer()}
 	 * returns <code>true</code>.
 	 * <p>
 	 * The default implementation returns an information control creator with

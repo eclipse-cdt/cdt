@@ -51,15 +51,15 @@ import org.eclipse.core.runtime.Status;
  * statement :   rule | macro_definition | comments | empty
  * rule :  inference_rule | target_rule
  * inference_rule : target ':' <nl> ( <tab> command <nl> ) +
- * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl> 
+ * target_rule : target [ ( target ) * ] ':' [ ( prerequisite ) * ] [ ';' command ] <nl>
                  [ ( command ) * ]
- * macro_definition : string '=' (string)* 
+ * macro_definition : string '=' (string)*
  * comments : ('#' (string) <nl>) *
  * empty : <nl>
  * command : <tab> prefix_command string <nl>
  * target : string
  * prefix_command : '-' | '@' | '+'
- * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%" 
+ * internal_macro :  "$<" | "$*" | "$@" | "$?" | "$%"
  */
 
 public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
@@ -531,7 +531,7 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 	}
 
 	/**
-	 * 
+	 *
 	 * ifdef CONDITIONAL
 	 * ifeq CONDITIONAL
 	 * ifneq CONDITIONAL
@@ -939,8 +939,8 @@ public class GNUAutomakefile extends AbstractMakefile implements IGNUMakefile {
 
 	/**
 	 * Create an IMakefile using the given IMakefileReaderProvider to fetch
-	 * contents by name. 
-	 * 
+	 * contents by name.
+	 *
 	 * @param fileURI URI of main file
 	 * @param makefileReaderProvider may be <code>null</code> for EFS IFileStore reading
 	 */

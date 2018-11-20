@@ -58,14 +58,12 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuilderCorePlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -178,21 +176,21 @@ public class HeadlessBuilder implements IApplication {
 	public static final Integer OK = IApplication.EXIT_OK;
 
 	/** Set of project URIs / paths to import */
-	protected final Set<String> projectsToImport = new HashSet<String>();
+	protected final Set<String> projectsToImport = new HashSet<>();
 	/** Tree of projects to recursively import */
-	protected final Set<String> projectTreeToImport = new HashSet<String>();
+	protected final Set<String> projectTreeToImport = new HashSet<>();
 	/** Set of project names to build */
-	protected final Set<String> projectRegExToBuild = new HashSet<String>();
+	protected final Set<String> projectRegExToBuild = new HashSet<>();
 	/** Set of project names to clean */
-	protected final Set<String> projectRegExToClean = new HashSet<String>();
+	protected final Set<String> projectRegExToClean = new HashSet<>();
 	protected boolean buildAll = false;
 	protected boolean cleanAll = false;
 	protected boolean disableIndexer = false;
 
 	/** List of Tool Option values being set */
-	protected List<ToolOption> toolOptions = new ArrayList<ToolOption>();
+	protected List<ToolOption> toolOptions = new ArrayList<>();
 	/** Map from configuration ID -> Set of SavedToolOptions */
-	protected Map<String, Set<SavedToolOption>> savedToolOptions = new HashMap<String, Set<SavedToolOption>>();
+	protected Map<String, Set<SavedToolOption>> savedToolOptions = new HashMap<>();
 	protected boolean markerTypesDefault = true;
 	protected boolean markerTypesAll = false;
 	protected Set<String> markerTypes = new HashSet<>();
@@ -247,7 +245,7 @@ public class HeadlessBuilder implements IApplication {
 							// Build this configuration for this project
 							Set<ICConfigurationDescription> set = cfgMap.get(project);
 							if (set == null)
-								set = new HashSet<ICConfigurationDescription>();
+								set = new HashSet<>();
 							set.add(cfg);
 							cfgMap.put(project, set);
 						}
@@ -501,7 +499,7 @@ public class HeadlessBuilder implements IApplication {
 
 			IProject[] allProjects = root.getProjects();
 			// Map from Project -> Configurations to build. We also Build all projects which are clean'd
-			Map<IProject, Set<ICConfigurationDescription>> configsToBuild = new HashMap<IProject, Set<ICConfigurationDescription>>();
+			Map<IProject, Set<ICConfigurationDescription>> configsToBuild = new HashMap<>();
 
 			/*
 			 * Perform the Clean / Build
@@ -847,7 +845,7 @@ public class HeadlessBuilder implements IApplication {
 					case IOption.UNDEF_LIBRARY_PATHS:
 					case IOption.UNDEF_LIBRARY_FILES:
 					case IOption.UNDEF_MACRO_FILES:
-						List<String> listValue = new ArrayList<String>();
+						List<String> listValue = new ArrayList<>();
 						switch (toolOption.operation) {
 						case ToolOption.APPEND:
 							listValue.addAll((List<String>) option.getValue());

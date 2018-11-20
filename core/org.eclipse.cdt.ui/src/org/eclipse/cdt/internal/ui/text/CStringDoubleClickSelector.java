@@ -14,6 +14,8 @@
 
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -23,10 +25,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.editor.CDocumentSetupParticipant;
 
 /**
  * Double click strategy aware of string and character syntax rules.

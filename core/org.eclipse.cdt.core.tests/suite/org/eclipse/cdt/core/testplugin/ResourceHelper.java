@@ -72,8 +72,8 @@ public class ResourceHelper {
 	private final static IProgressMonitor NULL_MONITOR = new NullProgressMonitor();
 	private static final int MAX_RETRY = 5;
 
-	private final static Set<String> externalFilesCreated = new HashSet<String>();
-	private final static Set<IResource> resourcesCreated = new HashSet<IResource>();
+	private final static Set<String> externalFilesCreated = new HashSet<>();
+	private final static Set<IResource> resourcesCreated = new HashSet<>();
 
 	/**
 	 * Creates CDT project in a specific path in workspace and opens it.
@@ -697,9 +697,10 @@ public class ResourceHelper {
 	 * This method removes *all* Workspace IResources and any external
 	 * files / folders created with the #createWorkspaceFile #createWorkspaceFolder
 	 * methods in this class
-	 * 
+	 *
 	 * @deprecated Use {@link #cleanUp(String)} instead so test name can be printed in diagnostics
 	 */
+	@Deprecated
 	public static void cleanUp() throws CoreException, IOException {
 		cleanUp("<unknown>");
 	}

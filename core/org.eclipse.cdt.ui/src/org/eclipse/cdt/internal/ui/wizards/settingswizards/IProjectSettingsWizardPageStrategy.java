@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.ui.wizards.settingswizards;
  * The wizard page is very similar for importing and exporting,
  * the wizard page delegates to a strategy object which defines
  * the behavior that is specific to import and export.
- * 
+ *
  * @author Mike Kucera
  * @since 5.1
  */

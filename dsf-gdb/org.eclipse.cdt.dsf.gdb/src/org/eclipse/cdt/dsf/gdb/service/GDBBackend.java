@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Nokia              - initial API and implementation with some code moved from GDBControl.
  *     Wind River System
@@ -67,7 +67,7 @@ import org.osgi.framework.BundleContext;
  * manages some GDB parameters from a given launch configuration.<br>
  * <br>
  * You can subclass for you special needs.
- * 
+ *
  * @since 1.1
  */
 public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBackend2 {
@@ -174,7 +174,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	/**
 	 * Options for GDB process. Returns the GDB command and its arguments as an
 	 * array. Allow subclass to override.
-	 * 
+	 *
 	 * @since 4.6
 	 * @deprecated Replaced by getDebuggerCommandLine()
 	 */
@@ -210,7 +210,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	//   is released, the extender may likely point their extension to
 	//   GDBBackend_7_12 instead of GDBBackend (which will even happen
 	//   automatically if the extender extends GDBBackend_HEAD).
-	//   In such a case, they would override the changes in 
+	//   In such a case, they would override the changes in
 	//   GDBBackend_7_12.getGDBCommandLineArray() and the debug session
 	//   is likely to fail since with GDBBackend_7_12, we launch GDB
 	//   in CLI mode.
@@ -278,7 +278,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 
 	/**
 	 * Launch GDB process. Allow subclass to override.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	// Again, we create a new method that we know has not been already
@@ -300,7 +300,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	/**
 	 * Launch GDB process with command and arguments. Allow subclass to
 	 * override.
-	 * 
+	 *
 	 * @since 4.6
 	 * @deprecated Replace by launchGDBProcess()
 	 */
@@ -325,18 +325,18 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	@Override
 	public OutputStream getMIOutputStream() {
 		return fProcess.getOutputStream();
-	};
+	}
 
 	@Override
 	public InputStream getMIInputStream() {
 		return fProcess.getInputStream();
-	};
+	}
 
 	/** @since 4.1 */
 	@Override
 	public InputStream getMIErrorStream() {
 		return fProcess.getErrorStream();
-	};
+	}
 
 	@Override
 	public String getId() {
@@ -732,7 +732,7 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 		 * GDBControlInitializedDMEvent that's used to indicate that GDB back
 		 * end is ready for MI commands. But we still fire the event as it does
 		 * no harm and may be needed sometime.... 09/29/2008
-		 * 
+		 *
 		 * We send the event in the register step because that is when other
 		 * services have access to it.
 		 */
@@ -810,12 +810,12 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * this job should be canceled. If this job is not canceled before the time
 	 * is up, it will imply the interrupt did not successfully suspend the
 	 * backend, and the current job will indicate this in the request monitor.
-	 * 
+	 *
 	 * The specified timeout is used to indicate how many milliseconds this job
 	 * should wait for. INTERRUPT_TIMEOUT_DEFAULT indicates to use the default
 	 * of 5 seconds. The default is also use if the timeout value is 0 or
 	 * negative.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected class MonitorInterruptJob extends Job {
@@ -864,14 +864,14 @@ public class GDBBackend extends AbstractDsfService implements IGDBBackend, IMIBa
 	 * when the target stops, in cases where we don't want to views to update.
 	 * For example, if we want to interrupt the target to set a breakpoint, this
 	 * interruption is done silently; we will receive the MI event though.
-	 * 
+	 *
 	 * <p>
 	 * Though we send a SIGINT, we may not specifically get an MISignalEvent.
 	 * Typically we will, but not always, so wait for an MIStoppedEvent. See
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=305178#c21
-	 * 
+	 *
 	 * @since 3.0
-	 * 
+	 *
 	 */
 	@DsfServiceEventHandler
 	public void eventDispatched(final MIStoppedEvent e) {

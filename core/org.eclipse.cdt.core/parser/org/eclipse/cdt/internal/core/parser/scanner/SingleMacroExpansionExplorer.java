@@ -53,7 +53,7 @@ public class SingleMacroExpansionExplorer extends MacroExpansionExplorer {
 	}
 
 	private CharArrayMap<PreprocessorMacro> createDictionary(IASTName[] refs) {
-		CharArrayMap<PreprocessorMacro> map = new CharArrayMap<PreprocessorMacro>(refs.length);
+		CharArrayMap<PreprocessorMacro> map = new CharArrayMap<>(refs.length);
 		for (IASTName name : refs) {
 			addMacroDefinition(map, name);
 		}

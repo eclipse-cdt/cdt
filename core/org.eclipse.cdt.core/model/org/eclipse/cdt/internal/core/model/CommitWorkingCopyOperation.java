@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * original resource have changed since the working copy was created,
  * in which case there is an update conflict. This operation allows
  * for two settings to resolve conflict set by the <code>fForce</code> flag:<ul>
- * <li>force flag is <code>false</code> - in this case a <code>CModelException</code> 	
+ * <li>force flag is <code>false</code> - in this case a <code>CModelException</code>
  * is thrown</li>
  * <li>force flag is <code>true</code> - in this case the contents of
  * 	the working copy are applied to the underlying resource even though
@@ -50,7 +50,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  *
  * A CModelOperation exception is thrown either if the commit could not be
  * performed.
- * 
+ *
  * This class is similar to the JDT CommitWorkingCopyOperation class.
  */
 
@@ -84,7 +84,7 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 			WorkingCopy wc = (WorkingCopy) getElementToProcess();
 			ITranslationUnit tu = wc.getOriginalElement();
 
-			// creates the delta builder (this remembers the content of the cu)	
+			// creates the delta builder (this remembers the content of the cu)
 			if (!tu.isOpen()) {
 				// force opening so that the delta builder can get the old info
 				tu.open(null);
@@ -186,7 +186,7 @@ public class CommitWorkingCopyOperation extends CModelOperation {
 		}
 
 		// no read-only check, since some repository adapters can change the flag on save
-		// operation.	
+		// operation.
 		return CModelStatus.VERIFIED_OK;
 
 	}

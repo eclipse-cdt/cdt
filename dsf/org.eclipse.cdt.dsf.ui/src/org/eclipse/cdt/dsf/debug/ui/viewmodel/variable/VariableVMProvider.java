@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -89,7 +89,7 @@ public class VariableVMProvider extends AbstractElementVMProvider implements ICo
 	/**
 	 * Configures the nodes of this provider.  This method may be over-ridden by
 	 * sub classes to create an alternate configuration in this provider.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void configureLayout() {
@@ -152,7 +152,7 @@ public class VariableVMProvider extends AbstractElementVMProvider implements ICo
 
 	@Override
 	protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
-		// To optimize the performance of the view when stepping rapidly, skip all 
+		// To optimize the performance of the view when stepping rapidly, skip all
 		// other events when a suspended event is received, including older suspended
 		// events.
 		return newEvent instanceof ISuspendedDMEvent;

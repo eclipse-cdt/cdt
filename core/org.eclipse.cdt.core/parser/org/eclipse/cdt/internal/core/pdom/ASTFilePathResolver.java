@@ -27,7 +27,7 @@ public abstract class ASTFilePathResolver {
 
 	/**
 	 * Resolve a path for an inclusion as computed by the preprocessor. Check for existence
-	 * and return <code>null</code> if the file does not exist. 
+	 * and return <code>null</code> if the file does not exist.
 	 * @return an index file location or <code>null</code> if the file does not exist.
 	 */
 	public abstract IIndexFileLocation resolveIncludeFile(String includePath);

@@ -67,7 +67,7 @@ public class FPRenderingPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the currently active workbench window shell or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the currently active workbench window shell or <code>null</code>
 	 */
 	public static Shell getShell() {

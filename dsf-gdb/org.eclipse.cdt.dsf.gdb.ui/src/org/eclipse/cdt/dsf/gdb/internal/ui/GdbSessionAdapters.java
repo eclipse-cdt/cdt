@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Mikhail Khodjaiants (Mentor Graphics) - initial API and implementation
@@ -135,7 +135,7 @@ public class GdbSessionAdapters {
 	}
 
 	/**
-	 * Returns the adapter object registered with the session for the given adapter type 
+	 * Returns the adapter object registered with the session for the given adapter type
 	 * or null if no adapter is registered.
 	 */
 	@SuppressWarnings("unchecked")
@@ -144,7 +144,7 @@ public class GdbSessionAdapters {
 	}
 
 	/**
-	 * Returns the adapter object registered with {@link ILaunch} for the given adapter type 
+	 * Returns the adapter object registered with {@link ILaunch} for the given adapter type
 	 * or null if no adapter is registered.
 	 */
 	@SuppressWarnings("unchecked")
@@ -180,8 +180,8 @@ public class GdbSessionAdapters {
 
 	/**
 	 * Returns all adapter types registered with the session.
-	 * Clients can override this method to add a new adapter type and 
-	 * then override {@link GdbSessionAdapters.createModelAdapter()} 
+	 * Clients can override this method to add a new adapter type and
+	 * then override {@link GdbSessionAdapters.createModelAdapter()}
 	 * to provide the adapter object.
 	 */
 	protected List<Class<?>> getModelAdapters() {
@@ -350,11 +350,11 @@ public class GdbSessionAdapters {
 
 	/**
 	 * Returns the method that will be called to dispose the given object.
-	 *  
-	 * @param adapter the object to dispose 
+	 *
+	 * @param adapter the object to dispose
 	 * @return "dispose()" method or null if the given object doesn't have "dispose()" method
-	 * 
-	 * Clients can override this method to provide dispose methods different than "dispose()" 
+	 *
+	 * Clients can override this method to provide dispose methods different than "dispose()"
 	 * for specific adapters.
 	 */
 	protected Method getDisposeMethod(Object adapter) {

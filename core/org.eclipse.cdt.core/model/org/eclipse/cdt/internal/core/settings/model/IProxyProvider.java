@@ -35,9 +35,9 @@ public interface IProxyProvider {
 	void invalidateCache();
 	/*
 		CDataProxy[] getProxies(Class arrayElClass);
-	
+
 		CDataProxy[] getProxiesOfKind(int kind, Class arrayElClass);
-	
+
 		CDataProxy[] getCachedProxies(Class arrayElClass);
 	*/
 	//	IDataProvider getDataProvider();

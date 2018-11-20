@@ -16,15 +16,15 @@ package org.eclipse.cdt.debug.ui.disassembly;
 
 /**
  * Provides context sensitive annotations for source elements.
- * 
+ *
  * This interface is experimental.
  */
 public interface IDocumentElementAnnotationProvider {
 
 	/**
 	 * Updates the annotations of the specified source elements.
-	 * 
-	 * @param updates each update specifies the element and context 
+	 *
+	 * @param updates each update specifies the element and context
 	 * for which annotations are requested and stores the results
 	 */
 	public void update(IDocumentElementAnnotationUpdate[] updates);

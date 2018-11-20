@@ -44,7 +44,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * C/C++ Project Paths page for 3.X projects.
- * 
+ *
  * @deprecated as of CDT 4.0. This property page was used to set properties
  * "C/C++ Make Project" for 3.X style projects.
  * This page lives dormant as of writing (CDT 7.0) but may get activated for
@@ -206,7 +206,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IStatusChangeListener#statusChanged
 	 */
 	@Override
@@ -217,7 +217,7 @@ public class CPathPropertyPage extends PropertyPage implements IStatusChangeList
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
 	@Override

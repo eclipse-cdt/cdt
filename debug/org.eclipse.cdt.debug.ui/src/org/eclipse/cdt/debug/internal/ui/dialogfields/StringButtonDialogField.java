@@ -94,7 +94,7 @@ public class StringButtonDialogField extends StringDialogField {
 		return gd;
 	}
 
-	// ------- ui creation	
+	// ------- ui creation
 
 	/**
 	 * Creates or returns the created buttom widget.

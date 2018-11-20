@@ -38,7 +38,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"f()"); //$NON-NLS-1$
 	}
 
-	// Kind PRIMARY_INTEGER_LITERAL : int 
+	// Kind PRIMARY_INTEGER_LITERAL : int
 	public void testPrimaryIntegerLiteral() throws Exception {
 		IASTTranslationUnit tu = parse("int x = f(1, 2+3);".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -118,7 +118,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"f(a)"); //$NON-NLS-1$
 	}
 
-	// Kind POSTFIX_SUBSCRIPT	
+	// Kind POSTFIX_SUBSCRIPT
 	public void testPostfixSubscript() throws Exception {
 		IASTTranslationUnit tu = parse("int x = f(pa[1]);".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -184,7 +184,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a->m)"); //$NON-NLS-1$
 	}
 
-	// Kind POSTFIX_INCREMENT : LHS 
+	// Kind POSTFIX_INCREMENT : LHS
 	public void testPostfixIncrement() throws Exception {
 		IASTTranslationUnit tu = parse("int y = foo( x++ );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -204,7 +204,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(x--)"); //$NON-NLS-1$
 	}
 
-	// Kind POSTFIX_DYNAMIC_CAST 
+	// Kind POSTFIX_DYNAMIC_CAST
 	public void testPostfixDynamicCast() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( dynamic_cast<B*>(a) );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -275,7 +275,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(typeid(const A))"); //$NON-NLS-1$
 	}
 
-	// Kind UNARY_INCREMENT : LHS             
+	// Kind UNARY_INCREMENT : LHS
 	public void testUnaryIncrement() throws Exception {
 		IASTTranslationUnit tu = parse("int y = foo( ++x );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -285,7 +285,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(++x)"); //$NON-NLS-1$
 	}
 
-	// Kind UNARY_DECREMENT : LHS             
+	// Kind UNARY_DECREMENT : LHS
 	public void testUnaryDecrement() throws Exception {
 		IASTTranslationUnit tu = parse("int y = foo( --x );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -295,7 +295,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(--x)"); //$NON-NLS-1$
 	}
 
-	// Kind UNARY_STAR_CASTEXPRESSION : LHS + t_pointer	
+	// Kind UNARY_STAR_CASTEXPRESSION : LHS + t_pointer
 	public void testUnaryStarCastExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x = f(*pa);".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -335,7 +335,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(-5)"); //$NON-NLS-1$
 	}
 
-	// Kind UNARY_NOT_CASTEXPRESSION : LHS   
+	// Kind UNARY_NOT_CASTEXPRESSION : LHS
 	public void testUnaryNotCastExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( !b );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -345,7 +345,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(!b)"); //$NON-NLS-1$
 	}
 
-	// Kind UNARY_TILDE_CASTEXPRESSION : LHS   
+	// Kind UNARY_TILDE_CASTEXPRESSION : LHS
 	public void testTildeNotCastExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int y = foo( ~x );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -355,7 +355,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(~x)"); //$NON-NLS-1$
 	}
 
-	// Kind UNARY_SIZEOF_UNARYEXPRESSION : unsigned int 
+	// Kind UNARY_SIZEOF_UNARYEXPRESSION : unsigned int
 	public void testUnarySizeofUnaryExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int y = foo( sizeof(5) );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -365,7 +365,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(sizeof (5))"); //$NON-NLS-1$
 	}
 
-	// Kind UNARY_SIZEOF_TYPEID : unsigned int          
+	// Kind UNARY_SIZEOF_TYPEID : unsigned int
 	public void testUnarySizeofTypeId() throws Exception {
 		IASTTranslationUnit tu = parse("int x, y = foo( sizeof(x) );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -374,7 +374,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 		isExpressionStringEqual(expression, "foo(sizeof (x))"); //$NON-NLS-1$
 	}
 
-	// Kind NEW_TYPEID                   
+	// Kind NEW_TYPEID
 	public void testNewTypeId() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( new A() );".toString(), ParserLanguage.CPP); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -384,7 +384,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(new A())"); //$NON-NLS-1$
 	}
 
-	// Kind CASTEXPRESSION      
+	// Kind CASTEXPRESSION
 	public void testCastExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( (A*)b );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -404,7 +404,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a * b)"); //$NON-NLS-1$
 	}
 
-	// Kind MULTIPLICATIVE_DIVIDE : usual arithmetic conversions        
+	// Kind MULTIPLICATIVE_DIVIDE : usual arithmetic conversions
 	public void testMultiplicativeDivide() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( b / a );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -414,7 +414,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(b / a)"); //$NON-NLS-1$
 	}
 
-	// Kind MULTIPLICATIVE_MODULUS : usual arithmetic conversions      
+	// Kind MULTIPLICATIVE_MODULUS : usual arithmetic conversions
 	public void testMultiplicativeModulus() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( b % a );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -424,7 +424,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(b % a)"); //$NON-NLS-1$
 	}
 
-	// Kind ADDITIVE_PLUS : usual arithmetic conversions              
+	// Kind ADDITIVE_PLUS : usual arithmetic conversions
 	public void testAdditivePlus() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( b + a );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -434,7 +434,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(b + a)"); //$NON-NLS-1$
 	}
 
-	// Kind ADDITIVE_MINUS : usual arithmetic conversions           
+	// Kind ADDITIVE_MINUS : usual arithmetic conversions
 	public void testAdditiveMinus() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( b - a );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -454,7 +454,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a << 5)"); //$NON-NLS-1$
 	}
 
-	// Kind SHIFT_RIGHT : LHS                  
+	// Kind SHIFT_RIGHT : LHS
 	public void testShiftRight() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a >> 5 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -464,7 +464,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a >> 5)"); //$NON-NLS-1$
 	}
 
-	// Kind RELATIONAL_LESSTHAN : bool          
+	// Kind RELATIONAL_LESSTHAN : bool
 	public void testRelationalLessThan() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( b < 3 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -474,7 +474,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(b < 3)"); //$NON-NLS-1$
 	}
 
-	// Kind RELATIONAL_GREATERTHAN : bool      
+	// Kind RELATIONAL_GREATERTHAN : bool
 	public void testRelationalGreaterThan() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( b > 3 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -484,7 +484,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(b > 3)"); //$NON-NLS-1$
 	}
 
-	// Kind RELATIONAL_LESSTHANEQUALTO : bool  
+	// Kind RELATIONAL_LESSTHANEQUALTO : bool
 	public void testRelationalLessThanOrEqual() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( b <= 3 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -504,7 +504,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(b >= 3)"); //$NON-NLS-1$
 	}
 
-	// Kind EQUALITY_EQUALS : bool         
+	// Kind EQUALITY_EQUALS : bool
 	public void testEqualityEquals() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( b == 3 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -514,7 +514,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(b == 3)"); //$NON-NLS-1$
 	}
 
-	// Kind EQUALITY_NOTEQUALS : bool      
+	// Kind EQUALITY_NOTEQUALS : bool
 	public void testEqualityNotEquals() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( b != 3 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -524,7 +524,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(b != 3)"); //$NON-NLS-1$
 	}
 
-	// Kind ANDEXPRESSION  : usual arithmetic conversions          
+	// Kind ANDEXPRESSION  : usual arithmetic conversions
 	public void testAndExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a & b );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -534,7 +534,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a & b)"); //$NON-NLS-1$
 	}
 
-	// Kind EXCLUSIVEOREXPRESSION : usual arithmetic conversions      
+	// Kind EXCLUSIVEOREXPRESSION : usual arithmetic conversions
 	public void testExclusiveOrExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a ^ b );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -544,7 +544,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a ^ b)"); //$NON-NLS-1$
 	}
 
-	// Kind INCLUSIVEOREXPRESSION : : usual arithmetic conversions     
+	// Kind INCLUSIVEOREXPRESSION : : usual arithmetic conversions
 	public void testInclusiveOrExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a | b );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -554,7 +554,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a | b)"); //$NON-NLS-1$
 	}
 
-	// Kind LOGICALANDEXPRESSION : bool      
+	// Kind LOGICALANDEXPRESSION : bool
 	public void testLogicalAndExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a && b );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -564,7 +564,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a && b)"); //$NON-NLS-1$
 	}
 
-	// Kind LOGICALOREXPRESSION  : bool      
+	// Kind LOGICALOREXPRESSION  : bool
 	public void testLogicalOrExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a || b );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -574,7 +574,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a || b)"); //$NON-NLS-1$
 	}
 
-	// Kind CONDITIONALEXPRESSION : conditional Expression Conversions     
+	// Kind CONDITIONALEXPRESSION : conditional Expression Conversions
 	public void testConditionalExpression() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a > 5 ? b : c );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -594,7 +594,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a = 5)"); //$NON-NLS-1$
 	}
 
-	// Kind ASSIGNMENTEXPRESSION_PLUS : LHS  
+	// Kind ASSIGNMENTEXPRESSION_PLUS : LHS
 	public void testAssignmentExpressionPlus() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a += 5 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -604,7 +604,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a += 5)"); //$NON-NLS-1$
 	}
 
-	// Kind ASSIGNMENTEXPRESSION_MINUS : LHS 
+	// Kind ASSIGNMENTEXPRESSION_MINUS : LHS
 	public void testAssignmentExpressionMinus() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a -= 5 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -614,7 +614,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a -= 5)"); //$NON-NLS-1$
 	}
 
-	// Kind ASSIGNMENTEXPRESSION_MULT : LHS  
+	// Kind ASSIGNMENTEXPRESSION_MULT : LHS
 	public void testAssignmentExpressionMulti() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a *= 5 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -624,7 +624,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a *= 5)"); //$NON-NLS-1$
 	}
 
-	// Kind ASSIGNMENTEXPRESSION_DIV : LHS   
+	// Kind ASSIGNMENTEXPRESSION_DIV : LHS
 	public void testAssignmentExpressionDiv() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a /= 5 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -634,7 +634,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a /= 5)"); //$NON-NLS-1$
 	}
 
-	// Kind ASSIGNMENTEXPRESSION_MOD : LHS   
+	// Kind ASSIGNMENTEXPRESSION_MOD : LHS
 	public void testAssignmentExpressionMod() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a %= 5 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();
@@ -674,7 +674,7 @@ public class AST2UtilOldTests extends AST2TestBase {
 				"foo(a &= 5)"); //$NON-NLS-1$
 	}
 
-	// Kind ASSIGNMENTEXPRESSION_OR : LHS 
+	// Kind ASSIGNMENTEXPRESSION_OR : LHS
 	public void testAssignmentExpressionOr() throws Exception {
 		IASTTranslationUnit tu = parse("int x = foo( a |= 5 );".toString(), ParserLanguage.C); //$NON-NLS-1$
 		IASTDeclaration[] d = tu.getDeclarations();

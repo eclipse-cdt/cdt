@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.debug.service.IStack.IFrameDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *  -exec-return [arg]
  *
  *  <p>
@@ -27,10 +27,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  *  inferior.  Displays the new current frame.
  *  </p>
  *  <p>
- *  The <code>-exec-return</code> command operates on the selected stack 
+ *  The <code>-exec-return</code> command operates on the selected stack
  *  frame.  Therefore the constructor requires a stack frame context.
  *  </p>
- * 
+ *
  */
 public class MIExecReturn extends MICommand<MIInfo> {
 	public MIExecReturn(IFrameDMContext dmc) {

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
@@ -35,13 +35,13 @@ import org.eclipse.swt.widgets.Label;
 public class ComboControlledStackComposite extends Composite {
 	private Composite fArea;
 	private Combo fCombo;
-	private Map<String, Composite> tabMap; // label ==> tab 
+	private Map<String, Composite> tabMap; // label ==> tab
 	private StackLayout layout;
 	private Label fLabel;
 
 	public ComboControlledStackComposite(Composite parent, int style) {
 		super(parent, style);
-		tabMap = new LinkedHashMap<String, Composite>();
+		tabMap = new LinkedHashMap<>();
 		setLayout(new GridLayout(2, false));
 		createContents(this);
 	}

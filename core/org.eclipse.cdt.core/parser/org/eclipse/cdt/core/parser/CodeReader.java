@@ -31,7 +31,7 @@ import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
  * Reads the content of a file into a char[] buffer.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @deprecated replaced by {@link FileContent}
  */
@@ -104,7 +104,7 @@ public class CodeReader {
 	}
 
 	/**
-	 * Load the stream content as a character array. The method loads the stream content using given 
+	 * Load the stream content as a character array. The method loads the stream content using given
 	 * character set name. In case if the character set is not supported, the default one is used.
 	 */
 	private char[] load(String charSet, FileInputStream stream) throws IOException {

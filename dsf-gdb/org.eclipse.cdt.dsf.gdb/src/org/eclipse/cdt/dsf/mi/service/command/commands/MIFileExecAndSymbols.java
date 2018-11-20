@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
  * -file-exec-and-symbols [FILE]
- * 
+ *
  * Specify the executable file to be debugged. This file is the one from which
  * the symbol table is also read. If no file is specified, the command clears
  * the executable and symbol information. If breakpoints are set when using this

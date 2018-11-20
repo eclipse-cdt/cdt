@@ -70,14 +70,14 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 
 	/**
 	 * A translation unit contains an ordered sequence of declarations.
-	 * 
+	 *
 	 * @return List of IASTDeclaration
 	 */
 	public IASTDeclaration[] getDeclarations();
 
 	/**
-	 * Adds declaration to translation unit. 
-	 * 
+	 * Adds declaration to translation unit.
+	 *
 	 * @param declaration {@code IASTDeclaration}
 	 */
 	@Override
@@ -85,7 +85,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 
 	/**
 	 * This returns the global scope for the translation unit.
-	 * 
+	 *
 	 * @return the global scope
 	 */
 	public IScope getScope();
@@ -94,7 +94,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * Returns the list of declarations in this translation unit for the given
 	 * binding. The list contains the IName nodes that declare the binding.
 	 * These may be part of the AST or are pulled in from the index.
-	 * 
+	 *
 	 * @param binding
 	 * @return Array of IName nodes for the binding's declaration
 	 */
@@ -104,7 +104,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * Returns the list of declarations in this translation unit for the given
 	 * binding. The list contains the IASTName nodes that declare the binding.
 	 * These are part of the AST no declarations are pulled in from the index.
-	 * 
+	 *
 	 * @param binding
 	 * @return Array of IASTName nodes for the binding's declaration
 	 */
@@ -114,7 +114,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * Returns the array of definitions in this translation unit for the given binding.
 	 * The array contains the IName nodes that define the binding.
 	 * These may be part of the AST or are pulled in from the index.
-	 *  
+	 *
 	 * @param binding
 	 * @return the definition of the IBinding
 	 */
@@ -129,10 +129,10 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	 * Returns the array of definitions in this translation unit for the given binding.
 	 * The array contains the IASTName nodes that define the binding.
 	 * These are part of the AST, no definitions are pulled in from the index.
-	 * 
+	 *
 	 * If 'permissive' is true, definitions that are not exact matches (for example,
 	 * a method definition with a non-matching signature) are also returned.
-	 * 
+	 *
 	 * @param binding
 	 * @param permissive
 	 * @return Array of IASTName nodes for the binding's declaration
@@ -143,9 +143,9 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	/**
 	 * Returns the list of references in this translation unit to the given
 	 * binding. This list contains the IASTName nodes that represent a use of
-	 * the binding. These are part of the AST, no definitions are pulled in from 
+	 * the binding. These are part of the AST, no definitions are pulled in from
 	 * the index.
-	 * 
+	 *
 	 * @param binding
 	 * @return List of IASTName nodes representing uses of the binding
 	 */
@@ -180,7 +180,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 
 	/**
 	 * Returns built-in macro definitions used when parsing this translation unit.
-	 * This includes macros obtained from the index. 
+	 * This includes macros obtained from the index.
 	 */
 	public IASTPreprocessorMacroDefinition[] getBuiltinMacroDefinitions();
 
@@ -194,7 +194,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	public IASTPreprocessorIncludeStatement[] getIncludeDirectives();
 
 	/**
-	 * Returns all preprocessor statements. 
+	 * Returns all preprocessor statements.
 	 * In case the information for a header-file is pulled in from the index,
 	 * preprocessing statements contained therein are not returned.
 	 */
@@ -224,10 +224,10 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	public String getFilePath();
 
 	/**
-	 * Flattens the node locations provided into a single file location.  
-	 * 
+	 * Flattens the node locations provided into a single file location.
+	 *
 	 * @param nodeLocations {@code IASTNodeLocation}s to flatten
-	 * @return null if not possible, otherwise, a file location representing where the macros are. 
+	 * @return null if not possible, otherwise, a file location representing where the macros are.
 	 */
 	public IASTFileLocation flattenLocationsToFile(IASTNodeLocation[] nodeLocations);
 
@@ -244,7 +244,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	}
 
 	/**
-	 * Returns the dependency tree for the translation unit. 
+	 * Returns the dependency tree for the translation unit.
 	 * <p>
 	 * In case the information for a header-file is pulled in from the index,
 	 * dependencies contained therein are not part of the dependency tree.
@@ -265,7 +265,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 
 	/**
 	 * Returns the Index associated with this translation unit.
-	 * 
+	 *
 	 * @return the Index for this translation unit.
 	 */
 	public IIndex getIndex();
@@ -289,7 +289,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	/**
 	 * In case the AST was created in a way that supports comment parsing, all comments of
 	 * the translation unit are returned. Otherwise an empty array will be supplied.
-	 * 
+	 *
 	 * @return {@code IASTComment[]}
 	 * @since 4.0
 	 */
@@ -324,21 +324,21 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	public void setIsHeaderUnit(boolean headerUnit);
 
 	/**
-	 * Causes this node and all the nodes rooted at this node to become immutable. 
-	 * Once the AST is frozen any calls to set or add methods on any of the nodes 
+	 * Causes this node and all the nodes rooted at this node to become immutable.
+	 * Once the AST is frozen any calls to set or add methods on any of the nodes
 	 * in the AST will result in an IllegalStateException.
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.1
 	 */
 	public void freeze();
 
 	/**
-	 * Returns a copy of the AST, however the ILocationResolver 
+	 * Returns a copy of the AST, however the ILocationResolver
 	 * and the preprocessor nodes are not copied.
-	 * 
+	 *
 	 * @see IASTNode#copy()
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.1
 	 */
@@ -348,9 +348,9 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	/**
 	 * Returns a copy of the AST, however the ILocationResolver and the preprocessor nodes are not
 	 * copied.
-	 * 
+	 *
 	 * @see IASTNode#copy()
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 5.3
 	 */
@@ -360,7 +360,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 	/**
 	 * Returns the ITranslationUnit this AST originated from, or {@code null} if the AST
 	 * does not correspond to an ITranslationUnit.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	public ITranslationUnit getOriginatingTranslationUnit();
@@ -380,7 +380,7 @@ public interface IASTTranslationUnit extends IASTDeclarationListOwner, IFileNomi
 
 	/**
 	 * @since 5.4
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void setPragmaOnceSemantics(boolean value);

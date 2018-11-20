@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -177,7 +177,7 @@ public class FindReplaceDialog extends SelectionDialog {
 	}
 
 	protected byte[] parseByteSequence(String s) {
-		Vector<Byte> sequence = new Vector<Byte>();
+		Vector<Byte> sequence = new Vector<>();
 		StringTokenizer st = new StringTokenizer(s, " "); //$NON-NLS-1$
 		while (st.hasMoreElements()) {
 			String element = ((String) st.nextElement()).trim();
@@ -239,9 +239,11 @@ public class FindReplaceDialog extends SelectionDialog {
 
 		fFindButton = createButton(parent, 10, Messages.getString("FindReplaceDialog.ButtonFind"), true); //$NON-NLS-1$
 		fFindButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performFind(getUserStart(), getUserEnd(), getSearchPhrase(), getIsDirectionForward(), null, false,
 						false);
@@ -251,9 +253,11 @@ public class FindReplaceDialog extends SelectionDialog {
 
 		fFindAllButton = createButton(parent, 10, Messages.getString("FindReplaceDialog.ButtonFindAll"), true); //$NON-NLS-1$
 		fFindAllButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performFind(getUserStart(), getUserEnd(), getSearchPhrase(), getIsDirectionForward(), null, true,
 						false);
@@ -263,9 +267,11 @@ public class FindReplaceDialog extends SelectionDialog {
 
 		fReplaceFindButton = createButton(parent, 11, Messages.getString("FindReplaceDialog.ButtonReplaceFind"), false); //$NON-NLS-1$
 		fReplaceFindButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performFind(getUserStart(), getUserEnd(), getSearchPhrase(), getIsDirectionForward(), getReplaceData(),
 						false, true);
@@ -275,9 +281,11 @@ public class FindReplaceDialog extends SelectionDialog {
 
 		fReplaceButton = createButton(parent, 12, Messages.getString("FindReplaceDialog.ButtonReplace"), false); //$NON-NLS-1$
 		fReplaceButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performFind(getUserStart(), getUserEnd(), getSearchPhrase(), getIsDirectionForward(), getReplaceData(),
 						false, false);
@@ -287,9 +295,11 @@ public class FindReplaceDialog extends SelectionDialog {
 
 		fReplaceAllButton = createButton(parent, 13, Messages.getString("FindReplaceDialog.ButtonReplaceAll"), false); //$NON-NLS-1$
 		fReplaceAllButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				performFind(getUserStart(), getUserEnd(), getSearchPhrase(), getIsDirectionForward(), getReplaceData(),
 						true, false);
@@ -426,7 +436,7 @@ public class FindReplaceDialog extends SelectionDialog {
 	}
 
 	private String[] removeNullElements(String strings[]) {
-		Vector<String> nonNullStrings = new Vector<String>();
+		Vector<String> nonNullStrings = new Vector<>();
 		for (String string : strings)
 			if (string != null)
 				nonNullStrings.addElement(string);
@@ -692,18 +702,22 @@ public class FindReplaceDialog extends SelectionDialog {
 				Boolean.parseBoolean(fProperties.getProperty(SEARCH_FORMAT_CASEINSENSTIVE, Boolean.FALSE.toString())));
 
 		fFormatAsciiButton.addSelectionListener(new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCaseInSensitiveCheckbox.setEnabled(true);
 			}
 		});
 
 		SelectionListener nonAsciiListener = new SelectionListener() {
+			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 
+			@Override
 			public void widgetSelected(SelectionEvent e) {
 				fCaseInSensitiveCheckbox.setEnabled(false);
 				validate();
@@ -716,6 +730,7 @@ public class FindReplaceDialog extends SelectionDialog {
 		fFormatByteSequenceButton.addSelectionListener(nonAsciiListener);
 
 		fStartText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				boolean valid = true;
 				try {
@@ -733,6 +748,7 @@ public class FindReplaceDialog extends SelectionDialog {
 		});
 
 		fEndText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				try {
 					getEndAddress();
@@ -747,12 +763,14 @@ public class FindReplaceDialog extends SelectionDialog {
 		});
 
 		fFindText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}
 		});
 
 		fReplaceText.addModifyListener(new ModifyListener() {
+			@Override
 			public void modifyText(ModifyEvent e) {
 				validate();
 			}
@@ -773,10 +791,10 @@ public class FindReplaceDialog extends SelectionDialog {
 
 	/**
 	 * Function : getSearchableBytes
-	 * 
-	 * This function returns to the user an array of memory 
+	 *
+	 * This function returns to the user an array of memory
 	 * @param start Address ( inclusive ) of the beginning byte of the memory region to be searched
-	 * @param end Address ( inclusive ) of the ending 
+	 * @param end Address ( inclusive ) of the ending
 	 * @param forwardSearch direction of the search ( true == searching forward , false = searching backwards
 	 * @param address Address ( inclusive ) of the byte set being requested/returned
 	 * @param length Number of bytes of data to be returned
@@ -810,8 +828,8 @@ public class FindReplaceDialog extends SelectionDialog {
 				 *  Legend : "#" == minimum requested data , "*" == additional data we want to prefetch/cache
 				 *
 				 *  This is the best case where everything cleanly fits within the starting/ending ranges
-				 *  to be searched.  What we cannot do is to fetch data outside of these ranges. The user 
-				 *  has specified them, if they are in error that is OK, but we must respect the boundaries 
+				 *  to be searched.  What we cannot do is to fetch data outside of these ranges. The user
+				 *  has specified them, if they are in error that is OK, but we must respect the boundaries
 				 *  they specified.
 				 *
 				 *  +-- address
@@ -874,8 +892,8 @@ public class FindReplaceDialog extends SelectionDialog {
 				 *  Legend : "#" == minimum requested data , "*" == additional data we want to prefetch/cache
 				 *
 				 *  This is the best case where everything cleanly fits within the starting/ending ranges
-				 *  to be searched.  What we cannot do is to fetch data outside of these ranges. The user 
-				 *  has specified them, if they are in error that is OK, but we must respect the boundaries 
+				 *  to be searched.  What we cannot do is to fetch data outside of these ranges. The user
+				 *  has specified them, if they are in error that is OK, but we must respect the boundaries
 				 *  they specified.
 				 *
 				 *               +-- address
@@ -916,7 +934,7 @@ public class FindReplaceDialog extends SelectionDialog {
 				 *      +-- start                                              end --+
 				 *
 				 *  See if the desired size ( minimum length + desired prefetch ) fits in to the current range.
-				 *  Without running off the end. 
+				 *  Without running off the end.
 				 */
 				if (address.add(len).compareTo(end) > 0) {
 					/*
@@ -1025,18 +1043,22 @@ public class FindReplaceDialog extends SelectionDialog {
 		final ISearchQuery query = new IMemorySearchQuery() {
 			private ISearchResult fSearchResult = null;
 
+			@Override
 			public boolean canRerun() {
 				return false;
 			}
 
+			@Override
 			public boolean canRunInBackground() {
 				return true;
 			}
 
+			@Override
 			public String getLabel() {
 				return Messages.getString("FindReplaceDialog.SearchingMemoryFor") + searchPhrase; //$NON-NLS-1$
 			}
 
+			@Override
 			public ISearchResult getSearchResult() {
 				if (fSearchResult == null)
 					fSearchResult = new MemorySearchResult(this,
@@ -1044,6 +1066,7 @@ public class FindReplaceDialog extends SelectionDialog {
 				return fSearchResult;
 			}
 
+			@Override
 			public IStatus run(IProgressMonitor monitor) throws OperationCanceledException {
 
 				final BigInteger searchPhraseLength = BigInteger.valueOf(searchPhrase.getByteLength());
@@ -1116,6 +1139,7 @@ public class FindReplaceDialog extends SelectionDialog {
 								final BigInteger finalEnd = end;
 								Display.getDefault().asyncExec(new Runnable() {
 
+									@Override
 									public void run() {
 										IMemoryRenderingContainer containers[] = getMemoryView()
 												.getMemoryRenderingContainers();
@@ -1191,6 +1215,7 @@ public class FindReplaceDialog extends SelectionDialog {
 				return Status.OK_STATUS;
 			}
 
+			@Override
 			public IMemoryRenderingSite getMemoryView() {
 				return fMemoryView;
 			}
@@ -1198,6 +1223,7 @@ public class FindReplaceDialog extends SelectionDialog {
 
 		if (all && replaceData == null) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					NewSearchUI.activateSearchResultView();
 					NewSearchUI.runQueryInBackground(query);
@@ -1220,6 +1246,7 @@ public class FindReplaceDialog extends SelectionDialog {
 
 		int getByteLength();
 
+		@Override
 		String toString();
 	}
 
@@ -1232,6 +1259,7 @@ public class FindReplaceDialog extends SelectionDialog {
 			fIsCaseInsensitive = isCaseInsensitive;
 		}
 
+		@Override
 		public int getByteLength() {
 			return fPhrase.length();
 		}
@@ -1241,6 +1269,7 @@ public class FindReplaceDialog extends SelectionDialog {
 			return fPhrase;
 		}
 
+		@Override
 		public boolean isMatch(MemoryByte[] bytes) {
 			byte[] targetBytes = new byte[bytes.length];
 			for (int i = 0; i < bytes.length; i++)
@@ -1265,6 +1294,7 @@ public class FindReplaceDialog extends SelectionDialog {
 			fBytes = parseByteSequence(phrase);
 		}
 
+		@Override
 		public int getByteLength() {
 			if (fBytes != null) {
 				return fBytes.length;
@@ -1283,6 +1313,7 @@ public class FindReplaceDialog extends SelectionDialog {
 			return buf.toString();
 		}
 
+		@Override
 		public boolean isMatch(MemoryByte[] bytes) {
 			if (fBytes == null)
 				return false;
@@ -1302,6 +1333,7 @@ public class FindReplaceDialog extends SelectionDialog {
 			fRadix = radix;
 		}
 
+		@Override
 		public int getByteLength() {
 			return removeZeroPrefixByte(fPhrase.toByteArray()).length;
 		}
@@ -1311,6 +1343,7 @@ public class FindReplaceDialog extends SelectionDialog {
 			return fPhrase.toString(fRadix);
 		}
 
+		@Override
 		public boolean isMatch(MemoryByte[] bytes) {
 			byte[] targetBytes = new byte[bytes.length + 1];
 			targetBytes[0] = 0;
@@ -1347,6 +1380,6 @@ public class FindReplaceDialog extends SelectionDialog {
 
 	interface IMemorySearchQuery extends ISearchQuery {
 		public IMemoryRenderingSite getMemoryView();
-	};
+	}
 
 }

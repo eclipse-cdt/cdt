@@ -44,9 +44,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * Class that implements the project type and configuration selection page in the new 
+ * Class that implements the project type and configuration selection page in the new
  * project wizard for managed builder projects.
- * 
+ *
  * @since 1.2
  */
 public class CProjectPlatformPage extends WizardPage {
@@ -169,7 +169,7 @@ public class CProjectPlatformPage extends WizardPage {
 		platformLabel.setText(AutotoolsWizardMessages.getResourceString(TARGET_LABEL));
 
 		platformSelection = new Text(composite, SWT.READ_ONLY);
-		//		platformSelection = new Combo(composite, SWT.READ_ONLY | SWT.BORDER);	
+		//		platformSelection = new Combo(composite, SWT.READ_ONLY | SWT.BORDER);
 		platformSelection.setFont(composite.getFont());
 		platformSelection.setToolTipText(AutotoolsWizardMessages.getResourceString(TARGET_TIP));
 		platformSelection.setText("GNU Autotools"); //$NON-NLS-1$
@@ -194,7 +194,7 @@ public class CProjectPlatformPage extends WizardPage {
 
 	/**
 	 * Returns the selected project type.
-	 * 
+	 *
 	 * @return IProjectType Selected type or <code>null</code> if an invalid selection
 	 * has been made.
 	 */
@@ -231,7 +231,7 @@ public class CProjectPlatformPage extends WizardPage {
 	/**
 	 * Populate the table viewer with either all known configurations
 	 * or only with the supported configurations depending on whether a user
-	 * has chosen to display unsupported configurations or not 
+	 * has chosen to display unsupported configurations or not
 	 * By default, only supported configurations are selected.
 	 */
 	private void populateConfigurations() {

@@ -20,16 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -55,6 +45,15 @@ import org.eclipse.cdt.ui.CDTUITools;
 import org.eclipse.cdt.ui.CElementGrouping;
 import org.eclipse.cdt.ui.IncludesGrouping;
 import org.eclipse.cdt.ui.NamespacesGrouping;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * A base content provider for C elements. It provides access to the
@@ -426,7 +425,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		if (!cproject.getProject().isOpen())
 			return NO_CHILDREN;
 
-		List<ICElement> list = new ArrayList<ICElement>();
+		List<ICElement> list = new ArrayList<>();
 		ICElement[] children = cproject.getChildren();
 		for (ICElement child : children) {
 			if (child instanceof ISourceRoot && child.getResource().getType() == IResource.PROJECT) {
@@ -455,7 +454,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		Object[] children = unit.getChildren();
 		if (fIncludesGrouping) {
 			boolean hasInclude = false;
-			ArrayList<Object> list = new ArrayList<Object>(children.length);
+			ArrayList<Object> list = new ArrayList<>(children.length);
 			for (int i = 0; i < children.length; i++) {
 				if (!(children[i] instanceof IInclude)) {
 					list.add(children[i]);
@@ -468,10 +467,10 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			}
 			children = list.toArray();
 		}
-		Map<String, NamespacesGrouping> nsmap = new HashMap<String, NamespacesGrouping>();
+		Map<String, NamespacesGrouping> nsmap = new HashMap<>();
 		if (fNamespacesGrouping) {
 			// check if there is another namespace with the same name for the same parent
-			List<Object> list = new ArrayList<Object>(children.length);
+			List<Object> list = new ArrayList<>(children.length);
 			for (int i = 0; i < children.length; ++i) {
 				if (children[i] instanceof INamespace) {
 					INamespace n1 = (INamespace) children[i];
@@ -493,8 +492,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		}
 		if (fMemberGrouping) {
 			// check if there is another member with the same namespace for the same parent
-			List<Object> list = new ArrayList<Object>(children.length);
-			Map<String, MembersGrouping> map = new HashMap<String, MembersGrouping>();
+			List<Object> list = new ArrayList<>(children.length);
+			Map<String, MembersGrouping> map = new HashMap<>();
 			for (int i = 0; i < children.length; ++i) {
 				if (children[i] instanceof IMember) {
 					final ICElement member = (ICElement) children[i];
@@ -516,7 +515,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 			children = list.toArray();
 		}
 		if (fMacroGrouping) {
-			ArrayList<Object> list = new ArrayList<Object>(children.length);
+			ArrayList<Object> list = new ArrayList<>(children.length);
 			boolean hasMacros = false;
 			for (int i = 0; i < children.length; i++) {
 				if (!(children[i] instanceof IMacro))
@@ -543,8 +542,8 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		Object[] children = element.getChildren();
 		if (fMemberGrouping) {
 			// check if there is another member with the same namespace for the same parent
-			List<Object> list = new ArrayList<Object>(children.length);
-			Map<String, MembersGrouping> map = new HashMap<String, MembersGrouping>();
+			List<Object> list = new ArrayList<>(children.length);
+			Map<String, MembersGrouping> map = new HashMap<>();
 			for (int i = 0; i < children.length; ++i) {
 				if (children[i] instanceof IMember) {
 					final ICElement member = (ICElement) children[i];
@@ -603,9 +602,9 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 	private List<ICElement> getMissingElements(ICContainer container, ICElement[] elements) {
 		// nested source roots may be filtered out below the project root,
 		// we need to find them to add them back in
-		List<ICElement> missingElements = new ArrayList<ICElement>();
+		List<ICElement> missingElements = new ArrayList<>();
 		try {
-			List<IResource> missingContainers = new ArrayList<IResource>();
+			List<IResource> missingContainers = new ArrayList<>();
 			IResource[] allChildren = container.getResource().members();
 			for (IResource child : allChildren) {
 				if (!(child instanceof IContainer))
@@ -667,7 +666,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 		} catch (CModelException e) {
 			roots = new ISourceRoot[0];
 		}
-		List<Object> nonCResources = new ArrayList<Object>(objects.length);
+		List<Object> nonCResources = new ArrayList<>(objects.length);
 		for (Object object : objects) {
 			Object o = object;
 			// A folder can also be a source root in the following case
@@ -746,7 +745,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	protected IBinary[] getBinaries(IBinaryContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
-		ArrayList<IBinary> list = new ArrayList<IBinary>(celements.length);
+		ArrayList<IBinary> list = new ArrayList<>(celements.length);
 		for (ICElement celement : celements) {
 			if (celement instanceof IBinary) {
 				IBinary bin = (IBinary) celement;
@@ -765,7 +764,7 @@ public class BaseCElementContentProvider implements ITreeContentProvider {
 
 	protected IArchive[] getArchives(IArchiveContainer container) throws CModelException {
 		ICElement[] celements = container.getChildren();
-		ArrayList<IArchive> list = new ArrayList<IArchive>(celements.length);
+		ArrayList<IArchive> list = new ArrayList<>(celements.length);
 		for (ICElement celement : celements) {
 			if (celement instanceof IArchive) {
 				IArchive ar = (IArchive) celement;

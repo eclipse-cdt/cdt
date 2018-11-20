@@ -17,12 +17,6 @@ import java.io.FileWriter;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.dialogs.IMessageProvider;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
@@ -35,13 +29,17 @@ import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.ISettingsProcessor;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.IncludePathsSettingsProcessor;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.MacroSettingsProcessor;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsExportStrategy;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.ProjectSettingsImportStrategy;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.dialogs.IMessageProvider;
 
 public class SettingsImportExportTest extends BaseUITestCase {
 
@@ -227,7 +225,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	// </invalidtag>
 	// </section>
 	// </cdtprojectproperties>
-	// 
+	//
 	// {badXML5}
 	// <cdtprojectproperties>
 	// <section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">
@@ -236,7 +234,7 @@ public class SettingsImportExportTest extends BaseUITestCase {
 	// </macro>
 	// </section>
 	// </cdtprojectproperties>
-	// 
+	//
 	// {badXML6}
 	// <cdtprojectproperties>
 	// <section name="org.eclipse.cdt.internal.ui.wizards.settingswizards.Macros">

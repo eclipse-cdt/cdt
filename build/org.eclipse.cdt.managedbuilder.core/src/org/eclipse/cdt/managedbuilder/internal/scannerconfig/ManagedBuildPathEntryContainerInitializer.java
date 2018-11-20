@@ -29,8 +29,8 @@ public class ManagedBuildPathEntryContainerInitializer extends PathEntryContaine
 	public static boolean VERBOSE = false;
 
 	/**
-	 * Need a zero-argument constructor to allow the system to create 
-	 * the intitializer 
+	 * Need a zero-argument constructor to allow the system to create
+	 * the intitializer
 	 */
 	public ManagedBuildPathEntryContainerInitializer() {
 		super();

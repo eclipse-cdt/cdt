@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.ui.search.actions;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.ITextSelection;
@@ -24,10 +26,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.Page;
-
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 public class SelectionSearchGroup extends ActionGroup {
 

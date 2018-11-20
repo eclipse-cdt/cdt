@@ -15,19 +15,17 @@ package org.eclipse.cdt.ui.tests.refactoring.includes;
 
 import java.util.Collections;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.text.edits.MultiTextEdit;
-
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.ui.refactoring.includes.HeaderSubstitutionMap;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IHeaderChooser;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeMap;
 import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeOrganizer;
 import org.eclipse.cdt.internal.ui.refactoring.includes.SymbolExportMap;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.text.edits.MultiTextEdit;
 
 import junit.framework.Test;
 

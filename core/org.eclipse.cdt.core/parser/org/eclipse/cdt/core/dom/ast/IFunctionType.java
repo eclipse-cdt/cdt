@@ -25,7 +25,7 @@ public interface IFunctionType extends IType {
 
 	/**
 	 * Returns the adjusted parameter types
-	 * ISO C99 6.7.5.3, ISO C++98 8.3.4-3 
+	 * ISO C99 6.7.5.3, ISO C++98 8.3.4-3
 	 */
 	public IType[] getParameterTypes();
 

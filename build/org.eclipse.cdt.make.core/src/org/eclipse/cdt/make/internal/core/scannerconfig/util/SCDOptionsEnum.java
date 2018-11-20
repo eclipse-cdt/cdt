@@ -16,7 +16,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
 /**
  * Enumeration class for scanner configuration affecting command line options
- * 
+ *
  * @author vhirsl
  */
 public final class SCDOptionsEnum {
@@ -60,7 +60,7 @@ public final class SCDOptionsEnum {
 			IQUOTE };
 
 	/**
-	 * 
+	 *
 	 */
 	private SCDOptionsEnum(int val) {
 		this._enum = val;

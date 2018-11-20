@@ -25,11 +25,11 @@ import org.eclipse.cdt.dsf.gdb.multicorevisualizer.internal.ui.MulticoreVisualiz
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.osgi.service.prefs.BackingStoreException;
 
-/** 
- * This class manages one or more PersistentParameter, PersistentListParameter, 
- * PersistentMapParameter objects, using a common name-space and optionally an 
- * instance id so that multiple instances can each have their own version of 
- * the parameter persisted 
+/**
+ * This class manages one or more PersistentParameter, PersistentListParameter,
+ * PersistentMapParameter objects, using a common name-space and optionally an
+ * instance id so that multiple instances can each have their own version of
+ * the parameter persisted
  */
 public class PersistentSettingsManager {
 
@@ -102,7 +102,7 @@ public class PersistentSettingsManager {
 		/**
 		 * Constructor
 		 * @param name: unique (for the namespace) label that identifies this parameter
-		 * @param perInstance: whether the parameter's value is persisted per client instance or  
+		 * @param perInstance: whether the parameter's value is persisted per client instance or
 		 *    globally (one common shared stored value for all instances)
 		 * @param storeKey : The key used to store the parameter in the store
 		 */
@@ -110,7 +110,7 @@ public class PersistentSettingsManager {
 			super(clazz, perInstance, storeKey);
 		}
 
-		/** Sets the default value to use if no persistent 
+		/** Sets the default value to use if no persistent
 		 *  value is found for this parameter   */
 		public void setDefault(T defaultValue) {
 			m_defaultValue = defaultValue;
@@ -131,16 +131,16 @@ public class PersistentSettingsManager {
 			}
 			// parameter has one value for any/all instances
 			else if (!isPerInstance()) {
-				// do not rely on cached value, since another instance might have 
+				// do not rely on cached value, since another instance might have
 				// changed it - reread from data store
 				m_value = restoreParameter();
 			}
 			return (m_value == null) ? m_defaultValue : m_value;
 		}
 
-		/** 
-		 * Gets the persistent value, optionally forcing re-reading stored value 
-		 * @param forceRefresh whether to force to re-read memento in case value changed 
+		/**
+		 * Gets the persistent value, optionally forcing re-reading stored value
+		 * @param forceRefresh whether to force to re-read memento in case value changed
 		 */
 		public T value(boolean forceRefresh) {
 			if (forceRefresh) {
@@ -188,7 +188,7 @@ public class PersistentSettingsManager {
 			super(clazz, perInstance, storeKey);
 		}
 
-		/** Sets the default value to use if no persistent 
+		/** Sets the default value to use if no persistent
 		 *  value is found for this parameter   */
 		public void setDefault(List<T> defaultValues) {
 			m_defaultValue = defaultValues;
@@ -209,16 +209,16 @@ public class PersistentSettingsManager {
 			}
 			// parameter has one value for any/all instances
 			else if (!isPerInstance()) {
-				// do not rely on cached value, since another instance might have 
+				// do not rely on cached value, since another instance might have
 				// changed it - reread from data store
 				m_value = restoreParameter();
 			}
 			return (m_value == null) ? m_defaultValue : m_value;
 		}
 
-		/** 
-		 * Gets the persistent value, optionally forcing re-reading stored value 
-		 * @param forceRefresh whether to force to re-read memento in case value changed 
+		/**
+		 * Gets the persistent value, optionally forcing re-reading stored value
+		 * @param forceRefresh whether to force to re-read memento in case value changed
 		 */
 		public List<T> value(boolean forceRefresh) {
 			if (forceRefresh) {
@@ -259,7 +259,7 @@ public class PersistentSettingsManager {
 			}
 		}
 
-		/** For list parameters, converts the restored values from String 
+		/** For list parameters, converts the restored values from String
 		 * to its expected generic type */
 		private List<T> convertToT(List<String> vals) {
 			List<T> convertedList = new ArrayList<>();
@@ -290,7 +290,7 @@ public class PersistentSettingsManager {
 			super(clazz, perInstance, storeKey);
 		}
 
-		/** Sets the default value to use if no persistent 
+		/** Sets the default value to use if no persistent
 		 *  value is found for this parameter   */
 		public void setDefault(Map<String, T> defaultValues) {
 			m_defaultValue = defaultValues;
@@ -311,16 +311,16 @@ public class PersistentSettingsManager {
 			}
 			// parameter has one value for any/all instances
 			else if (!isPerInstance()) {
-				// do not rely on cached value, since another instance might have 
+				// do not rely on cached value, since another instance might have
 				// changed it - reread from data store
 				m_value = restoreParameter();
 			}
 			return (m_value == null) ? m_defaultValue : m_value;
 		}
 
-		/** 
-		 * Gets the persistent value, optionally forcing re-reading stored value 
-		 * @param forceRefresh whether to force to re-read memento in case value changed 
+		/**
+		 * Gets the persistent value, optionally forcing re-reading stored value
+		 * @param forceRefresh whether to force to re-read memento in case value changed
 		 */
 		public Map<String, T> value(boolean forceRefresh) {
 			if (forceRefresh) {
@@ -361,7 +361,7 @@ public class PersistentSettingsManager {
 			}
 		}
 
-		/** For Map parameters, converts the restored values from {@literal Map<String,String>} 
+		/** For Map parameters, converts the restored values from {@literal Map<String,String>}
 		 * to {@literal Map<String, T>} */
 		private Map<String, T> convertToT(Map<String, String> vals) {
 			Map<String, T> convertedMap = new HashMap<>();
@@ -387,7 +387,7 @@ public class PersistentSettingsManager {
 	 * saved by a specific instance of the class */
 	private final String m_category;
 
-	/** an identifier that differentiates different client instances. For example, to save the 
+	/** an identifier that differentiates different client instances. For example, to save the
 	 * value of a parameter that is applicable per-view, the view secondary id could be used so
 	 * that each view has its own stored value */
 	private final String m_instance;
@@ -395,19 +395,19 @@ public class PersistentSettingsManager {
 	/**
 	 * Constructor
 	 * @param category : an optional id that is used to insulate the namespace for the parameters
-	 * saved by this instance of the class. Using different category values  permits to distinguish 
-	 * two or more parameters with the same label. Example: class name where the parameter is used. 
+	 * saved by this instance of the class. Using different category values  permits to distinguish
+	 * two or more parameters with the same label. Example: class name where the parameter is used.
 	 * This can be set to null if unused.
-	 * @param instance : a unique id that identifies the client's instance. Used when 
-	 *  a parameter is defined as per-instance 
+	 * @param instance : a unique id that identifies the client's instance. Used when
+	 *  a parameter is defined as per-instance
 	 */
 	public PersistentSettingsManager(String category, String instance) {
 		m_category = category != null ? category : ""; //$NON-NLS-1$
 		m_instance = instance != null ? instance : ""; //$NON-NLS-1$
 	}
 
-	/** Constructor 
-	 * @param instance:  a unique id that identifies the client's instance. Used when 
+	/** Constructor
+	 * @param instance:  a unique id that identifies the client's instance. Used when
 	 *  a parameter is not global (i.e. meant to be persisted per instance).
 	 */
 	public PersistentSettingsManager(String instance) {
@@ -422,8 +422,8 @@ public class PersistentSettingsManager {
 	/**
 	 * Creates a new persistent parameter, using the namespace and instance id of this manager.
 	 * @param clazz: the class of the persistent parameter. Supported types: String, Integer, Boolean
-	 * @param label: unique label that identifies this parameter. 
-	 * @param perInstance: whether the parameter's value should be persisted per client instance or  
+	 * @param label: unique label that identifies this parameter.
+	 * @param perInstance: whether the parameter's value should be persisted per client instance or
 	 *    globally (one common shared stored value for all instances)
 	 * @param defaultValue: default value to use (mandatory)
 	 */
@@ -431,7 +431,7 @@ public class PersistentSettingsManager {
 			T defaultValue) {
 		PersistentParameter<T> setting;
 		// build the final store key with category, parameter label and specific instance, if applicable
-		setting = new PersistentParameter<T>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
+		setting = new PersistentParameter<>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
 		// check that we're dealing with one of a few supported types
 		if (setting.isTypeSupported(clazz)) {
 			setting.setDefault(defaultValue);
@@ -444,16 +444,16 @@ public class PersistentSettingsManager {
 	/**
 	 * Creates a new persistent {@literal List<T>} parameter, using the namespace and instance id of this manager.
 	 * @param clazz: the class of the persistent parameter List (e.g. List of that type). Supported types: String, Integer, Boolean
-	 * @param label: unique label that identifies this parameter. 
-	 * @param perInstance: whether the parameter's value should be persisted per client instance or  
+	 * @param label: unique label that identifies this parameter.
+	 * @param perInstance: whether the parameter's value should be persisted per client instance or
 	 *    globally (one common shared stored value for all instances)
-	 * @param defaultValue: default value to use (mandatory). 
+	 * @param defaultValue: default value to use (mandatory).
 	 */
 	public <T> PersistentListParameter<T> getNewListParameter(Class<T> clazz, String label, boolean perInstance,
 			List<T> defaultValue) {
 		PersistentListParameter<T> setting;
 		// build the final store key with category, parameter label and specific instance, if applicable
-		setting = new PersistentListParameter<T>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
+		setting = new PersistentListParameter<>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
 		// check that we're dealing with one of a few supported types
 		if (setting.isTypeSupported(clazz)) {
 			setting.setDefault(defaultValue);
@@ -466,16 +466,16 @@ public class PersistentSettingsManager {
 	/**
 	 * Creates a new persistent {@literal Map<String,T>} parameter, using the namespace and instance id of this manager.
 	 * @param clazz: the class of the persistent parameter List (e.g. List of that type). Supported types: String, Integer, Boolean
-	 * @param label: unique label that identifies this parameter. 
-	 * @param perInstance: whether the parameter's value should be persisted per client instance or  
+	 * @param label: unique label that identifies this parameter.
+	 * @param perInstance: whether the parameter's value should be persisted per client instance or
 	 *    globally (one common shared stored value for all instances)
-	 * @param defaultValue: default value to use (mandatory). 
+	 * @param defaultValue: default value to use (mandatory).
 	 */
 	public <T> PersistentMapParameter<T> getNewMapParameter(Class<T> clazz, String label, boolean perInstance,
 			Map<String, T> defaultValue) {
 		PersistentMapParameter<T> setting;
 		// build the final store key with category, parameter label and specific instance, if applicable
-		setting = new PersistentMapParameter<T>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
+		setting = new PersistentMapParameter<>(clazz, perInstance, getStorageKey(perInstance) + "." + label); //$NON-NLS-1$
 		// check that we're dealing with one of a few supported types
 		if (setting.isTypeSupported(clazz)) {
 			setting.setDefault(defaultValue);
@@ -487,7 +487,7 @@ public class PersistentSettingsManager {
 
 	// ---- misc ----
 
-	/** Returns the key to be used to save parameter, taking into account the 
+	/** Returns the key to be used to save parameter, taking into account the
 	 * instance id, if applicable */
 	private String getStorageKey(boolean perInstance) {
 		return (perInstance ? m_instance : "") + (!m_category.isEmpty() ? "." + m_category : ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

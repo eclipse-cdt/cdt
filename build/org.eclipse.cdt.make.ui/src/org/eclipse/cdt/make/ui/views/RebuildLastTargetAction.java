@@ -19,9 +19,9 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Rebuild last target of selected resource or project.
- * 
+ *
  * @since 7.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -30,7 +30,7 @@ public class RebuildLastTargetAction extends SelectionListenerAction {
 	public RebuildLastTargetAction() {
 		super(MakeUIPlugin.getResourceString("BuildLastTargetAction.label")); //$NON-NLS-1$
 
-		setToolTipText(MakeUIPlugin.getResourceString("BuildLastTargetAction.tooltip")); //$NON-NLS-1$		
+		setToolTipText(MakeUIPlugin.getResourceString("BuildLastTargetAction.tooltip")); //$NON-NLS-1$
 		setEnabled(false);
 	}
 

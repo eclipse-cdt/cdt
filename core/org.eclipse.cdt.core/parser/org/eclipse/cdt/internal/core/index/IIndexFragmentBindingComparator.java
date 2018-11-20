@@ -27,7 +27,7 @@ public interface IIndexFragmentBindingComparator {
 	 * <li> -1 if the first differing component name of <em>a</em> was &lt the pairwise equivalent from <em>b</em>
 	 * <li> 1 if the first differing component name of <em>a</em> was &gt the pairwise equivalent from <em>b</em>
 	 * </ul> In case binding <em>a</em> has fewer component names than binding <em>b</em> then
-	 * -1 is returned, otherwise 1 is returned. 
+	 * -1 is returned, otherwise 1 is returned.
 	 * <li>Compares a course-grained binding type dependent on language. For C/C++ the
 	 * type comparison is performed by comparing the bindings associated constant as defined in
 	 * IIndexCNodeConstants or IIndexCPPNodeConstants. If these are equal comparison continues

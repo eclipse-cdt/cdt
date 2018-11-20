@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -30,10 +30,10 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
 /**
- * View model node that determines whether an "alarm triggered" indicator is 
- * shown in the tree.  This indicator is only shown if a given alarm is 
+ * View model node that determines whether an "alarm triggered" indicator is
+ * shown in the tree.  This indicator is only shown if a given alarm is
  * triggered for a given timer.
- * 
+ *
  * @see AlarmDMContext
  */
 @SuppressWarnings("restriction")
@@ -49,7 +49,7 @@ class AlarmsVMNode extends AbstractDMVMNode implements IElementLabelProvider {
 
 	@Override
 	protected void updateElementsInSessionThread(final IChildrenUpdate update) {
-		// Check that the service is available and find the trigger and timer contexts.  
+		// Check that the service is available and find the trigger and timer contexts.
 		// If not found, fail.
 		AlarmService alarmService = getServicesTracker().getService(AlarmService.class, null);
 		TriggerDMContext alarmDmc = findDmcInPath(update.getViewerInput(), update.getElementPath(),
@@ -62,7 +62,7 @@ class AlarmsVMNode extends AbstractDMVMNode implements IElementLabelProvider {
 			return;
 		}
 
-		// Get the alarm context then check the triggered value.  
+		// Get the alarm context then check the triggered value.
 		final AlarmDMContext alarmStatusDmc = alarmService.getAlarm(alarmDmc, timerDmc);
 		boolean triggered = alarmService.isAlarmTriggered(alarmStatusDmc);
 
@@ -93,7 +93,7 @@ class AlarmsVMNode extends AbstractDMVMNode implements IElementLabelProvider {
 
 	@Override
 	public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor requestMonitor) {
-		// The alarm element is added when and selected upon a triggered event.  
+		// The alarm element is added when and selected upon a triggered event.
 		// Parent element is also expanded allow the alarm to be selected.
 		if (e instanceof AlarmService.AlarmTriggeredDMEvent) {
 			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.EXPAND);

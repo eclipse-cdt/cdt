@@ -17,7 +17,7 @@ public interface IQmlObjectDefinition extends IQmlObjectMember {
 	@Override
 	default public String getType() {
 		return "QMLObjectDefinition"; //$NON-NLS-1$
-	};
+	}
 
 	public IQmlQualifiedID getIdentifier();
 

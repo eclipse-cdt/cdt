@@ -27,7 +27,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Return the provider with the given id
-	 * 
+	 *
 	 * @param providerId
 	 *            id
 	 * @return provider
@@ -37,7 +37,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Return the UI label for the toolchain type.
-	 * 
+	 *
 	 * @param id
 	 *            type toolchain type id
 	 * @return name of the type
@@ -47,7 +47,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Return the toolchain from the given provider with the given id and version.
-	 * 
+	 *
 	 * @param providerId
 	 *            id of provider
 	 * @param id
@@ -65,7 +65,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Return the toolChain with the given type and id.
-	 * 
+	 *
 	 * @param typeId
 	 *            id of toolchain type
 	 * @param id
@@ -78,7 +78,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Return the toolchains provided by the given provider
-	 * 
+	 *
 	 * @param providerId
 	 *            id of provider
 	 * @return toolchains the provider provides
@@ -93,7 +93,7 @@ public interface IToolChainManager {
 	/**
 	 * Return all versions of toolchains with the given id provided by the given
 	 * provider.
-	 * 
+	 *
 	 * @param providerId
 	 *            id of provider
 	 * @param id
@@ -109,7 +109,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Returns the list of toolchains that have the given properties.
-	 * 
+	 *
 	 * @param properties
 	 *            properties of the toolchains
 	 * @return the qualified toolchains
@@ -118,7 +118,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Return all of the toolchains.
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	Collection<IToolChain> getAllToolChains() throws CoreException;
@@ -128,7 +128,7 @@ public interface IToolChainManager {
 	 * toolchains are returned in the other methods in this interface. Often, the
 	 * first toolchain in a list is the default toolchain to use in a build
 	 * configuration.
-	 * 
+	 *
 	 * @param orderedToolchains
 	 * @throws CoreException
 	 * @since 6.4
@@ -137,7 +137,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Add a toolchain.
-	 * 
+	 *
 	 * @param toolChain
 	 *            the toolchain
 	 */
@@ -145,7 +145,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Remove a toolchain
-	 * 
+	 *
 	 * @param toolChain
 	 *            the toolchain
 	 */
@@ -154,7 +154,7 @@ public interface IToolChainManager {
 	/**
 	 * Add a listener for toolchains added or removed. The listener is a simple
 	 * runnable that is called when an event occurs.
-	 * 
+	 *
 	 * @param listener
 	 *            runnable that is called when a toolchain is added or removed
 	 * @since 6.4
@@ -163,7 +163,7 @@ public interface IToolChainManager {
 
 	/**
 	 * Remove a listener.
-	 * 
+	 *
 	 * @param listener
 	 *            the listener to remove
 	 * @since 6.4

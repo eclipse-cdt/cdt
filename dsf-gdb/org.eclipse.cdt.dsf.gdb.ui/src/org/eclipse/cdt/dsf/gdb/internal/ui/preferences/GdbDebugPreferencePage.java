@@ -144,7 +144,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 				validate();
 				updateDialogButtons();
 			}
-		};
+		}
 
 		abstract class AbstractEditingSupport extends EditingSupport {
 
@@ -189,7 +189,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 			abstract Object doGetValue(CommandTimeoutEntry entry);
 
 			abstract ICellEditorValidator getValidator();
-		};
+		}
 
 		private TableViewer fViewer;
 		private Button fAddButton;
@@ -228,7 +228,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		AdvancedTimeoutSettingsDialog(Shell parentShell, Set<Map.Entry<String, Integer>> entries) {
 			super(parentShell);
 			setShellStyle(getShellStyle() | SWT.RESIZE);
-			fEntries = new LinkedList<CommandTimeoutEntry>();
+			fEntries = new LinkedList<>();
 			for (Map.Entry<String, Integer> entry : entries) {
 				fEntries.add(new CommandTimeoutEntry(entry.getKey(), entry.getValue()));
 			}
@@ -675,7 +675,7 @@ public class GdbDebugPreferencePage extends FieldEditorPreferencePage implements
 		// couple the two fields using IntegerWithBooleanFieldEditor because
 		// we want the gdb traces limit to stay enabled even when the gdb traces
 		// are not actually shown (when the above preference is not selected).
-		// The reason is that since the gdb traces record even when they are not 
+		// The reason is that since the gdb traces record even when they are not
 		// shown, we want the user to be able to set the limit on those consoles,
 		// even if they are not currently shown.
 		final IntegerFieldEditor gdbTracesLimit = new IntegerFieldEditor(

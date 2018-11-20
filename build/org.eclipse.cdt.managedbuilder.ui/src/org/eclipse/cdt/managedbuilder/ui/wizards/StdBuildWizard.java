@@ -48,12 +48,12 @@ public class StdBuildWizard extends AbstractCWizard {
 
 		return new EntryDescriptor[] { wd, wd2 };
 
-		// test only: creating items like of Templates	
-		/*		
+		// test only: creating items like of Templates
+		/*
 				EntryDescriptor[] out = new EntryDescriptor[6];
 				out[5] = wd;
 				for (int i=0; i<5; i++) {
-					out[i] = new EntryDescriptor("Template #" + i, 
+					out[i] = new EntryDescriptor("Template #" + i,
 							"org.eclipse.cdt.build.core.buildArtefactType.exe",
 							"Template" + i,	false, null, null);
 				}

@@ -47,7 +47,7 @@ public class CoreModelMessages {
 
 	/**
 	 * Returns a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key the string used to get the bundle value, must not be {@code null}
 	 */
 	public static String getFormattedString(String key) {
@@ -56,7 +56,7 @@ public class CoreModelMessages {
 
 	/**
 	 * Returns a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key the string used to get the bundle value, must not be {@code null}
 	 */
 	public static String getFormattedString(String key, Object arg) {

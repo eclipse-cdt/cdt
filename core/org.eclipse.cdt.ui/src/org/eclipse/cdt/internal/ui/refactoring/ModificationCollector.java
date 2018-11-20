@@ -20,16 +20,14 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
+import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
+import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
-
-import org.eclipse.cdt.internal.ui.refactoring.changes.CCompositeChange;
-import org.eclipse.cdt.internal.ui.refactoring.changes.CreateFileChange;
 
 /**
  * A ModificationCollector can be passed through a refactoring and manages the rewriters

@@ -16,14 +16,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.jface.viewers.ViewerCell;
-
 import org.eclipse.cdt.core.index.IndexLocationFactory;
 import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CDTSharedImages;
-
 import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.jface.viewers.ViewerCell;
 
 /**
  * @author Doug Schaefer

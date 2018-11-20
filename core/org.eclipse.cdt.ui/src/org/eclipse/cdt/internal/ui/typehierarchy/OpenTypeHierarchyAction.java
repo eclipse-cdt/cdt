@@ -14,15 +14,14 @@
 
 package org.eclipse.cdt.internal.ui.typehierarchy;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.actions.SelectionDispatchAction;
 
 public class OpenTypeHierarchyAction extends SelectionDispatchAction {
 

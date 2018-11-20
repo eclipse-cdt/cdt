@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,14 +17,14 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.ui.IEditorInput;
 
 /**
- * The result of a source lookup contains the source element, editor id, and 
+ * The result of a source lookup contains the source element, editor id, and
  * editor input resolved for a debug artifact.
- * 
+ *
  * @since 3.1
  */
 class SourceLookupResult {
 
-	/** 
+	/**
 	 * Element that source was resolved for.
 	 */
 	private IDMContext fDmc;
@@ -45,7 +45,7 @@ class SourceLookupResult {
 	private IEditorInput fEditorInput;
 
 	/**
-	 * Creates a source lookup result on the given artifact, source element, 
+	 * Creates a source lookup result on the given artifact, source element,
 	 * editor id, and editor input.
 	 */
 	public SourceLookupResult(IDMContext dmc, Object sourceElement, String editorId, IEditorInput editorInput) {
@@ -73,7 +73,7 @@ class SourceLookupResult {
 	 * Sets the source element resolved for the artifact that source
 	 * lookup was performed for, or <code>null</code> if a source element
 	 * was not resolved.
-	 * 
+	 *
 	 * @param element resolved source element or <code>null</code> if unknown
 	 */
 	protected void setSourceElement(Object element) {
@@ -90,7 +90,7 @@ class SourceLookupResult {
 	/**
 	 * Sets the identifier of the editor used to display this source
 	 * lookup result's source element, or <code>null</code> if unknown.
-	 * 
+	 *
 	 * @param id the identifier of the editor used to display this source
 	 * lookup result's source element, or <code>null</code> if unknown
 	 */
@@ -108,7 +108,7 @@ class SourceLookupResult {
 	/**
 	 * Sets the editor input used to display this source lookup
 	 * result's source element, or <code>null</code> if unknown.
-	 * 
+	 *
 	 * @param input the editor input used to display this source lookup
 	 * result's source element, or <code>null</code> if unknown
 	 */
@@ -121,7 +121,7 @@ class SourceLookupResult {
 	 * if equal. For example, when a source lookup result is resued
 	 * for the same stack frame, we still need to update in case
 	 * the stack frame is not identical.
-	 * 
+	 *
 	 * @param artifact new artifact state
 	 */
 	public void updateArtifact(IDMContext dmc) {

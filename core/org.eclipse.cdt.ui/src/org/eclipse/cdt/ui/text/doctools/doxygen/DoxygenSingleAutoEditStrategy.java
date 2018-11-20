@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools.doxygen;
 
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
 import org.eclipse.jface.text.DocumentRewriteSession;
@@ -25,12 +30,6 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
-
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * {@link IAutoEditStrategy} for adding Doxygen tags for comments.
@@ -84,7 +83,7 @@ public class DoxygenSingleAutoEditStrategy extends DoxygenMultilineAutoEditStrat
 			String commentPrefix = getCommentPrefix(indentationWithPrefix);
 			String commentContent = doc.get(prefix.getOffset() + prefix.getLength(),
 					line.getLength() - prefix.getLength());
-			//String commentContentBeforeCursor = doc.get(prefix.getOffset() + prefix.getLength(), 
+			//String commentContentBeforeCursor = doc.get(prefix.getOffset() + prefix.getLength(),
 			//		c.offset - line.getOffset() - prefix.getLength());
 			String commentContentBehindCursor = doc.get(c.offset, line.getLength() - (c.offset - line.getOffset()));
 

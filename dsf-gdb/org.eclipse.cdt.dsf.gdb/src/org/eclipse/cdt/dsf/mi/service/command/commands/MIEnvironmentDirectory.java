@@ -18,12 +18,12 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *      -environment-directory [-r] PATHDIR
  *
  *   Add directory PATHDIR to beginning of search path for source files.
  *   -r will first reset the path to its default
- * 
+ *
  */
 public class MIEnvironmentDirectory extends MICommand<MIInfo> {
 

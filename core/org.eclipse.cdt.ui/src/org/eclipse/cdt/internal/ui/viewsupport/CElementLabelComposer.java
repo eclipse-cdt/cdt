@@ -16,13 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.StyledString.Styler;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IBinary;
@@ -40,9 +33,14 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.ITypeDef;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.model.CoreModelMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.StyledString.Styler;
 
 // Most parts of this file were previously located in CElementLabels.
 // FlexibleBuffer and sub-types are taken from JDTs JavaElementLabelComposer.
@@ -422,7 +420,7 @@ public class CElementLabelComposer {
 
 	/**
 	 * Strip any qualifier from the given name.
-	 * 
+	 *
 	 * @param elementName
 	 * @return a "simple" name
 	 */
@@ -923,7 +921,7 @@ public class CElementLabelComposer {
 
 	/**
 	 * Convert an <code>ASTAccessVisibility</code> into its string representation.
-	 * 
+	 *
 	 * @param access
 	 * @return "public", "protected" or "private"
 	 */

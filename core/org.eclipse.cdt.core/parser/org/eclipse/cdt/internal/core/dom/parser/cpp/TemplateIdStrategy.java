@@ -156,7 +156,7 @@ final class TemplateIdStrategy implements ITemplateIdStrategy {
 	 * backtracking we need to restore the branch point that was active at the point
 	 * we're backing up to (otherwise, the current branch point could get out of sync
 	 * with the parsing position). These methods facilitate marking and backing up to
-	 * the current branch point for such situations. 
+	 * the current branch point for such situations.
 	 */
 	public int getCurrentBranchPoint() {
 		return fCurrentBranchPoint;

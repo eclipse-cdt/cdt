@@ -47,10 +47,10 @@ public class ComboFieldEditor extends FieldEditor {
 	private String[][] fEntryNamesAndValues;
 
 	/**
-	* Create combo field editor with all choice values.  
-	* @param name - property name, must be the same as breakpoint attribute 
+	* Create combo field editor with all choice values.
+	* @param name - property name, must be the same as breakpoint attribute
 	* @param labelText - text in front of field
-	* @param entryNamesAndValues - The names (labels) and underlying values to populate the combo widget.  
+	* @param entryNamesAndValues - The names (labels) and underlying values to populate the combo widget.
 	* 		These should be arranged as: { {name1, value1}, {name2, value2}, ...}
 	* @param parent the parent control
 	*/
@@ -62,7 +62,7 @@ public class ComboFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Checks whether given <code>String[][]</code> is of "type" 
+	 * Checks whether given <code>String[][]</code> is of "type"
 	 * <code>String[][2]</code>.
 	 *
 	 * @return <code>true</code> if it is ok, and <code>false</code> otherwise

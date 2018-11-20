@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -28,14 +28,14 @@ import org.eclipse.swt.graphics.RGB;
  * </p>
  *
  * @see org.eclipse.cdt.ui.text.ICColorConstants
- * 
+ *
  * @since 5.1
  */
 public interface IColorManager {
 
 	/**
-	 * Returns a color object for the given key. The color objects 
-	 * are remembered internally; the same color object is returned 
+	 * Returns a color object for the given key. The color objects
+	 * are remembered internally; the same color object is returned
 	 * for equal keys.
 	 *
 	 * @param key the color key

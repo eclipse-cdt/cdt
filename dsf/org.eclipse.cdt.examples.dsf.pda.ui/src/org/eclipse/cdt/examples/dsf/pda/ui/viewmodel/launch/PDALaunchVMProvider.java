@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson			  - Modified for new functionality	
+ *     Ericsson			  - Modified for new functionality
  *******************************************************************************/
 package org.eclipse.cdt.examples.dsf.pda.ui.viewmodel.launch;
 
@@ -28,16 +28,16 @@ import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * View Model provider for the Launch (AKA Debug) view. The launch VM 
+ * View Model provider for the Launch (AKA Debug) view. The launch VM
  * provider is configured with three nodes:
  * <ul>
- * <li> LaunchRootVMNode - This is the root of the PDA view model.</li>  
+ * <li> LaunchRootVMNode - This is the root of the PDA view model.</li>
  * <li> PDAVirtualMachineVMNode - Supplies the element representing PDA VM</li>
  * <li> PDAThreadsVMNode - Supplies the PDA thread elements</li>
- * <li> StackFramesVMNode - Supplies the stack frame elements.</li>  
- * <li> StandardProcessVMNode - Supplies elements representing the PDA 
+ * <li> StackFramesVMNode - Supplies the stack frame elements.</li>
+ * <li> StandardProcessVMNode - Supplies elements representing the PDA
  * debugger process.</li>
- * </ul> 
+ * </ul>
  */
 @SuppressWarnings("restriction")
 public class PDALaunchVMProvider extends AbstractLaunchVMProvider

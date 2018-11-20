@@ -40,7 +40,7 @@ public class HoverMessages {
 
 	/**
 	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key	the string used to get the bundle value, must not be null
 	 * @since 3.0
 	 */
@@ -58,7 +58,7 @@ public class HoverMessages {
 
 	/**
 	 * Gets a string from the resource bundle and formats it with the arguments
-	 * 
+	 *
 	 * @param key	the string used to get the bundle value, must not be null
 	 * @since 3.0
 	 */
@@ -78,7 +78,7 @@ public class HoverMessages {
 
 	/**
 	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key	the string used to get the bundle value, must not be null
 	 * @since 3.0
 	 */

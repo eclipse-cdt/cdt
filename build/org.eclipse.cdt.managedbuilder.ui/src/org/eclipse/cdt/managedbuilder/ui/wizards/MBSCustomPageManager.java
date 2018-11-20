@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *     Intel Corporation - adaptation to new project model
@@ -39,9 +39,9 @@ import org.eclipse.jface.wizard.IWizardPage;
 /**
  *  This class is responsible for managing the use of custom pages in the Managed Build System's
  *  New Project wizards.
- *  
+ *
  *  This class is a singleton.
- *  
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class MBSCustomPageManager {
@@ -122,10 +122,10 @@ public final class MBSCustomPageManager {
 	private static List hiddenList;
 
 	/**
-	 * 
+	 *
 	 * Looks for contributions to the extension point org.eclipse.cdt.managedbuilder.ui.newWizardPages and adds all pages to the manager.
 	 * @since 3.0
-	 * 
+	 *
 	 */
 	public static void loadExtensions() throws BuildException {
 		loadExtensionsSynchronized();
@@ -143,11 +143,11 @@ public final class MBSCustomPageManager {
 
 					// Get the "configuraton elements" defined in the plugin.xml file.
 					// Note that these "configuration elements" are not related to the
-					// managed build system "configurations".  
+					// managed build system "configurations".
 					// From the PDE Guide:
-					//  A configuration element, with its attributes and children, directly 
-					//  reflects the content and structure of the extension section within the 
-					//  declaring plug-in's manifest (plugin.xml) file. 
+					//  A configuration element, with its attributes and children, directly
+					//  reflects the content and structure of the extension section within the
+					//  declaring plug-in's manifest (plugin.xml) file.
 					IConfigurationElement[] elements = extension.getConfigurationElements();
 
 					// process the top level elements for this extension
@@ -284,12 +284,12 @@ public final class MBSCustomPageManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param pageID - The unique ID of the page to search for.
-	 * 
+	 *
 	 * @return - The MBSCustomPageData corresponding to the page, or null
 	 * if not found.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static MBSCustomPageData getPageData(String pageID) {
@@ -344,19 +344,19 @@ public final class MBSCustomPageManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * Publishes a piece of data associated with a wizard page.  Clients (e.g. other wizard pages) can retrieve
 	 * the values of these pieces of data later given the proper page ID and key.
-	 * 
+	 *
 	 * @param pageID - The unique ID of the page for which the data is being added.
-	 * 
+	 *
 	 * @param key - A unique name by which the data is referred to.
-	 * 
+	 *
 	 * @param data - The data to be stored.  No assumptions are made about the type of data stored.  It is up to the
 	 * 				 contributor of a given page to establish their own contract as to what type of data is stored.
-	 * 
+	 *
 	 * @since 3.0
-	 * 
+	 *
 	 * @see org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager#getPageProperty(String, String)
 	 */
 	public static void addPageProperty(String pageID, String key, Object data) {
@@ -372,23 +372,23 @@ public final class MBSCustomPageManager {
 
 	/**
 	 * Retrieves a previously published piece of data associated with a wizard page.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param pageID - The unique ID of the page for which the
 	 * data should be retrieved.
-	 * 
+	 *
 	 * @param key - The unique name of the data to be retrieved.
-	 * 
+	 *
 	 * @return  The data that was stored for the given key.  No assumptions are made about the type of data stored.  It is up to the
 	 * 			contributor of a given page to establish their own contract as to what type of data is stored.
-	 * 
+	 *
 	 * 			There are certain well known pieces of data published by the stock wizard pages provided by the Managed Build System.
 	 * 			See org.eclipse.cdt.maangedbuilder.ui.wizards.CProjectPlatformPage.
-	 * 
+	 *
 	 * @see org.eclipse.cdt.maangedbuilder.ui.wizards.CProjectPlatformPage
 	 * @see org.eclipse.cdt.managedbuilder.ui.wizards.MBSCustomPageManager#addPageProperty(String, String, Object)
-	 * 
-	 * @since 3.0 
+	 *
+	 * @since 3.0
 	 */
 	public static Object getPageProperty(String pageID, String key) {
 		Map propertiesMap = (Map) pageIDtoPagePropertiesMap.get(pageID);
@@ -404,7 +404,7 @@ public final class MBSCustomPageManager {
 	/**
 	 * Gets the next page that should appear in the wizard.  This takes into account the selected
 	 * project type, project nature, and toolchains.
-	 * 
+	 *
 	 * @param currentPageID - The unique ID of the page the wizard is currently displaying.
 	 * @return The next page that should be displayed in the wizard, or null if at the end of the wizard.
 	 * @since 3.0
@@ -430,10 +430,10 @@ public final class MBSCustomPageManager {
 	/**
 	 * Adds an entry for a stock page into the manager.  This is used for pages provided by the Managed Build System that are not loaded via the
 	 * extension point mechanism.
-	 * 
+	 *
 	 * @param page - The IWizardPage to add.
 	 * @param pageID - A unique ID to associate with this page.  This ID will be used to refer to the page by the rest of the system.
-	 * @since 3.0 
+	 * @since 3.0
 	 */
 	public static void addStockPage(IWizardPage page, String pageID) {
 		MBSCustomPageData pageData = new MBSCustomPageData(pageID, page, (IRunnableWithProgress) null, true);
@@ -445,7 +445,7 @@ public final class MBSCustomPageManager {
 	 * Gets the previous page that should appear in the wizard.  This takes into account the selected
 	 * project type, project nature, and toolchains.  Stock pages can be returned by this method as well as
 	 * custom pages.
-	 * 
+	 *
 	 * @param currentPageID - The unique ID of the page currently being displayed in the wizard.
 	 * @return - The IWizardPage that corresponds to the previous page to be displayed in the wizard, or null if at the start of the wizard.
 	 * @since 3.0
@@ -513,12 +513,12 @@ public final class MBSCustomPageManager {
 
 	/**
 	 * Gets the pages that the page manager knows about.
-	 * 
+	 *
 	 * @return An array of IWizardPage objects corresponding to all pages the manager knows about.
 	 * Pages are returned in the order they appear in the wizard, and include both stock and custom pages.
-	 * 
+	 *
 	 * @since 3.0
-	 * 
+	 *
 	 * @see getCustomPages()
 	 */
 	public static IWizardPage[] getPages() {
@@ -539,12 +539,12 @@ public final class MBSCustomPageManager {
 
 	/**
 	 * Gets all custom pages that the page manager knows about.
-	 * 
+	 *
 	 * @return An array of IWizardPage objects corresponding to all custom pages the manager knows about.
 	 * Pages are returned in the order they appear in the wizard.  Stock pages are not included.
-	 * 
+	 *
 	 * @since 3.0
-	 * 
+	 *
 	 * @see getPages()
 	 */
 	public static IWizardPage[] getCustomPages() {
@@ -575,9 +575,9 @@ public final class MBSCustomPageManager {
 
 	/**
 	 * Gets all operations that should be run during the wizard's DoRunEpilogue() method.  Only operations for visible pages are returned.
-	 * 
+	 *
 	 * @return array of type Runnable[] corresponding to the operations.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static IRunnableWithProgress[] getOperations() {
@@ -614,10 +614,10 @@ public final class MBSCustomPageManager {
 
 	/**
 	 *  Initializes the manager.
-	 *  
+	 *
 	 *  This method should be called before any other operations are performed using this class, and should
 	 *  be called every time pages are added to the wizard.
-	 *  
+	 *
 	 *  @since 3.0
 	 */
 	public static void init() {
@@ -633,9 +633,9 @@ public final class MBSCustomPageManager {
 	}
 
 	/**
-	 * Ability to hide pages explicitly, 
-	 * not depending of nature/projecttype filter 
-	 * 
+	 * Ability to hide pages explicitly,
+	 * not depending of nature/projecttype filter
+	 *
 	 * @param p - page to hide
 	 * @param status - true means hidden
 	 */

@@ -16,7 +16,7 @@ package org.eclipse.cdt.managedbuilder.core;
 /**
  * Clients may implement this interface to dynamically provided the config
  * information that is otherwise specified in the ManagedBuidInfo extension
- * point.  It corresponds to the <code>configProvider</code> sub-element of 
+ * point.  It corresponds to the <code>configProvider</code> sub-element of
  * the ManagedBuildInfo extension point.
  */
 public interface IManagedConfigElementProvider {

@@ -116,7 +116,7 @@ public class ActionsList extends Composite {
 
 	/**
 	 * Remove an action from the list
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void removeAction(IBreakpointAction action) {

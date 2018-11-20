@@ -30,7 +30,7 @@ import org.eclipse.core.resources.IStorage;
 public interface IASTServiceProvider {
 	/**
 	 * This exception is thrown when there is not a service provider that can handle
-	 * the request due to dialect mis-match.  
+	 * the request due to dialect mis-match.
 	 */
 	public static class UnsupportedDialectException extends Exception {
 		public static final long serialVersionUID = 0;
@@ -38,50 +38,50 @@ public interface IASTServiceProvider {
 
 	/**
 	 * Returns a parse tree that represents the content provided as parameters.
-	 * 
-	 * @param fileToParse the file in question	
+	 *
+	 * @param fileToParse the file in question
 	 * @return syntactical parse tree
-	 * @throws UnsupportedDialectException 
+	 * @throws UnsupportedDialectException
 	 */
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse) throws UnsupportedDialectException;
 
 	/**
 	 * Returns a parse tree that represents the content provided as parameters.
-	 * 
+	 *
 	 * @param fileToParse the file in question
 	 * @param parseComments parse commtents flag
 	 * @return syntactical parse tree
-	 * @throws UnsupportedDialectException 
+	 * @throws UnsupportedDialectException
 	 */
 	public IASTTranslationUnit getTranslationUnit(IFile fileToParse, boolean parseComments)
 			throws UnsupportedDialectException;
 
 	/**
 	 * Returns a parse tree that represents the content provided as parameters.
-	 * 
+	 *
 	 * @param fileToParse the file in question
-	 * @param project     project handle to help us figure out build settings 
+	 * @param project     project handle to help us figure out build settings
 	 * @param fileCreator @see CDOM#getCodeReaderFactory(int)
 	 * @return syntactical parse tree
-	 * @throws UnsupportedDialectException 
+	 * @throws UnsupportedDialectException
 	 */
 	public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project,
 			ICodeReaderFactory fileCreator) throws UnsupportedDialectException;
 
 	/**
 	 * Returns a parse tree that represents the content provided as parameters.
-	 * 
+	 *
 	 * @param fileToParse the file in question
-	 * @param project     project handle to help us figure out build settings 
+	 * @param project     project handle to help us figure out build settings
 	 * @return syntactical parse tree
-	 * @throws UnsupportedDialectException 
+	 * @throws UnsupportedDialectException
 	 */
 	public IASTTranslationUnit getTranslationUnit(IStorage fileToParse, IProject project)
 			throws UnsupportedDialectException;
 
 	/**
 	 * Returns a parse tree that represents the content provided as parameters.
-	 * 
+	 *
 	 * @param fileToParse the file in question
 	 * @param fileCreator @see CDOM#getCodeReaderFactory(int)
 	 * @return syntactical parse tree
@@ -92,7 +92,7 @@ public interface IASTServiceProvider {
 
 	/**
 	 * Returns a parse tree that represents the content provided as parameters.
-	 * 
+	 *
 	 * @param fileToParse the file in question
 	 * @param fileCreator @see CDOM#getCodeReaderFactory(int)
 	 * @param parseComments parse comments flag
@@ -104,7 +104,7 @@ public interface IASTServiceProvider {
 
 	/**
 	 * Returns a parse tree that represents the content provided as parameters.
-	 * 
+	 *
 	 * @param fileToParse the file in question
 	 * @param fileCreator @see CDOM#getCodeReaderFactory(int)
 	 * @param configuration parser configuration provided rather than discovered by service
@@ -116,7 +116,7 @@ public interface IASTServiceProvider {
 
 	/**
 	 * Returns a parse tree that represents the content provided as parameters.
-	 * 
+	 *
 	 * @param fileToParse the file in question
 	 * @param offset the offset at which you require completion at
 	 * @param fileCreator @see CDOM#getCodeReaderFactory(int)
@@ -128,7 +128,7 @@ public interface IASTServiceProvider {
 
 	/**
 	 * Returns a parse tree that represents the content provided as parameters.
-	 * 
+	 *
 	 * @param fileToParse the file in question
 	 * @param project the project containing the scanner info
 	 * @param offset the offset at which you require completion at

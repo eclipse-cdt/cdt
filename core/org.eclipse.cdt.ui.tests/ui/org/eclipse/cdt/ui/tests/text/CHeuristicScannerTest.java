@@ -16,22 +16,20 @@ package org.eclipse.cdt.ui.tests.text;
 
 import java.util.HashMap;
 
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.text.CIndenter;
+import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.FastPartitioner;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.CIndenter;
-import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * CHeuristicScannerTest.
@@ -134,7 +132,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testPrevIndentationUnit7() {
-		// for with semis 
+		// for with semis
 		fDocument.set("\tvoid proc (int par1, int par2) {\n" + "\t\t\n" + "\t\tfor (int i= 4; i < 33; i++) \n" + "");
 
 		int pos = fScanner.findReferencePosition(fDocument.getLength());
@@ -160,7 +158,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testPrevIndentationUnit10() {
-		// if else 
+		// if else
 		fDocument.set("\tvoid proc (int par1, int par2) {\n" + "\t\t\n" + "\t\tif (condition()) {\n" + "\t\t\tcode();\n"
 				+ "\t\t} else {\n" + "\t\t\totherCode();\n" + "\t\t}\n" + "");
 
@@ -220,7 +218,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testPrevIndentation7() {
-		// for with semis 
+		// for with semis
 		fDocument.set("\tvoid proc (int par1, int par2) {\n" + "\t\t\n" + "\t\tfor (int i= 4; i < 33; i++) \n" + "");
 
 		String indent = fScanner.getReferenceIndentation(fDocument.getLength()).toString();
@@ -297,7 +295,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation6() {
-		// parameter declaration - alignment with parenthesis 
+		// parameter declaration - alignment with parenthesis
 		fDocument.set("\tvoid proc (int par1, int par2\n");
 
 		String indent = fScanner.computeIndentation(30).toString();
@@ -305,7 +303,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation6a() {
-		// parameter declaration - alignment with parenthesis 
+		// parameter declaration - alignment with parenthesis
 		fDocument.set("\tvoid proc (  int par1, int par2\n");
 
 		String indent = fScanner.computeIndentation(30).toString();
@@ -313,7 +311,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation7() {
-		// for with semis 
+		// for with semis
 		fDocument.set("\tvoid proc (int par1, int par2) {\n" + "\t\t\n" + "\t\tfor (int i= 4; i < 33; i++) \n" + "");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();
@@ -437,7 +435,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation22() {
-		// after double if w/ brace 
+		// after double if w/ brace
 		fDocument.set("\tif (true)\n" + "\t\tif (true) {\n" + "\t\t\tstuff();" + "\t\t}\n" + "");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();
@@ -445,7 +443,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation22a() {
-		// after double if w/ brace 
+		// after double if w/ brace
 		fDocument.set("\tif (true)\n" + "\t\tif (true) {\n" + "\t\t\tstuff();\n" + "\t\t}\n" + "");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength() - 2).toString();
@@ -453,7 +451,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation22b() {
-		// after double if w/ brace 
+		// after double if w/ brace
 		fDocument.set("\tif (true)\n" + "\t\tif (true) {\n" + "\t\t\tstuff();" + "\t\t}\n" + "a");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength() - 1).toString();
@@ -469,7 +467,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation24() {
-		// braceless else 
+		// braceless else
 		fDocument.set("\tif (true) {\n" + "\t\tstuff();\n" + "\t} else\n" + "\t\tnoStuff");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();
@@ -477,7 +475,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation25() {
-		// braceless else 
+		// braceless else
 		fDocument.set("\tif (true) {\r\n" + "\t\tstuff();\r\n" + "\t} else\r\n" + "\t\tnoStuff;\r\n");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();
@@ -522,7 +520,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation30() {
-		// braceless else 
+		// braceless else
 		fDocument.set("\tif (true)\n" + "\t{");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength() - 1).toString();
@@ -530,7 +528,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation31() {
-		// braceless else 
+		// braceless else
 		fDocument.set("\tif (true)\n" + "{\t\n" + "\t\tstuff();\n" + "\t} else\n" + "\t\tnoStuff");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();
@@ -538,7 +536,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testIndentation32() {
-		// braceless else 
+		// braceless else
 		fDocument.set("\tswitch(ch) {\n" + "\t\tcase one:\n");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();
@@ -546,7 +544,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testListAlignmentMethodDeclaration() {
-		// parameter declaration - alignment with parenthesis 
+		// parameter declaration - alignment with parenthesis
 		fDocument.set("\tvoid proc (  int par1, int par2,\n" + "	   int par3, int par4,\n");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();
@@ -554,7 +552,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testListAlignmentMethodCall() {
-		// parameter declaration - alignment with parenthesis 
+		// parameter declaration - alignment with parenthesis
 		fDocument.set("\this->proc (par1, par2,\n" + "	   par3, par4,\n");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();
@@ -562,7 +560,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testListAlignmentArray() {
-		// parameter declaration - alignment with parenthesis 
+		// parameter declaration - alignment with parenthesis
 		fDocument.set("\tint[]= new int[] { 1, two,\n" + "	   three, four,\n");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();
@@ -570,7 +568,7 @@ public class CHeuristicScannerTest extends TestCase {
 	}
 
 	public void testListAlignmentArray2() {
-		// no prior art - probe system settings. 
+		// no prior art - probe system settings.
 		fDocument.set("\tint[]= new int[] { 1, two,\n");
 
 		String indent = fScanner.computeIndentation(fDocument.getLength()).toString();

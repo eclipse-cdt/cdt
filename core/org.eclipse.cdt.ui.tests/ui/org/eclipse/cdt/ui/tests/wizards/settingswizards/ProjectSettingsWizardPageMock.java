@@ -16,7 +16,6 @@ package org.eclipse.cdt.ui.tests.wizards.settingswizards;
 import java.util.List;
 
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.IProjectSettingsWizardPage;
 import org.eclipse.cdt.internal.ui.wizards.settingswizards.ISettingsProcessor;
 

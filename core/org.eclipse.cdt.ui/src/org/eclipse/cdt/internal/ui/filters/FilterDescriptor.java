@@ -7,19 +7,19 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.filters;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -29,12 +29,12 @@ import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.osgi.util.NLS;
 
-import org.eclipse.cdt.ui.CUIPlugin;
+import com.ibm.icu.text.Collator;
 
 /**
  * Represents a custom filter which is provided by the
  * "org.eclipse.jdt.ui.javaElementFilters" extension point.
- * 
+ *
  * since 2.0
  */
 public class FilterDescriptor implements Comparable<FilterDescriptor> {
@@ -45,7 +45,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 
 	private static final String FILTER_TAG = "filter"; //$NON-NLS-1$
 
-	private static final String PATTERN_ATTRIBUTE = "pattern"; //$NON-NLS-1$	
+	private static final String PATTERN_ATTRIBUTE = "pattern"; //$NON-NLS-1$
 	private static final String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
 	/**
 	 * @deprecated as of 3.0 use {@link FilterDescriptor#TARGET_ID_ATTRIBUTE}
@@ -56,7 +56,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 	private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
 	private static final String NAME_ATTRIBUTE = "name"; //$NON-NLS-1$
 	private static final String ENABLED_ATTRIBUTE = "enabled"; //$NON-NLS-1$
-	private static final String DESCRIPTION_ATTRIBUTE = "description"; //$NON-NLS-1$	
+	private static final String DESCRIPTION_ATTRIBUTE = "description"; //$NON-NLS-1$
 	/**
 	 * @deprecated	use "enabled" instead
 	 */
@@ -86,7 +86,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 	 */
 	public static FilterDescriptor[] getFilterDescriptors(String targetId) {
 		FilterDescriptor[] filterDescs = FilterDescriptor.getFilterDescriptors();
-		List<FilterDescriptor> result = new ArrayList<FilterDescriptor>(filterDescs.length);
+		List<FilterDescriptor> result = new ArrayList<>(filterDescs.length);
 		for (int i = 0; i < filterDescs.length; i++) {
 			String tid = filterDescs[i].getTargetId();
 			if (tid == null || tid.equals(targetId))
@@ -169,7 +169,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 
 	/**
 	 * Returns the filter's pattern.
-	 * 
+	 *
 	 * @return the pattern string or <code>null</code> if it's not a pattern filter
 	 */
 	public String getPattern() {
@@ -178,7 +178,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 
 	/**
 	 * Returns the filter's viewId.
-	 * 
+	 *
 	 * @return the view ID or <code>null</code> if the filter is for all views
 	 * @since 3.0
 	 */
@@ -195,7 +195,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 
 	/**
 	 * Returns the filter's description.
-	 * 
+	 *
 	 * @return the description or <code>null</code> if no description is provided
 	 */
 	public String getDescription() {
@@ -222,7 +222,7 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 	/**
 	 * Returns <code>true</code> if the filter
 	 * is initially enabled.
-	 * 
+	 *
 	 * This attribute is optional and defaults to <code>true</code>.
 	 */
 	public boolean isEnabled() {
@@ -233,8 +233,8 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 		return strVal == null || Boolean.valueOf(strVal).booleanValue();
 	}
 
-	/* 
-	 * Implements a method from IComparable 
+	/*
+	 * Implements a method from IComparable
 	 */
 	@Override
 	public int compareTo(FilterDescriptor o) {
@@ -247,8 +247,8 @@ public class FilterDescriptor implements Comparable<FilterDescriptor> {
 	 * Creates the filter descriptors.
 	 */
 	private static FilterDescriptor[] createFilterDescriptors(IConfigurationElement[] elements) {
-		List<FilterDescriptor> result = new ArrayList<FilterDescriptor>(5);
-		Set<String> descIds = new HashSet<String>(5);
+		List<FilterDescriptor> result = new ArrayList<>(5);
+		Set<String> descIds = new HashSet<>(5);
 		for (int i = 0; i < elements.length; i++) {
 			final IConfigurationElement element = elements[i];
 			if (FILTER_TAG.equals(element.getName())) {

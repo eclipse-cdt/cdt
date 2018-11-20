@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RunNinjaPage extends WizardPage {

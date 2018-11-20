@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -34,9 +34,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 
 /**
- * Default implementation of a DSF executor interfaces, based on the 
+ * Default implementation of a DSF executor interfaces, based on the
  * standard java.util.concurrent.ThreadPoolExecutor.
- * 
+ *
  * @since 1.0
  */
 
@@ -73,7 +73,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 		this("DSF Executor"); //$NON-NLS-1$
 	}
 
-	/** 
+	/**
 	 * Creates a new DSF Executor with the given name.
 	 * @param name Name used to create executor's thread.
 	 */
@@ -116,7 +116,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 		if (log != null) {
 			log.log(new Status(IStatus.ERROR, DsfPlugin.PLUGIN_ID, -1, "Uncaught exception in DSF executor thread", t)); //$NON-NLS-1$
 		}
-		// Print out the stack trace to console if assertions are enabled. 
+		// Print out the stack trace to console if assertions are enabled.
 		if (ASSERTIONS_ENABLED) {
 			ByteArrayOutputStream outStream = new ByteArrayOutputStream(512);
 			PrintStream printStream = new PrintStream(outStream);
@@ -142,28 +142,28 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 		assert (ASSERTIONS_ENABLED = true) == true;
 	}
 
-	/** 
+	/**
 	 * This map is used by DsfRunnable/Query/DsfCallable to track by which executor
 	 * an executable object was created.
-	 * <br>Note: Only used when tracing. 
+	 * <br>Note: Only used when tracing.
 	 */
-	static Map<Thread, DefaultDsfExecutor> fThreadToExecutorMap = new HashMap<Thread, DefaultDsfExecutor>();
+	static Map<Thread, DefaultDsfExecutor> fThreadToExecutorMap = new HashMap<>();
 
-	/** 
+	/**
 	 * Currently executing runnable/callable.
-	 * <br>Note: Only used when tracing. 
+	 * <br>Note: Only used when tracing.
 	 */
 	TracingWrapper fCurrentlyExecuting;
 
-	/** 
-	 * Counter number saved by each tracing runnable when executed 
-	 * <br>Note: Only used when tracing. 
+	/**
+	 * Counter number saved by each tracing runnable when executed
+	 * <br>Note: Only used when tracing.
 	 */
 	int fSequenceCounter;
 
-	/** 
-	 * Wrapper for runnables/callables, is used to store tracing information 
-	 * <br>Note: Only used when tracing. 
+	/**
+	 * Wrapper for runnables/callables, is used to store tracing information
+	 * <br>Note: Only used when tracing.
 	 */
 	abstract class TracingWrapper {
 		/** Sequence number of this runnable/callable */
@@ -380,8 +380,8 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 			try {
 				fRunnable.run();
 			} catch (RuntimeException e) {
-				// If an exception was thrown in the Runnable, trace it.  
-				// Because there is no one else to catch it, it is a 
+				// If an exception was thrown in the Runnable, trace it.
+				// Because there is no one else to catch it, it is a
 				// programming error.
 				logException(e);
 				throw e;
@@ -434,7 +434,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 	public <V> ScheduledFuture<V> schedule(Callable<V> callable, long delay, TimeUnit unit) {
 		if (DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
 			if (!(callable instanceof TracingWrapper)) {
-				callable = new TracingWrapperCallable<V>(callable);
+				callable = new TracingWrapperCallable<>(callable);
 			}
 		}
 		return super.schedule(callable, delay, unit);
@@ -485,7 +485,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 	@Override
 	public <T> Future<T> submit(Callable<T> callable) {
 		if (DEBUG_EXECUTOR || ASSERTIONS_ENABLED) {
-			callable = new TracingWrapperCallable<T>(callable);
+			callable = new TracingWrapperCallable<>(callable);
 		}
 		return super.submit(callable);
 	}
@@ -500,7 +500,7 @@ public class DefaultDsfExecutor extends ScheduledThreadPoolExecutor implements D
 
 	@Override
 	public void shutdown() {
-		if (DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$    		
+		if (DEBUG_EXECUTOR && ("".equals(DEBUG_EXECUTOR_NAME) || fName.equals(DEBUG_EXECUTOR_NAME))) { //$NON-NLS-1$
 			DsfPlugin.debug(
 					DsfPlugin.getDebugTime() + " Executor (" + ((DsfThreadFactory) getThreadFactory()).fThreadName //$NON-NLS-1$
 							+ ") is being shut down. Already submitted tasks will be executed, new ones will not."); //$NON-NLS-1$

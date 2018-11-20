@@ -24,7 +24,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.graphics.Image;
 
 /**
- * 
+ *
  */
 class CNode extends DocumentRangeNode implements ITypedElement {
 

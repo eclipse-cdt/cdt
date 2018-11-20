@@ -7,12 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Make Registers View specific to a frame (Bug 323552)
- *     Raphael Zulliger (Indel) -  Allow derived classes of RegisterVMProvider 
- *                                 to create alternative configuration (Bug 
+ *     Raphael Zulliger (Indel) -  Allow derived classes of RegisterVMProvider
+ *                                 to create alternative configuration (Bug
  *                                 431622)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.register;
@@ -175,7 +175,7 @@ public class RegisterVMProvider extends AbstractElementVMProvider {
 		/*
 		 * To optimize the performance of the view when stepping rapidly, skip all
 		 * other events when a suspended event is received, including older suspended
-		 * events. 
+		 * events.
 		 */
 		return newEvent instanceof ISuspendedDMEvent;
 	}
@@ -237,7 +237,7 @@ public class RegisterVMProvider extends AbstractElementVMProvider {
 		}
 
 		/**
-		 * The IAdaptable implementation.  If the adapter is the DM context, 
+		 * The IAdaptable implementation.  If the adapter is the DM context,
 		 * return the context, otherwise delegate to IDMContext.getAdapter().
 		 */
 		@SuppressWarnings("unchecked")

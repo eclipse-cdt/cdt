@@ -20,7 +20,7 @@ public interface IProblemMarkerFilter {
 
 	/**
 	 * Decide if a problem marker should be reported or ignored.
-	 * 
+	 *
 	 * @param markerInfo description of the problem marker that is going to be reported
 	 * @return true if markers should be reported, false if should be ignored
 	 */

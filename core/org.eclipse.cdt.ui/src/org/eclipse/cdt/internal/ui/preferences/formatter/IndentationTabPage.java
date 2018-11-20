@@ -20,12 +20,11 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 
 public class IndentationTabPage extends FormatterTabPage {
 
@@ -36,7 +35,7 @@ public class IndentationTabPage extends FormatterTabPage {
 			+ "#include <math.h>\n\n" + //$NON-NLS-1$
 			"class Point {" + //$NON-NLS-1$
 			"public:" + //$NON-NLS-1$
-			"Point(double x, double y) : x(x), y(y) {}" + //$NON-NLS-1$ 
+			"Point(double x, double y) : x(x), y(y) {}" + //$NON-NLS-1$
 			"\n\n" + //$NON-NLS-1$
 			"double distance(const Point& other) const;" + //$NON-NLS-1$
 			"int compareX(const Point& other) const;" + //$NON-NLS-1$
@@ -127,8 +126,8 @@ public class IndentationTabPage extends FormatterTabPage {
 			}
 		});
 
-		//		final Group typeMemberGroup= createGroup(numColumns, composite, FormatterMessages.IndentationTabPage_field_alignment_group_title); 
-		//		createCheckboxPref(typeMemberGroup, numColumns, FormatterMessages.IndentationTabPage_field_alignment_group_align_fields_in_columns, DefaultCodeFormatterConstants.FORMATTER_ALIGN_TYPE_MEMBERS_ON_COLUMNS, FALSE_TRUE); 
+		//		final Group typeMemberGroup= createGroup(numColumns, composite, FormatterMessages.IndentationTabPage_field_alignment_group_title);
+		//		createCheckboxPref(typeMemberGroup, numColumns, FormatterMessages.IndentationTabPage_field_alignment_group_align_fields_in_columns, DefaultCodeFormatterConstants.FORMATTER_ALIGN_TYPE_MEMBERS_ON_COLUMNS, FALSE_TRUE);
 
 		final Group classGroup = createGroup(numColumns, composite,
 				FormatterMessages.IndentationTabPage_indent_group_title);
@@ -198,9 +197,9 @@ public class IndentationTabPage extends FormatterTabPage {
 		 * preference is not used by the core formatter. We piggy back the
 		 * visual tab length setting in that preference in that case. If the
 		 * user selects MIXED, we use the previous TAB_SIZE preference as the
-		 * new INDENTATION_SIZE (as this is what it really is) and set the 
+		 * new INDENTATION_SIZE (as this is what it really is) and set the
 		 * visual tab size to the value piggy backed in the INDENTATION_SIZE
-		 * preference. See also CodeFormatterUtil. 
+		 * preference. See also CodeFormatterUtil.
 		 */
 		if (DefaultCodeFormatterConstants.MIXED.equals(tabPolicy)) {
 			if (CCorePlugin.SPACE.equals(fOldTabChar) || CCorePlugin.TAB.equals(fOldTabChar))

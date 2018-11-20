@@ -10,7 +10,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Ken Ryall (Nokia) - Added support for AbsoluteSourceContainer(159833) 
+ * Ken Ryall (Nokia) - Added support for AbsoluteSourceContainer(159833)
  * Ken Ryall (Nokia) - Added support for CSourceNotFoundElement (167305)
  * Ken Ryall (Nokia) - Option to open disassembly view when no source (81353)
  * James Blackburn (Broadcom Corp.) - Linked Resources / Nested Projects (247948)
@@ -46,8 +46,8 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 
 	private Map<Object, Object[]> fCachedResults = Collections.synchronizedMap(new HashMap<Object, Object[]>());
 
-	/** 
-	 * Constructor for CSourceLookupParticipant. 
+	/**
+	 * Constructor for CSourceLookupParticipant.
 	 */
 	public CSourceLookupParticipant() {
 		super();
@@ -75,7 +75,7 @@ public class CSourceLookupParticipant extends AbstractSourceLookupParticipant {
 		if (results != null)
 			return results;
 
-		// Workaround for cases when the stack frame doesn't contain the source file name 
+		// Workaround for cases when the stack frame doesn't contain the source file name
 		String name = null;
 		IBreakpoint breakpoint = null;
 		if (object instanceof String) {

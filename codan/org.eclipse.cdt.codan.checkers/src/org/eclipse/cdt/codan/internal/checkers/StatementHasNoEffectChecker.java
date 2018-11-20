@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2014 Alena Laskavaia 
+ * Copyright (c) 2009, 2014 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,12 +33,12 @@ import org.eclipse.cdt.core.dom.ast.gnu.IGNUASTCompoundStatementExpression;
 
 /**
  * Checker that detects statements without effect such as
- * 
+ *
  * a+b;
  * or
  * +b;
- * 
- * 
+ *
+ *
  */
 public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.StatementHasNoEffectProblem"; //$NON-NLS-1$
@@ -101,7 +101,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 		 * We consider has not effect binary statements without assignment and
 		 * unary statement which is not dec and inc. If operator is overloaded
 		 * we not going to bother.
-		 * 
+		 *
 		 * @param e
 		 * @return
 		 */
@@ -190,7 +190,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 			IASTExpression operand1 = expr.getOperand1();
 			IASTExpression operand2 = expr.getOperand2();
 			// This shouldn't happen, but if it does, it's better to have a
-			// false negative than a false positive warning. 
+			// false negative than a false positive warning.
 			if (operand1 == null || operand2 == null)
 				return true;
 			if (!(operand1.getExpressionType() instanceof IBasicType
@@ -208,7 +208,7 @@ public class StatementHasNoEffectChecker extends AbstractIndexAstChecker {
 				return true;
 			IASTExpression operand = expr.getOperand();
 			// This shouldn't happen, but if it does, it's better to have a
-			// false negative than a false positive warning. 
+			// false negative than a false positive warning.
 			if (operand == null)
 				return true;
 			if (!(operand.getExpressionType() instanceof IBasicType)) {

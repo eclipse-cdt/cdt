@@ -144,7 +144,7 @@ final class DeltaProcessor {
 	}
 
 	/**
-	 * Adds the given child handle to its parent's cache of children. 
+	 * Adds the given child handle to its parent's cache of children.
 	 */
 	protected void addToParentInfo(Openable child) throws CModelException {
 		Openable parent = (Openable) child.getParent();
@@ -160,7 +160,7 @@ final class DeltaProcessor {
 	/**
 	 * Removes the given element from its parents cache of children. If the
 	 * element does not have a parent, or the parent is not currently open,
-	 * this has no effect. 
+	 * this has no effect.
 	 */
 	private void removeFromParentInfo(ICElement child) throws CModelException {
 		CModelManager factory = CModelManager.getDefault();

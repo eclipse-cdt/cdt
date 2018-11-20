@@ -135,7 +135,7 @@ public class CheckerTestCase extends CodanTestCase {
 
 	public void checkNoErrorsOfKind(String problemId) {
 		if (markers != null && markers.length > 0) {
-			List<IMarker> filtered = new ArrayList<IMarker>(markers.length);
+			List<IMarker> filtered = new ArrayList<>(markers.length);
 			for (IMarker m : markers) {
 				if (CodanProblemMarker.getProblemId(m).equals(problemId)) {
 					filtered.add(m);

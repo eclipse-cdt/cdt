@@ -17,7 +17,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * GDB/MI var-info-num-children.
- * 
+ *
  * For dynamic variable objects, only the number children currently fetched
  * by gdb is returned.
  */

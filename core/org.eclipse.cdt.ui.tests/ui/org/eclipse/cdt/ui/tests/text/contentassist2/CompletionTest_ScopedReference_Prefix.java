@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Scoped_Reference, with a prefix
  * Bug#50152: Wrong context sent after a "::"
  *

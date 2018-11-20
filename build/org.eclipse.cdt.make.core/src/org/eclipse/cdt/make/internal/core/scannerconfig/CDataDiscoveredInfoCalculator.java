@@ -100,7 +100,7 @@ public class CDataDiscoveredInfoCalculator {
 
 		void add(ILangSettingInfo info) {
 			if (fLangInfoList == null)
-				fLangInfoList = new ArrayList<ILangSettingInfo>();
+				fLangInfoList = new ArrayList<>();
 			fLangInfoList.add(info);
 		}
 	}
@@ -140,9 +140,9 @@ public class CDataDiscoveredInfoCalculator {
 		}
 
 		public void add(int index, PathFilePathInfo value) {
-			List<PathFilePathInfo> list = checkResize(index) ? new ArrayList<PathFilePathInfo>() : fStore[index];
+			List<PathFilePathInfo> list = checkResize(index) ? new ArrayList<>() : fStore[index];
 			if (list == null) {
-				list = new ArrayList<PathFilePathInfo>();
+				list = new ArrayList<>();
 				fStore[index] = list;
 			}
 
@@ -168,7 +168,7 @@ public class CDataDiscoveredInfoCalculator {
 
 		public List<PathFilePathInfo>[] getLists() {
 			int size = fMaxIndex + 1;
-			List<List<PathFilePathInfo>> list = new ArrayList<List<PathFilePathInfo>>(size);
+			List<List<PathFilePathInfo>> list = new ArrayList<>(size);
 			List<PathFilePathInfo> l;
 			for (int i = 0; i < size; i++) {
 				l = fStore[i];
@@ -222,13 +222,13 @@ public class CDataDiscoveredInfoCalculator {
 
 		public void add(PathFilePathInfo pInfo) {
 			if (fPathFilePathInfoMap == null)
-				fPathFilePathInfoMap = new HashMap<PathInfo, List<PathFilePathInfo>>(3);
+				fPathFilePathInfoMap = new HashMap<>(3);
 
 			PathInfo fileInfo = pInfo.fInfo;
 			List<PathFilePathInfo> list = fileInfo == fMaxMatchInfo ? fMaxMatchInfoList
 					: fPathFilePathInfoMap.get(fileInfo);
 			if (list == null) {
-				list = new ArrayList<PathFilePathInfo>();
+				list = new ArrayList<>();
 				fPathFilePathInfoMap.put(fileInfo, list);
 				if (fMaxMatchInfo == null) {
 					fMaxMatchInfo = fileInfo;
@@ -342,7 +342,7 @@ public class CDataDiscoveredInfoCalculator {
 
 		private HashSet<String> calcExtsSet() {
 			if (fExtsSet == null)
-				fExtsSet = new HashSet<String>(Arrays.asList(fExts));
+				fExtsSet = new HashSet<>(Arrays.asList(fExts));
 			return fExtsSet;
 		}
 
@@ -468,7 +468,7 @@ public class CDataDiscoveredInfoCalculator {
 
 		void internalAdd(ExtsSetSettings setting) {
 			if (fExtsSetToExtsSetSettingsMap == null) {
-				fExtsSetToExtsSetSettingsMap = new HashMap<ExtsSet, ExtsSetSettings>();
+				fExtsSetToExtsSetSettingsMap = new HashMap<>();
 			}
 
 			ExtsSetSettings cur = fExtsSetToExtsSetSettingsMap.get(setting.fExtsSet);
@@ -497,7 +497,7 @@ public class CDataDiscoveredInfoCalculator {
 		}
 
 		public RcSetSettings[] getChildren(final boolean includeCurrent) {
-			final List<Object> list = new ArrayList<Object>();
+			final List<Object> list = new ArrayList<>();
 			fContainer.accept(new IPathSettingsContainerVisitor() {
 
 				@Override
@@ -561,7 +561,7 @@ public class CDataDiscoveredInfoCalculator {
 		String[] exts = setting.fExtsSet.fExts;
 		String ext;
 		if (map == null) {
-			map = new HashMap<String, ExtsSetSettings>();
+			map = new HashMap<>();
 			forceAdd = true;
 		}
 
@@ -600,7 +600,7 @@ public class CDataDiscoveredInfoCalculator {
 			path = rcData.getPath();
 			curRcSet = rcSet.createChild(path, rcData, false);
 			if (rcData.getType() == ICSettingBase.SETTING_FILE) {
-				fileMap = new HashMap<ExtsSet, ExtsSetSettings>(1);
+				fileMap = new HashMap<>(1);
 				fileSetting = createExtsSetSettings(path, (CFileData) rcData);
 				fileMap.put(fileSetting.fExtsSet, fileSetting);
 				curRcSet.internalSetSettingsMap(fileMap);
@@ -672,7 +672,7 @@ public class CDataDiscoveredInfoCalculator {
 	private static void addLanguageInfos(RcSettingInfo rcInfo, CLanguageData[] lDatas, PathInfo info) {
 		ArrayList<ILangSettingInfo> list = rcInfo.fLangInfoList;
 		if (list == null) {
-			list = new ArrayList<ILangSettingInfo>(lDatas.length);
+			list = new ArrayList<>(lDatas.length);
 			rcInfo.fLangInfoList = list;
 		} else {
 			list.ensureCapacity(lDatas.length);
@@ -690,7 +690,7 @@ public class CDataDiscoveredInfoCalculator {
 		IPath projRelPath;
 		CResourceData rcData;
 		//		RcSetSettings dataSetting;
-		List<RcSettingInfo> list = new ArrayList<RcSettingInfo>(pfpis.length);
+		List<RcSettingInfo> list = new ArrayList<>(pfpis.length);
 		RcSettingInfo rcInfo;
 		ILangSettingInfo lInfo;
 		CLanguageData lData;
@@ -731,7 +731,7 @@ public class CDataDiscoveredInfoCalculator {
 
 					if (rcInfo == null) {
 						rcInfo = new RcSettingInfo(rootData);
-						tmpList = new ArrayList<ILangSettingInfo>(lDatas.length - k);
+						tmpList = new ArrayList<>(lDatas.length - k);
 						rcInfo.fLangInfoList = tmpList;
 					}
 
@@ -785,7 +785,7 @@ public class CDataDiscoveredInfoCalculator {
 				if (lData != null) {
 					rcInfo = new RcSettingInfo(rcData);
 					lInfo = new LangSettingInfo(lData, pInfo);
-					tmpList = new ArrayList<ILangSettingInfo>(1);
+					tmpList = new ArrayList<>(1);
 					tmpList.add(lInfo);
 					rcInfo.fLangInfoList = tmpList;
 					list.add(rcInfo);
@@ -814,7 +814,7 @@ public class CDataDiscoveredInfoCalculator {
 		RcSetSettings settings[] = rootSetting.getChildren(true);
 		RcSetSettings setting;
 		CResourceData rcData;
-		List<IRcSettingInfo> resultList = new ArrayList<IRcSettingInfo>();
+		List<IRcSettingInfo> resultList = new ArrayList<>();
 		LangSettingInfo langInfo;
 		RcSettingInfo rcInfo;
 		PathInfo pathInfo;
@@ -846,7 +846,7 @@ public class CDataDiscoveredInfoCalculator {
 					if (pathInfo != null) {
 						langInfo = new LangSettingInfo(extSetting.fBaseLangData, pathInfo);
 						rcInfo = new RcSettingInfo(rcData);
-						rcInfo.fLangInfoList = new ArrayList<ILangSettingInfo>(1);
+						rcInfo.fLangInfoList = new ArrayList<>(1);
 						rcInfo.fLangInfoList.add(langInfo);
 						resultList.add(rcInfo);
 					}
@@ -854,7 +854,7 @@ public class CDataDiscoveredInfoCalculator {
 			} else {
 				if (setting.fExtsSetToExtsSetSettingsMap.size() != 0) {
 					rcInfo = new RcSettingInfo(rcData);
-					rcInfo.fLangInfoList = new ArrayList<ILangSettingInfo>(setting.fExtsSetToExtsSetSettingsMap.size());
+					rcInfo.fLangInfoList = new ArrayList<>(setting.fExtsSetToExtsSetSettingsMap.size());
 					resultList.add(rcInfo);
 
 					Collection<ExtsSetSettings> extSettings = setting.fExtsSetToExtsSetSettingsMap.values();
@@ -1015,7 +1015,7 @@ public class CDataDiscoveredInfoCalculator {
 
 	private static HashMap<ExtsSet, ExtsSetSettings> createExtsSetSettingsMap(CFolderData data) {
 		CLanguageData[] lDatas = data.getLanguageDatas();
-		HashMap<ExtsSet, ExtsSetSettings> map = new HashMap<ExtsSet, ExtsSetSettings>(lDatas.length);
+		HashMap<ExtsSet, ExtsSetSettings> map = new HashMap<>(lDatas.length);
 		ExtsSetSettings settings;
 
 		if (lDatas.length != 0) {
@@ -1032,7 +1032,7 @@ public class CDataDiscoveredInfoCalculator {
 
 	private static PathFilePathInfo[] createOrderedInfo(Map<IResource, PathInfo> map) {
 		ListIndexStore store = new ListIndexStore(10);
-		HashMap<PathInfo, PathInfo> infoMap = new HashMap<PathInfo, PathInfo>();
+		HashMap<PathInfo, PathInfo> infoMap = new HashMap<>();
 		//		LinkedHashMap result;
 
 		Set<Entry<IResource, PathInfo>> entries = map.entrySet();

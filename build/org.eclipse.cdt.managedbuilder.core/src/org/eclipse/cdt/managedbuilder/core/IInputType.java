@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.content.IContentType;
 
 /**
  * This interface represents an inputType instance in the managed build system.
- * It describes one category of input files to a Tool.  A tool can have 
+ * It describes one category of input files to a Tool.  A tool can have
  * multiple inputType children.
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -48,7 +48,7 @@ public interface IInputType extends IBuildObject {
 
 	/**
 	 * Creates an inputOrder child for this InputType.
-	 * 
+	 *
 	 * @param path The path associated with the InputOrder element
 	 * @return IInputOrder of the new element
 	 */
@@ -56,28 +56,28 @@ public interface IInputType extends IBuildObject {
 
 	/**
 	 * Removes the InputOrder element with the path specified in the argument.
-	 * 
+	 *
 	 * @param path The path associated with the InputOrder element
 	 */
 	public void removeInputOrder(String path);
 
 	/**
 	 * Removes the InputOrder element specified in the argument.
-	 * 
+	 *
 	 * @param element The InputOrder element
 	 */
 	public void removeInputOrder(IInputOrder element);
 
 	/**
 	 * Returns all of the InputOrder children of this InputType
-	 * 
+	 *
 	 * @return IInputOrder[]
 	 */
 	public IInputOrder[] getInputOrders();
 
 	/**
 	 * Returns the InputOrder element with the path specified in the argument.
-	 * 
+	 *
 	 * @param path The path associated with the InputOrder element
 	 * @return IInputOrder
 	 */
@@ -85,7 +85,7 @@ public interface IInputType extends IBuildObject {
 
 	/**
 	 * Creates an additionalInput child for this InputType.
-	 * 
+	 *
 	 * @param path The path associated with the AdditionalInput element
 	 * @return IAdditionalInput of the new element
 	 */
@@ -93,28 +93,28 @@ public interface IInputType extends IBuildObject {
 
 	/**
 	 * Removes the AdditionalInput element with the path specified in the argument.
-	 * 
+	 *
 	 * @param path The path associated with the AdditionalInput element
 	 */
 	public void removeAdditionalInput(String path);
 
 	/**
 	 * Removes the AdditionalInput element specified in the argument.
-	 * 
+	 *
 	 * @param element The AdditionalInput element
 	 */
 	public void removeAdditionalInput(IAdditionalInput element);
 
 	/**
 	 * Returns all of the AdditionalInput children of this InputType
-	 * 
+	 *
 	 * @return IAdditionalInput[]
 	 */
 	public IAdditionalInput[] getAdditionalInputs();
 
 	/**
 	 * Returns the AdditionalInput element with the path specified in the argument.
-	 * 
+	 *
 	 * @param path The path associated with the AdditionalInput element
 	 * @return IAdditionalInput
 	 */
@@ -123,7 +123,7 @@ public interface IInputType extends IBuildObject {
 	/**
 	 * Returns all of the additional input resources of this InputType.
 	 * Note: This does not include additional dependencies.
-	 * 
+	 *
 	 * @return IPath[]
 	 */
 	public IPath[] getAdditionalResources();
@@ -131,14 +131,14 @@ public interface IInputType extends IBuildObject {
 	/**
 	 * Returns all of the additional dependency resources of this InputType.
 	 * Note: This does not include additional inputs.
-	 * 
+	 *
 	 * @return IPath[]
 	 */
 	public IPath[] getAdditionalDependencies();
 
 	/**
 	 * Returns the tool parent of this InputType.
-	 * 
+	 *
 	 * @return ITool
 	 */
 	public ITool getParent();
@@ -146,17 +146,17 @@ public interface IInputType extends IBuildObject {
 	/**
 	 * Returns the <code>IInputType</code> that is the superclass of this
 	 * InputType, or <code>null</code> if the attribute was not specified.
-	 * 
+	 *
 	 * @return IInputType
 	 */
 	public IInputType getSuperClass();
 
 	/**
 	 * Returns the Eclipse <code>IContentType</code> that describes this
-	 * input type.  If both the sources attribute and the sourceContentType 
-	 * attribute are specified, the sourceContentType will be used if it 
-	 * is registered in Eclipse. 
-	 * 
+	 * input type.  If both the sources attribute and the sourceContentType
+	 * attribute are specified, the sourceContentType will be used if it
+	 * is registered in Eclipse.
+	 *
 	 * @return IContentType
 	 */
 	public IContentType getSourceContentType();
@@ -184,7 +184,7 @@ public interface IInputType extends IBuildObject {
 	/**
 	 * Sets the Eclipse <code>IContentType</code> that describes this
 	 * input type.
-	 * 
+	 *
 	 * @param contentType  The Eclipse content type
 	 */
 	public void setSourceContentType(IContentType contentType);
@@ -193,19 +193,19 @@ public interface IInputType extends IBuildObject {
 	 * Returns the list of valid source extensions from the
 	 * sourceExtensions attribute. Note that this value is not used
 	 * if source content type is specified and registered with Eclipse.
-	 * Also, the user will not be able to modify the set of file 
+	 * Also, the user will not be able to modify the set of file
 	 * extensions as they can when sourceContentType is specified.
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public String[] getSourceExtensionsAttribute();
 
 	/**
 	 * Sets the list of valid source extensions for this input type.
-	 * NOTE: The value of this attribute will NOT be used if a 
+	 * NOTE: The value of this attribute will NOT be used if a
 	 *       source content type is specified and is registered with
 	 *       Eclipse.
-	 * 
+	 *
 	 * @param extensions  The comma-separated list of valid file extensions
 	 *                    - not including the separator period.
 	 */
@@ -213,19 +213,19 @@ public interface IInputType extends IBuildObject {
 
 	/**
 	 * Returns the list of valid source extensions for this input type.
-	 * Note that the list will come from the sourceContentType if it 
-	 * is specified and registered with Eclipse.  Otherwise the  
+	 * Note that the list will come from the sourceContentType if it
+	 * is specified and registered with Eclipse.  Otherwise the
 	 * sourceExtensions attribute will be used.
-	 * 
+	 *
 	 * @param tool  the tool that contains the input-type
 	 * @return String[]
 	 */
 	public String[] getSourceExtensions(ITool tool);
 
 	/**
-	 * Answers <code>true</code> if the input type considers the file extension to be 
+	 * Answers <code>true</code> if the input type considers the file extension to be
 	 * one associated with a source file.
-	 * 
+	 *
 	 * @param tool  the tool that contains the input-type
 	 * @param ext  file extension of the source
 	 * @return boolean
@@ -236,15 +236,15 @@ public interface IInputType extends IBuildObject {
 	 * Returns the Eclipse <code>IContentType</code> that describes the
 	 * dependency files of this input type.  If both the dependencyExtensions
 	 * attribute and the dependencyContentType attribute are specified,
-	 * the dependencyContentType will be used if it is defined in Eclipse. 
-	 * 
+	 * the dependencyContentType will be used if it is defined in Eclipse.
+	 *
 	 * @return IContentType
 	 */
 	public IContentType getDependencyContentType();
 
 	/**
 	 * Sets the Eclipse <code>IContentType</code> that describes the
-	 * dependency files of this input type. 
+	 * dependency files of this input type.
 	 */
 	public void setDependencyContentType(IContentType type);
 
@@ -252,19 +252,19 @@ public interface IInputType extends IBuildObject {
 	 * Returns the list of valid dependency extensions from the
 	 * dependencyExtensions attribute. Note that this value is not used
 	 * if dependency content type is specified and registered with Eclipse.
-	 * Also, the user will not be able to modify the set of file 
+	 * Also, the user will not be able to modify the set of file
 	 * extensions as they can when dependencyContentType is specified.
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public String[] getDependencyExtensionsAttribute();
 
 	/**
 	 * Sets the list of valid dependency extensions for this input type.
-	 * NOTE: The value of this attribute will NOT be used if a 
+	 * NOTE: The value of this attribute will NOT be used if a
 	 *       dependency content type is specified and is registered with
 	 *       Eclipse.
-	 * 
+	 *
 	 * @param extensions  The comma-separated list of valid dependency extensions
 	 *                    - not including the separator period.
 	 */
@@ -272,19 +272,19 @@ public interface IInputType extends IBuildObject {
 
 	/**
 	 * Returns the list of valid dependency extensions for this input type.
-	 * Note that the list will come from the dependencyContentType if it 
-	 * is specified and registered with Eclipse.  Otherwise the  
+	 * Note that the list will come from the dependencyContentType if it
+	 * is specified and registered with Eclipse.  Otherwise the
 	 * dependencyExtensions attribute will be used.
-	 * 
+	 *
 	 * @param tool  the tool that contains the input-type
 	 * @return String[]
 	 */
 	public String[] getDependencyExtensions(ITool tool);
 
 	/**
-	 * Answers <code>true</code> if the input type considers the file extension to be 
+	 * Answers <code>true</code> if the input type considers the file extension to be
 	 * one associated with a dependency file.
-	 * 
+	 *
 	 * @param tool  the tool that contains the input-type
 	 * @param ext  file extension of the source
 	 * @return boolean
@@ -294,50 +294,50 @@ public interface IInputType extends IBuildObject {
 	/**
 	 * Returns the id of the option that is associated with this input
 	 * type on the command line.  If specified, the name(s) of the input
-	 * files for this input type are taken from the value specified 
+	 * files for this input type are taken from the value specified
 	 * for the option.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getOptionId();
 
 	/**
-	 * Sets the id of the option that is associated with this input type on 
-	 * the command line.  If specified, the name(s) of the input files for 
+	 * Sets the id of the option that is associated with this input type on
+	 * the command line.  If specified, the name(s) of the input files for
 	 * this input type are taken from the value specified for the option.
 	 */
 	public void setOptionId(String optionId);
 
 	/**
-	 * Returns the id of the option whose value is to be assigned to the 
-	 * file(s) calculated for this input type.  The default is not to 
-	 * assign the input file(s) to a command line option but to assign the 
+	 * Returns the id of the option whose value is to be assigned to the
+	 * file(s) calculated for this input type.  The default is not to
+	 * assign the input file(s) to a command line option but to assign the
 	 * files to the ${Inputs} part of the command line.  Note that the
 	 * option value is only updated during build file generation and therefore
-	 * could be out of sync with the project until build file generation 
+	 * could be out of sync with the project until build file generation
 	 * occurs.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getAssignToOptionId();
 
 	/**
-	 * Sets the id of the option whose value is to be assigned to the 
-	 * file(s) calculated for this input type.  The default is not to 
-	 * assign the input file(s) to a command line option but to assign the 
+	 * Sets the id of the option whose value is to be assigned to the
+	 * file(s) calculated for this input type.  The default is not to
+	 * assign the input file(s) to a command line option but to assign the
 	 * files to the ${Inputs} part of the command line.  Note that the
 	 * option value is only updated during build file generation and therefore
-	 * could be out of sync with the project until build file generation 
+	 * could be out of sync with the project until build file generation
 	 * occurs.
 	 */
 	public void setAssignToOptionId(String optionId);
 
 	/**
 	 * Returns <code>true</code> if this inputType can contain multiple input
-	 * resources, else <code>false</code>.  The inputs can be project resources, 
+	 * resources, else <code>false</code>.  The inputs can be project resources,
 	 * or the outputs of other tools in the tool-chain.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean getMultipleOfType();
 
@@ -349,8 +349,8 @@ public interface IInputType extends IBuildObject {
 	/**
 	 * Returns <code>true</code> if this inputType is considered the primary input
 	 * of the tool, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean getPrimaryInput();
 
@@ -360,10 +360,10 @@ public interface IInputType extends IBuildObject {
 	public void setPrimaryInput(boolean primary);
 
 	/**
-	 * Returns a class instance that implements an interface to generate 
-	 * source-level dependencies for this input type. 
-	 * This method may return <code>null</code> in which case, the receiver 
-	 * should assume that the input type does not require dependency information 
+	 * Returns a class instance that implements an interface to generate
+	 * source-level dependencies for this input type.
+	 * This method may return <code>null</code> in which case, the receiver
+	 * should assume that the input type does not require dependency information
 	 * when the project is built.
 	 *
 	 * @return IManagedDependencyGeneratorType
@@ -372,11 +372,11 @@ public interface IInputType extends IBuildObject {
 
 	/**
 	 * Returns the name of the build variable associated this this input type's resources
-	 * The build variable used in the build file to represent the list of input files when 
-	 * multipleOfType is True.  The same variable name can be used by an outputType to 
-	 * identify a set of output files that contribute to this tool's input 
+	 * The build variable used in the build file to represent the list of input files when
+	 * multipleOfType is True.  The same variable name can be used by an outputType to
+	 * identify a set of output files that contribute to this tool's input
 	 * (i.e., those using the same buildVariable name).  The default name is chosen by MBS.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getBuildVariable();
@@ -387,18 +387,18 @@ public interface IInputType extends IBuildObject {
 	public void setBuildVariable(String variableName);
 
 	/**
-	 * Returns <code>true</code> if this element has changes that need to 
+	 * Returns <code>true</code> if this element has changes that need to
 	 * be saved in the project file, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isDirty();
 
 	/**
 	 * Returns <code>true</code> if this InputType was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isExtensionElement();
 

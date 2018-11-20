@@ -841,7 +841,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 	 *            an address the caller is hoping will be covered by this
 	 *            insertion. I.e., [mixedInstructions] may or may not contain
 	 *            that address; the caller wants to know if it does, and so we
-	 *            indicate that via our return value. Can be null to indicate n/a, 
+	 *            indicate that via our return value. Can be null to indicate n/a,
 	 *            in which case we return true as long as any instruction was inserted
 	 *            as long as any instruction was inserted
 	 * @param endAddress
@@ -1345,7 +1345,7 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 
 	/**
 	 * Align the opCode of an address.
-	 * 
+	 *
 	 * @param addr the address
 	 * @param rm the data request monitor
 	 */

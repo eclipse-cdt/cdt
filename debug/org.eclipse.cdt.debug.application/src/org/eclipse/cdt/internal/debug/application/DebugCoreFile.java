@@ -33,7 +33,7 @@ public class DebugCoreFile {
 
 	/**
 	 * Import given executable into the Executables project then create a launch configuration.
-	 * 
+	 *
 	 * @param monitor
 	 * @param executable
 	 * @param buildLog

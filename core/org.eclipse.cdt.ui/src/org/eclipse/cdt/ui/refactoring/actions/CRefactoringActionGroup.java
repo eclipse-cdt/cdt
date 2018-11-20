@@ -10,13 +10,17 @@
  *
  * Contributors:
  *    IBM Rational Software - Initial API and implementation
- *    Markus Schorn, Wind River Systems Inc. - ported for rename refactoring impl. 
+ *    Markus Schorn, Wind River Systems Inc. - ported for rename refactoring impl.
  *******************************************************************************/
 package org.eclipse.cdt.ui.refactoring.actions;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.ui.actions.CdtActionConstants;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -33,27 +37,21 @@ import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.ui.actions.CdtActionConstants;
-
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-
 /**
  * Action group that adds refactoring actions (for example Rename..., Move..., etc)
  * to a context menu and the global menu bar.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 2.0
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CRefactoringActionGroup extends ActionGroup implements ISelectionChangedListener {
 	/**
 	 * Pop-up menu: id of the refactor sub menu (value <code>org.eclipse.cdt.ui.refactoring.menu</code>).
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String MENU_ID = "org.eclipse.cdt.ui.refactoring.menu"; //$NON-NLS-1$
@@ -61,7 +59,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 	/**
 	 * Pop-up menu: id of the reorg group of the refactor sub menu (value
 	 * <code>reorgGroup</code>).
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String GROUP_REORG = "reorgGroup"; //$NON-NLS-1$
@@ -69,7 +67,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 	/**
 	 * Pop-up menu: id of the type group of the refactor sub menu (value
 	 * <code>typeGroup</code>).
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String GROUP_TYPE = "typeGroup"; //$NON-NLS-1$
@@ -77,7 +75,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 	/**
 	 * Pop-up menu: id of the coding group of the refactor sub menu (value
 	 * <code>codingGroup</code>).
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String GROUP_CODING = "codingGroup"; //$NON-NLS-1$
@@ -85,7 +83,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 	/**
 	 * Pop-up menu: id of the coding group 2 of the refactor sub menu (value
 	 * <code>codingGroup2</code>).
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static final String GROUP_CODING2 = "codingGroup2"; //$NON-NLS-1$
@@ -93,7 +91,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 	/**
 	 * Pop-up menu: id of the reorg group 2 of the refactor sub menu (value
 	 * <code>reorgGroup2</code>).
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static final String GROUP_REORG2 = "reorgGroup2"; //$NON-NLS-1$
@@ -101,7 +99,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 	/**
 	 * Pop-up menu: id of the type group 2 of the refactor sub menu (value
 	 * <code>typeGroup2</code>).
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static final String GROUP_TYPE2 = "typeGroup2"; //$NON-NLS-1$
@@ -109,7 +107,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 	/**
 	 * Pop-up menu: id of the type group 2 of the refactor sub menu (value
 	 * <code>typeGroup3</code>).
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static final String GROUP_TYPE3 = "typeGroup3"; //$NON-NLS-1$
@@ -122,7 +120,7 @@ public class CRefactoringActionGroup extends ActionGroup implements ISelectionCh
 	private RefactoringAction fToggleFunctionAction;
 	private RefactoringAction fHideMethodAction;
 	private IWorkbenchSite fSite;
-	private List<RefactoringAction> fAllActions = new ArrayList<RefactoringAction>();
+	private List<RefactoringAction> fAllActions = new ArrayList<>();
 
 	public CRefactoringActionGroup(IWorkbenchPart part) {
 		this(part, null);

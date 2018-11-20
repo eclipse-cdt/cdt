@@ -50,7 +50,7 @@ import com.ibm.icu.text.MessageFormat;
 public abstract class AbstractMakefileEditorPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 	OverlayPreferenceStore fOverlayStore;
 
-	Map<Control, String> fCheckBoxes = new HashMap<Control, String>();
+	Map<Control, String> fCheckBoxes = new HashMap<>();
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
 		public void widgetDefaultSelected(SelectionEvent e) {
@@ -63,7 +63,7 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		}
 	};
 
-	Map<Control, String> fTextFields = new HashMap<Control, String>();
+	Map<Control, String> fTextFields = new HashMap<>();
 	private ModifyListener fTextFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {
@@ -72,7 +72,7 @@ public abstract class AbstractMakefileEditorPreferencePage extends PreferencePag
 		}
 	};
 
-	private Map<Text, String[]> fNumberFields = new HashMap<Text, String[]>();
+	private Map<Text, String[]> fNumberFields = new HashMap<>();
 	private ModifyListener fNumberFieldListener = new ModifyListener() {
 		@Override
 		public void modifyText(ModifyEvent e) {

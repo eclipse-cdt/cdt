@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -32,8 +32,8 @@ import org.osgi.framework.Bundle;
  * Abstract image registry that allows for defining fallback paths for images.
  */
 public abstract class AbstractImageRegistry {
-	private HashMap<String, String> fPlugins = new HashMap<String, String>();
-	private HashMap<String, String[]> fLocations = new HashMap<String, String[]>();
+	private HashMap<String, String> fPlugins = new HashMap<>();
+	private HashMap<String, String[]> fLocations = new HashMap<>();
 	private URL fBaseUrl;
 	private final ImageRegistry fRegistry;
 

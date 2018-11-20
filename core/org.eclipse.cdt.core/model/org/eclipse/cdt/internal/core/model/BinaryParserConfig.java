@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 /*
- * BinaryParserConfig 
+ * BinaryParserConfig
  */
 public class BinaryParserConfig {
 	private IBinaryParser parser;

@@ -19,16 +19,16 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor;
 /**
  * This interface can be implemented by clients to contribute custom command-generator
  * for a build-option.
- * 
+ *
  * The custom command-generator class should be referenced in the <option>/commandGenerator
  * attribute of the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension-point.
- * 
+ *
  * @since 8.0
  */
 public interface IOptionCommandGenerator {
 	/**
 	 * Generate the command for the given option.
-	 * 
+	 *
 	 * @param option the underlying build-option
 	 * @param macroSubstitutor to be used for expanding macros in option's value
 	 * @return the generated build-option command. May return {@code null} to fall

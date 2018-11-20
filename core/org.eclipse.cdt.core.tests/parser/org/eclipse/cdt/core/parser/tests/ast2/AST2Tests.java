@@ -7528,7 +7528,7 @@ public class AST2Tests extends AST2TestBase {
 		parseAndCheckBindings(getAboveComment(), C, true);
 	}
 
-	// #define X 
+	// #define X
 	// int a=X-1;X
 	public void testMacroReferences_399394() throws Exception {
 		IASTTranslationUnit tu = parseAndCheckBindings(getAboveComment());
@@ -7661,7 +7661,7 @@ public class AST2Tests extends AST2TestBase {
 	//	struct Foo {
 	//	  struct Foo* a;
 	//	};
-	//	
+	//
 	//	int main() {
 	//	  struct Foo * f = 0;
 	//	  (f ? f->a : ((void*) 0))->a; // second 'a' cannot be resolved
@@ -7700,7 +7700,7 @@ public class AST2Tests extends AST2TestBase {
 	//		(waldo = 5) && waldo;
 	//	}
 	public void testTypeIdWithEqualsInitializer_484824() throws Exception {
-		// Test that 'waldo = 5' is not parsed as a type-id, causing 
+		// Test that 'waldo = 5' is not parsed as a type-id, causing
 		// the entire expression to be parsed as a cast-expression.
 		// See also bug 471174, which is about the broader problem of
 		// binary && expressions with a parenthesized left operand

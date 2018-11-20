@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTImplicitNameOwner;
 
 /**
  * Lambda expression, introduced in C++11.
- * 
+ *
  * @since 5.3
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -43,7 +43,7 @@ public interface ICPPASTLambdaExpression extends ICPPASTExpression, IASTImplicit
 	 */
 	CaptureDefault getCaptureDefault();
 
-	/** 
+	/**
 	 * Returns the array of captures for this lambda expression.
 	 */
 	ICPPASTCapture[] getCaptures();

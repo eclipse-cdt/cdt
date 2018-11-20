@@ -19,20 +19,20 @@ import org.eclipse.cdt.core.model.ICProject;
 
 /**
  * IndexChangeEvents describe changes to the index.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * 
+ *
  * @since 4.0
  */
 public interface IIndexChangeEvent {
 	/**
-	 * Returns the project for which the index has changed. 
+	 * Returns the project for which the index has changed.
 	 */
 	public ICProject getAffectedProject();
 
 	/**
-	 * Returns <code>true</code> when the index for the project was loaded for the first time or 
+	 * Returns <code>true</code> when the index for the project was loaded for the first time or
 	 * reloaded with a different database.
 	 */
 	public boolean isReloaded();
@@ -43,7 +43,7 @@ public interface IIndexChangeEvent {
 	public boolean isCleared();
 
 	/**
-	 * Returns the set of files that has been cleared in the index. When {@link #isCleared()} 
+	 * Returns the set of files that has been cleared in the index. When {@link #isCleared()}
 	 * returns <code>true</code>, the set will be empty.
 	 */
 	public Set<IIndexFileLocation> getFilesCleared();

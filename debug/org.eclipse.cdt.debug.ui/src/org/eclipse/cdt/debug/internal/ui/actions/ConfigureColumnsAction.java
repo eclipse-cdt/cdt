@@ -36,7 +36,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 
 /**
  * Configures visible columns in an asynch tree viewer/
- * 
+ *
  * @since 5.0
  */
 public class ConfigureColumnsAction extends Action implements IUpdate {

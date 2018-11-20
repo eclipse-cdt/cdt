@@ -42,7 +42,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 /**
- * Tests MIRunControl class for some reverse debugging scenarios. 
+ * Tests MIRunControl class for some reverse debugging scenarios.
  */
 @RunWith(Parameterized.class)
 public class MIRunControlReverseTest extends BaseParametrizedTestCase {
@@ -132,7 +132,7 @@ public class MIRunControlReverseTest extends BaseParametrizedTestCase {
 
 		IExpressionDMContext expr = SyncUtil.createExpression(stoppedEvent.getDMContext(), "lIntVar");
 
-		// Register an event listener to check that we don't send out a 'y' 
+		// Register an event listener to check that we don't send out a 'y'
 		// command when we don't need to.
 		boolean yesCommandSent[] = new boolean[1];
 		yesCommandSent[0] = false;

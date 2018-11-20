@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -16,6 +16,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.rules.IToken;
@@ -24,13 +26,10 @@ import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WordRule;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.ui.IPropertyChangeParticipant;
-
 /**
  * Which words should be recognized as task tags is specified under {@link CCorePreferenceConstants#TODO_TASK_TAGS} as a
  * comma delimited list.
- * 
+ *
  * @see CCorePreferenceConstants#TODO_TASK_TAGS
  * @since 5.0
  * @deprecated This class doesn't properly implement parsing of task tags
@@ -51,7 +50,7 @@ public final class TaskTagRule extends WordRule implements IPropertyChangePartic
 	}
 
 	/**
-	 * Convenience method for extracting a list of words that should be recognized as 
+	 * Convenience method for extracting a list of words that should be recognized as
 	 * task labels from an {@link IPreferenceStore} and a backup {@link Preferences}
 	 * @param preferenceStore
 	 * @param corePreferences

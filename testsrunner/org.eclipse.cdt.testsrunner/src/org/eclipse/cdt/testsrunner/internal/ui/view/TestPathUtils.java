@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,14 +36,14 @@ public class TestPathUtils {
 	/**
 	 * Returns the human readable path to the item in test hierarchy (e.g.
 	 * MySuite.MyInnerSuite.MyTest1).
-	 * 
+	 *
 	 * @param testItem test item (test suite or test case)
-	 * 
+	 *
 	 * @return path to test item
 	 */
 	public static String getTestItemPath(ITestItem testItem) {
 		StringBuilder itemPath = new StringBuilder();
-		List<ITestItem> parentItems = new ArrayList<ITestItem>();
+		List<ITestItem> parentItems = new ArrayList<>();
 		while (testItem != null) {
 			parentItems.add(testItem);
 			testItem = testItem.getParent();
@@ -61,10 +61,10 @@ public class TestPathUtils {
 
 	/**
 	 * Unpack the paths from the string list.
-	 * 
+	 *
 	 * @param testPaths packed test paths
 	 * @return array of test paths
-	 * 
+	 *
 	 * @see packTestPaths()
 	 */
 	public static String[][] unpackTestPaths(String[] testPaths) {
@@ -77,15 +77,15 @@ public class TestPathUtils {
 
 	/**
 	 * Pack the paths to specified test items to string list.
-	 * 
+	 *
 	 * @param testItems test items to pack
 	 * @return string list
-	 * 
+	 *
 	 * @see unpackTestPaths()
 	 */
 	public static String[] packTestPaths(ITestItem[] testItems) {
 		String[] result = new String[testItems.length];
-		List<String> testPath = new ArrayList<String>();
+		List<String> testPath = new ArrayList<>();
 
 		for (int itemIdx = 0; itemIdx < testItems.length; itemIdx++) {
 			// Collect test path parts (in reverse order)

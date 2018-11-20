@@ -16,7 +16,6 @@ package org.eclipse.cdt.debug.ui.disassembly.rulers;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
-
 import org.eclipse.ui.IWorkbenchPart;
 
 /**

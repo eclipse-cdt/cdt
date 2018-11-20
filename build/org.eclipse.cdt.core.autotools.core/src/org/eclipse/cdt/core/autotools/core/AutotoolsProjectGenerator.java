@@ -20,10 +20,10 @@ import java.util.Map;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.autotools.core.internal.Activator;
 import org.eclipse.cdt.core.build.CBuilder;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.core.autotools.core.internal.Activator;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -81,7 +81,7 @@ public class AutotoolsProjectGenerator extends FMProjectGenerator implements IGe
 			}
 		}
 
-		entries.add(CoreModel.newOutputEntry(getProject().getFullPath())); //$NON-NLS-1$
+		entries.add(CoreModel.newOutputEntry(getProject().getFullPath()));
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
 

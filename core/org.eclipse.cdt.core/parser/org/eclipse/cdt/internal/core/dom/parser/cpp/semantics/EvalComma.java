@@ -212,7 +212,7 @@ public class EvalComma extends CPPDependentEvaluation {
 		for (int i = 0; i < fArguments.length; i++) {
 			ICPPEvaluation arg = fArguments[i].instantiate(context, maxDepth);
 			if (arg != fArguments[i]) {
-				// Propagate instantiation errors for SFINAE purposes. 
+				// Propagate instantiation errors for SFINAE purposes.
 				if (arg == EvalFixed.INCOMPLETE) {
 					return arg;
 				}

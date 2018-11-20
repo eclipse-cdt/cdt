@@ -29,7 +29,7 @@ public abstract class CDataObject implements ICSettingBase {
 		public CConfigurationData getConfiguration(){
 			return fConfiguration;
 		}
-		
+
 		void setConfiguration(CConfigurationData cfg){
 			fConfiguration = cfg;
 		}

@@ -75,7 +75,7 @@ public class ToolFactory {
 
 	/**
 	 * Creates an instance of the built-in code formatter.
-	 * 
+	 *
 	 * @param options - the options map to use for formatting with the default code formatter.
 	 *     Recognized options are documented in {@link DefaultCodeFormatterConstants}. If set to
 	 *     {@code null}, then use the current settings from {@code CCorePlugin.getOptions()}.

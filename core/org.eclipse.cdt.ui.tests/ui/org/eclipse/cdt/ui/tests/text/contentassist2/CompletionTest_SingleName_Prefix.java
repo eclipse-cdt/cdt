@@ -18,8 +18,8 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
- * Testing Single name reference, Macro lookups 
+ *
+ * Testing Single name reference, Macro lookups
  *
  */
 public class CompletionTest_SingleName_Prefix extends CompletionProposalsBaseTest {

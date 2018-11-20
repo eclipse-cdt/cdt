@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
 public class ConfigurationLabelProvider extends LabelProvider implements ITableLabelProvider {
 	private final Image IMG_CFG = AutotoolsUIPluginImages.get(AutotoolsUIPluginImages.IMG_BUILD_CONFIG);
 
-	// 
+	//
 	@Override
 	public String getColumnText(Object obj, int index) {
 		if (obj instanceof IConfiguration) {

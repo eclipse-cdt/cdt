@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * Memory service that uses the enhancements from GDB 7.6:
  * 	=memory-changed MI event
- * 
+ *
  * @since 4.2
  */
 public class GDBMemory_7_6 extends GDBMemory_7_0 implements IEventListener {
@@ -153,7 +153,7 @@ public class GDBMemory_7_6 extends GDBMemory_7_0 implements IEventListener {
 											// earlier, the memory view may not show the updated value.
 											//
 											// We must always send this event when GDB reports a memory change because it can mean that
-											// an expression or register has changed, and therefore we must notify the different views 
+											// an expression or register has changed, and therefore we must notify the different views
 											// and services of it.  We cannot rely on this event to be sent by the memory cache after being
 											// refreshed, because if the memory cache does not contain this address, it will not send
 											// the event.

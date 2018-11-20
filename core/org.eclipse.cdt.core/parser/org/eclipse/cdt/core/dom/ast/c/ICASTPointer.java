@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPointer;
 
 /**
  * C-specific pointer. (includes restrict modifier).
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

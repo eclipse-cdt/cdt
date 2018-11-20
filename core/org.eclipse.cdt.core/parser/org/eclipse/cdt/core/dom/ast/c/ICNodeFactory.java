@@ -26,9 +26,9 @@ import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 
 /**
  * Factory for AST nodes for the C programming language.
- * 
+ *
  * @since 5.1
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

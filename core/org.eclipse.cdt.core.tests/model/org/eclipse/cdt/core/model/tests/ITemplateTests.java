@@ -21,15 +21,15 @@ package org.eclipse.cdt.core.model.tests;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IStructure;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IVariable;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Class for testing ITemplate interface
@@ -73,7 +73,7 @@ public class ITemplateTests extends IntegratedCModelTest {
 		suite.addTest(new ITemplateTests("testGetTemplateParameterTypes"));
 		suite.addTest(new ITemplateTests("testGetTemplateSignature"));
 
-		// Language Specification tests:		
+		// Language Specification tests:
 		// TBD.
 
 		return suite;
@@ -190,8 +190,8 @@ public class ITemplateTests extends IntegratedCModelTest {
 			}
 		}
 		{
-			//			// Methods and Functions are tested together as 
-			//			// Function declarations in Quick Parse mode 
+			//			// Methods and Functions are tested together as
+			//			// Function declarations in Quick Parse mode
 			//			// are considered Method Declarations in Structural parse mode
 			//			List arrayElements = getTemplateMethods(tu);
 			//			arrayElements.addAll(tu.getChildrenOfType(ICElement.C_TEMPLATE_FUNCTION));

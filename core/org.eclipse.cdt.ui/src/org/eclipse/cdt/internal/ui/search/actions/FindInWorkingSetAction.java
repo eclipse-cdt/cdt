@@ -16,6 +16,11 @@ package org.eclipse.cdt.internal.ui.search.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.search.CSearchUtil;
+import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchSite;
@@ -23,13 +28,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
-
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.search.CSearchUtil;
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 public abstract class FindInWorkingSetAction extends FindAction {
 
@@ -73,7 +71,7 @@ public abstract class FindInWorkingSetAction extends FindAction {
 		if (fWorkingSets == null) {
 			return ICElement.EMPTY_ARRAY;
 		}
-		List<ICElement> scope = new ArrayList<ICElement>();
+		List<ICElement> scope = new ArrayList<>();
 		for (int i = 0; i < fWorkingSets.length; ++i) {
 			IAdaptable[] elements = fWorkingSets[i].getElements();
 			for (int j = 0; j < elements.length; ++j) {

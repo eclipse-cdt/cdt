@@ -34,8 +34,8 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
- * Manages the mapping between the viewer model and the underlying debug model 
- * through the content, label and annotation adapters. 
+ * Manages the mapping between the viewer model and the underlying debug model
+ * through the content, label and annotation adapters.
  * Maintains the list of model proxies and reacts to the debug model changes.
  */
 public class DocumentContentProvider implements IModelChangedListener {
@@ -49,8 +49,8 @@ public class DocumentContentProvider implements IModelChangedListener {
 
 	private IModelProxy fRootProxy;
 	private IModelProxy fBaseProxy;
-	private List<IModelProxy> fLineProxies = new ArrayList<IModelProxy>(50);
-	private Map<Object, Integer> fLineElements = new HashMap<Object, Integer>(20);
+	private List<IModelProxy> fLineProxies = new ArrayList<>(50);
+	private Map<Object, Integer> fLineElements = new HashMap<>(20);
 
 	private DocumentUpdate fUpdateInProgress;
 
@@ -431,7 +431,7 @@ public class DocumentContentProvider implements IModelChangedListener {
 				fUpdateInProgress.start();
 			} else if (fUpdateInProgress instanceof DocumentBaseChangeUpdate
 					&& update instanceof DocumentContentUpdate) {
-				// cancel the content update because the base change update 
+				// cancel the content update because the base change update
 				// will start a new one
 				update.cancel();
 				update.done();

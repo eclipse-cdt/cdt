@@ -216,17 +216,17 @@ public class PE {
 		public short MajorSubsystemVersion; // 2 bytes.
 		public short MinorSubsystemVersion; // 2 bytes.
 		public byte[] Reserved = new byte[4]; // 4 bytes.
-		public int SizeOfImage; // 4 bytes. 
-		public int SizeOfHeaders; // 4 bytes. 
-		public int CheckSum; // 4 bytes. 
+		public int SizeOfImage; // 4 bytes.
+		public int SizeOfHeaders; // 4 bytes.
+		public int CheckSum; // 4 bytes.
 		public short Subsystem; // 2 bytes.
 		public short DLLCharacteristics; // 2 bytes.
-		public int SizeOfStackReserve; // 4 bytes. 
-		public int SizeOfStackCommit; // 4 bytes. 
-		public int SizeOfHeapReserve; // 4 bytes. 
-		public int SizeOfHeapCommit; // 4 bytes. 
-		public int LoaderFlags; // 4 bytes. 
-		public int NumberOfRvaAndSizes; // 4 bytes. 
+		public int SizeOfStackReserve; // 4 bytes.
+		public int SizeOfStackCommit; // 4 bytes.
+		public int SizeOfHeapReserve; // 4 bytes.
+		public int SizeOfHeapCommit; // 4 bytes.
+		public int LoaderFlags; // 4 bytes.
+		public int NumberOfRvaAndSizes; // 4 bytes.
 		public IMAGE_DATA_DIRECTORY DataDirectory[];
 
 		public NTOptionalHeader(RandomAccessFile file) throws IOException {
@@ -260,7 +260,7 @@ public class PE {
 			LoaderFlags = memory.getInt();
 			NumberOfRvaAndSizes = memory.getInt();
 
-			DataDirectory = new IMAGE_DATA_DIRECTORY[NumberOfRvaAndSizes]; // 8*16=128 bytes			
+			DataDirectory = new IMAGE_DATA_DIRECTORY[NumberOfRvaAndSizes]; // 8*16=128 bytes
 			for (int i = 0; i < NumberOfRvaAndSizes; i++) {
 				DataDirectory[i] = new IMAGE_DATA_DIRECTORY();
 				DataDirectory[i].VirtualAddress = memory.getInt();

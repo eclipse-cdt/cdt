@@ -19,12 +19,12 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *     -stack-select-frame FRAMENUM
  *
  *  Change the current frame.  Select a different frame FRAMENUM on the
  * stack.
- * 
+ *
  */
 public class MIStackSelectFrame extends MICommand<MIInfo> {
 

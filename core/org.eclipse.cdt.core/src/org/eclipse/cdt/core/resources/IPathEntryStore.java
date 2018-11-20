@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.CoreException;
 public interface IPathEntryStore extends ICExtension {
 
 	/**
-	 * Returns the path entries save on the project. 
+	 * Returns the path entries save on the project.
 	 * @throws CoreException
 	 */
 	IPathEntry[] getRawPathEntries() throws CoreException;
@@ -35,7 +35,7 @@ public interface IPathEntryStore extends ICExtension {
 	 * Save the entries on the project.
 	 * Setting paths should fire a CONTENT_CHANGED events to the listeners.
 	 * It is up to the listener to calculate the deltas.
-	 * 
+	 *
 	 * @param project
 	 * @param entries
 	 * @throws CoreException
@@ -44,14 +44,14 @@ public interface IPathEntryStore extends ICExtension {
 
 	/**
 	 * Add a listener to the store.
-	 * 
+	 *
 	 * @param listener
 	 */
 	void addPathEntryStoreListener(IPathEntryStoreListener listener);
 
 	/**
 	 * Remove the listener form the list.
-	 * 
+	 *
 	 * @param listener
 	 */
 	void removePathEntryStoreListener(IPathEntryStoreListener listener);

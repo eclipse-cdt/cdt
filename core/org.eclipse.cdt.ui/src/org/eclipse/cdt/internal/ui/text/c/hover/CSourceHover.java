@@ -19,36 +19,6 @@ package org.eclipse.cdt.internal.ui.text.c.hover;
 import java.io.IOException;
 import java.util.Set;
 
-import org.eclipse.core.filebuffers.FileBuffers;
-import org.eclipse.core.filebuffers.ITextFileBuffer;
-import org.eclipse.core.filebuffers.ITextFileBufferManager;
-import org.eclipse.core.filebuffers.LocationKind;
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.part.IWorkbenchPartOrientation;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.IPositionConverter;
 import org.eclipse.cdt.core.dom.IName;
@@ -96,10 +66,6 @@ import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.KeywordSetKey;
 import org.eclipse.cdt.core.parser.ParserFactory;
 import org.eclipse.cdt.core.parser.ParserLanguage;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
@@ -108,11 +74,42 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.corext.util.Strings;
-
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.text.CCodeReader;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
 import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.core.filebuffers.FileBuffers;
+import org.eclipse.core.filebuffers.ITextFileBuffer;
+import org.eclipse.core.filebuffers.ITextFileBufferManager;
+import org.eclipse.core.filebuffers.LocationKind;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.part.IWorkbenchPartOrientation;
 
 /**
  * A text hover presenting the source of the element under the cursor.
@@ -147,7 +144,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		/**
 		 * @param tUnit the translation unit
 		 * @param textRegion the selected region
-		 * @param selection the text of the selected region without 
+		 * @param selection the text of the selected region without
 		 */
 		public ComputeSourceRunnable(ITranslationUnit tUnit, IRegion textRegion, String selection) {
 			fTU = tUnit;
@@ -236,12 +233,12 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * Compute the source for a macro. If the source location of the macro definition can be
 		 * determined, the source is taken from there, otherwise the source is constructed as
 		 * a {@code #define} directive.
-		 * 
+		 *
 		 * @param ast  the AST of the translation unit
 		 * @param name  the macro occurrence in the AST
 		 * @param binding   the binding of the macro name
 		 * @return the source or {@code null}
-		 * @throws CoreException 
+		 * @throws CoreException
 		 */
 		private String computeSourceForMacro(IASTTranslationUnit ast, IASTName name, IBinding binding)
 				throws CoreException {
@@ -287,7 +284,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		 * Find a definition or declaration for the given binding and returns the source for it.
 		 * Definitions are preferred over declarations. In case of multiple definitions or
 		 * declarations, and the first name which yields source is taken.
-		 * 
+		 *
 		 * @param ast  the AST of the translation unit
 		 * @param binding  the binding
 		 * @return a source string or {@code null}, if no source could be computed
@@ -331,7 +328,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 		/**
 		 * Returns the source for the given name from the underlying file.
-		 * 
+		 *
 		 * @param name  the name to get the source for
 		 * @param binding  the binding of the name
 		 * @return the source string or {@code null}, if the source could not be computed
@@ -436,7 +433,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 		/**
 		 * Computes the hover containing the deduced type for a declaration based on {@code auto}
 		 * keyword.
-		 * 
+		 *
 		 * @param name the name of the declarator
 		 * @return the hover text, if the declaration is based on {@code auto} keyword,
 		 *     otherwise {@code null}.
@@ -670,7 +667,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 		/**
 		 * Search for definitions for the given binding.
-		 * 
+		 *
 		 * @param ast  the AST of the translation unit
 		 * @param binding  the binding
 		 * @return an array of definitions, never {@code null}
@@ -691,7 +688,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 		/**
 		 * Search for declarations for the given binding.
-		 * 
+		 *
 		 * @param ast  the AST of the translation unit
 		 * @param binding  the binding
 		 * @return an array of declarations, never {@code null}
@@ -716,7 +713,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public CSourceHover() {
 		super();
@@ -777,12 +774,12 @@ public class CSourceHover extends AbstractCEditorTextHover {
 	 * Searches the start of the comment preceding the given source offset.
 	 * Continuous line comments are considered as one comment until a block
 	 * comment is reached or a non-comment partition.
-	 * 
+	 *
 	 * @param doc  the document
 	 * @param start  the start of the backward search
 	 * @param bound  search boundary (exclusive)
 	 * @return the comment start offset or {@code -1}, if no suitable comment was found
-	 * @throws BadLocationException 
+	 * @throws BadLocationException
 	 */
 	private static int searchCommentBackward(IDocument doc, int start, int bound) throws BadLocationException {
 		int firstLine = doc.getLineOfOffset(start);
@@ -836,7 +833,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 	/**
 	 * Strip the leading comment from the given source string.
-	 * 
+	 *
 	 * @param source
 	 * @return  the source string without leading comments
 	 */
@@ -899,7 +896,7 @@ public class CSourceHover extends AbstractCEditorTextHover {
 
 	/**
 	 * Checks whether the given name is a known keyword.
-	 * 
+	 *
 	 * @param name
 	 * @return {@code true} if the name is a known keyword or {@code false} if the
 	 *         name is not considered a keyword

@@ -21,8 +21,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.cdt.core.dom.ast.IASTCompletionContext;
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -48,6 +46,8 @@ import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
 import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.AssertionFailedError;
 
 public class CompletionTestBase extends BaseTestCase {
 
@@ -140,7 +140,7 @@ public class CompletionTestBase extends BaseTestCase {
 	}
 
 	protected List<IBinding> proposeBindings(IASTCompletionNode completionNode, boolean isPrefix) {
-		List<IBinding> proposals = new ArrayList<IBinding>();
+		List<IBinding> proposals = new ArrayList<>();
 		boolean handleMacros = false;
 		IASTName[] names = completionNode.getNames();
 

@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
@@ -34,11 +35,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.part.ResourceTransfer;
 
-import org.eclipse.cdt.internal.ui.CUIMessages;
-
 /**
  * A drag adapter that transfers the current selection as </code>
- * IResource</code>. Only those elements in the selection are part 
+ * IResource</code>. Only those elements in the selection are part
  * of the transfer which can be converted into an <code>IResource
  * </code>.
  */
@@ -108,7 +107,7 @@ public class ResourceTransferDragAdapter implements TransferDragSourceListener {
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection structured = (IStructuredSelection) selection;
 
-			resources = new ArrayList<IResource>(structured.size());
+			resources = new ArrayList<>(structured.size());
 
 			for (Iterator<?> iterator = structured.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();

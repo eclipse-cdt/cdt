@@ -7,14 +7,11 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage;
@@ -22,6 +19,9 @@ import org.eclipse.cdt.core.dom.lrparser.gnu.GPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.CompleteParser2Tests;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestSuite;
 
 public class LRCompleteParser2Tests extends CompleteParser2Tests {
 
@@ -64,7 +64,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 	//			return;
 	//		}
 	//		fail();
-	//	} 
+	//	}
 
 	//	public void testPredefinedSymbol_bug70928_infinite_loop_test1() throws Exception { // gcc extension
 	//		try {
@@ -72,7 +72,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 	//			fail();
 	//		} catch(AssertionError expectedException) { }
 	//	}
-	//	
+	//
 	//	public void testPredefinedSymbol_bug70928_infinite_loop_test2() throws Exception { // gcc extension
 	//		try {
 	//			super.testPredefinedSymbol_bug70928_infinite_loop_test2();
@@ -111,7 +111,7 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError expectedException) { }
 	//	}
-	//	
+	//
 	//	@Override
 	//	public void testPredefinedSymbol_bug70928() throws Exception {
 	//		try {
@@ -129,15 +129,15 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 		}
 	}
 
-	//	
+	//
 	//	@Override
 	//	public void testGNUASMExtension() throws Exception {
 	//		try {
 	//			super.testGNUASMExtension();
 	//			fail();
-	//		} catch(AssertionFailedError expectedException) { 
+	//		} catch(AssertionFailedError expectedException) {
 	//		} catch(AssertionError expectedException) {
-	//		}		
+	//		}
 	//	}
 	//
 	//	@Override
@@ -147,8 +147,8 @@ public class LRCompleteParser2Tests extends CompleteParser2Tests {
 	//			fail();
 	//		} catch(AssertionFailedError expectedException) { }
 	//	}
-	//	
-	//	
-	//	
+	//
+	//
+	//
 
 }

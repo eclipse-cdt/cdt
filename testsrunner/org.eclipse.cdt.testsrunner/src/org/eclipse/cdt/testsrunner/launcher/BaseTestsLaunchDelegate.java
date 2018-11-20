@@ -53,7 +53,7 @@ import org.eclipse.ui.PartInitException;
 public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegate {
 
 	/** Stores the changes made to the launch configuration. */
-	private Map<String, String> changesToLaunchConfiguration = new HashMap<String, String>();
+	private Map<String, String> changesToLaunchConfiguration = new HashMap<>();
 
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration config, String mode) throws CoreException {
@@ -84,14 +84,14 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 
 		if (mode.equals(ILaunchManager.RUN_MODE) || mode.equals(ILaunchManager.DEBUG_MODE)) {
 
-			// NOTE: The modified working copy of launch configuration cannot be passed directly 
+			// NOTE: The modified working copy of launch configuration cannot be passed directly
 			// to the preferred delegate because in this case the LaunchHistory will not work
 			// properly (and the rerun last launched configuration action will fail). So we
 			// just modify the existing configuration and revert all the changes back after
 			// the launch is done.
 
 			try {
-				// Changes launch configuration a bit and redirect it to the preferred C/C++ Application Launch delegate 
+				// Changes launch configuration a bit and redirect it to the preferred C/C++ Application Launch delegate
 				updatedLaunchConfiguration(config);
 				getPreferredDelegate(config, mode).launch(config, mode, launch, monitor);
 			} finally {
@@ -104,7 +104,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Revert the changes to launch configuration previously made with
 	 * <code>updatedLaunchConfigurationAttribute()</code>.
-	 * 
+	 *
 	 * @param config launch configuration to revert
 	 */
 	private void revertChangedToLaunchConfiguration(ILaunchConfiguration config) throws CoreException {
@@ -119,7 +119,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Saves the current value of the specified attribute (to be reverted later)
 	 * and update its value in launch configuration.
-	 * 
+	 *
 	 * @param config launch configuration which attribute should be updated
 	 * @param attributeName attribute name
 	 * @param value new value of the specified attribute
@@ -134,7 +134,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * Makes the necessary changes to the launch configuration before passing it
 	 * to the underlying delegate. Currently, updates the program arguments with
 	 * the value that was obtained from Tests Runner provider plug-in.
-	 * 
+	 *
 	 * @param config launch configuration
 	 */
 	private void updatedLaunchConfiguration(ILaunchConfiguration config) throws CoreException {
@@ -147,7 +147,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Updates the program arguments with the value that was obtained from Tests
 	 * Runner provider plug-in.
-	 * 
+	 *
 	 * @param config launch configuration
 	 */
 	private void setProgramArguments(ILaunchConfigurationWorkingCopy config) throws CoreException {
@@ -156,7 +156,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 		String[][] testsFilter = TestPathUtils
 				.unpackTestPaths(packedTestsFilter.toArray(new String[packedTestsFilter.size()]));
 
-		// Configure test module run parameters with a Tests Runner 
+		// Configure test module run parameters with a Tests Runner
 		String[] params = null;
 		try {
 			params = getTestsRunner(config).getAdditionalLaunchParameters(testsFilter);
@@ -182,7 +182,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Resolves Tests Runner provider plug-in interface by the value written in
 	 * launch configuration.
-	 * 
+	 *
 	 * @param config launch configuration
 	 */
 	private ITestsRunnerProvider getTestsRunner(ILaunchConfiguration config) throws CoreException {
@@ -204,7 +204,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	 * Resolves the preferred launch delegate for the specified configuration to
 	 * launch C/C++ Local Application in the specified mode. The preferred
 	 * launch delegate ID is taken from <code>getPreferredDelegateId()</code>.
-	 * 
+	 *
 	 * @param config launch configuration
 	 * @param mode mode
 	 * @return launch delegate
@@ -228,7 +228,7 @@ public abstract class BaseTestsLaunchDelegate extends LaunchConfigurationDelegat
 	/**
 	 * Returns the launch delegate id which should be used to redirect the
 	 * launch.
-	 * 
+	 *
 	 * @return launch delegate ID
 	 */
 	public abstract String getPreferredDelegateId();

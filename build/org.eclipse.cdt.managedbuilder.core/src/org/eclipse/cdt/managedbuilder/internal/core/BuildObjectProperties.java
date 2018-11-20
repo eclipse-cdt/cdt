@@ -54,7 +54,7 @@ public class BuildObjectProperties extends BuildProperties implements IBuildObje
 		IBuildPropertyType types[] = BuildPropertyManager.getInstance().getPropertyTypes();
 
 		if (fRestriction != null && types.length != 0) {
-			List<IBuildPropertyType> list = new ArrayList<IBuildPropertyType>(types.length);
+			List<IBuildPropertyType> list = new ArrayList<>(types.length);
 			for (IBuildPropertyType type : types) {
 				if (fRestriction.supportsType(type.getId()))
 					list.add(type);
@@ -72,7 +72,7 @@ public class BuildObjectProperties extends BuildProperties implements IBuildObje
 		if (type != null) {
 			IBuildPropertyValue values[] = type.getSupportedValues();
 			if (fRestriction != null && values.length != 0) {
-				List<IBuildPropertyValue> list = new ArrayList<IBuildPropertyValue>(values.length);
+				List<IBuildPropertyValue> list = new ArrayList<>(values.length);
 				for (IBuildPropertyValue value : values) {
 					if (fRestriction.supportsValue(type.getId(), value.getId()))
 						list.add(value);

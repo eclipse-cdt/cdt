@@ -19,6 +19,9 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 
+import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.TextUtilities;
@@ -28,11 +31,6 @@ import org.eclipse.jface.text.formatter.FormattingContextProperties;
 import org.eclipse.jface.text.formatter.IFormattingContext;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
 
 /**
  * @author AChapiro

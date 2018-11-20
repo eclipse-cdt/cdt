@@ -236,23 +236,23 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 
 	/**
 	 * Calculate enablements when multiple configurations selected on property page.
-	 * 
+	 *
 	 * @return:
 	 * Mode 0:
 	 *    0: bld.isManagedBuildOn()
 	 *    1: bld.isDefaultBuildCmd()
 	 *    2: bld.canKeepEnvironmentVariablesInBuildfile()
 	 *    3: bld.keepEnvironmentVariablesInBuildfile()
-	 * Mode 1: 
+	 * Mode 1:
 	 *    0: isStopOnError
 	 *    1: supportsStopOnError(true)
-	 *    2: bld.supportsStopOnError(false)  
+	 *    2: bld.supportsStopOnError(false)
 	 *    3: N/A
 	 * Mode 2:
 	 *    0: b.isAutoBuildEnable()
 	 *    1: b.isIncrementalBuildEnabled()
 	 *    2: b.isCleanBuildEnabled()
-	 *    3: N/A   
+	 *    3: N/A
 	 */
 	static int[] calc3states(ICPropertyProvider p, IConfiguration mcfg, int mode) {
 		if (p.isMultiCfg() && mcfg instanceof ICMultiItemsHolder) {
@@ -490,7 +490,7 @@ public class BuildBehaviourTab extends AbstractCBuildPropertyTab {
 	/*
 	 * Performs common settings for all controls
 	 * (Copy from config to widgets)
-	 * @param cfgd - 
+	 * @param cfgd -
 	 */
 
 	@Override

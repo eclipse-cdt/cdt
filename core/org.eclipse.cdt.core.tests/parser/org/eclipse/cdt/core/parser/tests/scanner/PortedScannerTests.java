@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -914,10 +914,10 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	public void testBug36434() throws Exception {
 		initializeScanner("#define X(Y)\nX(55)");
 		validateEOF();
-		/*IMacroDescriptor macro = fScanner.getDefinition( "X" ); 
-		assertNotNull( macro ); 
+		/*IMacroDescriptor macro = fScanner.getDefinition( "X" );
+		assertNotNull( macro );
 		assertEquals( macro.getParameters().length, 1 );
-		assertEquals( macro.getParameters()[0], "Y" ); 
+		assertEquals( macro.getParameters()[0], "Y" );
 		assertEquals( macro.getTokenizedExpansion().length, 0 );*/
 	}
 
@@ -958,7 +958,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		writer.write("debug(1, 2);");
 
 		initializeScanner(writer.toString());
-		//printf("x1=%d, x2= %s", x1, x2); 
+		//printf("x1=%d, x2= %s", x1, x2);
 		validateIdentifier("printf");
 		validateToken(IToken.tLPAREN);
 		validateString("x1= %d, x2= %s");
@@ -993,7 +993,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 		//TODO as in 36701B, whitespace is not properly replaced inside the string, ok for now.
 		validateString("strncmp(\\\"abc\\\\0d\\\", \\\"abc\\\", '\\\\4') == 0");
-		//validateString("strncmp(\\\"abc\\\\0d\\\", \\\"abc\\\", '\\\\4')         == 0"); 
+		//validateString("strncmp(\\\"abc\\\\0d\\\", \\\"abc\\\", '\\\\4')         == 0");
 
 		validateToken(IToken.tCOMMA);
 		validateIdentifier("s");
@@ -1317,7 +1317,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 		initializeScanner("#define A A\nA");
 		validateIdentifier("A");
 		validateEOF();
-		/*IMacroDescriptor d = fScanner.getDefinition( "A"); 
+		/*IMacroDescriptor d = fScanner.getDefinition( "A");
 		assertTrue( d.isCircular() );*/
 	}
 
@@ -1334,7 +1334,7 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 
 	public void testBug62042() throws Exception {
 		initializeScanner("0x", ParserMode.QUICK_PARSE);
-		validateInteger("0x"); // to me this is a valid number 
+		validateInteger("0x"); // to me this is a valid number
 		validateEOF();
 	}
 
@@ -1730,24 +1730,24 @@ public class PortedScannerTests extends PreprocessorTestsBase {
 	// the problems currently don't get reported when using the DOMScanner
 	public void testBug75532IProblems() throws Exception {
 		Writer writer = new StringWriter();
-		writer.write("#if 09 == 9\n#endif\n"); // malformed octal 
-		writer.write("#if 1A == 0x1A\n#endif\n"); // malformed decimal 
-		writer.write("#if 0x == 0x0\n#endif\n"); // malformed hex 
-		writer.write("#if 0xAX == 0xA\n#endif\n"); // malformed hex 
-		writer.write("#if 1/0 == 1\n#endif\n"); // division by zero  
-		writer.write("#if defined ( sadf a\n#endif\n"); // missing ')' in defined  
-		writer.write("#if defined ( sadf\n#endif\n"); // missing ')' in defined  
-		writer.write("#if defined ( 2sadf )\n#endif\n"); // illegal identifier in defined  
-		writer.write("#if ( 1 == 1 ? 1\n#endif\n"); // bad conditional expression   
-		writer.write("#if (  \n#endif\n"); // expression syntax error  
-		writer.write("#if @\n#endif\n"); // expression syntax error  
-		writer.write("#if \n#endif\n"); // expression syntax error  
-		writer.write("#if -\n#endif\n"); // expression syntax error  
-		writer.write("#if ( 1 == 1\n#endif\n"); // missing ')'  
-		writer.write("#if 1 = 1\n#endif\n"); // assignment not allowed 
+		writer.write("#if 09 == 9\n#endif\n"); // malformed octal
+		writer.write("#if 1A == 0x1A\n#endif\n"); // malformed decimal
+		writer.write("#if 0x == 0x0\n#endif\n"); // malformed hex
+		writer.write("#if 0xAX == 0xA\n#endif\n"); // malformed hex
+		writer.write("#if 1/0 == 1\n#endif\n"); // division by zero
+		writer.write("#if defined ( sadf a\n#endif\n"); // missing ')' in defined
+		writer.write("#if defined ( sadf\n#endif\n"); // missing ')' in defined
+		writer.write("#if defined ( 2sadf )\n#endif\n"); // illegal identifier in defined
+		writer.write("#if ( 1 == 1 ? 1\n#endif\n"); // bad conditional expression
+		writer.write("#if (  \n#endif\n"); // expression syntax error
+		writer.write("#if @\n#endif\n"); // expression syntax error
+		writer.write("#if \n#endif\n"); // expression syntax error
+		writer.write("#if -\n#endif\n"); // expression syntax error
+		writer.write("#if ( 1 == 1\n#endif\n"); // missing ')'
+		writer.write("#if 1 = 1\n#endif\n"); // assignment not allowed
 
 		writer.write("int main(int argc, char **argv) {\n");
-		writer.write("if ( 09 == 9 )\n"); // added while fixing this bug, IProblem on invalid octal number 
+		writer.write("if ( 09 == 9 )\n"); // added while fixing this bug, IProblem on invalid octal number
 		writer.write("return 1;\nreturn 0;\n}\n");
 
 		initializeScanner(writer.toString());

@@ -15,14 +15,12 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.swt.custom.BusyIndicator;
-
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
-
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.swt.custom.BusyIndicator;
 
 /**
  * A runnable context that shows the busy cursor instead of a progress

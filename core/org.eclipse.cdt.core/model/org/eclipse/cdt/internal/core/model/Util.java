@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Rational Software - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -81,7 +81,7 @@ public class Util implements ICLogConstants {
 	 * Returns the given input stream's contents as a character array. If a
 	 * length is specified (ie. if length != -1), only length chars are
 	 * returned. Otherwise all chars in the stream are returned. Closes the stream.
-	 * 
+	 *
 	 * @throws IOException
 	 *             if a problem occured reading the stream.
 	 */
@@ -427,7 +427,7 @@ public class Util implements ICLogConstants {
 
 	/**
 	 * Returns the first line separator found in the given file.
-	 * 
+	 *
 	 * @param fileUri - URI if the file on the local file-system.
 	 * @return the first line separator in the given file or {@code null} if none was read.
 	 */
@@ -456,7 +456,7 @@ public class Util implements ICLogConstants {
 	/**
 	 * Returns the line separator for the given file. If line separator is not found in the file
 	 * default value for the project or workspace is returned.
-	 * 
+	 *
 	 * @param file - the file to look for a line separator.
 	 * @return the line separator for the given file. The method does not return {@code null}.
 	 */
@@ -492,7 +492,7 @@ public class Util implements ICLogConstants {
 	 *   <li> Line separator defined in default preferences.
 	 *   <li> Operating system default line separator.
 	 * </ol>
-	 * 
+	 *
 	 * @param project - the project. If {@code null} no project preferences are inquired.
 	 * @return line separator for the given project. The method does not return {@code null}.
 	 */
@@ -537,7 +537,7 @@ public class Util implements ICLogConstants {
 
 	/**
 	 * Returns the first line separator used by the input stream.
-	 * 
+	 *
 	 * @param input - input stream to inspect.
 	 * @return line separator for the given input stream or {@code null} if no line separator was read.
 	 */

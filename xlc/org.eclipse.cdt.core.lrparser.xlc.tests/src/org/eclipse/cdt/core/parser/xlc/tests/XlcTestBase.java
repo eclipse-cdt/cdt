@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.xlc.tests;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.lrparser.tests.ParseHelper;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
+
+import junit.framework.TestCase;
 
 public class XlcTestBase extends TestCase {
 

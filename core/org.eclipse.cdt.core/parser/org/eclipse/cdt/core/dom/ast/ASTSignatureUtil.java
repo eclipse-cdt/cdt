@@ -44,7 +44,7 @@ import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 /**
  * This is a utility class to help convert AST elements to Strings corresponding to the AST
  * element's signature.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @deprecated The class is provided for testing purposes, only. It should not be used by clients.
@@ -60,7 +60,7 @@ public class ASTSignatureUtil {
 	/**
 	 * Return's the String representation of a node's type (if available). This is currently only
 	 * being used for testing.
-	 * 
+	 *
 	 * @param node
 	 */
 	public static String getNodeSignature(IASTNode node) {
@@ -95,10 +95,10 @@ public class ASTSignatureUtil {
 
 	/**
 	 * Returns the parameter signature for an IASTDeclarator as a comma separated list wrapped in parenthesis.
-	 * 
+	 *
 	 * This method uses ASTSignatureUtil#getParametersSignatureArray(IASTArray) to build a comma separated
 	 * list of the parameter's signatures and then wraps them in parenthesis.
-	 * 
+	 *
 	 * @param decltor
 	 * @return the parameter signature for an IASTDeclarator as a comma separated list wrapped in parenthesis
 	 */
@@ -128,7 +128,7 @@ public class ASTSignatureUtil {
 
 	/**
 	 * Returns a String[] corresponding to the signatures of individual parameters for an IASTDeclarator.
-	 * 
+	 *
 	 * @param decltor
 	 * @return a String[] corresponding to the signatures of individual parameters for an IASTDeclarator
 	 */
@@ -298,7 +298,7 @@ public class ASTSignatureUtil {
 
 	/**
 	 * This function is used to return the signature of an IASTInitializer.
-	 * 
+	 *
 	 * @param init an initializer
 	 * @return the signature of an IASTInitializer
 	 */
@@ -375,7 +375,7 @@ public class ASTSignatureUtil {
 	 * Returns the String signature corresponding to an IASTDeclarator. This includes the signature
 	 * of the parameters which is built via ASTSignatureUtil#getParameterSignature(IASTDeclarator)
 	 * if the declarator is for a function.
-	 * 
+	 *
 	 * @param declarator
 	 * @return the String signature corresponding to an IASTDeclarator
 	 */
@@ -417,7 +417,7 @@ public class ASTSignatureUtil {
 
 	/**
 	 * Returns the String representation of the signature for the IASTDeclSpecifier.
-	 * 
+	 *
 	 * @param declSpec
 	 * @return the String representation of the signature for the IASTDeclSpecifier
 	 */
@@ -829,7 +829,7 @@ public class ASTSignatureUtil {
 
 	/**
 	 * Returns the String representation of the signature for the IASTTypeId.
-	 * 
+	 *
 	 * @param typeId
 	 * @return the String representation of the signature for the IASTTypeId
 	 */
@@ -840,7 +840,7 @@ public class ASTSignatureUtil {
 	/**
 	 * Return a string representation for the given IASTExpression. Expressions having an extension kind
 	 * should provide their own toString method which will be called by this.
-	 * 
+	 *
 	 * @param expression
 	 * @return a string representation for the given IASTExpression
 	 */
@@ -1104,7 +1104,7 @@ public class ASTSignatureUtil {
 
 	/**
 	 * Returns the String representation of the IASTCastExpression's operator.
-	 * 
+	 *
 	 * @param expression
 	 * @return the String representation of the IASTCastExpression's operator
 	 */
@@ -1145,7 +1145,7 @@ public class ASTSignatureUtil {
 
 	/**
 	 * Returns the String representation of the IASTUnaryExpression's operator.
-	 * 
+	 *
 	 * @param ue
 	 * @return the String representation of the IASTUnaryExpression's operator
 	 */
@@ -1216,7 +1216,7 @@ public class ASTSignatureUtil {
 
 	/**
 	 * Returns the String representation of the IASTBinaryExpression's operator.
-	 * 
+	 *
 	 * @param be
 	 * @return the String representation of the IASTBinaryExpression's operator
 	 */
@@ -1330,7 +1330,7 @@ public class ASTSignatureUtil {
 
 	/**
 	 * Returns the String representation of the IASTTypeIdExpression's operator.
-	 * 
+	 *
 	 * @param expression
 	 * @return the String representation of the IASTTypeIdExpression's operator
 	 */

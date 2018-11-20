@@ -269,7 +269,7 @@ public class ListDialogField extends DialogField {
 		return fTable;
 	}
 
-	/* 
+	/*
 	 * Subclasses may override to specify a different style.
 	 */
 	protected int getListStyle() {

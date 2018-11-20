@@ -33,7 +33,7 @@ import org.eclipse.launchbar.core.target.launch.LaunchConfigurationTargetedDeleg
 
 /**
  * Common launch delegate code for core build launches.
- * 
+ *
  * @since 8.1
  */
 public abstract class CoreBuildLaunchConfigDelegate extends LaunchConfigurationTargetedDelegate {

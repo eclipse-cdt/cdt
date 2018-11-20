@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Wind River - Initial API and implementation
- *     Ericsson   - Low-level breakpoints integration  
+ *     Ericsson   - Low-level breakpoints integration
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.debug.service;
@@ -51,9 +51,9 @@ import org.eclipse.debug.core.model.IBreakpoint;
 import org.osgi.framework.BundleContext;
 
 /**
- * Breakpoints mediator is a DSF service which synchronizes breakpoints in the 
- * IDE and breakpoints in the debugger.  The IDE breakpoints are managed by the 
- * {@link IBreakpointManager} while the debugger breakpoints are accessed 
+ * Breakpoints mediator is a DSF service which synchronizes breakpoints in the
+ * IDE and breakpoints in the debugger.  The IDE breakpoints are managed by the
+ * {@link IBreakpointManager} while the debugger breakpoints are accessed
  * through the {@link IBreakpoints} service.
  * <p>
  * This class is not intended to be extended by clients.  Instead clients should
@@ -61,8 +61,8 @@ import org.osgi.framework.BundleContext;
  * to translate breakpoint attributes between the IDE and debugger breakpoints.
  * <p>
  * Note: This breakpoint mediator implementation has been superseded by a more
- * powerful {@link BreakpointsMediator2} implementation.  
- * 
+ * powerful {@link BreakpointsMediator2} implementation.
+ *
  * @since 1.0
  * @see IBreakpointAttributeTranslator
  * @see BreakpointsMediator2
@@ -99,11 +99,11 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	 * - Modified on breakpointChanged()
 	 * - Diminished on breakpointRemoved()
 	 */
-	private Map<IBreakpointsTargetDMContext, Map<IBreakpoint, List<Map<String, Object>>>> fPlatformBPs = new HashMap<IBreakpointsTargetDMContext, Map<IBreakpoint, List<Map<String, Object>>>>();
+	private Map<IBreakpointsTargetDMContext, Map<IBreakpoint, List<Map<String, Object>>>> fPlatformBPs = new HashMap<>();
 
 	/**
 	 * Holds the mapping from platform breakpoint to the corresponding target
-	 * breakpoint(s), per context. There can be multiple back-end BPs for a 
+	 * breakpoint(s), per context. There can be multiple back-end BPs for a
 	 * single platform BP in the case of [1] multiple target contexts, and/or
 	 * [2] thread filtering.
 	 * Updated when:
@@ -111,27 +111,27 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	 * - A platform breakpoint is added/removed
 	 * - A thread filter is applied/removed
 	 */
-	private Map<IBreakpointsTargetDMContext, Map<IBreakpoint, List<IBreakpointDMContext>>> fBreakpointDMContexts = new HashMap<IBreakpointsTargetDMContext, Map<IBreakpoint, List<IBreakpointDMContext>>>();
+	private Map<IBreakpointsTargetDMContext, Map<IBreakpoint, List<IBreakpointDMContext>>> fBreakpointDMContexts = new HashMap<>();
 
 	/**
 	 * Due to the very asynchronous nature of DSF, a new breakpoint request can
 	 * pop up at any time before an ongoing one is completed. The following set
 	 * is used to store requests until the ongoing operation completes.
 	 */
-	private Set<IBreakpoint> fPendingRequests = new HashSet<IBreakpoint>();
+	private Set<IBreakpoint> fPendingRequests = new HashSet<>();
 
 	/**
 	 * @see fPendingRequests
 	 */
-	private Set<IBreakpoint> fPendingBreakpoints = new HashSet<IBreakpoint>();
+	private Set<IBreakpoint> fPendingBreakpoints = new HashSet<>();
 
 	///////////////////////////////////////////////////////////////////////////
-	// AbstractDsfService    
+	// AbstractDsfService
 	///////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * The service constructor
-	 * 
+	 *
 	 * @param session
 	 * @param debugModelId
 	 */
@@ -144,7 +144,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	public void initialize(final RequestMonitor rm) {
 		// - Collect references for the services we interact with
 		// - Register to interesting events
-		// - Obtain the list of platform breakpoints   
+		// - Obtain the list of platform breakpoints
 		// - Register the service for interested parties
 		super.initialize(new RequestMonitor(getExecutor(), rm) {
 			@Override
@@ -155,8 +155,8 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	}
 
 	/**
-	 * Asynchronous service initialization 
-	 * 
+	 * Asynchronous service initialization
+	 *
 	 * @param requestMonitor
 	 */
 	private void doInitialize(RequestMonitor rm) {
@@ -181,7 +181,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 		// - Un-register the service
 		// - Stop listening to events
 		// - Remove the breakpoints installed by this service
-		// 
+		//
 		//  Since we are shutting down, there is no overwhelming need
 		//  to keep the maps coherent...
 
@@ -203,7 +203,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 
 		// We have to make a copy of the fPlatformBPs keys because uninstallBreakpoints()
 		// modifies the map as it walks through it.
-		List<IBreakpointsTargetDMContext> platformBPKeysCopy = new ArrayList<IBreakpointsTargetDMContext>(
+		List<IBreakpointsTargetDMContext> platformBPKeysCopy = new ArrayList<>(
 				fPlatformBPs.size());
 		platformBPKeysCopy.addAll(0, fPlatformBPs.keySet());
 		for (IBreakpointsTargetDMContext dmc : platformBPKeysCopy) {
@@ -222,8 +222,8 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	///////////////////////////////////////////////////////////////////////////
 
 	/**
-	 * Install and begin tracking breakpoints for given context.  The service 
-	 * will keep installing new breakpoints that appear in the IDE for this 
+	 * Install and begin tracking breakpoints for given context.  The service
+	 * will keep installing new breakpoints that appear in the IDE for this
 	 * context until {@link #uninstallBreakpoints(IDMContext)} is called for that
 	 * context.
 	 * @param dmc Context to start tracking breakpoints for.
@@ -257,7 +257,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 		fBreakpointDMContexts.put(breakpointsDmc, new HashMap<IBreakpoint, List<IBreakpointDMContext>>());
 
 		// Install the platform breakpoints (stored in fPlatformBPs) on the target.
-		// We need to use a background thread for this operation because we are 
+		// We need to use a background thread for this operation because we are
 		// accessing the resources system to retrieve the breakpoint attributes.
 		// Accessing the resources system potentially requires using global locks.
 		// Also we will be calling IBreakpointAttributeTranslator which is prohibited
@@ -274,7 +274,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 				// Read initial breakpoints from platform.  Copy the breakpoint attributes into a local map.
 				// Note that we cannot write data into fPlatformBPs table here directly because we are not
 				// executing on the dispatch thread.
-				final Map<IBreakpoint, List<Map<String, Object>>> initialPlatformBPs = new HashMap<IBreakpoint, List<Map<String, Object>>>();
+				final Map<IBreakpoint, List<Map<String, Object>>> initialPlatformBPs = new HashMap<>();
 				try {
 					// Get the stored breakpoint list from the platform BreakpointManager
 					IBreakpoint[] bps = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
@@ -357,9 +357,9 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 			uninstallBreakpoint(dmc, bp, new RequestMonitor(getExecutor(), countingRm) {
 				@Override
 				protected void handleCompleted() {
-					// After the breakpoint is removed from target.  Call the attribute 
-					// translator to refresh breakpoint status based on the new target 
-					// breakpoint status. 
+					// After the breakpoint is removed from target.  Call the attribute
+					// translator to refresh breakpoint status based on the new target
+					// breakpoint status.
 					new Job("Breakpoint status update") { //$NON-NLS-1$
 						{
 							setSystem(true);
@@ -369,7 +369,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 						protected IStatus run(IProgressMonitor monitor) {
 							fAttributeTranslator.updateBreakpointStatus(bp);
 							return Status.OK_STATUS;
-						};
+						}
 					}.schedule();
 
 					countingRm.done();
@@ -386,7 +386,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	 * Install a new platform breakpoint on the back-end. A platform breakpoint
 	 * can resolve into multiple back-end breakpoints when threads are taken
 	 * into account.
-	 *  
+	 *
 	 * @param dmc
 	 * @param breakpoint
 	 * @param attrsList
@@ -399,7 +399,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 		assert platformBPs != null;
 
 		final Map<IBreakpoint, List<IBreakpointDMContext>> breakpointIDs = fBreakpointDMContexts.get(dmc);
-		assert breakpointIDs != null; // fBreakpointIds should be updated in parallel with fPlatformBPs 
+		assert breakpointIDs != null; // fBreakpointIds should be updated in parallel with fPlatformBPs
 
 		// Ensure the breakpoint is not already installed
 		if (platformBPs.containsKey(breakpoint)) {
@@ -424,7 +424,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 					protected IStatus run(IProgressMonitor monitor) {
 						fAttributeTranslator.updateBreakpointStatus(breakpoint);
 						return Status.OK_STATUS;
-					};
+					}
 				}.schedule();
 				rm.done();
 			}
@@ -441,7 +441,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 						protected void handleCompleted() {
 							List<IBreakpointDMContext> list = breakpointIDs.get(breakpoint);
 							if (list == null) {
-								list = new LinkedList<IBreakpointDMContext>();
+								list = new LinkedList<>();
 								breakpointIDs.put(breakpoint, list);
 							}
 
@@ -461,7 +461,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	/**
 	 * Un-install an individual breakpoint on the back-end. For one platform
 	 * breakpoint, there could be multiple corresponding back-end breakpoints.
-	 * 
+	 *
 	 * @param dmc
 	 * @param breakpoint
 	 * @param rm
@@ -472,7 +472,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 		CountingRequestMonitor removeRM = new CountingRequestMonitor(getExecutor(), rm) {
 			@Override
 			protected void handleCompleted() {
-				// Remove the attributes mapping 
+				// Remove the attributes mapping
 				Map<IBreakpoint, List<Map<String, Object>>> platformBPs = fPlatformBPs.get(dmc);
 				if (platformBPs == null) {
 					rm.setStatus(
@@ -503,7 +503,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 					protected IStatus run(IProgressMonitor monitor) {
 						fAttributeTranslator.updateBreakpointStatus(breakpoint);
 						return Status.OK_STATUS;
-					};
+					}
 				}.schedule();
 
 				rm.done();
@@ -531,7 +531,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 
 	/**
 	 * Modify an individual breakpoint
-	 * 
+	 *
 	 * @param context
 	 * @param breakpoint
 	 * @param attributes
@@ -541,12 +541,12 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 	private void modifyBreakpoint(final IBreakpointsTargetDMContext context, final IBreakpoint breakpoint,
 			final List<Map<String, Object>> newAttrsList0, final IMarkerDelta oldValues, final RequestMonitor rm) {
 		// This method uses several lists to track the changed breakpoints:
-		// commonAttrsList - attributes which have not changed 
+		// commonAttrsList - attributes which have not changed
 		// oldAttrsList - attributes for the breakpoint before the change
 		// newAttrsList - attributes for the breakpoint after the change
 		// oldBpContexts - target-side breakpoints from before the change
 		// newBpContexts - target-side breakpoints after the change
-		// attrDeltasList - changes in the attributes for each attribute map in 
+		// attrDeltasList - changes in the attributes for each attribute map in
 		//     oldAttrsList and newAttrsList
 
 		// Get the maps
@@ -566,20 +566,20 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 			return;
 		}
 
-		// Get the list of corresponding back-end breakpoints 
-		final List<IBreakpointDMContext> oldBpContexts = new ArrayList<IBreakpointDMContext>(
+		// Get the list of corresponding back-end breakpoints
+		final List<IBreakpointDMContext> oldBpContexts = new ArrayList<>(
 				breakpointIDs.get(breakpoint));
 
-		// Calculate the list of attributes maps that have not changed.  
+		// Calculate the list of attributes maps that have not changed.
 		// Immediately add these to the list of new breakpoint contexts,
 		// and remove them from further breakpoint attribute comparisons.
 		final List<Map<String, Object>> commonAttrsList = getCommonAttributeMaps(newAttrsList0, oldAttrsList0);
-		final List<IBreakpointDMContext> newBpContexts = new ArrayList<IBreakpointDMContext>(commonAttrsList.size());
+		final List<IBreakpointDMContext> newBpContexts = new ArrayList<>(commonAttrsList.size());
 
-		final List<Map<String, Object>> newAttrsList = new ArrayList<Map<String, Object>>(newAttrsList0);
+		final List<Map<String, Object>> newAttrsList = new ArrayList<>(newAttrsList0);
 		newAttrsList.removeAll(commonAttrsList);
 
-		List<Map<String, Object>> oldAttrsList = new ArrayList<Map<String, Object>>(oldAttrsList0);
+		List<Map<String, Object>> oldAttrsList = new ArrayList<>(oldAttrsList0);
 		for (int i = 0; i < oldAttrsList.size(); i++) {
 			if (commonAttrsList.contains(oldAttrsList.get(i))) {
 				if (oldBpContexts.size() > i) {
@@ -599,13 +599,13 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 		final CountingRequestMonitor countingRM = new CountingRequestMonitor(getExecutor(), rm) {
 			@Override
 			protected void handleCompleted() {
-				// Save the new list of breakpoint contexts and attributes 
+				// Save the new list of breakpoint contexts and attributes
 				breakpointIDs.put(breakpoint, newBpContexts);
 				newAttrsList.addAll(commonAttrsList);
 				platformBPs.put(breakpoint, newAttrsList);
 
 				// Update breakpoint status.  updateBreakpointStatus() cannot
-				// be called on the executor thread, so we need to 
+				// be called on the executor thread, so we need to
 				// use a Job.
 				new Job("Breakpoint status update") { //$NON-NLS-1$
 					{
@@ -616,7 +616,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 					protected IStatus run(IProgressMonitor monitor) {
 						fAttributeTranslator.updateBreakpointStatus(breakpoint);
 						return Status.OK_STATUS;
-					};
+					}
 				}.schedule();
 
 				super.handleCompleted();
@@ -645,7 +645,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 							}
 						});
 			} else if (!fAttributeTranslator.canUpdateAttributes(oldBpContexts.get(i), attrDeltasList.get(i))) {
-				// The attribute translator tells us that the debugger cannot modify the 
+				// The attribute translator tells us that the debugger cannot modify the
 				// breakpoint to change the given attributes.  Remove the breakpoint
 				// and insert a new one.
 				final Map<String, Object> attrs = newAttrsList.get(i);
@@ -668,7 +668,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 					}
 				});
 			} else {
-				// The back end can modify the breakpoint.  Update the breakpoint with the 
+				// The back end can modify the breakpoint.  Update the breakpoint with the
 				// new attributes.
 				final IBreakpointDMContext bpCtx = oldBpContexts.get(i);
 				fBreakpoints.updateBreakpoint(oldBpContexts.get(i), newAttrsList.get(i),
@@ -685,8 +685,8 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 
 	private List<Map<String, Object>> getCommonAttributeMaps(List<Map<String, Object>> array1,
 			List<Map<String, Object>> array2) {
-		List<Map<String, Object>> intersection = new LinkedList<Map<String, Object>>();
-		List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>(array2);
+		List<Map<String, Object>> intersection = new LinkedList<>();
+		List<Map<String, Object>> list2 = new ArrayList<>(array2);
 		for (Map<String, Object> array1Map : array1) {
 			if (list2.remove(array1Map)) {
 				intersection.add(array1Map);
@@ -697,14 +697,14 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 
 	/**
 	 * Determine the set of modified attributes
-	 * 
+	 *
 	 * @param oldAttributes
 	 * @param newAttributes
 	 * @return
 	 */
 	private List<Map<String, Object>> getAttributesDeltas(List<Map<String, Object>> oldAttributesList,
 			List<Map<String, Object>> newAttributesList) {
-		List<Map<String, Object>> deltas = new ArrayList<Map<String, Object>>(oldAttributesList.size());
+		List<Map<String, Object>> deltas = new ArrayList<>(oldAttributesList.size());
 
 		// Go through the bp attributes common to the old and the new lists and calculate
 		// their deltas.
@@ -712,16 +712,16 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 			Map<String, Object> oldAttributes = oldAttributesList.get(i);
 			Map<String, Object> newAttributes = newAttributesList.get(i);
 
-			Map<String, Object> delta = new HashMap<String, Object>();
+			Map<String, Object> delta = new HashMap<>();
 
 			Set<String> oldKeySet = oldAttributes.keySet();
 			Set<String> newKeySet = newAttributes.keySet();
 
-			Set<String> commonKeys = new HashSet<String>(newKeySet);
+			Set<String> commonKeys = new HashSet<>(newKeySet);
 			commonKeys.retainAll(oldKeySet);
-			Set<String> addedKeys = new HashSet<String>(newKeySet);
+			Set<String> addedKeys = new HashSet<>(newKeySet);
 			addedKeys.removeAll(oldKeySet);
-			Set<String> removedKeys = new HashSet<String>(oldKeySet);
+			Set<String> removedKeys = new HashSet<>(oldKeySet);
 			removedKeys.removeAll(newKeySet);
 
 			// Add the modified attributes
@@ -778,7 +778,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 				getExecutor().execute(new DsfRunnable() {
 					@Override
 					public void run() {
-						//TODO pp: need to track pending requests 
+						//TODO pp: need to track pending requests
 
 						final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), null) {
 							@Override
@@ -854,7 +854,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 										protected IStatus run(IProgressMonitor monitor) {
 											breakpointChanged(breakpoint, delta);
 											return Status.OK_STATUS;
-										};
+										}
 									}.schedule();
 								}
 							}
@@ -887,7 +887,7 @@ public class BreakpointsMediator extends AbstractDsfService implements IBreakpoi
 				getExecutor().execute(new DsfRunnable() {
 					@Override
 					public void run() {
-						//TODO pp: need to track pending requests 
+						//TODO pp: need to track pending requests
 
 						CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), null) {
 							@Override

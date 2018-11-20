@@ -16,7 +16,6 @@ package org.eclipse.cdt.internal.corext.refactoring.code.flow;
 
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.IASTReturnStatement;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 
 class ReturnFlowInfo extends FlowInfo {

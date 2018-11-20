@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2012 QNX Software Systems and others.
- * 
+ *
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0

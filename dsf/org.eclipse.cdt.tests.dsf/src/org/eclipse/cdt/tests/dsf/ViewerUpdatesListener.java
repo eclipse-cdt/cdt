@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -46,7 +46,7 @@ public class ViewerUpdatesListener implements IViewerUpdateListener, ILabelUpdat
 	private ITreeModelViewer fViewer;
 
 	private boolean fFailOnRedundantUpdates;
-	private Set<IViewerUpdate> fRedundantUpdates = new HashSet<IViewerUpdate>();
+	private Set<IViewerUpdate> fRedundantUpdates = new HashSet<>();
 
 	private boolean fFailOnMultipleModelUpdateSequences;
 	private boolean fMultipleModelUpdateSequencesObserved;
@@ -54,20 +54,20 @@ public class ViewerUpdatesListener implements IViewerUpdateListener, ILabelUpdat
 	private boolean fMultipleLabelUpdateSequencesObserved;
 
 	private Set<TreePath> fHasChildrenUpdatesScheduled = makeTreePathSet();
-	private Set<IViewerUpdate> fHasChildrenUpdatesRunning = new HashSet<IViewerUpdate>();
-	private Set<IViewerUpdate> fHasChildrenUpdatesCompleted = new HashSet<IViewerUpdate>();
+	private Set<IViewerUpdate> fHasChildrenUpdatesRunning = new HashSet<>();
+	private Set<IViewerUpdate> fHasChildrenUpdatesCompleted = new HashSet<>();
 	private Map<TreePath, Set<Integer>> fChildrenUpdatesScheduled = makeTreePathMap();
-	private Set<IViewerUpdate> fChildrenUpdatesRunning = new HashSet<IViewerUpdate>();
-	private Set<IViewerUpdate> fChildrenUpdatesCompleted = new HashSet<IViewerUpdate>();
+	private Set<IViewerUpdate> fChildrenUpdatesRunning = new HashSet<>();
+	private Set<IViewerUpdate> fChildrenUpdatesCompleted = new HashSet<>();
 	private Set<TreePath> fChildCountUpdatesScheduled = makeTreePathSet();
-	private Set<IViewerUpdate> fChildCountUpdatesRunning = new HashSet<IViewerUpdate>();
-	private Set<IViewerUpdate> fChildCountUpdatesCompleted = new HashSet<IViewerUpdate>();
+	private Set<IViewerUpdate> fChildCountUpdatesRunning = new HashSet<>();
+	private Set<IViewerUpdate> fChildCountUpdatesCompleted = new HashSet<>();
 	private Set<TreePath> fLabelUpdates = makeTreePathSet();
-	private Set<IViewerUpdate> fLabelUpdatesRunning = new HashSet<IViewerUpdate>();
-	private Set<IViewerUpdate> fLabelUpdatesCompleted = new HashSet<IViewerUpdate>();
+	private Set<IViewerUpdate> fLabelUpdatesRunning = new HashSet<>();
+	private Set<IViewerUpdate> fLabelUpdatesCompleted = new HashSet<>();
 	private Set<TreePath> fPropertiesUpdates = makeTreePathSet();
-	private Set<IViewerUpdate> fPropertiesUpdatesRunning = new HashSet<IViewerUpdate>();
-	private Set<IViewerUpdate> fPropertiesUpdatesCompleted = new HashSet<IViewerUpdate>();
+	private Set<IViewerUpdate> fPropertiesUpdatesRunning = new HashSet<>();
+	private Set<IViewerUpdate> fPropertiesUpdatesCompleted = new HashSet<>();
 	//    private Set<TreePath> fProxyModels = new HashSet<TreePath>();
 	private Set<TreePath> fStateUpdates = makeTreePathSet();
 	private boolean fContentSequenceStarted;
@@ -86,11 +86,11 @@ public class ViewerUpdatesListener implements IViewerUpdateListener, ILabelUpdat
 	private long fTimeoutTime;
 
 	protected Set<TreePath> makeTreePathSet() {
-		return new HashSet<TreePath>();
+		return new HashSet<>();
 	}
 
 	protected <V> Map<TreePath, V> makeTreePathMap() {
-		return new HashMap<TreePath, V>();
+		return new HashMap<>();
 	}
 
 	public ViewerUpdatesListener(ITreeModelViewer viewer, boolean failOnRedundantUpdates,
@@ -135,8 +135,8 @@ public class ViewerUpdatesListener implements IViewerUpdateListener, ILabelUpdat
 	}
 
 	/**
-	 * Sets the the maximum amount of time (in milliseconds) that the update listener 
-	 * is going to wait. If set to -1, the listener will wait indefinitely. 
+	 * Sets the the maximum amount of time (in milliseconds) that the update listener
+	 * is going to wait. If set to -1, the listener will wait indefinitely.
 	 */
 	public void setTimeoutInterval(int milis) {
 		fTimeoutInterval = milis;
@@ -194,7 +194,7 @@ public class ViewerUpdatesListener implements IViewerUpdateListener, ILabelUpdat
 	public void addChildreUpdate(TreePath path, int index) {
 		Set<Integer> childrenIndexes = fChildrenUpdatesScheduled.get(path);
 		if (childrenIndexes == null) {
-			childrenIndexes = new TreeSet<Integer>();
+			childrenIndexes = new TreeSet<>();
 			fChildrenUpdatesScheduled.put(path, childrenIndexes);
 		}
 		childrenIndexes.add(index);

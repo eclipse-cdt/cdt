@@ -74,11 +74,11 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	private static final String[] USAGE_ATTRIBUTES = new String[] { "__unused__", "unused", "constructor", //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 			"destructor" }; //$NON-NLS-1$
 
-	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
-	private Map<IBinding, IASTDeclarator> staticFunctionDeclarations = new HashMap<IBinding, IASTDeclarator>();
-	private Map<IBinding, IASTDeclarator> staticFunctionDefinitions = new HashMap<IBinding, IASTDeclarator>();
-	private Map<IBinding, IASTDeclarator> externVariableDeclarations = new HashMap<IBinding, IASTDeclarator>();
-	private Map<IBinding, IASTDeclarator> staticVariableDeclarations = new HashMap<IBinding, IASTDeclarator>();
+	private Map<IBinding, IASTDeclarator> externFunctionDeclarations = new HashMap<>();
+	private Map<IBinding, IASTDeclarator> staticFunctionDeclarations = new HashMap<>();
+	private Map<IBinding, IASTDeclarator> staticFunctionDefinitions = new HashMap<>();
+	private Map<IBinding, IASTDeclarator> externVariableDeclarations = new HashMap<>();
+	private Map<IBinding, IASTDeclarator> staticVariableDeclarations = new HashMap<>();
 	private Set<IBinding> declarationsWithUsageAttributes = new HashSet<>();
 	private IProblemWorkingCopy unusedVariableProblem = null;
 
@@ -376,7 +376,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 	}
 
 	private void reportProblems() {
-		List<IASTDeclarator> funcDeclarators = new ArrayList<IASTDeclarator>();
+		List<IASTDeclarator> funcDeclarators = new ArrayList<>();
 		funcDeclarators.addAll(externFunctionDeclarations.values());
 		funcDeclarators.addAll(staticFunctionDeclarations.values());
 		for (IASTDeclarator symbol : funcDeclarators) {
@@ -387,7 +387,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 			}
 		}
 
-		List<IASTDeclarator> varDeclarators = new ArrayList<IASTDeclarator>();
+		List<IASTDeclarator> varDeclarators = new ArrayList<>();
 		varDeclarators.addAll(externVariableDeclarations.values());
 		varDeclarators.addAll(staticVariableDeclarations.values());
 		for (IASTDeclarator symbol : varDeclarators) {
@@ -398,7 +398,7 @@ public class UnusedSymbolInFileScopeChecker extends AbstractIndexAstChecker {
 			}
 		}
 
-		List<IASTDeclarator> staticFuncDeclarators = new ArrayList<IASTDeclarator>();
+		List<IASTDeclarator> staticFuncDeclarators = new ArrayList<>();
 		staticFuncDeclarators.addAll(staticFunctionDefinitions.values());
 		for (IASTDeclarator symbol : staticFuncDeclarators) {
 			IASTName astName = getAstName(symbol);

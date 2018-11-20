@@ -16,9 +16,8 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.text.source.DefaultAnnotationHover;
-
 import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.jface.text.source.DefaultAnnotationHover;
 
 /**
  * Determines all annotations for the given line and collects, concatenates, and formats

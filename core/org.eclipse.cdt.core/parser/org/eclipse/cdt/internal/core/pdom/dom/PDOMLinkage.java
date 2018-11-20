@@ -440,7 +440,7 @@ public abstract class PDOMLinkage extends PDOMNamedNode implements IIndexLinkage
 				.getCachedResult(key);
 		CharArrayMap<PDOMBinding[]> map = cached == null ? null : cached.get();
 		if (map == null) {
-			map = new CharArrayMap<PDOMBinding[]>();
+			map = new CharArrayMap<>();
 			pdom.putCachedResult(key, new SoftReference<CharArrayMap<?>>(map));
 		}
 		return map;

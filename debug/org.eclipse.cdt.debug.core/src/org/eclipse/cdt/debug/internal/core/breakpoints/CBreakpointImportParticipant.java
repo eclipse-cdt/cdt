@@ -29,11 +29,12 @@ import org.eclipse.debug.core.model.IBreakpointImportParticipant;
 public class CBreakpointImportParticipant implements IBreakpointImportParticipant {
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.core.model.IBreakpointImportParticipant#matches(java
 	 * .util.Map, org.eclipse.debug.core.model.IBreakpoint)
 	 */
+	@Override
 	public boolean matches(Map<String, Object> attributes, IBreakpoint breakpoint) throws CoreException {
 		if (attributes == null || breakpoint == null) {
 			return false;
@@ -70,7 +71,7 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 
 	/**
 	 * Compares two attributes in a <code>null</code> safe way
-	 * 
+	 *
 	 * @param attr1
 	 *            the first attribute
 	 * @param attr2
@@ -88,7 +89,7 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 	/**
 	 * Returns if the given map of attributes matches the given breakpoint
 	 * Works for any breakpoint class that extends AbstractLineBreakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the breakpoint's attributes, false
@@ -111,7 +112,7 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 	/**
 	 * Returns if the given map of attributes matches the given tracepoint
 	 * Works for any breakpoint class that extends AbstractTracepoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param tracepoint
 	 * @return true if the attributes match the tracepoint's attributes, false
@@ -133,7 +134,7 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 
 	/**
 	 * Returns if the given map of attributes matches the given event breakpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the event breakpoint's attributes, false
@@ -148,7 +149,7 @@ public class CBreakpointImportParticipant implements IBreakpointImportParticipan
 
 	/**
 	 * Returns if the given map of attributes matches the given watchpoint
-	 * 
+	 *
 	 * @param attributes
 	 * @param breakpoint
 	 * @return true if the attributes match the watchpoint's attributes, false

@@ -42,7 +42,7 @@ public class ProblemProfile implements IProblemProfile, Cloneable {
 
 	@Override
 	public IProblem[] getProblems() {
-		Collection<IProblem> problems = new ArrayList<IProblem>();
+		Collection<IProblem> problems = new ArrayList<>();
 		collectProblems(getRoot(), problems);
 		return problems.toArray(new IProblem[problems.size()]);
 	}

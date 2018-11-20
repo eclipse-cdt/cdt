@@ -18,6 +18,27 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.jface.text.AbstractInformationControlManager;
+import org.eclipse.jface.text.DefaultInformationControl;
+import org.eclipse.jface.text.IInformationControl;
+import org.eclipse.jface.text.IInformationControlCreator;
+import org.eclipse.jface.text.IInformationControlExtension;
+import org.eclipse.jface.text.IInformationControlExtension2;
+import org.eclipse.jface.text.IInformationControlExtension5;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.IViewportListener;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.TextViewer;
+import org.eclipse.jface.text.source.Annotation;
+import org.eclipse.jface.text.source.IAnnotationAccess;
+import org.eclipse.jface.text.source.IAnnotationAccessExtension;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.IVerticalRulerInfo;
+import org.eclipse.jface.text.source.IVerticalRulerListener;
+import org.eclipse.jface.text.source.VerticalRulerEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -48,29 +69,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-
-import org.eclipse.jface.viewers.IDoubleClickListener;
-
-import org.eclipse.jface.text.AbstractInformationControlManager;
-import org.eclipse.jface.text.DefaultInformationControl;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
-import org.eclipse.jface.text.IInformationControlExtension;
-import org.eclipse.jface.text.IInformationControlExtension2;
-import org.eclipse.jface.text.IInformationControlExtension5;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.IViewportListener;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextViewer;
-import org.eclipse.jface.text.source.Annotation;
-import org.eclipse.jface.text.source.IAnnotationAccess;
-import org.eclipse.jface.text.source.IAnnotationAccessExtension;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.IVerticalRulerInfo;
-import org.eclipse.jface.text.source.IVerticalRulerListener;
-import org.eclipse.jface.text.source.VerticalRulerEvent;
 
 /**
  * A control that can display a number of annotations. The control can decide how it layouts the
@@ -261,11 +259,11 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		/*
 		 * JDT uses mouseDown here rather than mouseUp to fix a bug
 		 * (details see https://bugs.eclipse.org/bugs/show_bug.cgi?id=165533)
-		 * 
+		 *
 		 * However this causes an issue where the top annotation is fired if the user
 		 * click the 1st item in the expansion control. Due to mouseUp going to the ruler
 		 * after the expansion is close.
-		 * 
+		 *
 		 * Bug as described in JDT does not seems to affect CDT so reverting to mouseUp.
 		 *
 		 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
@@ -670,7 +668,7 @@ public class AnnotationExpansionControl implements IInformationControl, IInforma
 		if (visible) {
 			/*
 			 * Force 1st item to be selected when made visible
-			 * 
+			 *
 			 * This causes the tooltip to be displayed without additional
 			 * delay.
 			 */

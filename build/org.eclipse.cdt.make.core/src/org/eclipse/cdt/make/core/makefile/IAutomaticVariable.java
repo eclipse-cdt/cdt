@@ -17,7 +17,7 @@ import org.eclipse.cdt.make.core.makefile.gnu.IVariableDefinition;
 
 /**
  * Interface fore built-in automatic variables.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 7.3

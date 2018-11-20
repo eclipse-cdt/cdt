@@ -104,13 +104,13 @@ class PDOMCEnumeration extends PDOMBinding implements IEnumeration, IIndexType, 
 		if (result == null && create) {
 			// there is no cache, build it:
 			result = loadEnumerators();
-			pdom.putCachedResult(key, new SoftReference<List<PDOMCEnumerator>>(result));
+			pdom.putCachedResult(key, new SoftReference<>(result));
 		}
 		return result;
 	}
 
 	private List<PDOMCEnumerator> loadEnumerators() {
-		final ArrayList<PDOMCEnumerator> result = new ArrayList<PDOMCEnumerator>();
+		final ArrayList<PDOMCEnumerator> result = new ArrayList<>();
 		try {
 			PDOMNodeLinkedList list = new PDOMNodeLinkedList(getLinkage(), record + OFFSET_ENUMERATOR_LIST);
 			list.accept(new IPDOMVisitor() {

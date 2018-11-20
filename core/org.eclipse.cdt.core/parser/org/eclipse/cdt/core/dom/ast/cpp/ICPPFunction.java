@@ -59,7 +59,7 @@ public interface ICPPFunction extends IFunction, ICPPBinding {
 	 * Returns the function's type.
 	 * Any placeholders in the type are resolved.
 	 * If the type contains placeholders and a function definition is not available to
-	 * resolve them, a ProblemType is returned (call sites that do not need the 
+	 * resolve them, a ProblemType is returned (call sites that do not need the
 	 * placeholders resolved should call getDeclaredType() instead).
 	 * @since 5.1
 	 */

@@ -17,6 +17,11 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.net.URI;
 
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.ResourcesUtil;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -28,13 +33,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.ResourcesUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsoleManager;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
 
 /**
  * Action to copy build log from working file to a user selected file.

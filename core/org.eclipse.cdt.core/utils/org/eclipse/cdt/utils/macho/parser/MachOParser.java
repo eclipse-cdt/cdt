@@ -58,7 +58,7 @@ public class MachOParser extends AbstractCExtension implements IBinaryParser {
 				}
 			}
 
-			//Take a second run at it if the data array failed. 			
+			//Take a second run at it if the data array failed.
 			if (attribute == null) {
 				attribute = MachO.getAttributes(path.toOSString());
 			}

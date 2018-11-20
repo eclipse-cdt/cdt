@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 /**
  * A type-id expression with any number of arguments.
  * Example: __is_trivially_constructible(MyClass, int, float)
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 6.0

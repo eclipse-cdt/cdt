@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
@@ -16,7 +16,7 @@
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
  *     Marc Khouzam (Ericsson) - Pass errorStream to startCommandProcessing() (Bug 350837)
- *     Mikhail Khodjaiants (Mentor Graphics) - Terminate should cancel the initialization sequence 
+ *     Mikhail Khodjaiants (Mentor Graphics) - Terminate should cancel the initialization sequence
  *                                             if it is still running (bug 373845)
  *     Marc Khouzam (Ericsson) - Terminate the session if we lose the connection to the remote target (bug 422586)
  *     Marc Khouzam (Ericsson) - Allow to override the creation of the ControlDMC (Bug 389945)
@@ -96,8 +96,8 @@ import org.eclipse.debug.core.IStatusHandler;
 import org.osgi.framework.BundleContext;
 
 /**
- * GDB Debugger control implementation.  This implementation extends the 
- * base MI control implementation to provide the GDB-specific debugger 
+ * GDB Debugger control implementation.  This implementation extends the
+ * base MI control implementation to provide the GDB-specific debugger
  * features.  This includes:<br>
  * - CLI console support,<br>
  * - inferior process status tracking.<br>
@@ -207,15 +207,15 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	 * is available in 6.8, it does not report anything we care about, so
 	 * return empty list.
 	 */
-	private final List<String> fFeatures = new ArrayList<String>();
+	private final List<String> fFeatures = new ArrayList<>();
 
 	private Sequence fInitializationSequence;
 
 	/**
 	 * Indicator to distinguish whether this service is initialized.
-	 * <code>fInitializationSequence</code> can not be used for this 
+	 * <code>fInitializationSequence</code> can not be used for this
 	 * purpose because there is a period of time when the service is already
-	 * initializing but the initialization sequence has not created yet.   
+	 * initializing but the initialization sequence has not created yet.
 	 */
 	private boolean fInitialized = false;
 
@@ -255,7 +255,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 		fMIBackend = getServicesTracker().getService(IGDBBackend.class);
 
-		// getId, called to create this context, uses the MIBackend service, 
+		// getId, called to create this context, uses the MIBackend service,
 		// which is why we must wait until we have MIBackend, before we can create the below context.
 		fControlDmc = createComandControlContext();
 
@@ -326,7 +326,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		}
 
 		// Schedule a runnable to be executed 2 seconds from now.
-		// If we don't get a response to the quit command, this 
+		// If we don't get a response to the quit command, this
 		// runnable will kill the task.
 		final Future<?> forceQuitTask = getExecutor().schedule(new DsfRunnable() {
 			@Override
@@ -447,11 +447,11 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 	/**
 	 * Return the sequence that is to be used to complete the initialization of GDB.
-	 * 
+	 *
 	 * @param rm A RequestMonitorWithProgress that will indicate when the sequence is completed, but that
 	 *           also contains an IProgressMonitor to be able to cancel the launch.  A NullProgressMonitor
 	 *           can be used if cancellation is not required.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes,
@@ -794,7 +794,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 		final String errorMessage = String.format("Command '%s' is timed out", commandText); //$NON-NLS-1$
 		commandFailed(token, STATUS_CODE_COMMAND_TIMED_OUT, errorMessage);
 
-		// If the timeout occurs while the launch sequence is running 
+		// If the timeout occurs while the launch sequence is running
 		// the error will be reported by the launcher's error reporting mechanism.
 		// We need to show the error message only when the session is initialized.
 		if (isInitialized()) {
@@ -805,7 +805,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 				protected void handleErrorOrWarning() {
 					GdbPlugin.getDefault().getLog().log(getStatus());
 					super.handleErrorOrWarning();
-				};
+				}
 			});
 
 			IStatus status = new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, IGdbDebugConstants.STATUS_HANDLER_CODE,
@@ -823,10 +823,10 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 	/**
 	 * Parse output from GDB to determine if the connection to the remote was lost.
-	 * 
+	 *
 	 * @param output The output received from GDB that must be parsed
 	 *               to determine if the connection to the remote was lost.
-	 * 
+	 *
 	 * @return True if the connection was lost, false otherwise.
 	 * @since 4.3
 	 */
@@ -836,8 +836,8 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 		// Check if any command has a result that indicates a lost connection.
 		// This can happen as a normal command result, or as an out-of-band event.
-		// The out-of-band case can happen when GDB sends another response to 
-		// a previous command.  This case can happen, for example, in all-stop 
+		// The out-of-band case can happen when GDB sends another response to
+		// a previous command.  This case can happen, for example, in all-stop
 		// when sending an -exec-continue and then killing gdbserver while connected
 		// to a process; in that case a second result to -exec-continue will be sent
 		// and will indicate the remote connection is closed.
@@ -906,7 +906,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 	/**
 	 * Handle the loss of the connection to the remote.
 	 * The default implementation terminates the debug session.
-	 * 
+	 *
 	 * @param reason A string indicating as much as possible why the connection was lost. Can be null.
 	 * @since 4.3
 	 */
@@ -916,7 +916,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 			protected void handleErrorOrWarning() {
 				GdbPlugin.getDefault().getLog().log(getStatus());
 				super.handleErrorOrWarning();
-			};
+			}
 		});
 	}
 
@@ -929,7 +929,7 @@ public class GDBControl extends AbstractMIControl implements IGDBControl {
 
 	/**
 	 * Returns the time (in seconds) the debugger will wait for "gdb-exit" to complete.
-	 * 
+	 *
 	 * @since 4.2
 	 */
 	protected int getGDBExitWaitTime() {

@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Texas Instruments - Bug 340478 
+ *     Texas Instruments - Bug 340478
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.actions;
 
@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IViewPart;
 
 /**
- * 
+ *
  */
 public class RefreshActionDelegate extends AbstractVMProviderActionDelegate {
 

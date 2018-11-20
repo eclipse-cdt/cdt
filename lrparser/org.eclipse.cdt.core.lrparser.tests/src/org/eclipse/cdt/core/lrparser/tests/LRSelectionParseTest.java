@@ -7,13 +7,11 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -29,6 +27,8 @@ import org.eclipse.cdt.core.parser.tests.ast2.AST2SelectionParseTest;
 import org.eclipse.cdt.internal.core.dom.SavedCodeReaderFactory;
 import org.eclipse.cdt.internal.core.parser.ParserException;
 import org.eclipse.core.resources.IFile;
+
+import junit.framework.TestSuite;
 
 @SuppressWarnings("restriction")
 public class LRSelectionParseTest extends AST2SelectionParseTest {

@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.settings.model;
 
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.settings.model.CProjectDescriptionEvent;
@@ -35,6 +33,8 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.Version;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This abstract class provides an extension point for functionality for loading
@@ -78,7 +78,7 @@ public abstract class AbstractCProjectDescriptionStorage {
 	/** Before the description is fully applied / loaded, consumers of CProjectDescriptionEvent and CProjectDescription.applyDatas()
 	 *  assume that getProjectDescription(...) will return the writable project description in the process of being created / modified...
 	 *  Cached temporarily in a thread local variable for this very purpose. */
-	final private ThreadLocal<ICProjectDescription> currentThreadProjectDescription = new ThreadLocal<ICProjectDescription>();
+	final private ThreadLocal<ICProjectDescription> currentThreadProjectDescription = new ThreadLocal<>();
 
 	/**
 	 * @param type CProjectDescriptionStorageTypeProxy

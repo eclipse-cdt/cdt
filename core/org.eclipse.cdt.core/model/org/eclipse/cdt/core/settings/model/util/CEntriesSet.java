@@ -19,7 +19,7 @@ import java.util.List;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 
 public class CEntriesSet {
-	private LinkedHashMap<Object, ICSettingEntry> fEntriesMap = new LinkedHashMap<Object, ICSettingEntry>();
+	private LinkedHashMap<Object, ICSettingEntry> fEntriesMap = new LinkedHashMap<>();
 
 	public CEntriesSet() {
 	}

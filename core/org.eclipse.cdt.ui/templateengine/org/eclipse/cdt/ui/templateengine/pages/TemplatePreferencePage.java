@@ -16,6 +16,11 @@ package org.eclipse.cdt.ui.templateengine.pages;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.templateengine.SharedDefaults;
+import org.eclipse.cdt.core.templateengine.TemplateEngine;
+import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
+import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -39,12 +44,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.w3c.dom.Element;
-
-import org.eclipse.cdt.core.templateengine.SharedDefaults;
-import org.eclipse.cdt.core.templateengine.TemplateEngine;
-import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
-import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This class represents a preference page that is contributed to the

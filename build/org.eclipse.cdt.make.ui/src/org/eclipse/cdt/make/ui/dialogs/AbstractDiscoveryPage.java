@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Abstract SCD profile page
- * 
+ *
  * @author vhirsl
  */
 public abstract class AbstractDiscoveryPage extends DialogPage {
@@ -83,7 +83,7 @@ public abstract class AbstractDiscoveryPage extends DialogPage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public AbstractDiscoveryPage() {
 		super();
@@ -105,7 +105,7 @@ public abstract class AbstractDiscoveryPage extends DialogPage {
 		variablesButton.addSelectionListener(new SelectionAdapter() {
 			/*
 			 * (non-Javadoc)
-			 * 
+			 *
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			@Override

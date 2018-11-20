@@ -20,6 +20,7 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
@@ -33,8 +34,6 @@ import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.part.ViewPart;
-
-import org.eclipse.cdt.internal.ui.util.SelectionUtil;
 
 /**
  * Copies contents of a TreeViewer to the clipboard.
@@ -93,7 +92,7 @@ public class CopyTreeAction extends Action {
 
 	/**
 	 * Adds the specified {@link TreeItem}'s text to the StringBuilder.
-	 * 
+	 *
 	 * @param item the tree item
 	 * @param indent the indent size
 	 * @param buf the string buffer

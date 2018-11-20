@@ -65,7 +65,7 @@ public class DeleteElementsOperation extends MultiOperation {
 	 * duplicates specified in elements to be processed.
 	 */
 	protected void groupElements() throws CModelException {
-		fChildrenToRemove = new HashMap<ITranslationUnit, IRegion>(1);
+		fChildrenToRemove = new HashMap<>(1);
 		int uniqueTUs = 0;
 		for (ICElement e : fElementsToProcess) {
 			ITranslationUnit tu = getTranslationUnitFor(e);

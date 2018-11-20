@@ -30,7 +30,7 @@ public class AddContainerAction extends SourceContainerAction {
 
 	/**
 	 * Prompts for a project to add.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override

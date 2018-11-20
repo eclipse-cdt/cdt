@@ -1164,7 +1164,7 @@ public class MIMemoryTest extends BaseParametrizedTestCase {
 		}
 
 		// Write asynchronously
-		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<IMemoryChangedEvent>(fSession,
+		ServiceEventWaitor<IMemoryChangedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				IMemoryChangedEvent.class);
 		MemoryWriteQuery writeQueries[] = new MemoryWriteQuery[BLOCK_SIZE];
 		for (int offset = 0; offset < BLOCK_SIZE; offset++) {

@@ -18,6 +18,41 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IArchive;
+import org.eclipse.cdt.core.model.IArchiveContainer;
+import org.eclipse.cdt.core.model.IBinary;
+import org.eclipse.cdt.core.model.IBinaryContainer;
+import org.eclipse.cdt.core.model.IBinaryModule;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IParent;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
+import org.eclipse.cdt.internal.ui.dnd.DelegatingDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.FileTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.dnd.FileTransferDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.PluginTransferDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDragAdapter;
+import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;
+import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
+import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
+import org.eclipse.cdt.internal.ui.util.RemoteTreeViewer;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.cdt.ui.CElementSorter;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IPath;
@@ -83,47 +118,10 @@ import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.views.framelist.FrameList;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IArchive;
-import org.eclipse.cdt.core.model.IArchiveContainer;
-import org.eclipse.cdt.core.model.IBinary;
-import org.eclipse.cdt.core.model.IBinaryContainer;
-import org.eclipse.cdt.core.model.IBinaryModule;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IParent;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.cdt.ui.CElementSorter;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.dnd.CDTViewerDragAdapter;
-import org.eclipse.cdt.internal.ui.dnd.DelegatingDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.FileTransferDragAdapter;
-import org.eclipse.cdt.internal.ui.dnd.FileTransferDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.PluginTransferDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDragAdapter;
-import org.eclipse.cdt.internal.ui.dnd.ResourceTransferDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.TransferDragSourceListener;
-import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
-import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-import org.eclipse.cdt.internal.ui.preferences.CPluginPreferencePage;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.ProblemTreeViewer;
-import org.eclipse.cdt.internal.ui.util.RemoteTreeViewer;
-import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
-
 /**
- * 
+ *
  * CView
- * 
+ *
  */
 public class CView extends ViewPart
 		implements ISetSelectionTarget, IPropertyChangeListener, IShowInTarget, IShowInTargetList {
@@ -220,7 +218,7 @@ public class CView extends ViewPart
 	/**
 	 * Reveal and select the passed element selection in self's visual
 	 * component
-	 * 
+	 *
 	 * @see ISetSelectionTarget#selectReveal(ISelection)
 	 */
 	@Override
@@ -270,7 +268,7 @@ public class CView extends ViewPart
 
 	/**
 	 * Handles a key release in the viewer. Does nothing by default.
-	 * 
+	 *
 	 */
 	protected void handleKeyReleased(KeyEvent event) {
 		if (getActionGroup() != null) {
@@ -305,7 +303,7 @@ public class CView extends ViewPart
 
 	/**
 	 * Returns the action group.
-	 * 
+	 *
 	 * @return the action group
 	 */
 	protected CViewActionGroup getActionGroup() {
@@ -314,7 +312,7 @@ public class CView extends ViewPart
 
 	/**
 	 * Sets the action group.
-	 * 
+	 *
 	 * @param actionGroup
 	 *            the action group
 	 */
@@ -365,7 +363,7 @@ public class CView extends ViewPart
 
 	/**
 	 * Adds the filters to the viewer.
-	 * 
+	 *
 	 * @param viewer
 	 *            the viewer
 	 */
@@ -660,7 +658,7 @@ public class CView extends ViewPart
 
 	/**
 	 * Returns the working set filter for this view.
-	 * 
+	 *
 	 * @return the working set
 	 */
 	public IWorkingSet getWorkingSet() {
@@ -697,7 +695,7 @@ public class CView extends ViewPart
 	/**
 	 * Called when the context menu is about to open. Delegates to the action
 	 * group using the viewer's selection as the action context.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
@@ -726,7 +724,7 @@ public class CView extends ViewPart
 
 	/**
 	 * Returns the message to show in the status line.
-	 * 
+	 *
 	 * @param selection
 	 *            the current selection
 	 * @return the status line message
@@ -775,7 +773,7 @@ public class CView extends ViewPart
 
 	/**
 	 * Updates the action bar actions.
-	 * 
+	 *
 	 * @param selection
 	 *            the current selection
 	 */
@@ -803,7 +801,7 @@ public class CView extends ViewPart
 
 	/**
 	 * Updates the message shown in the status line.
-	 * 
+	 *
 	 * @param selection
 	 *            the current selection
 	 */
@@ -882,7 +880,7 @@ public class CView extends ViewPart
 	/**
 	 * Returns whether the navigator selection automatically tracks the active
 	 * editor.
-	 * 
+	 *
 	 * @return <code>true</code> if linking is enabled, <code>false</code>
 	 *         if not
 	 */
@@ -931,7 +929,7 @@ public class CView extends ViewPart
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IViewPartInputProvider#getViewPartInput()
 	 */
 	public Object getViewPartInput() {
@@ -949,7 +947,7 @@ public class CView extends ViewPart
 
 		IMemento childMem = memento.getChild(TAG_EXPANDED);
 		if (childMem != null) {
-			ArrayList<ICElement> elements = new ArrayList<ICElement>();
+			ArrayList<ICElement> elements = new ArrayList<>();
 			IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 			for (IMemento element2 : elementMem) {
 				String p = element2.getString(TAG_PATH);
@@ -965,7 +963,7 @@ public class CView extends ViewPart
 		}
 		childMem = memento.getChild(TAG_SELECTION);
 		if (childMem != null) {
-			ArrayList<ICElement> list = new ArrayList<ICElement>();
+			ArrayList<ICElement> list = new ArrayList<>();
 			IMemento[] elementMem = childMem.getChildren(TAG_ELEMENT);
 			for (IMemento element2 : elementMem) {
 				String p = element2.getString(TAG_PATH);
@@ -1070,7 +1068,7 @@ public class CView extends ViewPart
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
 	 */
 	@Override

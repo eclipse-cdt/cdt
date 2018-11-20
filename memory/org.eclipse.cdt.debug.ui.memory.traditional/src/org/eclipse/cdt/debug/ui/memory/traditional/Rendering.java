@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
@@ -174,7 +174,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 	/**
 	 * Maps any address within a memory information range to a corresponding list of information items
-	 * sharing that address. 
+	 * sharing that address.
 	 * This is useful to e.g. produce a tooltip while hovering over any memory location of a memory information range
 	 *
 	 * @since 1.5
@@ -193,7 +193,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		if (fParent.getMemoryBlock() != null) {
 			// This is base address from user.
 			// Honor it if the block has no limits or the base is within the block limits.
-			// Fix Bug 414519.  
+			// Fix Bug 414519.
 			BigInteger base = fParent.getBigBaseAddress();
 
 			fViewportAddress = fParent.getMemoryBlockStartAddress();
@@ -266,6 +266,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		getVerticalBar().addSelectionListener(createVerticalBarSelectinListener());
 
 		this.addPaintListener(new PaintListener() {
+			@Override
 			public void paintControl(PaintEvent pe) {
 				pe.gc.setBackground(Rendering.this.getTraditionalRendering().getColorBackground());
 				pe.gc.fillRectangle(0, 0, Rendering.this.getBounds().width, Rendering.this.getBounds().height);
@@ -275,9 +276,11 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		setLayout();
 
 		this.addControlListener(new ControlListener() {
+			@Override
 			public void controlMoved(ControlEvent ce) {
 			}
 
+			@Override
 			public void controlResized(ControlEvent ce) {
 				packColumns();
 			}
@@ -369,10 +372,12 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 	protected SelectionListener createHorizontalBarSelectionListener() {
 		return new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent se) {
 				Rendering.this.layout();
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent se) {
 				// do nothing
 			}
@@ -381,6 +386,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 	protected SelectionListener createVerticalBarSelectinListener() {
 		return new SelectionListener() {
+			@Override
 			public void widgetSelected(SelectionEvent se) {
 				switch (se.detail) {
 				case SWT.ARROW_DOWN:
@@ -396,7 +402,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 					handlePageUp();
 					break;
 				case SWT.SCROLL_LINE:
-					// See: BUG 203068 selection event details broken on GTK < 2.6 
+					// See: BUG 203068 selection event details broken on GTK < 2.6
 				default:
 					// Figure out the delta, ignore events with no delta
 					int deltaScroll = getVerticalBar().getSelection() - fCurrentScrollSelection;
@@ -411,7 +417,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 					// FIXME conversion from slider to scrollbar
 					// getVerticalBar().setToolTipText(Rendering.this.getAddressString(fViewportAddress));
 
-					// Update the addresses on the Address pane. 
+					// Update the addresses on the Address pane.
 					if (fAddressPane.isPaneVisible()) {
 						fAddressPane.redraw();
 					}
@@ -421,6 +427,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 			}
 
+			@Override
 			public void widgetDefaultSelected(SelectionEvent se) {
 				// do nothing
 			}
@@ -519,6 +526,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 	static int suspendCount = 0;
 
+	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		if (this.isDisposed())
 			return;
@@ -562,6 +570,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	protected void handleSuspend(boolean isBreakpointHit) {
 		if (getUpdateMode() == UPDATE_ALWAYS || (getUpdateMode() == UPDATE_ON_BREAKPOINT && isBreakpointHit)) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					archiveDeltas();
 					refresh();
@@ -573,6 +582,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	protected void handleChange() {
 		if (getUpdateMode() == UPDATE_ALWAYS) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 					archiveDeltas();
 					refresh();
@@ -595,7 +605,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	protected IMemoryBlockExtension getMemoryBlock() {
 		IMemoryBlock block = fParent.getMemoryBlock();
 		if (block != null)
-			return (IMemoryBlockExtension) block.getAdapter(IMemoryBlockExtension.class);
+			return block.getAdapter(IMemoryBlockExtension.class);
 
 		return null;
 	}
@@ -678,13 +688,13 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			}
 		}
 
-		private HashMap<BigInteger, TraditionalMemoryByte[]> fEditBuffer = new HashMap<BigInteger, TraditionalMemoryByte[]>();
+		private HashMap<BigInteger, TraditionalMemoryByte[]> fEditBuffer = new HashMap<>();
 
 		private boolean fDisposed = false;
 
 		private Object fLastQueued = null;
 
-		private Vector<Object> fQueue = new Vector<Object>();
+		private Vector<Object> fQueue = new Vector<>();
 
 		protected MemoryUnit fCache = null;
 
@@ -696,6 +706,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			start();
 		}
 
+		@Override
 		public void dispose() {
 			fDisposed = true;
 			synchronized (fQueue) {
@@ -712,6 +723,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			fHistoryCache = new MemoryUnit[fHistoryDepth];
 		}
 
+		@Override
 		public void refresh() {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -721,6 +733,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			}
 		}
 
+		@Override
 		public void archiveDeltas() {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -811,7 +824,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				// We don't want this to happen, because it interferes with this rendering's own
 				// change history. Ideally, we should strictly use the back end change notification
 				// and history, but it is only guaranteed to work for bytes within the address range
-				// of the MemoryBlock. 
+				// of the MemoryBlock.
 				MemoryByte readBytes[] = memoryBlock.getBytesFromAddress(startAddress, units);
 
 				TraditionalMemoryByte cachedBytes[] = new TraditionalMemoryByte[readBytes.length];
@@ -849,6 +862,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				fCache.bytes = cachedBytesFinal;
 
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						// generate deltas
 						for (int historyIndex = 0; historyIndex < getHistoryDepth(); historyIndex++) {
@@ -897,6 +911,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		}
 
 		// bytes will be fetched from cache
+		@Override
 		public TraditionalMemoryByte[] getBytes(BigInteger address, int bytesRequested) throws DebugException {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -940,6 +955,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return bytes;
 		}
 
+		@Override
 		public boolean containsEditedCell(BigInteger address) {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -954,6 +970,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return fEditBuffer.get(address);
 		}
 
+		@Override
 		public void clearEditBuffer() {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -962,6 +979,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			Rendering.this.redrawPanes();
 		}
 
+		@Override
 		public void writeEditBuffer() {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -992,6 +1010,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			clearEditBuffer();
 		}
 
+		@Override
 		public void setEditedValue(BigInteger address, TraditionalMemoryByte[] bytes) {
 			assert Thread.currentThread().equals(Display.getDefault().getThread()) : TraditionalRenderingMessages
 					.getString("TraditionalRendering.CALLED_ON_NON_DISPATCH_THREAD"); //$NON-NLS-1$
@@ -1043,15 +1062,18 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		private BigInteger fEndHigh;
 		private BigInteger fEndLow;
 
+		@Override
 		public void clear() {
 			fEndHigh = fEndLow = fStartHigh = fStartLow = null;
 			redrawPanes();
 		}
 
+		@Override
 		public boolean hasSelection() {
 			return fStartHigh != null && fStartLow != null && fEndHigh != null && fEndLow != null;
 		}
 
+		@Override
 		public boolean isSelected(BigInteger address) {
 			// do we have valid start and end addresses
 			if (getEnd() == null || getStart() == null)
@@ -1071,6 +1093,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return false;
 		}
 
+		@Override
 		public void setStart(BigInteger high, BigInteger low) {
 			if (high == null && low == null) {
 				if (fStartHigh != null && fStartLow != null) {
@@ -1098,6 +1121,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				redrawPanes();
 		}
 
+		@Override
 		public void setEnd(BigInteger high, BigInteger low) {
 			if (high == null && low == null) {
 				if (fEndHigh != null && fEndLow != null) {
@@ -1125,6 +1149,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				redrawPanes();
 		}
 
+		@Override
 		public BigInteger getHigh() {
 			if (!hasSelection())
 				return null;
@@ -1132,6 +1157,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return getStart().max(getEnd());
 		}
 
+		@Override
 		public BigInteger getLow() {
 			if (!hasSelection())
 				return null;
@@ -1139,6 +1165,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 			return getStart().min(getEnd());
 		}
 
+		@Override
 		public BigInteger getStart() {
 			// if there is no start, return null
 			if (fStartHigh == null)
@@ -1162,10 +1189,12 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				return fStartLow;
 		}
 
+		@Override
 		public BigInteger getStartLow() {
 			return fStartLow;
 		}
 
+		@Override
 		public BigInteger getEnd() {
 			// if there is no end, return null
 			if (fEndHigh == null)
@@ -1246,11 +1275,11 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		try {
 			// Update the number of bytes per row;
-			// the max and min scroll range and the current thumb nail position.        
+			// the max and min scroll range and the current thumb nail position.
 			fBytesPerRow = getBytesPerColumn() * getColumnCount();
 
 			getVerticalBar().setMinimum(1);
-			// scrollbar maximum range is Integer.MAX_VALUE. 
+			// scrollbar maximum range is Integer.MAX_VALUE.
 			getVerticalBar().setMaximum(getMaxScrollLines());
 			getVerticalBar().setIncrement(1);
 			getVerticalBar().setPageIncrement(this.getRowCount() - 1);
@@ -1401,7 +1430,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 				rowCount = Math.max(rowCount, ((AbstractPane) panes[i]).getRowCount());
 		}
 
-		// Add an extra row of information as we can present part of the information on 
+		// Add an extra row of information as we can present part of the information on
 		// the remaining space of the canvas
 		int extra = 1;
 		return rowCount + extra;
@@ -1595,6 +1624,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		fParent.setTargetMemoryLittleEndian(littleEndian);
 		fIsTargetLittleEndian = littleEndian;
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				fireSettingsChanged();
 				layoutPanes();
@@ -1614,6 +1644,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 
 		fireSettingsChanged();
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (isShowCrossReferenceInfo()) {
 					resolveAddressInfoForCurrentSelection();
@@ -1725,7 +1756,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 		}
 
 		// convert byte to character if all bytes are readable or
-		// it is a mixed of readable&non-readable bytes and format is Hex or Binary. Bugzilla 342239        		
+		// it is a mixed of readable&non-readable bytes and format is Hex or Binary. Bugzilla 342239
 		if (allBytesReadable || readableByte && (radix == Rendering.RADIX_HEX || radix == Rendering.RADIX_BINARY)) {
 			// bytes from the cache are stored as a sequential byte sequence regardless of target endian.
 			// the endian attribute tells us the recommended endian for display. the user may change this
@@ -2007,7 +2038,7 @@ public class Rendering extends Composite implements IDebugEventSetListener {
 	/**
 	 * Provides a string with the information relevant to a given address, the separator helps to format it
 	 * e.g. Separated items by comma, new line, etc.
-	 * 
+	 *
 	 * @param addTypeHeaders
 	 *            Indicates if the string shall include a data type name before each list of items of the same
 	 *            type e.g. Variables, Registers, etc.

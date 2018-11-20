@@ -39,7 +39,7 @@ public class XmlStorageElement implements ICStorageElement {
 
 	Element fElement;
 	private ICStorageElement fParent;
-	private List<XmlStorageElement> fChildList = new ArrayList<XmlStorageElement>();
+	private List<XmlStorageElement> fChildList = new ArrayList<>();
 	private boolean fChildrenCreated;
 	private String[] fAttributeFilters;
 	private String[] fChildFilters;
@@ -355,7 +355,7 @@ public class XmlStorageElement implements ICStorageElement {
 			return false;
 
 		if (attrs.length != 0) {
-			Set<String> set = new HashSet<String>(Arrays.asList(attrs));
+			Set<String> set = new HashSet<>(Arrays.asList(attrs));
 			set.removeAll(Arrays.asList(otherAttrs));
 			if (set.size() != 0)
 				return false;
@@ -397,7 +397,7 @@ public class XmlStorageElement implements ICStorageElement {
 	public String[] getAttributeNames() {
 		NamedNodeMap nodeMap = fElement.getAttributes();
 		int length = nodeMap.getLength();
-		List<String> list = new ArrayList<String>(length);
+		List<String> list = new ArrayList<>(length);
 		for (int i = 0; i < length; i++) {
 			Node node = nodeMap.item(i);
 			String name = node.getNodeName();

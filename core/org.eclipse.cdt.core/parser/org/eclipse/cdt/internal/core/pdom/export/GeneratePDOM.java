@@ -53,7 +53,7 @@ public class GeneratePDOM {
 
 	/**
 	 * Runnable to export a PDOM.
-	 * @param checkIndexStatus <code>true</code> to check index completeness before exporting, or 
+	 * @param checkIndexStatus <code>true</code> to check index completeness before exporting, or
 	 *     <code>false</code> to export the index without checking anything
 	 * @since 5.5
 	 */
@@ -81,7 +81,7 @@ public class GeneratePDOM {
 	}
 
 	/**
-	 * Executes the PDOM generation 
+	 * Executes the PDOM generation
 	 * @return {@link IStatus#OK} if the generated content is complete, {@link IStatus#ERROR} otherwise.
 	 * @throws CoreException if an internal or invalid configuration error occurs
 	 */

@@ -20,13 +20,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarDeleteInfo;
 
 /**
- * 
+ *
  *    -var-delete NAME
  *
  *  Deletes a previously created variable object and all of its children.
  *
  *  Returns an error if the object NAME is not found.
- * 
+ *
  */
 public class MIVarDelete extends MICommand<MIVarDeleteInfo> {
 	/**

@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
+import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -22,12 +25,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchWindow;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.callhierarchy.CHViewPart;
-import org.eclipse.cdt.internal.ui.callhierarchy.CallHierarchyUI;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
+import junit.framework.Test;
 
 public class CallHierarchyBugs extends CallHierarchyBaseTest {
 
@@ -157,7 +155,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	// }
 	// void regRefs() {
 	//    Base* b= 0;
-	//    b->Base::vmethod(); b->Base::method(); 
+	//    b->Base::vmethod(); b->Base::method();
 	// }
 	public void testPolyMorphicMethodCalls_156689() throws Exception {
 		String content = getContentsForTest(1)[0].toString();
@@ -486,7 +484,7 @@ public class CallHierarchyBugs extends CallHierarchyBaseTest {
 	//
 	//	int main() {
 	//		Array<int> test;
-	//		test.erase(1); 
+	//		test.erase(1);
 	//	}
 	public void testCallsToInstanceofSpecializedTemplate_361999() throws Exception {
 		final String content = getAboveComment();

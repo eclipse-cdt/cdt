@@ -199,7 +199,7 @@ public class MakeBuilder extends ACBuilder {
 				String[] errorParsers = info.getErrorParsers();
 				ErrorParserManager epm = new ErrorParserManager(getProject(), workingDirectoryURI, this, errorParsers);
 
-				List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+				List<IConsoleParser> parsers = new ArrayList<>();
 				if (!isOnlyClean) {
 					ICProjectDescription prjDescription = CoreModel.getDefault().getProjectDescription(project);
 					if (prjDescription != null) {
@@ -249,7 +249,7 @@ public class MakeBuilder extends ACBuilder {
 
 	private HashMap<String, String> getEnvironment(ICommandLauncher launcher, IMakeBuilderInfo info)
 			throws CoreException {
-		HashMap<String, String> envMap = new HashMap<String, String>();
+		HashMap<String, String> envMap = new HashMap<>();
 		if (info.appendEnvironment()) {
 			@SuppressWarnings({ "unchecked", "rawtypes" })
 			Map<String, String> env = (Map) launcher.getEnvironment();

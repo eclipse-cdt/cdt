@@ -14,13 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.rules.FastPartitioner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 
 /**
  * A slightly adapted FastPartitioner.
@@ -28,7 +27,7 @@ import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
 public class FastCPartitioner extends FastPartitioner {
 	/**
 	 * Creates a new partitioner for the given content types.
-	 * 
+	 *
 	 * @param scanner
 	 * @param legalContentTypes
 	 */

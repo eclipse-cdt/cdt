@@ -20,16 +20,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
 
 public class FormatterProfileManager extends ProfileManager {
 	private static final List<String> EMPTY_LIST = Collections.emptyList();
@@ -43,7 +41,7 @@ public class FormatterProfileManager extends ProfileManager {
 
 	private final static KeySet[] KEY_SETS = new KeySet[] {
 			new KeySet(CCorePlugin.PLUGIN_ID,
-					new ArrayList<String>(DefaultCodeFormatterConstants.getDefaultSettings().keySet())),
+					new ArrayList<>(DefaultCodeFormatterConstants.getDefaultSettings().keySet())),
 			new KeySet(CUIPlugin.PLUGIN_ID, EMPTY_LIST) };
 
 	private final static String PROFILE_KEY = PreferenceConstants.FORMATTER_PROFILE;
@@ -77,8 +75,8 @@ public class FormatterProfileManager extends ProfileManager {
 			List<Profile> defaultProfiles = new FormatterProfileStore(profileVersioner)
 					.readProfiles(DefaultScope.INSTANCE);
 			if (defaultProfiles != null) {
-				Map<String, Profile> profMap = new LinkedHashMap<String, Profile>();
-				// Add the already loaded / created profiles to a map 
+				Map<String, Profile> profMap = new LinkedHashMap<>();
+				// Add the already loaded / created profiles to a map
 				for (Profile p : profiles)
 					profMap.put(p.getID(), p);
 
@@ -86,7 +84,7 @@ public class FormatterProfileManager extends ProfileManager {
 				for (Profile p : defaultProfiles)
 					profMap.put(p.getID(), new BuiltInProfile(p.getName(), p.getName(), p.getSettings(), 2,
 							profileVersioner.getCurrentVersion(), profileVersioner.getProfileKind()));
-				profiles = new ArrayList<Profile>(profMap.values());
+				profiles = new ArrayList<>(profMap.values());
 			}
 		} catch (CoreException e) {
 			CUIPlugin.log(e);
@@ -95,35 +93,35 @@ public class FormatterProfileManager extends ProfileManager {
 		return profiles;
 	}
 
-	/** 
+	/**
 	 * @return Returns the default settings.
 	 */
 	public static Map<String, String> getDefaultSettings() {
 		return DefaultCodeFormatterConstants.getDefaultSettings();
 	}
 
-	/** 
+	/**
 	 * @return Returns the K&R settings.
 	 */
 	public static Map<String, String> getKandRSettings() {
 		return DefaultCodeFormatterConstants.getKandRSettings();
 	}
 
-	/** 
+	/**
 	 * @return Returns the ANSI settings.
 	 */
 	public static Map<String, String> getAllmanSettings() {
 		return DefaultCodeFormatterConstants.getAllmanSettings();
 	}
 
-	/** 
+	/**
 	 * @return Returns the GNU settings.
 	 */
 	public static Map<String, String> getGNUSettings() {
 		return DefaultCodeFormatterConstants.getGNUSettings();
 	}
 
-	/** 
+	/**
 	 * @return Returns the Whitesmiths settings.
 	 */
 	public static Map<String, String> getWhitesmithsSettings() {
@@ -140,7 +138,7 @@ public class FormatterProfileManager extends ProfileManager {
 			// request from bug 129427
 			profileId = DefaultScope.INSTANCE.getNode(CUIPlugin.PLUGIN_ID).get(PROFILE_KEY, null);
 			// fix for bug 89739
-			//			if (DEFAULT_PROFILE.equals(profileId)) { // default default: 
+			//			if (DEFAULT_PROFILE.equals(profileId)) { // default default:
 			//				IEclipsePreferences node= instanceScope.getNode(CCorePlugin.PLUGIN_ID);
 			//				if (node != null) {
 			//					String tabSetting= node.get(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, null);

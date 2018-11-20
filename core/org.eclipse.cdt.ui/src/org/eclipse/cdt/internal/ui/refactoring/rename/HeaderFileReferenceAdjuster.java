@@ -26,6 +26,42 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.IASTComment;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.index.IIndexFile;
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexInclude;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
+import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
+import org.eclipse.cdt.internal.core.model.SourceRoot;
+import org.eclipse.cdt.internal.core.util.TextUtil;
+import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeCreationContext;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
+import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.refactoring.CTextFileChange;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -54,45 +90,6 @@ import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 import org.eclipse.text.edits.TextEditGroup;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.IASTComment;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorIncludeStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.index.IIndexFile;
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IIndexInclude;
-import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.core.settings.model.ICSourceEntry;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.refactoring.CTextFileChange;
-import org.eclipse.cdt.utils.PathUtil;
-
-import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.ASTCommenter;
-import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
-import org.eclipse.cdt.internal.core.dom.rewrite.util.ASTNodes;
-import org.eclipse.cdt.internal.core.model.SourceRoot;
-import org.eclipse.cdt.internal.core.util.TextUtil;
-import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-import org.eclipse.cdt.internal.corext.codemanipulation.StyledInclude;
-
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeCreationContext;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeGroupStyle;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludePreferences;
-import org.eclipse.cdt.internal.ui.refactoring.includes.IncludeUtil;
-
 /**
  * Updates include statements and include guards in response to file or folder move or rename.
  */
@@ -112,7 +109,7 @@ public class HeaderFileReferenceAdjuster {
 	 * @param movedFiles keys are files being moved or renamed, values are new, not yet existing,
 	 *     files
 	 * @param renamedContainers keys are folders and projects being renamed, values are new,
-	 *     not yet existing folders and projects. 
+	 *     not yet existing folders and projects.
 	 * @param processor the refactoring processor
 	 */
 	public HeaderFileReferenceAdjuster(Map<IFile, IFile> movedFiles, Map<IContainer, IContainer> renamedContainers,

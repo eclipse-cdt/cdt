@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Display;
 public class FPRenderingPreferenceInitializer extends AbstractPreferenceInitializer {
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#
 	 * initializeDefaultPreferences()
 	 */

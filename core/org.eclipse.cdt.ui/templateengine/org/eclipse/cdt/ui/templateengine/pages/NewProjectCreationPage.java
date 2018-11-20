@@ -16,13 +16,12 @@ package org.eclipse.cdt.ui.templateengine.pages;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.templateengine.IWizardDataPage;
 
 /**
  * The first page in a NewProjectWizard. This is the wizard page that
@@ -38,7 +37,7 @@ public class NewProjectCreationPage extends WizardNewProjectCreationPage impleme
 
 	public NewProjectCreationPage(String name) {
 		super(name);
-		data = new HashMap<String, String>();
+		data = new HashMap<>();
 		this.setDescription(Messages.getString("NewProjectCreationPage.3")); //$NON-NLS-1$
 	}
 

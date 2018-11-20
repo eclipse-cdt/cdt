@@ -41,7 +41,7 @@ public interface IOptionCategory extends IBuildObject {
 	/**
 	 * Returns an array of ITool/IOption pairs for the options in this category
 	 * for a given configuration.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public Object[][] getOptions(IConfiguration configuration, IHoldsOptions optHolder);
@@ -55,7 +55,7 @@ public interface IOptionCategory extends IBuildObject {
 	//	/**
 	//	 * Returns an array of ITool/IOption pairs for the options in this category
 	//	 * for a given resource configuration.
-	//	 * 
+	//	 *
 	//	 * @since 3.1
 	//	 */
 	//	public Object[][] getOptions(IResourceConfiguration resConfig, IHoldsOptions optHolder);
@@ -63,7 +63,7 @@ public interface IOptionCategory extends IBuildObject {
 	/**
 	 * Returns an array of ITool/IOption pairs for the options in this category
 	 * for a given resource configuration.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public Object[][] getOptions(IResourceInfo resInfo, IHoldsOptions optHolder);
@@ -83,7 +83,7 @@ public interface IOptionCategory extends IBuildObject {
 	/**
 	 * Returns the tool that ultimately owns this category.
 	 * If owned by a toolChain return null.
-	 * 
+	 *
 	 * @deprecated since 3.0 - use getOptionHolder() instead
 	 */
 	@Deprecated
@@ -92,12 +92,12 @@ public interface IOptionCategory extends IBuildObject {
 	/**
 	 * Returns the holder (parent) of this category. This may be an object
 	 * implementing ITool or IToolChain, which both extend IHoldsOptions.
-	 * The call can return null, for example the top option category of a tool 
+	 * The call can return null, for example the top option category of a tool
 	 * will return null.
-	 * 
+	 *
 	 * Note that the name getOptionHolder() has been choosen, because Tool implements
 	 * both ITool and IOptionCategory and ITool.getParent() exists already.
-	 *  
+	 *
 	 * @return IHoldsOptions
 	 * @since 3.0
 	 */
@@ -106,17 +106,17 @@ public interface IOptionCategory extends IBuildObject {
 	/**
 	 * Get the path name of an alternative icon for the option group.
 	 * Or null if no alternative icon was defined.
-	 * 
+	 *
 	 * @return URL
 	 * @since 3.0
 	 */
 	public URL getIconPath();
 
 	/**
-	 * Returns <code>true</code> if this element has changes that need to 
+	 * Returns <code>true</code> if this element has changes that need to
 	 * be saved in the project file, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isDirty();
 

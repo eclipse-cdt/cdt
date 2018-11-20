@@ -19,21 +19,21 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * A CBuildConfigurationProvider provides C build configurations.
- * 
+ *
  * @since 6.0
  */
 public interface ICBuildConfigurationProvider {
 
 	/**
 	 * Return the id of this provider
-	 * 
+	 *
 	 * @return provider id
 	 */
 	String getId();
 
 	/**
 	 * Returns the ICBuildConfiguration that owns this build configuration.
-	 * 
+	 *
 	 * @param config
 	 * @return CDT build configuration for the Platform build configuration
 	 */
@@ -42,7 +42,7 @@ public interface ICBuildConfigurationProvider {
 	/**
 	 * Create a new build configuration for a given project using a given
 	 * toolchain and builds for a given launch mode.
-	 * 
+	 *
 	 * @param project
 	 *            project for the config
 	 * @param toolChain
@@ -61,7 +61,7 @@ public interface ICBuildConfigurationProvider {
 	/**
 	 * Return a collection of supported toolchains for build configurations of this
 	 * type.
-	 * 
+	 *
 	 * @since 6.4
 	 */
 	default Collection<IToolChain> getSupportedToolchains(Collection<IToolChain> toolchains) throws CoreException {

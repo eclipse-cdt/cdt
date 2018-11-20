@@ -17,7 +17,7 @@ import java.util.Collection;
 
 /**
  * Static methods for working with strings.
- * 
+ *
  * @since 5.6
  */
 public class StringUtil {

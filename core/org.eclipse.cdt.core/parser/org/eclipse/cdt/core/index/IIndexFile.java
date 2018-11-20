@@ -21,10 +21,10 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents a file that has been indexed.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * 
+ *
  * @since 4.0
  */
 public interface IIndexFile extends IFileNomination {
@@ -52,7 +52,7 @@ public interface IIndexFile extends IFileNomination {
 
 	/**
 	 * Returns all using directives for namespaces and global scope, found in this file.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 * @since 5.0
 	 */
 	ICPPUsingDirective[] getUsingDirectives() throws CoreException;
@@ -60,12 +60,12 @@ public interface IIndexFile extends IFileNomination {
 	/**
 	 * Last modification of file before it was indexed.
 	 * @return the last modification date of the file at the time it was parsed.
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	long getTimestamp() throws CoreException;
 
 	/**
-	 * Time when the file was read during indexing. Corresponds to the start of reading.    
+	 * Time when the file was read during indexing. Corresponds to the start of reading.
 	 * @return time of indexing in milliseconds since epoch
 	 * @throws CoreException
 	 * @since 5.4
@@ -82,7 +82,7 @@ public interface IIndexFile extends IFileNomination {
 
 	/**
 	 * @deprecated Returns 0.
-	 * @noreference This method is not intended to be referenced by clients. 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	@Deprecated
 	int getScannerConfigurationHashcode() throws CoreException;

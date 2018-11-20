@@ -71,7 +71,7 @@ public class LanguageSettingsChangeListener implements ILanguageSettingsChangeLi
 	private void reindex(String cfgId, ILanguageSettingsChangeEvent event) {
 		CModelManager manager = CModelManager.getDefault();
 		ICProject cProject = manager.getCModel().getCProject(event.getProjectName());
-		Set<ICElement> tuSelection = new HashSet<ICElement>();
+		Set<ICElement> tuSelection = new HashSet<>();
 
 		Set<IResource> resources = event.getAffectedResources(cfgId);
 		if (resources != null && !resources.isEmpty()) {

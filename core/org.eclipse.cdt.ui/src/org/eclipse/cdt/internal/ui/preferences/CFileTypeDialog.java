@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
@@ -32,8 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.core.model.CoreModel;
 
 public class CFileTypeDialog extends Dialog {
 
@@ -117,7 +116,7 @@ public class CFileTypeDialog extends Dialog {
 	private void populateTypesCombo() {
 		IContentTypeManager manager = Platform.getContentTypeManager();
 		String[] ids = CoreModel.getRegistedContentTypeIds();
-		ArrayList<IContentType> list = new ArrayList<IContentType>(ids.length);
+		ArrayList<IContentType> list = new ArrayList<>(ids.length);
 		for (String id : ids) {
 			IContentType ctype = manager.getContentType(id);
 			if (ctype != null) {

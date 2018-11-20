@@ -196,7 +196,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 			b_expandVars.setEnabled(external && b_genMakefileAuto.getSelection());
 
 		if (external) { // just set relatet text widget state,
-			checkPressed(b_useDefault, false); // do not update 
+			checkPressed(b_useDefault, false); // do not update
 		}
 		canModify = true;
 	}
@@ -333,7 +333,7 @@ public class BuilderSettingsTab extends AbstractCBuildPropertyTab {
 	}
 
 	/* (non-Javadoc)
-	 * 
+	 *
 	 * @param string
 	 * @return
 	 */

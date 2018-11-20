@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.dialogs.CacheSizeBlock;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.IndexerBlock;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -28,13 +33,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.dialogs.CacheSizeBlock;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
-import org.eclipse.cdt.ui.dialogs.IndexerBlock;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 
 public class IndexerPreferencePage extends PreferencePage implements IWorkbenchPreferencePage, ICOptionContainer {
 	// bug 217860, allow to hide build configuration

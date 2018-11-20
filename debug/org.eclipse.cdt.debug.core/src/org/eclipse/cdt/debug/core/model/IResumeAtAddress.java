@@ -24,14 +24,14 @@ public interface IResumeAtAddress {
 
 	/**
 	 * Returns whether this operation is currently available for this element.
-	 * 
+	 *
 	 * @return whether this operation is currently available
 	 */
 	public boolean canResumeAtAddress(IAddress address);
 
 	/**
 	 * Causes this element to resume the execution at the specified address.
-	 * 
+	 *
 	 * @exception DebugException on failure. Reasons include:
 	 */
 	public void resumeAtAddress(IAddress address) throws DebugException;

@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListFramesInfo;
 
 /**
- * 
+ *
  *     -stack-list-frames [ LOW-FRAME HIGH-FRAME ]
  *
  *  List the frames currently on the stack.  For each frame it displays
@@ -51,7 +51,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIStackListFramesInfo;
  * whole stack.  If given two integer arguments, it shows the frames whose
  * levels are between the two arguments (inclusive).  If the two arguments
  * are equal, it shows the single frame at the corresponding level.
- * 
+ *
  */
 public class MIStackListFrames extends MICommand<MIStackListFramesInfo> {
 	public MIStackListFrames(IMIExecutionDMContext execDmc) {

@@ -37,7 +37,7 @@ public class DecoratingStringFieldEditor extends StringFieldEditor {
 	/**
 	 * Creates a string field editor of unlimited width.
 	 * Use the method <code>setTextLimit</code> to limit the text.
-	 * 
+	 *
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param parent the parent of the field editor's control
@@ -49,7 +49,7 @@ public class DecoratingStringFieldEditor extends StringFieldEditor {
 	/**
 	 * Creates a string field editor.
 	 * Use the method <code>setTextLimit</code> to limit the text.
-	 * 
+	 *
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param width the width of the text input field in characters,
@@ -63,7 +63,7 @@ public class DecoratingStringFieldEditor extends StringFieldEditor {
 	/**
 	 * Creates a string field editor.
 	 * Use the method <code>setTextLimit</code> to limit the text.
-	 * 
+	 *
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param width the width of the text input field in characters,

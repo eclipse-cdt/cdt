@@ -31,8 +31,8 @@ import org.eclipse.core.runtime.Platform;
  * in order to do so.
  * <br><br>
  * If your requirements are very simple, then {@link ExternalExportProjectProvider} may
- * be sufficient for direct usage. 
- * 
+ * be sufficient for direct usage.
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -55,7 +55,7 @@ public interface IExportProjectProvider {
 
 	/**
 	 * The location converter to use on export. This converter will be called to convert
-	 * IIndexFileLocation's to an external form. The external form is implementation dependent. 
+	 * IIndexFileLocation's to an external form. The external form is implementation dependent.
 	 * @param cproject
 	 * @see URIRelativeLocationConverter
 	 * @see ResourceContainerRelativeLocationConverter

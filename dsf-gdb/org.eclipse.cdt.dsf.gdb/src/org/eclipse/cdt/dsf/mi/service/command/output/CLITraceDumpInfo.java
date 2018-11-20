@@ -53,7 +53,7 @@ public class CLITraceDumpInfo extends MIInfo {
 
 	/**
 	 * Alternative constructor.  Use this one to have control if the tdump
-	 * header is kept or not in the result.  
+	 * header is kept or not in the result.
 	 * @param out the output of the tdump printout
 	 * @param keepHeader keep the tdump header in result or not
 	 */
@@ -63,14 +63,14 @@ public class CLITraceDumpInfo extends MIInfo {
 	}
 
 	/**
-	 * Do a quick parse of the tdump printout.  The tdump command printout is 
+	 * Do a quick parse of the tdump printout.  The tdump command printout is
 	 * split in short pieces (records), each one wrapped like this:
 	 * <p>
 	 * ~"eax            0x10"
 	 * <p>
-	 * Also, tabs and newlines are represented by symbols: \n and \t . 
-	 * <p> 
-	 * In this method, we strip the wrapping off each record and translate the 
+	 * Also, tabs and newlines are represented by symbols: \n and \t .
+	 * <p>
+	 * In this method, we strip the wrapping off each record and translate the
 	 * symbols to their value.   The resulting string is not parsed further.
 	 * <p>
 	 * See an example of a tdump printout at the end of this file.
@@ -104,12 +104,12 @@ public class CLITraceDumpInfo extends MIInfo {
 				fTraceFrameNumber = matcher.group(2).trim();
 			}
 
-			// command result has the substrings "\n" and "\t" in it. 
+			// command result has the substrings "\n" and "\t" in it.
 			// replace them by their actual meaning (real newline and tab)
 			fParsedOutput = fParsedOutput.replaceAll("\\\\n", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			fParsedOutput = fParsedOutput.replaceAll("\\\\t+", "\t"); //$NON-NLS-1$ //$NON-NLS-2$
 
-			// Optionaly remove the header line from tdump printout 
+			// Optionaly remove the header line from tdump printout
 			if (!keepHeader) {
 				fParsedOutput = fParsedOutput.replaceFirst("Data collected at tracepoint \\d+, trace frame \\d+:\\n", //$NON-NLS-1$
 						""); //$NON-NLS-1$
@@ -157,7 +157,7 @@ public class CLITraceDumpInfo extends MIInfo {
 	}
 }
 
-/*  
+/*
  * Example of raw output from command tdump:
 
 &"tdump\n"

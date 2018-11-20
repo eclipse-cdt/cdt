@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
@@ -32,7 +32,7 @@ public interface IGdbDebugPreferenceConstants {
 	public static final String PREFIX = GdbPlugin.PLUGIN_ID + "."; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference whether to enable GDB traces. Default is <code>true</code>. 
+	 * Boolean preference whether to enable GDB traces. Default is <code>true</code>.
 	 */
 	public static final String PREF_TRACES_ENABLE = "tracesEnable"; //$NON-NLS-1$
 
@@ -43,12 +43,12 @@ public interface IGdbDebugPreferenceConstants {
 	public static final String PREF_MAX_GDB_TRACES = "maxGdbTraces"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference whether to automatically terminate GDB when the inferior exists. Default is <code>true</code>. 
+	 * Boolean preference whether to automatically terminate GDB when the inferior exists. Default is <code>true</code>.
 	 */
 	public static final String PREF_AUTO_TERMINATE_GDB = "autoTerminateGdb"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference whether to use the advanced Inspect debug text hover. Default is <code>true</code>. 
+	 * Boolean preference whether to use the advanced Inspect debug text hover. Default is <code>true</code>.
 	 * @since 3.0
 	 */
 	public static final String PREF_USE_INSPECTOR_HOVER = "useInspectorHover"; //$NON-NLS-1$
@@ -124,7 +124,7 @@ public interface IGdbDebugPreferenceConstants {
 	/**
 	 * Boolean preference whether to use RTTI for MI variables type
 	 * determination. Default is <code>true</code>.
-	 * 
+	 *
 	 * @since 4.1
 	 */
 	public static final String PREF_USE_RTTI = PREFIX + "useRtti"; //$NON-NLS-1$
@@ -132,7 +132,7 @@ public interface IGdbDebugPreferenceConstants {
 	/**
 	 * Boolean preference whether to use new-console. Default is
 	 * {@link IGDBLaunchConfigurationConstants#DEBUGGER_EXTERNAL_CONSOLE_DEFAULT}
-	 * 
+	 *
 	 * @since 5.4
 	 */
 	public static final String PREF_EXTERNAL_CONSOLE = PREFIX + "externalConsole"; //$NON-NLS-1$
@@ -140,21 +140,21 @@ public interface IGdbDebugPreferenceConstants {
 	/**
 	 * Boolean preference whether to hide or not, the running threads in the debug view.
 	 * Default is <code>false</code>.
-	 * 
+	 *
 	 * @since 4.1
 	 */
 	public static final String PREF_HIDE_RUNNING_THREADS = PREFIX + "hideRunningThreads"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference whether to use the new behavior of the command 
+	 * Boolean preference whether to use the new behavior of the command
 	 * "Show Breakpoints Supported by Selected Target" from the Breakpoints view.
-	 * The original behavior is to only show breakpoints that apply to the current debug 
+	 * The original behavior is to only show breakpoints that apply to the current debug
 	 * session; so all C/C++ breakpoints but not Java ones.
 	 * The new behavior is to only show breakpoints that are actually installed in the current
 	 * debug session.
-	 * 
+	 *
 	 * Default is <code>true</code>.
-	 * 
+	 *
 	 * @since 4.2
 	 */
 	public static final String PREF_AGGRESSIVE_BP_FILTER = PREFIX + "aggressiveBpFilter"; //$NON-NLS-1$
@@ -210,7 +210,7 @@ public interface IGdbDebugPreferenceConstants {
 	/**
 	 * The value is a boolean specifying the default for whether to issue "set
 	 * remotetimout" with the value being {@link #PREF_DEFAULT_REMOTE_TIMEOUT_VALUE}
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public static final String PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED = "defaultRemoteTimeoutEnabled"; //$NON-NLS-1$
@@ -218,7 +218,7 @@ public interface IGdbDebugPreferenceConstants {
 	/**
 	 * The value, if enabled with {@link #PREF_DEFAULT_REMOTE_TIMEOUT_ENABLED}, the
 	 * value for GDB "set remotetimout"
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public static final String PREF_DEFAULT_REMOTE_TIMEOUT_VALUE = "defaultRemoteTimeoutValue"; //$NON-NLS-1$

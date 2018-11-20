@@ -43,6 +43,7 @@ public class CFunctionBreakpoint extends AbstractLineBreakpoint implements ICFun
 	/**
 	 * Returns the type of marker associated with this type of breakpoints
 	 */
+	@Override
 	public String getMarkerType() {
 		return C_FUNCTION_BREAKPOINT_MARKER;
 	}

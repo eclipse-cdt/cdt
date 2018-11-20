@@ -14,9 +14,8 @@
 
 package org.eclipse.cdt.internal.ui.navigator;
 
-import org.eclipse.core.resources.IResource;
-
 import org.eclipse.cdt.internal.ui.viewsupport.ProblemsLabelDecorator;
+import org.eclipse.core.resources.IResource;
 
 /**
  * A {@link ProblemsLabelDecorator} optimized for use with the Common Navigator.

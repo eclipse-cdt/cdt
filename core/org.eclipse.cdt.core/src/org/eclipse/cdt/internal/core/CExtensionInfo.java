@@ -17,7 +17,7 @@ import java.util.HashMap;
 
 public class CExtensionInfo {
 
-	protected HashMap<String, String> attribMap = new HashMap<String, String>(4);
+	protected HashMap<String, String> attribMap = new HashMap<>(4);
 
 	public CExtensionInfo() {
 

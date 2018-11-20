@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -16,6 +16,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
+import org.eclipse.cdt.core.model.AssemblyLanguage;
+import org.eclipse.cdt.internal.ui.text.CCommentScanner;
+import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
+import org.eclipse.cdt.internal.ui.text.TokenStore;
+import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
+import org.eclipse.cdt.internal.ui.text.util.CColorManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.ITokenStore;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.FastPartitioner;
@@ -23,23 +34,10 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.cdt.core.model.AssemblyLanguage;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.ITokenStore;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-
-import org.eclipse.cdt.internal.ui.text.CCommentScanner;
-import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
-import org.eclipse.cdt.internal.ui.text.TokenStore;
-import org.eclipse.cdt.internal.ui.text.asm.AsmPartitionScanner;
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
-
 /**
  * This type shares all scanners and the color manager between
  * its clients.
- * 
+ *
  * @deprecated No longer used within CDT.
  */
 @Deprecated
@@ -71,7 +69,7 @@ public class AsmTextTools {
 	private PreferenceListener fPreferenceListener = new PreferenceListener();
 
 	/**
-	 * Creates a new Asm text tools collection and eagerly creates 
+	 * Creates a new Asm text tools collection and eagerly creates
 	 * and initializes all members of this collection.
 	 */
 	public AsmTextTools(IPreferenceStore store) {
@@ -96,7 +94,7 @@ public class AsmTextTools {
 	}
 
 	/**
-	 * Creates a new Asm text tools collection and eagerly creates 
+	 * Creates a new Asm text tools collection and eagerly creates
 	 * and initializes all members of this collection.
 	 */
 	public AsmTextTools() {
@@ -180,7 +178,7 @@ public class AsmTextTools {
 	/**
 	 * Determines whether the preference change encoded by the given event
 	 * changes the behavior of one its contained components.
-	 * 
+	 *
 	 * @param event the event to be investigated
 	 * @return <code>true</code> if event causes a behavioral change
 	 */
@@ -193,7 +191,7 @@ public class AsmTextTools {
 	/**
 	 * Adapts the behavior of the contained components to the change
 	 * encoded in the given event.
-	 * 
+	 *
 	 * @param event the event to whch to adapt
 	 */
 	protected void adaptToPreferenceChange(PropertyChangeEvent event) {

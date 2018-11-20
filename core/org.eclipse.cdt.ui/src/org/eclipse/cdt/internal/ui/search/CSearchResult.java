@@ -20,6 +20,11 @@ package org.eclipse.cdt.internal.ui.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IIndexName;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -39,13 +44,6 @@ import org.eclipse.ui.IPathEditorInput;
 import org.eclipse.ui.IStorageEditorInput;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.part.FileEditorInput;
-
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 /**
  * @author Doug Schaefer

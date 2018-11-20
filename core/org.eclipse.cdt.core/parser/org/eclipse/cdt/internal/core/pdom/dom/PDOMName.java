@@ -437,7 +437,7 @@ public final class PDOMName implements IIndexFragmentName {
 
 	/**
 	 * Returns an iterator over names in binding. This is a lighter weight alternative to
-	 * the {@link #getNextInBinding()} method. 
+	 * the {@link #getNextInBinding()} method.
 	 */
 	public static IRecordIterator getNameInBindingRecordIterator(Database db, long nameRecord) {
 		if (nameRecord == 0)

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -37,15 +37,15 @@ import org.eclipse.debug.core.model.LaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.IPersistableSourceLocator2;
 
 /**
- * Launches PDA program on a PDA interpretter written in Perl 
+ * Launches PDA program on a PDA interpretter written in Perl
  */
 public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
 		// Need to configure the source locator before creating the launch
-		// because once the launch is created and added to launch manager, 
-		// the adapters will be created for the whole session, including 
+		// because once the launch is created and added to launch manager,
+		// the adapters will be created for the whole session, including
 		// the source lookup adapter.
 		ISourceLocator locator = getSourceLocator(configuration);
 
@@ -159,7 +159,7 @@ public class PDALaunchDelegate extends LaunchConfigurationDelegate {
 	/**
 	 * Throws an exception with a new status containing the given
 	 * message and optional exception.
-	 * 
+	 *
 	 * @param message error message
 	 * @param e underlying exception
 	 * @throws CoreException

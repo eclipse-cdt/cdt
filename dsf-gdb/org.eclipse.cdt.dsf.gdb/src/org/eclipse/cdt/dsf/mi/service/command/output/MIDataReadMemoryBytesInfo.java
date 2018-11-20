@@ -10,16 +10,16 @@
  *
  * Contributors:
  *     Vladimir Prus (CodeSourcery) - Initial API and implementation
- *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)     
+ *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
 
 import org.eclipse.debug.core.model.MemoryByte;
 
-/** 
+/**
  * Example output is:
- * 
+ *
  *     (gdb)
  *     -data-read-memory-bytes &a 10
  *     ^done,memory=[{begin="0xbffff154",offset="0x00000000",

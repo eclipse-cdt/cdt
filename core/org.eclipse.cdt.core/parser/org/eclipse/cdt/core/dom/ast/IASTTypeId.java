@@ -48,7 +48,7 @@ public interface IASTTypeId extends IASTNode {
 
 	/**
 	 * Get the abstract declarator.
-	 * 
+	 *
 	 * @return <code>IASTDeclarator</code>
 	 */
 	public IASTDeclarator getAbstractDeclarator();

@@ -32,9 +32,9 @@ public final class ConfigurationSettings {
 	/**
 	 * Constructor.
 	 * @param externalToolName the name of the external tool. The name of the external tool is
-	 * used in the labels of the settings' input fields. For example, assuming that the external 
+	 * used in the labels of the settings' input fields. For example, assuming that the external
 	 * tool's name is "Cppcheck", the input field for entering the path of the executable
-	 * will have the label "Cppcheck Path". 
+	 * will have the label "Cppcheck Path".
 	 * @param defaultPath the default path of the external tool.
 	 * @param defaultArgs the default arguments to pass when invoking the external tool.
 	 */

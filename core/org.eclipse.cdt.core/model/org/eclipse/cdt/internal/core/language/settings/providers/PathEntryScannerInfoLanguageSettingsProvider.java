@@ -69,10 +69,10 @@ public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettin
 		IPath projectPath = cproject.getPath();
 
 		// using map of sets to support specific ordering of entries
-		LinkedHashMap<Integer, Set<IPathEntry>> pathEntriesMap = new LinkedHashMap<Integer, Set<IPathEntry>>();
+		LinkedHashMap<Integer, Set<IPathEntry>> pathEntriesMap = new LinkedHashMap<>();
 		pathEntriesMap.put(IPathEntry.CDT_INCLUDE, new LinkedHashSet<IPathEntry>());
 		// keep macros sorted
-		pathEntriesMap.put(IPathEntry.CDT_MACRO, new TreeSet<IPathEntry>(new Comparator<IPathEntry>() {
+		pathEntriesMap.put(IPathEntry.CDT_MACRO, new TreeSet<>(new Comparator<IPathEntry>() {
 			@Override
 			public int compare(IPathEntry macro1, IPathEntry macro2) {
 				if (macro1 instanceof IMacroEntry && macro2 instanceof IMacroEntry) {
@@ -120,7 +120,7 @@ public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettin
 			CCorePlugin.log(e);
 		}
 
-		Set<ICLanguageSettingEntry> lsEntries = new LinkedHashSet<ICLanguageSettingEntry>();
+		Set<ICLanguageSettingEntry> lsEntries = new LinkedHashSet<>();
 		for (Entry<Integer, Set<IPathEntry>> entrySet : pathEntriesMap.entrySet()) {
 			Set<IPathEntry> pathEntries = entrySet.getValue();
 			for (IPathEntry pathEntry : pathEntries) {
@@ -131,7 +131,7 @@ public class PathEntryScannerInfoLanguageSettingsProvider extends LanguageSettin
 			}
 		}
 
-		return LanguageSettingsSerializableStorage.getPooledList(new ArrayList<ICLanguageSettingEntry>(lsEntries));
+		return LanguageSettingsSerializableStorage.getPooledList(new ArrayList<>(lsEntries));
 	}
 
 	private void collectPathEntry(LinkedHashMap<Integer, Set<IPathEntry>> pathEntriesMap, IPath projectPath,

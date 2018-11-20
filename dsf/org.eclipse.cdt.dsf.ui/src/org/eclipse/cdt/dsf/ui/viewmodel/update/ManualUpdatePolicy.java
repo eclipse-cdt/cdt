@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -29,9 +29,9 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.graphics.RGB;
 
 /**
- * An "manual" update policy which causes the view model provider cache to be 
- * flushed only as a result of an explicit user action.    
- * 
+ * An "manual" update policy which causes the view model provider cache to be
+ * flushed only as a result of an explicit user action.
+ *
  * @since 1.0
  */
 public class ManualUpdatePolicy implements IVMUpdatePolicy {
@@ -73,8 +73,8 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
 					.getRGB(IDsfDebugUIConstants.PREF_COLOR_STALE_DATA_BACKGROUND);
 			for (ILabelUpdate update : updates) {
 				update.setLabel(ViewModelUpdateMessages.ManualUpdatePolicy_InitialDataElement__label, 0);
-				// Set the stale data color to the label.  Use foreground color if column modes are enabled, and 
-				// background color when there are no columns.  
+				// Set the stale data color to the label.  Use foreground color if column modes are enabled, and
+				// background color when there are no columns.
 				if (update.getColumnIds() != null) {
 					update.setForeground(staleDataForeground, 0);
 				} else {
@@ -173,14 +173,14 @@ public class ManualUpdatePolicy implements IVMUpdatePolicy {
 
 	@Override
 	public Object[] getInitialRootElementChildren(Object rootElement) {
-		// Return an dummy element to show in the view.  The user will 
+		// Return an dummy element to show in the view.  The user will
 		// need to refresh the view to retrieve this data from the model.
 		return new Object[] { new BlankDataElement() };
 	}
 
 	@Override
 	public Map<String, Object> getInitialRootElementProperties(Object rootElement) {
-		// Return an empty set of properties for the root element.  The user will 
+		// Return an empty set of properties for the root element.  The user will
 		// need to refresh the view to retrieve this data from the model.
 		return Collections.emptyMap();
 	}

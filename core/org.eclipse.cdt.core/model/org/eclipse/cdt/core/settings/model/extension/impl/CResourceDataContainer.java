@@ -70,7 +70,7 @@ public class CResourceDataContainer {
 	}
 
 	public List<CResourceData> getRcDataList(final int kind) {
-		final List<CResourceData> list = new ArrayList<CResourceData>();
+		final List<CResourceData> list = new ArrayList<>();
 		fRcDataContainer.accept(new IPathSettingsContainerVisitor() {
 
 			@Override

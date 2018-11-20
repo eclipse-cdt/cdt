@@ -15,6 +15,7 @@ package org.eclipse.cdt.debug.internal.ui.views;
 
 import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * A debug view that uses an event handler to update its
@@ -29,7 +30,7 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 
 	/**
 	 * Sets the event handler for this view
-	 * 
+	 *
 	 * @param eventHandler event handler
 	 */
 	protected void setEventHandler(AbstractDebugEventHandler eventHandler) {
@@ -38,7 +39,7 @@ public abstract class AbstractDebugEventHandlerView extends AbstractDebugView {
 
 	/**
 	 * Returns the event handler for this view
-	 * 
+	 *
 	 * @return The event handler for this view
 	 */
 	protected AbstractDebugEventHandler getEventHandler() {

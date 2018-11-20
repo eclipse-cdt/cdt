@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 
 /**
  * This interface extends IRunControl to let a service support the
- * "Run to Line," "Move to Line," and "Resume at Line" commands. 
+ * "Run to Line," "Move to Line," and "Resume at Line" commands.
  * @since 2.1
  */
 public interface IRunControl2 extends IRunControl {
@@ -27,7 +27,7 @@ public interface IRunControl2 extends IRunControl {
 	/**
 	 * Returns whether the service can run the specified context to
 	 * a source file and line number.
-	 * 
+	 *
 	 * @param context the execution DM context
 	 * @param sourceFile the source file path, mapped to a debugger path if possible.
 	 * @param lineNumber the line number offset (one-based) into the source file
@@ -40,7 +40,7 @@ public interface IRunControl2 extends IRunControl {
 	 * If skipBreakpoints is false, any other breakpoint will stop this
 	 * command; while if skipBreakpoints is true, the operation will ignore
 	 * other breakpoints and continue until the specified location.
-	 * 
+	 *
 	 * @param context the execution DM context
 	 * @param sourceFile the source file path, mapped to a debugger path if possible.
 	 * @param lineNumber the line number offset into (one-based) the source file
@@ -53,7 +53,7 @@ public interface IRunControl2 extends IRunControl {
 	/**
 	 * Returns whether the service can run the specified context to
 	 * a specified address.
-	 * 
+	 *
 	 * @param context the execution DM context
 	 * @param address the address specifier
 	 * @param rm the DataRequestMonitor that will return the result
@@ -65,7 +65,7 @@ public interface IRunControl2 extends IRunControl {
 	 * If skipBreakpoints is false, any other breakpoint will stop this
 	 * command; while if skipBreakpoints is true, the operation will ignore
 	 * other breakpoints and continue until the specified location.
-	 * 
+	 *
 	 * @param context the execution DM context
 	 * @param address the address specifier
 	 * @param skipBreakpoints the skip breakpoints
@@ -76,7 +76,7 @@ public interface IRunControl2 extends IRunControl {
 	/**
 	 * Determines if the service can move the program counter to the specified
 	 * source location.
-	 * 
+	 *
 	 * @param context the execution DM context
 	 * @param sourceFile the source file path, mapped to a debugger path if possible.
 	 * @param lineNumber the line number offset (one-based) into the source file
@@ -89,7 +89,7 @@ public interface IRunControl2 extends IRunControl {
 	/**
 	 * Moves the program counter for the specified context to the specified
 	 * source location.
-	 * 
+	 *
 	 * @param context the execution DM context
 	 * @param sourceFile the source file path, mapped to a debugger path if possible.
 	 * @param lineNumber the line number offset (one-based) into the source file
@@ -101,7 +101,7 @@ public interface IRunControl2 extends IRunControl {
 	/**
 	 * Determines if the service can move the program counter to the specified
 	 * address.
-	 * 
+	 *
 	 * @param context the execution DM context
 	 * @param address the address specifier
 	 * @param resume resume execution after moving the PC
@@ -113,7 +113,7 @@ public interface IRunControl2 extends IRunControl {
 	/**
 	 * Moves the program counter for the specified context to the specified
 	 * address.
-	 * 
+	 *
 	 * @param context the execution DM context
 	 * @param address the address specifier
 	 * @param resume resume execution after moving the PC

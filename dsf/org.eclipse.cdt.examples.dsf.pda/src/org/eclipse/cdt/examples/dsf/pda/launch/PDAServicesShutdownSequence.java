@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.Status;
  * session.  If any of the individual steps fail, the shutdown will abort.
  * <p>
  * Services are shut down in the reverse order of initialization.
- * </p>   
+ * </p>
  */
 public class PDAServicesShutdownSequence extends Sequence {
 
@@ -51,7 +51,7 @@ public class PDAServicesShutdownSequence extends Sequence {
 
 		@Override
 		public void rollBack(RequestMonitor requestMonitor) {
-			// In case the shutdown sequence aborts, ensure that the 
+			// In case the shutdown sequence aborts, ensure that the
 			// tracker is properly disposed.
 			fTracker.dispose();
 			fTracker = null;

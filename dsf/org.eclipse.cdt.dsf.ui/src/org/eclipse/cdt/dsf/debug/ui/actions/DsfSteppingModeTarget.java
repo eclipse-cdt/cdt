@@ -23,7 +23,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * 
+ *
  * @since 1.0
  */
 public class DsfSteppingModeTarget implements ISteppingModeTarget, ITargetProperties {

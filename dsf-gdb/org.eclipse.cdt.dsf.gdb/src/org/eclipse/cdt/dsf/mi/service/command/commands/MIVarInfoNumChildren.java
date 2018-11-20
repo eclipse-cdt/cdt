@@ -20,13 +20,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoNumChildrenInfo;
 
 /**
- * 
+ *
  * -var-info-num-children NAME
- * 
+ *
  * Returns the number of children of a variable object NAME:
- * 
+ *
  * numchild=N
- * 
+ *
  * Note that this number is not completely reliable for a dynamic varobjs. It
  * will return the current number of children, but more children may be
  * available.

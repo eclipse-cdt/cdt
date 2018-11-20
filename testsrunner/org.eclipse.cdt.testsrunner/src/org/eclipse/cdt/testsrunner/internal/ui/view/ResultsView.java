@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -54,7 +54,7 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Represents view orientation
-	 * 
+	 *
 	 * @note <code>Auto</code> state may be not acceptable for some methods (see
 	 * their comments for details).
 	 */
@@ -224,7 +224,7 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Changes the view orientation
-	 * 
+	 *
 	 * @param orientation new view orientation (Horizontal, Vertical, Auto)
 	 */
 	public void setOrientation(Orientation orientation) {
@@ -252,7 +252,7 @@ public class ResultsView extends ViewPart {
 	/**
 	 * Recalculates actual view orientation depending on the specified by user
 	 * orientation value and current view size.
-	 * 
+	 *
 	 * @param orientation by user specified orientation
 	 * @return actual orientation
 	 */
@@ -282,7 +282,7 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Changes the view caption.
-	 * 
+	 *
 	 * @param message new view caption
 	 */
 	public void setCaption(String message) {
@@ -297,7 +297,7 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Restores the value of the checkable action.
-	 * 
+	 *
 	 * @param memento previously saved state to restore the action value from
 	 * @param key tag name that is used to restore the value
 	 * @param action action to restore
@@ -312,7 +312,7 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Restores the state of the view.
-	 * 
+	 *
 	 * @param memento previously saved state
 	 */
 	private void restoreState(IMemento memento) {
@@ -356,7 +356,7 @@ public class ResultsView extends ViewPart {
 
 	/**
 	 * Returns whether the view was disposed.
-	 * 
+	 *
 	 * @return true if the view was disposed
 	 */
 	public boolean isDisposed() {

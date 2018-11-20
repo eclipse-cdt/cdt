@@ -208,10 +208,10 @@ public class GdbVariableVMNode extends VariableVMNode {
 			}
 			return super.getAdapter(adapter);
 		}
-	};
+	}
 
 	private static boolean isConvenienceVariable(String expr) {
-		// GDB convenience variables are variables that start with a $ followed 
+		// GDB convenience variables are variables that start with a $ followed
 		// by at least one digit.
 		// Note that registers also start with a $, so we need to make sure
 		// there is a digit immediately following the $.
@@ -264,7 +264,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 
 	/**
 	 * The special context representing more children to be available.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public class IncompleteChildrenVMC extends AbstractVMContext {
@@ -294,10 +294,10 @@ public class GdbVariableVMNode extends VariableVMNode {
 	/**
 	 * Maps expressions to their current limit on the maximum number of children.
 	 */
-	private Map<IExpressionDMContext, Integer> childCountLimits = new HashMap<IExpressionDMContext, Integer>();
+	private Map<IExpressionDMContext, Integer> childCountLimits = new HashMap<>();
 
 	/**
-	 * Utility method to create an IStatus object for an internal error 
+	 * Utility method to create an IStatus object for an internal error
 	 */
 	private static Status internalError() {
 		return new Status(Status.ERROR, GdbUIPlugin.getUniqueIdentifier(), Messages.Internal_Error);
@@ -317,7 +317,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 	 * "Add Watchpoint" context menu appears for variables and expressions in
 	 * GDB-DSF sessions but not necessarily other DSF-based sessions [bugzilla
 	 * 248606]
-	 * 
+	 *
 	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.variable.VariableVMNode#createVMContext(org.eclipse.cdt.dsf.datamodel.IDMContext)
 	 */
 	@Override
@@ -418,7 +418,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 
 	@Override
 	public void update(IPropertiesUpdate[] updates) {
-		List<IPropertiesUpdate> realExpressions = new ArrayList<IPropertiesUpdate>();
+		List<IPropertiesUpdate> realExpressions = new ArrayList<>();
 
 		for (IPropertiesUpdate update : updates) {
 			if (update.getElement() instanceof IncompleteChildrenVMC) {
@@ -450,10 +450,10 @@ public class GdbVariableVMNode extends VariableVMNode {
 	 * The given expression context requires a child count limit. If a limit
 	 * is already available from preceding calls, obtain this limit. Otherwise
 	 * calculate the initial value, store it, and return it.
-	 * 
+	 *
 	 * @param expressionDMC
 	 * @return The child count limit to apply for the given expression.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected int getOrInitChildCountLimit(IExpressionDMContext expressionDMC) {
@@ -472,7 +472,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 	 * @return The currently stored child count limit for the given expression,
 	 *         or {@link Integer#MAX_VALUE} if no child count limit is currently
 	 *         stored.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected int getChildCountLimit(IExpressionDMContext expressionDMC) {
@@ -501,7 +501,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 	/**
 	 * Increment the child count limit by the default increment.
 	 * This implementation doubles the current limit.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void incrementChildCountLimit(IExpressionDMContext expressionDMC) {
@@ -605,7 +605,7 @@ public class GdbVariableVMNode extends VariableVMNode {
 			parentDelta = parentDelta.addNode(path.getSegment(i), IModelDelta.NO_CHANGE);
 		}
 
-		// Add the node for the expression. This one changed, of course. 
+		// Add the node for the expression. This one changed, of course.
 		final VMDelta expressionDelta = parentDelta.addNode(path.getSegment(path.getSegmentCount() - 2),
 				IModelDelta.CONTENT);
 

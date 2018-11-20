@@ -14,6 +14,17 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.IFunctionSummary.IFunctionPrototypeSummary;
+import org.eclipse.cdt.ui.IRequiredInclude;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
+import org.eclipse.cdt.ui.text.IHoverHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -21,19 +32,6 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Region;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.IEditorInput;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IFunctionSummary;
-import org.eclipse.cdt.ui.IFunctionSummary.IFunctionPrototypeSummary;
-import org.eclipse.cdt.ui.IRequiredInclude;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-import org.eclipse.cdt.ui.text.IHoverHelpInvocationContext;
-
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.text.HTMLPrinter;
 
 public class CDocHover extends AbstractCEditorTextHover {
 
@@ -109,7 +107,7 @@ public class CDocHover extends AbstractCEditorTextHover {
 						buffer.append("<br>"); //$NON-NLS-1$
 						if (count++ > 4) {
 							buffer.append("...<br>"); //$NON-NLS-1$
-							break; // too long list: do not display all 
+							break; // too long list: do not display all
 						}
 					}
 				}

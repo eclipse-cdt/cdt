@@ -19,6 +19,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -38,14 +42,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
-
 /**
- * The dialog to create a new profile. 
+ * The dialog to create a new profile.
  */
 public class CreateProfileDialog extends StatusDialog {
 
@@ -193,7 +191,7 @@ public class CreateProfileDialog extends StatusDialog {
 
 		CUIPlugin.getDefault().getDialogSettings().put(PREF_OPEN_EDIT_DIALOG, fOpenEditDialog);
 
-		final Map<String, String> baseSettings = new HashMap<String, String>(
+		final Map<String, String> baseSettings = new HashMap<>(
 				(fSortedProfiles.get(fProfileCombo.getSelectionIndex())).getSettings());
 		final String profileName = fNameText.getText();
 

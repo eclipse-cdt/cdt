@@ -42,109 +42,109 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	public static final int op_typeof = 3;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_has_nothrow_assign = 4;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_has_nothrow_copy = 5;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_has_nothrow_constructor = 6;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_has_trivial_assign = 7;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_has_trivial_copy = 8;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_has_trivial_constructor = 9;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_has_trivial_destructor = 10;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_has_virtual_destructor = 11;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_is_abstract = 12;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_is_class = 13;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_is_empty = 14;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_is_enum = 15;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_is_pod = 16;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_is_polymorphic = 17;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.3
 	 */
 	public static final int op_is_union = 18;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.5
 	 */
 	public static final int op_is_literal_type = 19;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.5
 	 */
 	public static final int op_is_standard_layout = 20;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.5
 	 */
 	public static final int op_is_trivial = 21;
@@ -156,20 +156,20 @@ public interface IASTTypeIdExpression extends IASTExpression {
 	public static final int op_sizeofParameterPack = 22;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 5.6
 	 */
 	public static final int op_is_final = 23;
 
 	/**
-	 * Built-in type trait of g++. 
+	 * Built-in type trait of g++.
 	 * @since 6.0
 	 */
 	public static final int op_is_trivially_copyable = 24;
 
 	/**
 	 * Returns the operator for the expression.
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getOperator();

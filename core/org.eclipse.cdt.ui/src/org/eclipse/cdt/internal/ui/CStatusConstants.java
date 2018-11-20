@@ -15,7 +15,7 @@
 package org.eclipse.cdt.internal.ui;
 
 /**
- * Defines status codes relevant to the C UI plug-in. When a 
+ * Defines status codes relevant to the C UI plug-in. When a
  * Core exception is thrown, it contain a status object describing
  * the cause of the exception. The status objects originating from the
  * C UI plug-in use the codes defined in this interface.

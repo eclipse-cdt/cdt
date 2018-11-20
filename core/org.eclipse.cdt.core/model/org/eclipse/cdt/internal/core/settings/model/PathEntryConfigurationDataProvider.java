@@ -247,7 +247,7 @@ public class PathEntryConfigurationDataProvider extends CConfigurationDataProvid
 		ICProject cproject = manager.create(project);
 		IPathEntry[] curRawEntries = PathEntryManager.getDefault().getRawPathEntries(cproject);
 
-		List<IPathEntry> list = new ArrayList<IPathEntry>();
+		List<IPathEntry> list = new ArrayList<>();
 		list.addAll(Arrays.asList(entries));
 		for (int i = 0; i < curRawEntries.length; i++) {
 			if (curRawEntries[i].getEntryKind() == IPathEntry.CDT_CONTAINER) {

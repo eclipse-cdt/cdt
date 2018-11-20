@@ -25,7 +25,7 @@ import org.eclipse.cdt.managedbuilder.core.IOutputType;
 
 public class BuildIOType implements IBuildIOType {
 	private BuildStep fStep;
-	private List<BuildResource> fResources = new ArrayList<BuildResource>();
+	private List<BuildResource> fResources = new ArrayList<>();
 	private boolean fIsInput;
 	private boolean fIsPrimary;
 	private String fLinkId;

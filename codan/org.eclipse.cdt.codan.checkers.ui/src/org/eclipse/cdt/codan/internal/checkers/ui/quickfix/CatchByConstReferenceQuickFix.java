@@ -30,6 +30,7 @@ public class CatchByConstReferenceQuickFix extends CatchByReferenceQuickFix {
 		return Messages.CatchByConstReferenceQuickFix_Message;
 	}
 
+	@Override
 	protected Optional<IASTDeclSpecifier> getNewDeclSpecifier(IASTSimpleDeclaration declaration) {
 		IASTDeclSpecifier declSpecifier = declaration.getDeclSpecifier();
 		IASTDeclSpecifier replacement = declSpecifier.copy(CopyStyle.withLocations);

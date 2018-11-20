@@ -42,7 +42,7 @@ public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettin
 	@Override
 	public List<ICLanguageSettingEntry> getSettingEntries(ICConfigurationDescription cfgDescription, IResource rc,
 			String languageId) {
-		List<ICLanguageSettingEntry> entries = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> entries = new ArrayList<>();
 		IScannerInfoProvider scannerInfoProvider = getScannerInfoProvider(cfgDescription);
 		if (scannerInfoProvider != null) {
 			IScannerInfo si = scannerInfoProvider.getScannerInformation(rc);
@@ -69,7 +69,7 @@ public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettin
 
 	/**
 	 * Return ScannerInfoProvider defined in configuration metadata in .cproject.
-	 * 
+	 *
 	 * @param cfgDescription - configuration description.
 	 * @return an instance of ScannerInfoProvider or {@code null}.
 	 */
@@ -128,7 +128,7 @@ public class ScannerInfoExtensionLanguageSettingsProvider extends LanguageSettin
 	private void addDefinedSymbols(List<ICLanguageSettingEntry> entries, IScannerInfo si) {
 		Map<String, String> definedSymbols = si.getDefinedSymbols();
 		if (definedSymbols != null) {
-			for (Entry<String, String> entry : new TreeMap<String, String>(definedSymbols).entrySet()) {
+			for (Entry<String, String> entry : new TreeMap<>(definedSymbols).entrySet()) {
 				String name = entry.getKey();
 				String value = entry.getValue();
 				entries.add(CDataUtil.createCMacroEntry(name, value, 0));

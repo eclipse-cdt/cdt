@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -85,7 +85,7 @@ public class MemberVariableTests extends TestBase {
 	//		int x;
 	//	};
 	//	struct S {
-	//		T t{5};	
+	//		T t{5};
 	//		int i = t.x * 2;
 	//	};
 	//	constexpr int f() {
@@ -117,7 +117,7 @@ public class MemberVariableTests extends TestBase {
 	}
 
 	//    struct S {
-	//    	static const int x = 5;	
+	//    	static const int x = 5;
 	//    };
 	//    constexpr int f() {
 	//    	return S::x;

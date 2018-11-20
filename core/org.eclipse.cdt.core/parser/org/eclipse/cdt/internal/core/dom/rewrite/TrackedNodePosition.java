@@ -14,12 +14,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.rewrite;
 
-import org.eclipse.text.edits.TextEdit;
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.rewrite.ITrackedNodePosition;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.text.edits.TextEdit;
+import org.eclipse.text.edits.TextEditGroup;
 
 /**
  * @see org.eclipse.cdt.core.dom.rewrite.ITrackedNodePosition

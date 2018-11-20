@@ -61,7 +61,7 @@ public abstract class AbstractDisassemblyBackend implements IDisassemblyBackend 
 
 	/**
 	 * Default error handler, sub-class can override this method to provide it's own error handling.
-	 *  
+	 *
 	 * @param status
 	 */
 	protected void handleError(final IStatus status) {

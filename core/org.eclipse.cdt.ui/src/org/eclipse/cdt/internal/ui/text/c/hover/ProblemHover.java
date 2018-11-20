@@ -18,6 +18,17 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
+import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposalComparator;
+import org.eclipse.cdt.internal.ui.text.correction.CCorrectionProcessor;
+import org.eclipse.cdt.internal.ui.text.correction.CorrectionContext;
+import org.eclipse.cdt.internal.ui.text.correction.ProblemLocation;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.IProblemLocation;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.Position;
@@ -28,19 +39,6 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.ui.texteditor.spelling.SpellingAnnotation;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.IProblemLocation;
-
-import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
-import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposalComparator;
-import org.eclipse.cdt.internal.ui.text.correction.CCorrectionProcessor;
-import org.eclipse.cdt.internal.ui.text.correction.CorrectionContext;
-import org.eclipse.cdt.internal.ui.text.correction.ProblemLocation;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * This annotation hover shows the description of the
@@ -87,7 +85,7 @@ public class ProblemHover extends AbstractAnnotationHover {
 			if (!SpellingAnnotation.TYPE.equals(cAnnotation.getType()))
 				return NO_PROPOSALS;
 
-			List<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+			List<ICCompletionProposal> proposals = new ArrayList<>();
 			CCorrectionProcessor.collectCorrections(context, new IProblemLocation[] { location }, proposals);
 			Collections.sort(proposals, new CCompletionProposalComparator());
 
@@ -123,7 +121,7 @@ public class ProblemHover extends AbstractAnnotationHover {
 			CorrectionContext context = new CorrectionContext(tu, sourceViewer, position.getOffset(),
 					position.getLength());
 
-			List<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>();
+			List<ICCompletionProposal> proposals = new ArrayList<>();
 			CCorrectionProcessor.collectProposals(context, model, new Annotation[] { markerAnnotation }, true, false,
 					proposals);
 

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -36,11 +36,13 @@ public class TraditionalRenderingPreferenceAction extends ActionDelegate impleme
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
 	 */
+	@Override
 	public void init(IViewPart view) {
 	}
 
 	protected void showPreferencePage(String id, IPreferencePage page) {
 		BusyIndicator.showWhile(TraditionalRenderingPlugin.getStandardDisplay(), new Runnable() {
+			@Override
 			public void run() {
 				PreferencesUtil
 						.createPreferenceDialogOn(TraditionalRenderingPlugin.getShell(), id, new String[] { id }, null)

@@ -34,13 +34,13 @@ public interface IBuildDescriptionFactory {
 	 * @param flags specifies how the build description should be generated
 	 * and what information it should contain.
 	 * Can contain the following flags:
-	 * BuildDescriptionManager.REBUILD, 
+	 * BuildDescriptionManager.REBUILD,
 	 * BuildDescriptionManager.REMOVED,
 	 * BuildDescriptionManager.DEPS,
 	 * BuildDescriptionManager.DEPFILES,
-	 * 
-	 * 
-	 * @see BuildDescriptionManager#REBUILD 
+	 *
+	 *
+	 * @see BuildDescriptionManager#REBUILD
 	 * @see BuildDescriptionManager#REMOVED
 	 * @see BuildDescriptionManager#DEPS
 	 * @see BuildDescriptionManager#DEPFILES
@@ -50,14 +50,14 @@ public interface IBuildDescriptionFactory {
 	IBuildDescription createBuildDescription(IConfiguration cfg, IResourceDelta delta, int flags) throws CoreException;
 
 	/**
-	 * 
+	 *
 	 * returns the supported methods of generation the build description
-	 * 
-	 * @see BuildDescriptionManager#REBUILD 
+	 *
+	 * @see BuildDescriptionManager#REBUILD
 	 * @see BuildDescriptionManager#REMOVED
 	 * @see BuildDescriptionManager#DEPS
 	 * @see BuildDescriptionManager#DEPFILES
-	 * 
+	 *
 	 * @return int
 	 */
 	int getSupportedMethods();

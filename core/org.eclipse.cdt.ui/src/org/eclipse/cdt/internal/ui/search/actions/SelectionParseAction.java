@@ -17,6 +17,11 @@
 
 package org.eclipse.cdt.internal.ui.search.actions;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.search.CSearchMessages;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.action.Action;
@@ -27,13 +32,6 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.ICModelBasedEditor;
-
-import org.eclipse.cdt.internal.ui.search.CSearchMessages;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.StatusLineHandler;
 
 /**
  * @author aniefer

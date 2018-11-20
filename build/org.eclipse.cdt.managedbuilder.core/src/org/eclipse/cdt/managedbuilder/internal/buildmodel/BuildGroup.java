@@ -19,7 +19,7 @@ import java.util.Set;
 import org.eclipse.cdt.managedbuilder.buildmodel.IBuildStep;
 
 public class BuildGroup {
-	private Set<BuildStep> fActions = new HashSet<BuildStep>();
+	private Set<BuildStep> fActions = new HashSet<>();
 	private boolean fNeedsRebuild;
 
 	/* (non-Javadoc)

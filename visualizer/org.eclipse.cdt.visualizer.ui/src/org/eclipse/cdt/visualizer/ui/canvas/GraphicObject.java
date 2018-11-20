@@ -139,11 +139,13 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 	// --- accessors ---
 
 	/** Gets data object associated with this view element. */
+	@Override
 	public Object getData() {
 		return m_data;
 	}
 
 	/** Sets data object associated with this view element. */
+	@Override
 	public void setData(Object data) {
 		m_data = data;
 	}
@@ -222,11 +224,13 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 	}
 
 	/** Returns true if element bounds contains point. */
+	@Override
 	public boolean contains(int x, int y) {
 		return m_bounds.contains(x, y);
 	}
 
 	/** Returns true if element bounds are within specified rectangle. */
+	@Override
 	public boolean isWithin(Rectangle region) {
 		return (region.x <= m_bounds.x && region.y <= m_bounds.y
 				&& region.x + region.width >= m_bounds.x + m_bounds.width
@@ -276,6 +280,7 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 	// --- methods ---
 
 	/** Invoked to allow element to paint itself on the viewer canvas */
+	@Override
 	public void paint(GC gc, boolean decorations) {
 		if (isVisible()) {
 			// Set GC to reflect object properties, if set.
@@ -329,6 +334,7 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 	}
 
 	/** Returns true if object has decorations to paint. */
+	@Override
 	public boolean hasDecorations() {
 		return false;
 	}
@@ -349,20 +355,20 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 
 	/**
 	 * Draws an image on the current canvas graphic element. Where the image is
-	 * located, relative to the graphic object and it's horizontal and vertical 
-	 * scale is configurable. 
-	 * 
+	 * located, relative to the graphic object and it's horizontal and vertical
+	 * scale is configurable.
+	 *
 	 * @param gc
 	 * @param imgPath : Absolute path and name of image to display
 	 * by this margin, in each dimension.
-	 * @param imgRelPositionAndScale : Rectangle object, where x, y  are in % and 
+	 * @param imgRelPositionAndScale : Rectangle object, where x, y  are in % and
 	 *  represent the relative position where the upper left corner of the image
-	 *  will be positioned, relative to the parent graphic object. 
+	 *  will be positioned, relative to the parent graphic object.
 	 *  The width and height are in % and represent the scale of the object relative
-	 *  to the parent object. For example. a relative width and height of 25 means 
-	 *  that the image will be scaled to be 1/4 of the width and height of the parent 
-	 *  graphic object. 
-	 * @throws FileNotFoundException 
+	 *  to the parent object. For example. a relative width and height of 25 means
+	 *  that the image will be scaled to be 1/4 of the width and height of the parent
+	 *  graphic object.
+	 * @throws FileNotFoundException
 	 * @since 1.3
 	 */
 	public void drawImage(GC gc, String imgPath, Rectangle imgRelPositionAndScale) throws FileNotFoundException {
@@ -370,45 +376,45 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 		drawImageWithMargin(gc, imgPath, imgRelPositionAndScale, 0);
 	}
 
-	/** 
+	/**
 	 * Draws an image on the current canvas graphic element. Where the image is
-	 * located, relative to the graphic object and it's horizontal and vertical 
-	 * scale is configurable. 
-	 * 
+	 * located, relative to the graphic object and it's horizontal and vertical
+	 * scale is configurable.
+	 *
 	 * @param gc
 	 * @param imgPath : Absolute path and name of image to draw
 	 * @param sizeAndpos : ImageSizeAndPosition enum value
 	 *  represent the relative position where the upper left corner of the image
-	 *  will be positioned, relative to the parent graphic object. 
+	 *  will be positioned, relative to the parent graphic object.
 	 *  The width and height are in % and represent the scale of the object relative
-	 *  to the parent object. For example. a relative width and height of 25 means 
-	 *  that the image will be scaled to be 1/4 of the width and height of the parent 
-	 *  graphic object. 
-	 * @throws FileNotFoundException 
+	 *  to the parent object. For example. a relative width and height of 25 means
+	 *  that the image will be scaled to be 1/4 of the width and height of the parent
+	 *  graphic object.
+	 * @throws FileNotFoundException
 	 * @since 1.3
 	 */
 	public void drawImage(GC gc, String imgPath, ImageSizeAndPosition sizeAndpos) throws FileNotFoundException {
 		drawImageWithMargin(gc, imgPath, sizeAndpos.getValue(), 0);
 	}
 
-	/** 
+	/**
 	 * Draws an image on the current canvas graphic element. Where the image is
-	 * located, relative to the graphic object and it's horizontal and vertical 
+	 * located, relative to the graphic object and it's horizontal and vertical
 	 * scale is configurable. This version of the method allows to specify a margin,
-	 * in pixels, that is to be left, by reducing the size of the image 
-	 * 
+	 * in pixels, that is to be left, by reducing the size of the image
+	 *
 	 * @param gc
 	 * @param imgPath : Absolute path and name of image to draw
 	 * @param sizeAndpos : ImageSizeAndPosition enum value
 	 *  represent the relative position where the upper left corner of the image
-	 *  will be positioned, relative to the parent graphic object. 
+	 *  will be positioned, relative to the parent graphic object.
 	 *  The width and height are in % and represent the scale of the object relative
-	 *  to the parent object. For example. a relative width and height of 25 means 
-	 *  that the image will be scaled to be 1/4 of the width and height of the parent 
-	 *  graphic object. 
+	 *  to the parent object. For example. a relative width and height of 25 means
+	 *  that the image will be scaled to be 1/4 of the width and height of the parent
+	 *  graphic object.
 	 * @param margin: margin in pixels: the image will be reduced in size
 	 *  by this margin, in each dimension.
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 * @since 1.3
 	 */
 	public void drawImageWithMargin(GC gc, String imgPath, ImageSizeAndPosition sizeAndpos, int margin)
@@ -416,24 +422,24 @@ public class GraphicObject implements IGraphicObject, ITooltipProvider {
 		drawImageWithMargin(gc, imgPath, sizeAndpos.getValue(), margin);
 	}
 
-	/** 
+	/**
 	 * Draws an image on the current canvas graphic element. Where the image is
-	 * located, relative to the graphic object and it's horizontal and vertical 
+	 * located, relative to the graphic object and it's horizontal and vertical
 	 * scale is configurable. This version of the method allows to specify a margin,
-	 * in pixels, that is to be left, by reducing the size of the image 
-	 * 
+	 * in pixels, that is to be left, by reducing the size of the image
+	 *
 	 * @param gc
 	 * @param imgPath : Absolute path and name of image to draw
-	 * @param imgRelPositionAndScale : Rectangle object, where x, y  are in % and 
+	 * @param imgRelPositionAndScale : Rectangle object, where x, y  are in % and
 	 *  represent the relative position where the upper left corner of the image
-	 *  will be positioned, relative to the parent graphic object. 
+	 *  will be positioned, relative to the parent graphic object.
 	 *  The width and height are in % and represent the scale of the object relative
-	 *  to the parent object. For example. a relative width and height of 25 means 
-	 *  that the image will be scaled to be 1/4 of the width and height of the parent 
-	 *  graphic object. 
+	 *  to the parent object. For example. a relative width and height of 25 means
+	 *  that the image will be scaled to be 1/4 of the width and height of the parent
+	 *  graphic object.
 	 * @param margin: margin in pixels: the image will be reduced in size
 	 *  by this margin, in each dimension.
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
 	 * @since 1.3
 	 */
 	public void drawImageWithMargin(GC gc, String imgPath, Rectangle imgRelPositionAndScale, int margin)

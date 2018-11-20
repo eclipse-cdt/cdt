@@ -26,7 +26,7 @@ import org.osgi.framework.Bundle;
 
 /**
  * This supplier is used to suply MBS-predefined macros
- * 
+ *
  * @since 3.0
  */
 public class CdtMacroSupplier extends CoreMacroSupplierBase {
@@ -122,7 +122,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					}
 				}
 			}
-			
+
 			return value;
 		}*/
 
@@ -214,11 +214,11 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					String ext = cfg.getArtifactExtension();
 					if(ext != null && !EMPTY_STRING.equals(ext))
 						name = name + DOT + ext;
-					macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,name); 
+					macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,name);
 				}*/
 		/*		else if("BuildArtifactFileExt".equals(macroName)){	//$NON-NLS-1$
 					String ext = cfg.getArtifactExtension();
-					macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,ext); 
+					macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,ext);
 				}*/
 		/*		else if("BuildArtifactFileBaseName".equals(macroName)){	//$NON-NLS-1$
 					String name = cfg.getArtifactName();
@@ -226,15 +226,15 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					if(targetTool != null){
 						IOutputType pot = targetTool.getPrimaryOutputType();
 						String prefix = pot.getOutputPrefix();
-						
-		
+
+
 						// Resolve any macros in the outputPrefix
 						// Note that we cannot use file macros because if we do a clean
 						// we need to know the actual
 						// name of the file to clean, and cannot use any builder
 						// variables such as $@. Hence
 						// we use the next best thing, i.e. configuration context.
-		
+
 						// figure out the configuration we're using
 						IBuildObject toolParent = targetTool.getParent();
 						IConfiguration config = null;
@@ -246,20 +246,20 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 							config = (IConfiguration) ((IToolChain) toolParent)
 									.getParent();
 						}
-		
+
 						else if (toolParent instanceof IResourceConfiguration) {
 							config = (IConfiguration) ((IResourceConfiguration) toolParent)
 									.getParent();
 						}
-		
+
 						else {
 							// bad
 							throw new AssertionError(
 									"tool parent must be one of configuration, toolchain, or resource configuration");
 						}
-		
+
 						if (config != null) {
-		
+
 							try {
 								prefix = ManagedBuildManager
 										.getBuildMacroProvider()
@@ -270,31 +270,31 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 												IBuildMacroProvider.CONTEXT_CONFIGURATION,
 												config);
 							}
-		
+
 							catch (BuildMacroException e) {
 							}
-		
+
 						}
-		
-						
+
+
 						if(prefix != null && !EMPTY_STRING.equals(prefix))
 							name = prefix + name;
 					}
-					macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,name); 
+					macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,name);
 				}*/
 		/*		else if("BuildArtifactFilePrefix".equals(macroName)){	//$NON-NLS-1$
 					ITool targetTool = cfg.calculateTargetTool();
 					if(targetTool != null){
 						IOutputType pot = targetTool.getPrimaryOutputType();
 						String prefix = pot.getOutputPrefix();
-						
+
 						// Resolve any macros in the outputPrefix
 						// Note that we cannot use file macros because if we do a clean
 						// we need to know the actual
 						// name of the file to clean, and cannot use any builder
 						// variables such as $@. Hence
 						// we use the next best thing, i.e. configuration context.
-		
+
 						// figure out the configuration we're using
 						IBuildObject toolParent = targetTool.getParent();
 						IConfiguration config = null;
@@ -306,20 +306,20 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 							config = (IConfiguration) ((IToolChain) toolParent)
 									.getParent();
 						}
-		
+
 						else if (toolParent instanceof IResourceConfiguration) {
 							config = (IConfiguration) ((IResourceConfiguration) toolParent)
 									.getParent();
 						}
-		
+
 						else {
 							// bad
 							throw new AssertionError(
 									"tool parent must be one of configuration, toolchain, or resource configuration");
 						}
-		
+
 						if (config != null) {
-		
+
 							try {
 								prefix = ManagedBuildManager
 										.getBuildMacroProvider()
@@ -330,12 +330,12 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 												IBuildMacroProvider.CONTEXT_CONFIGURATION,
 												config);
 							}
-		
+
 							catch (BuildMacroException e) {
 							}
-		
+
 						}
-						
+
 						if(prefix == null)
 							prefix = EMPTY_STRING;
 						macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,prefix);
@@ -354,14 +354,14 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 					if(archList == null)
 						archList = new String[0];
 					macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT_LIST,archList);
-					
+
 				}*/
 		/*		else if("ToolChainVersion".equals(macroName)){	//$NON-NLS-1$
 					if(cfg.getToolChain().getVersion() != null)
 						macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,cfg.getToolChain().getVersion().toString());
 				}*/
 		/*		else if("BuilderVersion".equals(macroName)){	//$NON-NLS-1$
-					PluginVersionIdentifier version = cfg.getToolChain().getBuilder().getVersion(); 
+					PluginVersionIdentifier version = cfg.getToolChain().getBuilder().getVersion();
 					if(version != null)
 						macro = new BuildMacro(macroName,IBuildMacro.VALUE_TEXT,version.toString());
 				}*/
@@ -377,7 +377,7 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 	//			value = name.substring(0,index);
 	//		return value;
 	//	}
-	//	
+	//
 	//	private String getExtension(String name){
 	//		String value = null;
 	//		int index = name.lastIndexOf('.');
@@ -490,16 +490,16 @@ public class CdtMacroSupplier extends CoreMacroSupplierBase {
 			IPath workingDirectory = null;
 			IResource owner = cfg.getOwner();
 			IManagedBuildInfo info = ManagedBuildManager.getBuildInfo(owner);
-				
+
 			if(info != null){
 				if(info.getDefaultConfiguration().equals(cfg)){
 					IManagedBuilderMakefileGenerator generator = ManagedBuildManager.getBuildfileGenerator(info.getDefaultConfiguration());
 					generator.initialize((IProject)owner,info,null);
-					
+
 					IPath topBuildDir = generator.getBuildWorkingDir();
 					if(topBuildDir == null)
 						topBuildDir = new Path(info.getConfigurationName());
-	
+
 					IPath projectLocation = owner.getLocation();
 					workingDirectory = projectLocation.append(topBuildDir);
 				}

@@ -85,7 +85,7 @@ public class FPRenderingPreferencePage extends FieldEditorPreferencePage impleme
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */

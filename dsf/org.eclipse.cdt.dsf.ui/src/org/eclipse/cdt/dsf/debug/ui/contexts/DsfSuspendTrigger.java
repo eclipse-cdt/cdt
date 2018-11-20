@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -44,11 +44,11 @@ import org.eclipse.debug.ui.contexts.ISuspendTriggerListener;
 
 /**
  * DSF implementation of the ISuspendTrigger interface.  The suspend trigger
- * is used by the IDE to trigger activation of the debug perspective when 
+ * is used by the IDE to trigger activation of the debug perspective when
  * the debugger suspends.
- *   
+ *
  * @see ISuspendTrigger
- * 
+ *
  * @since 1.0
  */
 @ConfinedToDsfExecutor("fSession.getExecutor()")
@@ -87,7 +87,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 	public void addSuspendTriggerListener(final ISuspendTriggerListener listener) {
 		fListeners.add(listener);
 
-		// Check if an execution context in the model is already suspended.  
+		// Check if an execution context in the model is already suspended.
 		// If so notify the listener.
 		getIsLaunchSuspended(new DataRequestMonitor<Boolean>(ImmediateExecutor.getInstance(), null) {
 			@Override
@@ -190,9 +190,9 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 
 	/**
 	 * Notifies the listeners that a suspend event was received.
-	 * 
+	 *
 	 * @param context
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	@ThreadSafe
@@ -229,10 +229,10 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 	}
 
 	/**
-	 * Retrieves the top-level containers for this launch.  This method should 
-	 * be overriden by specific debugger integrations. 
+	 * Retrieves the top-level containers for this launch.  This method should
+	 * be overriden by specific debugger integrations.
 	 * @param rm
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	@ThreadSafe
@@ -243,10 +243,10 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 	}
 
 	/**
-	 * Checks if the given launch is currently suspended.  
-	 * 
+	 * Checks if the given launch is currently suspended.
+	 *
 	 * @param rm Request monitor.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	@ThreadSafe
@@ -261,7 +261,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 							rm.setData(Boolean.FALSE);
 						}
 						rm.done();
-					};
+					}
 				};
 				int count = 0;
 				for (final IContainerDMContext containerCtx : getData()) {
@@ -273,7 +273,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 										rm.setData(Boolean.TRUE);
 									}
 									crm.done();
-								};
+								}
 							});
 					count++;
 				}
@@ -283,12 +283,12 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 	}
 
 	/**
-	 * Recursively checks if the given container or any of its execution 
+	 * Recursively checks if the given container or any of its execution
 	 * contexts are suspended.
-	 * 
+	 *
 	 * @param container Container to check.
 	 * @param rm Request monitor.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	@ConfinedToDsfExecutor("fSession.getExecutor()")
@@ -340,7 +340,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 								rm.setData(Boolean.FALSE);
 							}
 							rm.done();
-						};
+						}
 					};
 					int count = 0;
 					for (IExecutionDMContext execCtx : getData()) {
@@ -353,7 +353,7 @@ public class DsfSuspendTrigger implements ISuspendTrigger {
 												rm.setData(Boolean.TRUE);
 											}
 											crm.done();
-										};
+										}
 									});
 							count++;
 						}

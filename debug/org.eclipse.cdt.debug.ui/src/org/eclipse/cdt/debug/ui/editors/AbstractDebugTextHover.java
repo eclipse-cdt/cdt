@@ -76,12 +76,12 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * The text hovering support for C/C++ debugger.
- * 
+ *
  * @since 7.0
  */
 public abstract class AbstractDebugTextHover implements ICEditorTextHover, ITextHoverExtension {
 
-	/** 
+	/**
 	 * ASTVisitor checking for side-effect expressions.
 	 */
 	private static class ExpressionChecker extends ASTVisitor {
@@ -152,7 +152,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 
 	/**
 	 * Compute a value for given expression.
-	 * 
+	 *
 	 * @param expression
 	 * @return a result string or <code>null</code> if the expression could not be evaluated
 	 */
@@ -205,7 +205,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 	 * The default implementation uses an AST to compute a valid, side-effect free
 	 * expression.
 	 * </p>
-	 * 
+	 *
 	 * @param textViewer  the underlying text viewer
 	 * @param hoverRegion  the hover region as returned by {@link #getHoverRegion(ITextViewer, int)}
 	 * @return an expression string or <code>null</code> if no valid expression could be computed
@@ -231,7 +231,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 
 	/**
 	 * Compute a valid expression from AST if available.
-	 * 
+	 *
 	 * @param document
 	 * @param hoverRegion
 	 * @return a valid expression string, an empty string to indicate an invalid
@@ -359,7 +359,7 @@ public abstract class AbstractDebugTextHover implements ICEditorTextHover, IText
 			private boolean insideInactiveCode(IASTTranslationUnit ast, int offset) {
 				int inactiveCodeStart = -1;
 				boolean inInactiveCode = false;
-				Stack<Boolean> inactiveCodeStack = new Stack<Boolean>();
+				Stack<Boolean> inactiveCodeStack = new Stack<>();
 
 				IASTPreprocessorStatement[] preprocStmts = ast.getAllPreprocessorStatements();
 

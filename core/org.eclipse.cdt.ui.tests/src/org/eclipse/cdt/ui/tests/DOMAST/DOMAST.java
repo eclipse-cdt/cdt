@@ -9,10 +9,51 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation 
+ *    IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
+import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
+import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTInitializer;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
+import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
+import org.eclipse.cdt.core.dom.ast.IASTProblem;
+import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
+import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTStatement;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeId;
+import org.eclipse.cdt.core.dom.ast.IFunction;
+import org.eclipse.cdt.core.dom.ast.IType;
+import org.eclipse.cdt.core.dom.ast.IVariable;
+import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.parser.ParserUtil;
+import org.eclipse.cdt.core.resources.FileStorage;
+import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
+import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTStringUtil;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -64,50 +105,6 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.eclipse.ui.views.properties.PropertySheet;
-
-import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTArrayModifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
-import org.eclipse.cdt.core.dom.ast.IASTExpression;
-import org.eclipse.cdt.core.dom.ast.IASTInitializer;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTParameterDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTPointerOperator;
-import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
-import org.eclipse.cdt.core.dom.ast.IASTProblem;
-import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTProblemExpression;
-import org.eclipse.cdt.core.dom.ast.IASTProblemStatement;
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTStatement;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTTypeId;
-import org.eclipse.cdt.core.dom.ast.IFunction;
-import org.eclipse.cdt.core.dom.ast.IType;
-import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.c.ICASTDesignator;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorChainInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTConstructorInitializer;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.parser.ParserUtil;
-import org.eclipse.cdt.core.resources.FileStorage;
-import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-
-import org.eclipse.cdt.internal.core.dom.parser.c.CASTTranslationUnit;
-import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTTranslationUnit;
-import org.eclipse.cdt.internal.core.model.ASTStringUtil;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * This is a simple DOM AST View used for development testing.
@@ -550,7 +547,7 @@ public class DOMAST extends ViewPart {
 		/**
 		 * Find an ASTNode in the tree and expand the tree to that node.
 		 * Returns true if successful, false otherwise.
-		 * 
+		 *
 		 * @param offset
 		 * @param findString
 		 * @param searchForward
@@ -1159,7 +1156,7 @@ public class DOMAST extends ViewPart {
 		Runnable runner = null;
 
 		/**
-		 * 
+		 *
 		 */
 		public RunAfterViewOpenJob(String name, Runnable runner) {
 			super(name);
@@ -1185,9 +1182,9 @@ public class DOMAST extends ViewPart {
 	/**
 	* Open the DOM AST View and return a reference to it.  This helper method can also be used to run an
 	* Action after the DOM AST View has been fully loaded (like find/select nodes in the view).
-	* 
+	*
 	* Note:  The action is not guaranteed to run.  An example would be if loading the view is canceled.
-	* 
+	*
 	* @param editor
 	* @param action
 	* @return
@@ -1206,7 +1203,7 @@ public class DOMAST extends ViewPart {
 
 	/**
 	 * Open the DOM AST View and return a reference to it.
-	 * 
+	 *
 	 * @param editor
 	 * @return
 	 */

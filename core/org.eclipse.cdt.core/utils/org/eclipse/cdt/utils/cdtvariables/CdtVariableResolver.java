@@ -28,7 +28,7 @@ import org.eclipse.cdt.internal.core.cdtvariables.CdtMacroSupplier;
 /**
  * Utility class to resolve macro and variable references. Provides fixture to parse ${macro}
  * expressions and replace macros with actual values using {@link IVariableSubstitutor}.
- * 
+ *
  * @since 3.0
  */
 public class CdtVariableResolver {
@@ -77,7 +77,7 @@ public class CdtVariableResolver {
 	/**
 	 * Converts list of strings to one string using given string as delimiter,
 	 * i.e -> "string1:string2:string3"
-	 * 
+	 *
 	 * @param value - list of strings to convert.
 	 * @param listDelimiter - delimiter.
 	 * @return all strings from the list separated with given delimiter.
@@ -101,11 +101,11 @@ public class CdtVariableResolver {
 	 * for each macro reference found. Macros can be inside one another like
 	 * ${workspace_loc:/${ProjName}/} but resolved just once. No recursive or concatenated
 	 * macro names are allowed. It is possible to prevent macro from expanding using backslash \$.
-	 * 
+	 *
 	 * @param string - macro expression.
 	 * @param substitutor - macro resolution provider to retrieve macro values.
 	 * @return resolved string
-	 * 
+	 *
 	 * @throws CdtVariableException if substitutor can't handle the macro and returns null or throws.
 	 */
 	static public String resolveToString(String string, IVariableSubstitutor substitutor) throws CdtVariableException {
@@ -140,7 +140,7 @@ public class CdtVariableResolver {
 			resolved = resolved.replace(VARIABLE_PREFIX, VARIABLE_PREFIX_MASKED);
 			resolved = resolved.replace(VARIABLE_SUFFIX, VARIABLE_SUFFIX_MASKED);
 			buffer.replace(matcher.start(2), matcher.end(2), resolved);
-			// collapse and hide backslashes  \\\\${Macro} -> \\MacroValue or \\\\\${Macro} -> \\${Macro} 
+			// collapse and hide backslashes  \\\\${Macro} -> \\MacroValue or \\\\\${Macro} -> \\${Macro}
 			buffer.replace(matcher.start(1), matcher.end(1),
 					bSlashes.substring(0, nBSlashes / 2).replace(VARIABLE_ESCAPE_CHAR, VARIABLE_ESCAPE_CHAR_MASKED));
 		}
@@ -157,11 +157,11 @@ public class CdtVariableResolver {
 	/**
 	 * finds the macro references in the given string and calls the macro substitutor for each macro found
 	 * this could be used for obtaining the list of macros referenced in the given string, etc.
-	 * 
+	 *
 	 * @param string
 	 * @param substitutor
 	 * @throws CdtVariableException
-	 * 
+	 *
 	 * @deprecated Use {@link #resolveToString} which would do full nested expansion.
 	 */
 	@Deprecated
@@ -173,7 +173,7 @@ public class CdtVariableResolver {
 	 * Resolves array of macros using {@code substitutor} to pull macro's list of values.
 	 * Note that each macro of input array can in turn provide list of values and
 	 * the resulting array combines all of them.
-	 * 
+	 *
 	 * @param values - input array of macros.
 	 * @param substitutor - macro resolution provider to retrieve macro values.
 	 * @param ignoreErrors - if {@code true} then exceptions are caught and ignored.
@@ -194,7 +194,7 @@ public class CdtVariableResolver {
 					throw e;
 			}
 		else {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (String value : values) {
 				String resolved[];
 				try {
@@ -216,7 +216,7 @@ public class CdtVariableResolver {
 	 * Resolves macro ${ListMacro} in the given String to the String-list using substitutor
 	 * to pull macro's list of values. If the provided string is not exactly a single macro
 	 * it is treated as macro expression and result is put into the first element of resulting array.
-	 * 
+	 *
 	 * @param string - input string.
 	 * @param substitutor - macro resolution provider to retrieve macro values.
 	 * @return array of resolved values.
@@ -263,7 +263,7 @@ public class CdtVariableResolver {
 	/**
 	 * Checks the macros integrity for the given context. If test fails {@link CdtVariableException}
 	 * is thrown.
-	 * 
+	 *
 	 * @param info - context information to acquire list of available macros.
 	 * @param substitutor - macro resolution provider to retrieve macro values.
 	 * @throws CdtVariableException propagated up if {@code substitutor} throws.
@@ -287,7 +287,7 @@ public class CdtVariableResolver {
 	/**
 	 * Constructs a macro reference given the macro name
 	 * e.g. if the "macro1" name is passed, returns "${macro1}"
-	 * 
+	 *
 	 * @param name - macro name.
 	 * @return macro variable in form "${macro}"
 	 */

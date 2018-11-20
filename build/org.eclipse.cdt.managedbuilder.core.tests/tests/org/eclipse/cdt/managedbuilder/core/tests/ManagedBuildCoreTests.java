@@ -17,10 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.managedbuilder.core.BuildException;
 import org.eclipse.cdt.managedbuilder.core.IBuilder;
 import org.eclipse.cdt.managedbuilder.core.IConfiguration;
@@ -36,6 +32,10 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.core.Builder;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.junit.Assert;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class ManagedBuildCoreTests extends TestCase {
 	private static IProjectType exeType;
@@ -141,7 +141,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			//
 			ITargetPlatform platform = toolChain.getTargetPlatform();
 
-			List<String> expectedOSListarr = new ArrayList<String>();
+			List<String> expectedOSListarr = new ArrayList<>();
 			String[] expectedOSListTokens = expectedOSList.split(","); //$NON-NLS-1$
 			for (i = 0; i < expectedOSListTokens.length; ++i) {
 				expectedOSListarr.add(expectedOSListTokens[i].trim());
@@ -208,7 +208,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			assertEquals(optionDefaultValue, expectedOptionIdValue1[iconfig]);
 			String optionEnumCmd1 = option.getEnumCommand(optionDefaultValue);
 			assertEquals(optionEnumCmd1, expectedOptionEnumCmd1arr[iconfig]);
-			List<String> expectedEnumList1arr = new ArrayList<String>();
+			List<String> expectedEnumList1arr = new ArrayList<>();
 			String[] expectedEnumList1Tokens = expectedEnumList1.split(","); //$NON-NLS-1$
 			for (i = 0; i < expectedEnumList1Tokens.length; ++i) {
 				expectedEnumList1arr.add(expectedEnumList1Tokens[i].trim());
@@ -314,7 +314,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			IToolChain toolChain = configs[iconfig].getToolChain();
 			assertEquals(toolChain.getName(), (expectedToolChainName[iconfig]));
 
-			List<String> expectedOSListarr = new ArrayList<String>();
+			List<String> expectedOSListarr = new ArrayList<>();
 			String[] expectedOSListTokens = expectedOSList.split(","); //$NON-NLS-1$
 			for (i = 0; i < expectedOSListTokens.length; ++i) {
 				expectedOSListarr.add(expectedOSListTokens[i].trim());
@@ -502,7 +502,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			//
 			IToolChain toolChain = configs[iconfig].getToolChain();
 
-			List<String> expectedOSListarr = new ArrayList<String>();
+			List<String> expectedOSListarr = new ArrayList<>();
 			String[] expectedOSListTokens = expectedOSList.split(","); //$NON-NLS-1$
 			for (i = 0; i < expectedOSListTokens.length; ++i) {
 				expectedOSListarr.add(expectedOSListTokens[i].trim());
@@ -571,7 +571,7 @@ public class ManagedBuildCoreTests extends TestCase {
 			String optionEnumCmd1 = option.getEnumCommand(optionDefaultValue);
 			assertEquals(optionEnumCmd1, (expectedOptionEnumCmd1arr[iconfig]));
 
-			List<String> expectedEnumList1arr = new ArrayList<String>();
+			List<String> expectedEnumList1arr = new ArrayList<>();
 			String[] expectedEnumList1Tokens = expectedEnumList1.split(","); //$NON-NLS-1$
 			for (i = 0; i < expectedEnumList1Tokens.length; ++i) {
 				expectedEnumList1arr.add(expectedEnumList1Tokens[i].trim());

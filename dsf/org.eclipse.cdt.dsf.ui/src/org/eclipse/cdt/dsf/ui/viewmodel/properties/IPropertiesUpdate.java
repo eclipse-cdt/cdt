@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
  * Context sensitive properties update request for an element.
- * 
+ *
  * @since 1.0
  */
 public interface IPropertiesUpdate extends IViewerUpdate {
@@ -31,7 +31,7 @@ public interface IPropertiesUpdate extends IViewerUpdate {
 
 	/**
 	 * Sets the given property to update.
-	 * 
+	 *
 	 * @param property Property ID.
 	 * @param value Property value.
 	 */
@@ -40,9 +40,9 @@ public interface IPropertiesUpdate extends IViewerUpdate {
 	/**
 	 * Sets the given map as the complete property map for this update.
 	 * If other properties were already set to this update, the properties
-	 * given here will be added.  If properties are added later, the properties 
+	 * given here will be added.  If properties are added later, the properties
 	 * map given here will not be modified, instead it will be copied.
-	 * 
+	 *
 	 * @param properties Full properties map.
 	 */
 	public void setAllProperties(Map<String, Object> properties);

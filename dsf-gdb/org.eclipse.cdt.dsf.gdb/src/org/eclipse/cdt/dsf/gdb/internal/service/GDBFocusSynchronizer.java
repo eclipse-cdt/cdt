@@ -51,28 +51,28 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
- * This service keeps synchronized the CDT Debug View selection and GDB's 
- * internal focus. 
+ * This service keeps synchronized the CDT Debug View selection and GDB's
+ * internal focus.
  *
- * To keep the Debug View selection synchronized to CDT's selection, the service keeps 
- * track of what is the current GDB focus, by listening to the GDB MI notification 
- * "=thread-selected". When this notification is received, the service orders a change 
- * to CDT's Debug View selection to match, by sending an IGDBFocusChangedEvent. 
- * 
- * To keep GDB's focus synchronized to the Debug View selections, the UI listens to 
- * platform 'Debug Selection changed' events, and then uses this service, to order GDB 
- * to change focus to match the selection. 
- * 
+ * To keep the Debug View selection synchronized to CDT's selection, the service keeps
+ * track of what is the current GDB focus, by listening to the GDB MI notification
+ * "=thread-selected". When this notification is received, the service orders a change
+ * to CDT's Debug View selection to match, by sending an IGDBFocusChangedEvent.
+ *
+ * To keep GDB's focus synchronized to the Debug View selections, the UI listens to
+ * platform 'Debug Selection changed' events, and then uses this service, to order GDB
+ * to change focus to match the selection.
+ *
  * Note: the mapping between the DV selection and GDB focus is not 1 to 1; there can
  * be multiple debug sessions at one time, all shown in the DV. There is however a single
  * effective DV selection. On the other end, each debug session has a dedicated instance
- * of GDB, having its own unique focus, at any given time. Also not all DV selections map 
- * to a valid GDB focus. 
- * 
+ * of GDB, having its own unique focus, at any given time. Also not all DV selections map
+ * to a valid GDB focus.
+ *
  * @since 5.2
  */
 public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocusSynchronizer, IEventListener {
-	/** This service's opinion of what is the current GDB focus - it can be 
+	/** This service's opinion of what is the current GDB focus - it can be
 	 * a process, thread or stack frame context */
 	private IDMContext fCurrentGDBFocus;
 
@@ -110,7 +110,7 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 	}
 
 	private void doInitialize(RequestMonitor requestMonitor) {
-		// obtain reference to a few needed services		
+		// obtain reference to a few needed services
 		fProcesses = getServicesTracker().getService(IGDBProcesses.class);
 		fStackService = getServicesTracker().getService(IStack.class);
 		fGdbcontrol = getServicesTracker().getService(IGDBControl.class);
@@ -121,8 +121,8 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 		fGdbcontrol.addEventListener(this);
 		getSession().addServiceEventListener(this, null);
 
-		// set a sane initial value for current GDB focus. 
-		// This value will be updated when the session has finished launching. 
+		// set a sane initial value for current GDB focus.
+		// This value will be updated when the session has finished launching.
 		// See updateContexts() below.
 		fCurrentGDBFocus = createThreadContextFromThreadId(THREAD_ID_DEFAULT);
 		requestMonitor.done();
@@ -274,10 +274,10 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 		}
 	}
 
-	/**  
+	/**
 	 * Parses gdb output for the =thread-selected notification.
 	 * When this is detected, generate a DSF event to notify listeners
-	 * 
+	 *
 	 * example :
 	 * =thread-selected,id="7",frame={level="0",addr="0x000000000041eab0",func="main",args=[]}
 	 */
@@ -365,7 +365,7 @@ public class GDBFocusSynchronizer extends AbstractDsfService implements IGDBFocu
 
 	/**
 	 * Creates an execution context from a thread id
-	 * 
+	 *
 	 * @param tid The thread id on which the execution context is based
 	 */
 	private IMIExecutionDMContext createThreadContextFromThreadId(String tid) {

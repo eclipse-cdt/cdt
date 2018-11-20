@@ -17,9 +17,9 @@ import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 
 /**
  * Common protocol for C elements that can be members of types.
- * This set consists of <code>IType</code>, <code>IMethod</code>, 
+ * This set consists of <code>IType</code>, <code>IMethod</code>,
  * <code>IField</code>.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

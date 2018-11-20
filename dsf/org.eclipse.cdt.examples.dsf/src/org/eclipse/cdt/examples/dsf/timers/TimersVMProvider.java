@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -27,14 +27,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentati
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * The View Model provider for the Timers view.  This provider allows for 
+ * The View Model provider for the Timers view.  This provider allows for
  * switching between two different view layouts:
  * <ol>
  *  <li>Timers -> Triggers -> Alarms</li>
  *  <li>Triggers -> Timers -> Alarms</li>
- * </ol>  
+ * </ol>
  * A special event is sent when the layout is changed in order to generate
- * a proper delta to refresh the view. 
+ * a proper delta to refresh the view.
  */
 @SuppressWarnings("restriction")
 public class TimersVMProvider extends AbstractDMVMProvider {
@@ -99,7 +99,7 @@ public class TimersVMProvider extends AbstractDMVMProvider {
 		super.dispose();
 	}
 
-	/** 
+	/**
 	 * Configures a new layout for the timers view model.
 	 * @param layout New layout to use.
 	 */
@@ -138,7 +138,7 @@ public class TimersVMProvider extends AbstractDMVMProvider {
 		return TimersViewColumnPresentation.ID;
 	}
 
-	// Add a handler for the triggers and timers changed events.  The 
+	// Add a handler for the triggers and timers changed events.  The
 	// AbstractDMVMProvider superclass automatically registers this provider
 	// for all IDMEvent events, however these two events do not implement
 	// IDMEvent

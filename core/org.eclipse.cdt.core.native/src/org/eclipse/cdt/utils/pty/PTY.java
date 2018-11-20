@@ -93,7 +93,7 @@ public class PTY {
 
 	/**
 	 * Create PTY for given mode.
-	 * 
+	 *
 	 * <p>
 	 * The provided mode indicates whether the pseudo terminal is used with the interactive
 	 * Eclipse console or a terminal emulation:
@@ -118,7 +118,7 @@ public class PTY {
 
 	/**
 	 * Create pseudo terminal.
-	 * 
+	 *
 	 * <p>
 	 * The provided flag indicates whether the pseudo terminal is used with the interactive
 	 * Eclipse console:
@@ -133,7 +133,7 @@ public class PTY {
 	 * </li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * @param console  whether terminal is used with Eclipse console
 	 * @throws IOException  if the PTY could not be created
 	 * @deprecated Use {@link #PTY(Mode)} instead
@@ -178,7 +178,7 @@ public class PTY {
 
 	/**
 	 * @return whether this pseudo terminal is for use with the Eclipse console.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public final boolean isConsole() {
@@ -197,7 +197,7 @@ public class PTY {
 	 * Change terminal window size to given width and height.
 	 * <p>
 	 * This should only be used when the pseudo terminal is configured
-	 * for use with a terminal emulation, i.e. when {@link #isConsole()} 
+	 * for use with a terminal emulation, i.e. when {@link #isConsole()}
 	 * returns <code>false</code>.
 	 * </p>
 	 * <p>
@@ -205,7 +205,7 @@ public class PTY {
 	 * Known platforms which support this method are:
 	 * <code>linux-x86</code>, <code>linux-x86_64</code>, <code>solaris-sparc</code>, <code>macosx</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public final void setTerminalSize(int width, int height) {

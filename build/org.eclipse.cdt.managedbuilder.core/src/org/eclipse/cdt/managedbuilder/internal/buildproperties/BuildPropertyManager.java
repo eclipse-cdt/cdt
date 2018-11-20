@@ -64,7 +64,7 @@ public class BuildPropertyManager implements IBuildPropertyManager {
 		return properties.toString();
 	}
 
-	private Map<String, IBuildPropertyType> fPropertyTypeMap = new HashMap<String, IBuildPropertyType>();
+	private Map<String, IBuildPropertyType> fPropertyTypeMap = new HashMap<>();
 
 	@Override
 	public IBuildPropertyType getPropertyType(String id) {
@@ -136,13 +136,13 @@ public class BuildPropertyManager implements IBuildPropertyManager {
 
 	private List<IConfigurationElement> getTypeElList(boolean create) {
 		if (fTypeCfgElements == null && create)
-			fTypeCfgElements = new ArrayList<IConfigurationElement>();
+			fTypeCfgElements = new ArrayList<>();
 		return fTypeCfgElements;
 	}
 
 	private List<IConfigurationElement> getValueElList(boolean create) {
 		if (fValueCfgElements == null && create)
-			fValueCfgElements = new ArrayList<IConfigurationElement>();
+			fValueCfgElements = new ArrayList<>();
 		return fValueCfgElements;
 	}
 

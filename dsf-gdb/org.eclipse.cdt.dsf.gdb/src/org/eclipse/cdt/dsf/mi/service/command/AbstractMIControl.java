@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for handling of multiple stacks and threads
@@ -74,7 +74,7 @@ import org.eclipse.core.runtime.Status;
 import com.ibm.icu.text.MessageFormat;
 
 /**
- * Base implementation of an MI control service.  It provides basic handling 
+ * Base implementation of an MI control service.  It provides basic handling
  * of input/output channels, and processing of the commands.
  * <p>
  * Extending classes need to implement the initialize() and shutdown() methods.
@@ -104,12 +104,12 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	// Since GDB.7.1
 	private boolean fUseThreadGroupOption;
 
-	private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<CommandHandle>();
+	private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<>();
 	private final Map<Integer, CommandHandle> fRxCommands = Collections
 			.synchronizedMap(new HashMap<Integer, CommandHandle>());
 
 	/**
-	 * Handle that's inserted into the TX commands queue to signal 
+	 * Handle that's inserted into the TX commands queue to signal
 	 * that the TX thread should shut down.
 	 */
 	private final CommandHandle fTerminatorHandle = new CommandHandle(null, null);
@@ -119,14 +119,14 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	 *   what the control object is doing.
 	 */
 
-	private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
-	private final List<IEventListener> fEventProcessors = new ArrayList<IEventListener>();
+	private final List<ICommandListener> fCommandProcessors = new ArrayList<>();
+	private final List<IEventListener> fEventProcessors = new ArrayList<>();
 
 	/**
 	 *   Current command which have not been handed off to the backend yet.
 	 */
 
-	private final List<CommandHandle> fCommandQueue = new ArrayList<CommandHandle>();
+	private final List<CommandHandle> fCommandQueue = new ArrayList<>();
 
 	/**
 	 * Flag indicating that the command control has stopped processing commands.
@@ -175,7 +175,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	/**
 	 * Set the tracing stream for the MI communication.  If this method is never
 	 * called, tracing will be off, by default.
-	 * 
+	 *
 	 * @param tracingStream The stream to use.  Can be <code>null</code>
 	 * to disable tracing.
 	 * @since 2.0
@@ -219,9 +219,9 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	/**
 	 * Starts the threads that process the debugger input/output channels.
 	 * To be invoked by the initialization routine of the extending class.
-	 * 
+	 *
 	 * This version of the method will not start a thread for the error stream.
-	 * 
+	 *
 	 * @param inStream
 	 * @param outStream
 	 */
@@ -232,8 +232,8 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	/**
 	 * Starts the threads that process the debugger input/output/error channels.
 	 * To be invoked by the initialization routine of the extending class.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param inStream
 	 * @param outStream
 	 * @param errorStream
@@ -257,9 +257,9 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 
 	/**
 	 *  Stops the threads that process the debugger input/output channels, and notifies the
-	 *  results of the outstanding commands. To be invoked by the shutdown routine of the 
+	 *  results of the outstanding commands. To be invoked by the shutdown routine of the
 	 *  extending class.
-	 * 
+	 *
 	 * @param inStream
 	 * @param outStream
 	 */
@@ -269,7 +269,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	}
 
 	protected void stopCommandProcessing() {
-		// Guard against calling this multiple times (e.g. as a result of a 
+		// Guard against calling this multiple times (e.g. as a result of a
 		// user request and an event from the back end).
 		if (fStoppedCommandProcessing)
 			return;
@@ -294,7 +294,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 		/*
 		 *  Now handle any requests which have not been transmitted, but weconsider them handed off.
 		 */
-		List<CommandHandle> txCommands = new ArrayList<CommandHandle>();
+		List<CommandHandle> txCommands = new ArrayList<>();
 		fTxCommands.drainTo(txCommands);
 		for (CommandHandle commandHandle : txCommands) {
 			if (commandHandle.getRequestMonitor() == null)
@@ -318,20 +318,20 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	}
 
 	/**
-	 * Queues the given MI command to be sent to the debugger back end.  
-	 * 
-	 * @param command Command to be executed.  This parameter must be an 
-	 * instance of DsfMICommand, otherwise a ClassCastException will be 
-	 * thrown. 
+	 * Queues the given MI command to be sent to the debugger back end.
+	 *
+	 * @param command Command to be executed.  This parameter must be an
+	 * instance of DsfMICommand, otherwise a ClassCastException will be
+	 * thrown.
 	 * @param rm Request completion monitor
-	 * 
+	 *
 	 * @see org.eclipse.cdt.dsf.debug.service.command.ICommandControl#addCommand(org.eclipse.cdt.dsf.debug.service.command.ICommand, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
 	 */
 
 	@Override
 	public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command, DataRequestMonitor<V> rm) {
 
-		// Cast the command to MI Command type.  This will cause a cast exception to be 
+		// Cast the command to MI Command type.  This will cause a cast exception to be
 		// thrown if the client did not give an MI command as an argument.
 		@SuppressWarnings("unchecked")
 		MICommand<MIInfo> miCommand = (MICommand<MIInfo>) command;
@@ -343,7 +343,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 
 		final CommandHandle handle = new CommandHandle(miCommand, miDone);
 
-		// If the command control stopped processing commands, just return an error immediately. 
+		// If the command control stopped processing commands, just return an error immediately.
 		if (fStoppedCommandProcessing) {
 			rm.setStatus(genStatus("Connection is shut down")); //$NON-NLS-1$
 			rm.done();
@@ -358,8 +358,8 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 			processCommandQueued(handle);
 
 			if (fRxCommands.size() < NUMBER_CONCURRENT_COMMANDS) {
-				// In a separate dispatch cycle.  This allows command listeners 
-				// to respond to the command queued event.  
+				// In a separate dispatch cycle.  This allows command listeners
+				// to respond to the command queued event.
 				getExecutor().execute(new DsfRunnable() {
 					@Override
 					public void run() {
@@ -381,7 +381,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 				// Older debuggers didn't support the --thread/--frame options
 				// Also, not all commands support those options (e.g., CLI commands)
 				if (!fUseThreadAndFrameOptions || !handle.getCommand().supportsThreadAndFrameOptions()) {
-					// Without the --thread/--frame, we need to send the proper 
+					// Without the --thread/--frame, we need to send the proper
 					// -thread-select and -stack-frame-select before sending the command
 
 					final IDMContext targetContext = handle.fCommand.getContext();
@@ -393,7 +393,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 					IMIExecutionDMContext execDmc = DMContexts.getAncestorOfType(targetContext,
 							IMIExecutionDMContext.class);
 					if (runControl != null && execDmc != null && runControl.isSuspended(execDmc)) {
-						// Before the command is sent, Check the Thread Id and send it to 
+						// Before the command is sent, Check the Thread Id and send it to
 						// the queue only if the id has been changed. Also, don't send a threadId of 0,
 						// because that id is only used internally for single-threaded programs
 						if (targetThread != null && !targetThread.equals("0") //$NON-NLS-1$
@@ -406,8 +406,8 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 							fTxCommands.add(cmdHandle);
 						}
 
-						// Before the command is sent, Check the Stack level and send it to 
-						// the queue only if the level has been changed. 
+						// Before the command is sent, Check the Stack level and send it to
+						// the queue only if the level has been changed.
 						if (targetFrame >= 0 && targetFrame != fCurrentStackLevel) {
 							fCurrentStackLevel = targetFrame;
 							CommandHandle cmdHandle = new CommandHandle((MICommand<MIInfo>) getCommandFactory()
@@ -431,9 +431,9 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 
 	/*
 	 *   This is the command which allows the user to retract a previously issued command. The
-	 *   state of the command  is that it is in the waiting queue  and has not yet been handed 
+	 *   state of the command  is that it is in the waiting queue  and has not yet been handed
 	 *   to the backend yet.
-	 *   
+	 *
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#removeCommand(org.eclipse.cdt.dsf.mi.service.command.commands.ICommand)
 	 */
@@ -462,7 +462,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	/*
 	 *  Allows a user ( typically a cache manager ) to sign up a listener to monitor command queue
 	 *  activity.
-	 *  
+	 *
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#addCommandListener(org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl.ICommandListener)
 	 */
@@ -483,7 +483,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 
 	/*
 	 *  Allows a user to sign up to a listener which handles out of band messages ( events ).
-	 *  
+	 *
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#addEventListener(org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl.IEventListener)
 	 */
@@ -494,7 +494,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 
 	/*
 	 *  Allows a user to remove a event monitoring listener.
-	 *  
+	 *
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#removeEventListener(org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl.IEventListener)
 	 */
@@ -638,7 +638,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	 *  considered to be sent, even if it has not actually been sent yet.  This assumption
 	 *  makes it easier from state management.  Whomever fill this pipeline handles all of
 	 *  the required state notification ( callbacks ). This thread simply physically gives
-	 *  the message to the backend. 
+	 *  the message to the backend.
 	 */
 
 	private class TxThread extends Thread {
@@ -668,7 +668,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 					// We do this to avoid synchronizing the handling of fRxCommands
 					// because this is more efficient, as it happens only once at shutdown.
 					cancelRxCommands();
-					break; // Null command is an indicator that we're shutting down. 
+					break; // Null command is an indicator that we're shutting down.
 				}
 
 				/*
@@ -748,7 +748,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 		 * List of out of band records since the last result record. Out of band
 		 * records are required for processing the results of CLI commands.
 		 */
-		private final List<MIOOBRecord> fAccumulatedOOBRecords = new LinkedList<MIOOBRecord>();
+		private final List<MIOOBRecord> fAccumulatedOOBRecords = new LinkedList<>();
 
 		/**
 		 * List of stream records since the last result record, not including
@@ -756,7 +756,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 		 * a subset of {@link #fAccumulatedOOBRecords}, as a stream record is a
 		 * particular type of OOB record.
 		 */
-		private final List<MIStreamRecord> fAccumulatedStreamRecords = new LinkedList<MIStreamRecord>();
+		private final List<MIStreamRecord> fAccumulatedStreamRecords = new LinkedList<>();
 
 		public RxThread(InputStream inputStream) {
 			super("MI RX Thread"); //$NON-NLS-1$
@@ -873,7 +873,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 					try {
 						clientMsg.append(MessageFormat.format(message, (Object[]) parameters));
 					} catch (IllegalArgumentException e2) {
-						// Message format string invalid.  Fallback to just appending the strings. 
+						// Message format string invalid.  Fallback to just appending the strings.
 						clientMsg.append(message);
 						clientMsg.append(Arrays.toString(parameters));
 					}
@@ -924,7 +924,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 					try {
 						clientMsg.append(MessageFormat.format(message, (Object[]) parameters));
 					} catch (IllegalArgumentException e2) {
-						// Message format string invalid.  Fallback to just appending the strings. 
+						// Message format string invalid.  Fallback to just appending the strings.
 						clientMsg.append(message);
 						clientMsg.append(Arrays.toString(parameters));
 					}
@@ -961,7 +961,7 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 
 					/*
 					 *  Not all users want to get there results. They indicate so by not having
-					 *  a completion object. 
+					 *  a completion object.
 					 */
 					if (rm != null) {
 						rm.setData(result);
@@ -1026,10 +1026,10 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 					}
 				} else {
 					/*
-					 *  GDB apparently can sometimes send multiple responses to the same command.  In those cases, 
+					 *  GDB apparently can sometimes send multiple responses to the same command.  In those cases,
 					 *  the command handle is gone, so post the result as an event.  To avoid processing OOB records
-					 *  as events multiple times, do not include the accumulated OOB record list in the response 
-					 *  MIOutput object.  
+					 *  as events multiple times, do not include the accumulated OOB record list in the response
+					 *  MIOutput object.
 					 */
 					final MIOutput response = new MIOutput(rr, new MIOOBRecord[0]);
 
@@ -1106,12 +1106,12 @@ public abstract class AbstractMIControl extends AbstractDsfService implements IM
 	 * the inferior writes to stderr will be output on GDB's stderr.
 	 * If we don't read it, gdb eventually blocks, when the sream is
 	 * full.
-	 * 
+	 *
 	 * Although we could write this error output to the inferior
 	 * console, we actually write it to the GDB console.  This is
 	 * because we cannot differentiate between inferior errors printouts
 	 * and GDB error printouts.
-	 * 
+	 *
 	 * See bug 327617 for details.
 	 */
 	private class ErrorThread extends Thread {

@@ -2,14 +2,14 @@
  * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Thomas Corbat (IFS)
@@ -49,10 +49,10 @@ import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
 
 /**
- * 
+ *
  * Generates source code of expression nodes. The actual string operations are delegated
  * to the <code>Scribe</code> class.
- * 
+ *
  * @see Scribe
  * @see IASTExpression
  * @author Emanuel Graf IFS

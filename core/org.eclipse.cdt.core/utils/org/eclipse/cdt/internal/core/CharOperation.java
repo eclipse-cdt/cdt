@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.core;
 
 /**
  * This class is a collection of helper methods to manipulate char arrays.
- * 
+ *
  * @since 2.1
  */
 public final class CharOperation {
@@ -48,7 +48,7 @@ public final class CharOperation {
 	 *    => result = { 'c' }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array the array that is concanated with the suffix character
 	 * @param suffix the suffix character
 	 * @return the new array
@@ -95,13 +95,13 @@ public final class CharOperation {
 	 *    => result = { 'a', 'd' , 'e', 'f', '0', '0', '0', '0' } (new array)
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param target the given target
 	 * @param index the given index
 	 * @param array the given array
 	 * @param start the given start index
 	 * @param end the given end index
-	 * 
+	 *
 	 * @return the new array
 	 * @throws NullPointerException if the target array is null
 	 */
@@ -149,7 +149,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first the first array to concatenate
 	 * @param second the second array to concatenate
 	 * @return the concatenation of the two arrays, or null if the two arrays are null.
@@ -195,7 +195,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first the first array to concatenate
 	 * @param second the array to add at the end of the first array
 	 * @return a new array adding the second array at the end of first array, or null if the two arrays are null.
@@ -218,7 +218,7 @@ public final class CharOperation {
 	 * <ul>
 	 * <li>zero if the array starts with the prefix contents</li>
 	 * <li>the difference between the first two characters that are not equal </li>
-	 * <li>one if array length is lower than the prefix length and that the prefix starts with the 
+	 * <li>one if array length is lower than the prefix length and that the prefix starts with the
 	 * array contents.</li>
 	 * </ul>
 	 * <p>
@@ -262,7 +262,7 @@ public final class CharOperation {
 	 * </li>
 	 * </ol>
 	 * </p>
-	 * 
+	 *
 	 * @param array the given array
 	 * @param prefix the given prefix
 	 * @return the result of the comparison
@@ -311,7 +311,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first the first array to concatenate
 	 * @param second the second array to concatenate
 	 * @return the concatenation of the two arrays, or null if the two arrays are null.
@@ -375,11 +375,11 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first the first array to concatenate
 	 * @param second the second array to concatenate
 	 * @param third the third array to concatenate
-	 * 
+	 *
 	 * @return the concatenation of the three arrays, or null if the three arrays are null.
 	 */
 	public static final char[] concat(char[] first, char[] second, char[] third) {
@@ -431,11 +431,11 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first the first array to concatenate
 	 * @param second the second array to concatenate
 	 * @param separator the character to insert
-	 * @return the concatenation of the two arrays inserting the separator character 
+	 * @return the concatenation of the two arrays inserting the separator character
 	 * between the two arrays , or null if the two arrays are null.
 	 */
 	public static final char[] concat(char[] first, char[] second, char separator) {
@@ -459,7 +459,7 @@ public final class CharOperation {
 	}
 
 	/**
-	 * Answers the concatenation of the three arrays inserting the sep1 character between the 
+	 * Answers the concatenation of the three arrays inserting the sep1 character between the
 	 * two arrays and sep2 between the last two.
 	 * It answers null if the three arrays are null.
 	 * If the first array is null, then it answers the concatenation of second and third inserting
@@ -509,13 +509,13 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first the first array to concatenate
 	 * @param sep1 the character to insert
 	 * @param second the second array to concatenate
 	 * @param sep2 the character to insert
 	 * @param third the second array to concatenate
-	 * @return the concatenation of the three arrays inserting the sep1 character between the 
+	 * @return the concatenation of the three arrays inserting the sep1 character between the
 	 * two arrays and sep2 between the last two.
 	 */
 	public static final char[] concat(char[] first, char sep1, char[] second, char sep2, char[] third) {
@@ -539,8 +539,8 @@ public final class CharOperation {
 	}
 
 	/**
-	 * Answers a new array with prepending the prefix character and appending the suffix 
-	 * character at the end of the array. If array is null, it answers a new array containing the 
+	 * Answers a new array with prepending the prefix character and appending the suffix
+	 * character at the end of the array. If array is null, it answers a new array containing the
 	 * prefix and the suffix characters.
 	 * <br>
 	 * <br>
@@ -560,7 +560,7 @@ public final class CharOperation {
 	 *    => result = { 'a', 'c' }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param prefix the prefix character
 	 * @param array the array that is concanated with the prefix and suffix characters
 	 * @param suffix the suffix character
@@ -605,7 +605,7 @@ public final class CharOperation {
 	 *    => result = { 'c' }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param name the given name
 	 * @param array the given array
 	 * @param separator the given separator
@@ -670,7 +670,7 @@ public final class CharOperation {
 	 *    => result = { 'c' }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array the given array
 	 * @param name the given name
 	 * @param separator the given separator
@@ -726,7 +726,7 @@ public final class CharOperation {
 	 *    => result = { }
 	 * </pre></li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array the given array
 	 * @param separator the given separator
 	 * @return the concatenation of the given array parts using the given separator between each part
@@ -764,7 +764,7 @@ public final class CharOperation {
 
 	/**
 	 * Answers true if the array contains an occurrence of character, false otherwise.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * For example:
@@ -782,7 +782,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param character the character to search
 	 * @param array the array in which the search is done
 	 * @return true if the array contains an occurrence of character, false otherwise.
@@ -800,7 +800,7 @@ public final class CharOperation {
 
 	/**
 	 * Answers true if the array contains an occurrence of character, false otherwise.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * For example:
@@ -818,7 +818,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param character the character to search
 	 * @param array the array in which the search is done
 	 * @return true if the array contains an occurrence of character, false otherwise.
@@ -833,7 +833,7 @@ public final class CharOperation {
 
 	/**
 	 * Answers a deep copy of the toCopy array.
-	 * 
+	 *
 	 * @param toCopy the array to copy
 	 * @return a deep copy of the toCopy array.
 	 */
@@ -851,7 +851,7 @@ public final class CharOperation {
 	}
 
 	/**
-	 * Return true if array ends with the sequence of characters contained in toBeFound, 
+	 * Return true if array ends with the sequence of characters contained in toBeFound,
 	 * otherwise false.
 	 * <br>
 	 * <br>
@@ -870,10 +870,10 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array the array to check
 	 * @param toBeFound the array to find
-	 * @return true if array ends with the sequence of characters contained in toBeFound, 
+	 * @return true if array ends with the sequence of characters contained in toBeFound,
 	 * otherwise false.
 	 * @exception NullPointerException if array is null or toBeFound is null
 	 */
@@ -943,7 +943,7 @@ public final class CharOperation {
 	/**
 	 * If isCaseSensite is true, answers true if the two arrays are identical character
 	 * by character, otherwise false.
-	 * If it is false, answers true if the two arrays are identical character by 
+	 * If it is false, answers true if the two arrays are identical character by
 	 * character without checking the case, otherwise false.
 	 * <br>
 	 * <br>
@@ -978,7 +978,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first the first array
 	 * @param second the second array
 	 * @param isCaseSensitive check whether or not the equality should be case sensitive
@@ -1057,7 +1057,7 @@ public final class CharOperation {
 	/**
 	 * If isCaseSensite is true, answers true if the two arrays are identical character
 	 * by character, otherwise false.
-	 * If it is false, answers true if the two arrays are identical character by 
+	 * If it is false, answers true if the two arrays are identical character by
 	 * character without checking the case, otherwise false.
 	 * <br>
 	 * <br>
@@ -1092,7 +1092,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param first the first array
 	 * @param second the second array
 	 * @param isCaseSensitive check whether or not the equality should be case sensitive
@@ -1253,7 +1253,7 @@ public final class CharOperation {
 
 	/**
 	 * If isCaseSensite is true, the equality is case sensitive, otherwise it is case insensitive.
-	 * 
+	 *
 	 * Answers true if the name contains the fragment at the starting index startIndex, otherwise false.
 	 * <br>
 	 * <br>
@@ -1292,12 +1292,12 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param fragment the fragment to check
 	 * @param name the array to check
 	 * @param startIndex the starting index
 	 * @param isCaseSensitive check whether or not the equality should be case sensitive
-	 * @return true if the name contains the fragment at the starting index startIndex according to the 
+	 * @return true if the name contains the fragment at the starting index startIndex according to the
 	 * value of isCaseSensitive, otherwise false.
 	 * @exception NullPointerException if fragment or name is null.
 	 */
@@ -1320,7 +1320,7 @@ public final class CharOperation {
 
 	/**
 	 * Answers a hashcode for the array
-	 * 
+	 *
 	 * @param array the array for which a hashcode is required
 	 * @return the hashcode
 	 * @exception NullPointerException if array is null
@@ -1358,7 +1358,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param c the character to check
 	 * @return true if c is a whitespace according to the JLS, otherwise false.
 	 */
@@ -1395,7 +1395,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound the character to search
 	 * @param array the array to be searched
 	 * @return the first index in the array for which the corresponding character is
@@ -1439,7 +1439,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound the character to search
 	 * @param array the array to be searched
 	 * @param start the starting index
@@ -1569,7 +1569,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound the character to search
 	 * @param array the array to be searched
 	 * @param startIndex the stopping index
@@ -1594,7 +1594,7 @@ public final class CharOperation {
 	 * <pre>
 	 * 	lastSegment("java.lang.Object".toCharArray(),'.') --> Object
 	 * </pre>
-	 * 
+	 *
 	 * @param array the array
 	 * @param separator the given separator
 	 * @return the last portion of a name given a separator
@@ -1641,7 +1641,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param pattern the given pattern
 	 * @param name the given name
 	 * @param isCaseSensitive flag to know whether or not the matching should be case sensitive
@@ -1691,7 +1691,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param pattern the given pattern
 	 * @param patternStart the given pattern start
 	 * @param patternEnd the given pattern end
@@ -1785,19 +1785,19 @@ public final class CharOperation {
 
 	/**
 	 * Answers true if the pattern matches the filepath using the pathSepatator, false otherwise.
-	 * 
+	 *
 	 * Path char[] pattern matching, accepting wild-cards '**', '*' and '?' (using Ant directory tasks
 	 * conventions, also see "http://jakarta.apache.org/ant/manual/dirtasks.html#defaultexcludes").
 	 * Path pattern matching is enhancing regular pattern matching in supporting extra rule where '**' represent
 	 * any folder combination.
-	 * Special rules: 
-	 * - foo\  is equivalent to foo\**   
+	 * Special rules:
+	 * - foo\  is equivalent to foo\**
 	 * - *.java is equivalent to **\*.java
 	 * When not case sensitive, the pattern is assumed to already be lowercased, the
 	 * name will be lowercased character per character as comparing.
-	 * 
+	 *
 	 * @param pattern the given pattern
-	 * @param filepath the given path 
+	 * @param filepath the given path
 	 * @param isCaseSensitive to find out whether or not the matching should be case sensitive
 	 * @param pathSeparator the given path separator
 	 * @return true if the pattern matches the filepath using the pathSepatator, false otherwise
@@ -1855,7 +1855,7 @@ public final class CharOperation {
 				return false;
 			}
 
-			// jump to next segment		
+			// jump to next segment
 			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 			// skip separator
 			if (pSegmentEnd < 0)
@@ -1938,7 +1938,7 @@ public final class CharOperation {
 					fSegmentEnd = fLength;
 				continue checkSegment;
 			}
-			// jump to next segment		
+			// jump to next segment
 			pSegmentEnd = CharOperation.indexOf(pathSeparator, pattern, pSegmentStart = pSegmentEnd + 1);
 			// skip separator
 			if (pSegmentEnd < 0)
@@ -1957,7 +1957,7 @@ public final class CharOperation {
 
 	/**
 	 * Answers the number of occurrences of the given character in the given array, 0 if any.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * For example:
@@ -1975,7 +1975,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound the given character
 	 * @param array the given array
 	 * @return the number of occurrences of the given character in the given array, 0 if any
@@ -1992,7 +1992,7 @@ public final class CharOperation {
 	/**
 	 * Answers the number of occurrences of the given character in the given array starting
 	 * at the given index, 0 if any.
-	 * 
+	 *
 	 * <br>
 	 * <br>
 	 * For example:
@@ -2012,7 +2012,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param toBeFound the given character
 	 * @param array the given array
 	 * @return the number of occurrences of the given character in the given array, 0 if any
@@ -2047,7 +2047,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param prefix the given prefix
 	 * @param name the given name
 	 * @return true if the given name starts with the given prefix, false otherwise
@@ -2086,7 +2086,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param prefix the given prefix
 	 * @param name the given name
 	 * @param isCaseSensitive to find out whether or not the comparison should be case sensitive
@@ -2133,7 +2133,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array the given array
 	 * @param toBeReplaced the character to be replaced
 	 * @param replacementChar the replacement character
@@ -2171,7 +2171,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array the given array
 	 * @param toBeReplaced characters to be replaced
 	 * @param replacementChars the replacement characters
@@ -2252,7 +2252,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param divider the given divider
 	 * @param array the given array
 	 * @return a new array which is the split of the given array using the given divider and triming each subarray to remove
@@ -2319,7 +2319,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param divider the given divider
 	 * @param array the given array
 	 * @return a new array which is the split of the given array using the given divider
@@ -2351,7 +2351,7 @@ public final class CharOperation {
 	}
 
 	/**
-	 * Return a new array which is the split of the given array using the given divider. The given end 
+	 * Return a new array which is the split of the given array using the given divider. The given end
 	 * is exclusive and the given start is inclusive.
 	 * <br>
 	 * <br>
@@ -2366,7 +2366,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param divider the given divider
 	 * @param array the given array
 	 * @param start the given starting index
@@ -2401,9 +2401,9 @@ public final class CharOperation {
 	}
 
 	/**
-	 * Answers a new array which is a copy of the given array starting at the given start and 
+	 * Answers a new array which is a copy of the given array starting at the given start and
 	 * ending at the given end. The given start is inclusive and the given end is exclusive.
-	 * Answers null if start is greater than end, if start is lower than 0 or if end is greater 
+	 * Answers null if start is greater than end, if start is lower than 0 or if end is greater
 	 * than the length of the given array. If end  equals -1, it is converted to the array length.
 	 * <br>
 	 * <br>
@@ -2424,11 +2424,11 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 *  
+	 *
 	 * @param array the given array
 	 * @param start the given starting index
 	 * @param end the given ending index
-	 * @return a new array which is a copy of the given array starting at the given start and 
+	 * @return a new array which is a copy of the given array starting at the given start and
 	 * ending at the given end
 	 * @exception NullPointerException if the given array is null
 	 */
@@ -2448,9 +2448,9 @@ public final class CharOperation {
 	}
 
 	/**
-	 * Answers a new array which is a copy of the given array starting at the given start and 
+	 * Answers a new array which is a copy of the given array starting at the given start and
 	 * ending at the given end. The given start is inclusive and the given end is exclusive.
-	 * Answers null if start is greater than end, if start is lower than 0 or if end is greater 
+	 * Answers null if start is greater than end, if start is lower than 0 or if end is greater
 	 * than the length of the given array. If end  equals -1, it is converted to the array length.
 	 * <br>
 	 * <br>
@@ -2471,11 +2471,11 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 *  
+	 *
 	 * @param array the given array
 	 * @param start the given starting index
 	 * @param end the given ending index
-	 * @return a new array which is a copy of the given array starting at the given start and 
+	 * @return a new array which is a copy of the given array starting at the given start and
 	 * ending at the given end
 	 * @exception NullPointerException if the given array is null
 	 */
@@ -2513,7 +2513,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param chars the chars to convert
 	 * @return the result of a char[] conversion to lowercase
 	 */
@@ -2553,7 +2553,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param chars the given array
 	 * @return a new array removing leading and trailing spaces (' ')
 	 */
@@ -2592,7 +2592,7 @@ public final class CharOperation {
 	 * </pre>
 	 * </li>
 	 * </ol>
-	 * 
+	 *
 	 * @param array the given array
 	 * @return a string which is the concatenation of the given array using the '.' as a separator
 	 */

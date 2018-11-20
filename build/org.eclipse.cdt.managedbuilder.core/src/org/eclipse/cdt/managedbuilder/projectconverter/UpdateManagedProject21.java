@@ -122,7 +122,7 @@ class UpdateManagedProject21 {
 					workspace.run(runnable, project, IWorkspace.AVOID_UPDATE, monitor);
 				} catch (Exception e) {
 				} // Ignore the error - the user may have to add .c extensions to
-				// the local definition of C++ file extensions
+					// the local definition of C++ file extensions
 
 				final boolean found[] = new boolean[1];
 				project.accept(new IResourceProxyVisitor() {

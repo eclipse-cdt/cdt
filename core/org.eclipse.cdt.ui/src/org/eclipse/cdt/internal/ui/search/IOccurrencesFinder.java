@@ -93,14 +93,14 @@ public interface IOccurrencesFinder {
 
 	/**
 	 * Returns the AST root.
-	 * 
+	 *
 	 * @return the AST root
 	 */
 	public IASTTranslationUnit getASTRoot();
 
 	/**
 	 * Returns the occurrences
-	 * 
+	 *
 	 * @return the occurrences
 	 */
 	public OccurrenceLocation[] getOccurrences();

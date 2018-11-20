@@ -16,6 +16,16 @@ package org.eclipse.cdt.ui.actions;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.callhierarchy.OpenCallHierarchyAction;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.includebrowser.OpenIncludeBrowserAction;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
+import org.eclipse.cdt.internal.ui.typehierarchy.OpenTypeHierarchyAction;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -30,26 +40,14 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.Page;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IInclude;
-import org.eclipse.cdt.ui.ICModelBasedEditor;
-
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.callhierarchy.OpenCallHierarchyAction;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-import org.eclipse.cdt.internal.ui.includebrowser.OpenIncludeBrowserAction;
-import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
-import org.eclipse.cdt.internal.ui.typehierarchy.OpenTypeHierarchyAction;
-
 /**
- * Action group that adds actions to open a new CDT view part or an external 
+ * Action group that adds actions to open a new CDT view part or an external
  * viewer to a context menu and the global menu bar.
- * 
+ *
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public class OpenViewActionGroup extends ActionGroup {
@@ -75,7 +73,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	 * Creates a new <code>OpenActionGroup</code>. The group requires
 	 * that the selection provided by the page's selection provider is of type <code>
 	 * org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param page the page that owns this action group
 	 */
 	public OpenViewActionGroup(Page page) {
@@ -86,9 +84,9 @@ public class OpenViewActionGroup extends ActionGroup {
 	 * Creates a new <code>OpenActionGroup</code>. The group requires
 	 * that the selection provided by the page's selection provider is of type <code>
 	 * org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param page the page that owns this action group
-	 * 
+	 *
 	 * @noreference This constructor is not intended to be referenced by clients.
 	 */
 	public OpenViewActionGroup(Page page, CEditor editor) {
@@ -99,7 +97,7 @@ public class OpenViewActionGroup extends ActionGroup {
 	 * Creates a new <code>OpenActionGroup</code>. The group requires
 	 * that the selection provided by the part's selection provider is of type <code>
 	 * org.eclipse.jface.viewers.IStructuredSelection</code>.
-	 * 
+	 *
 	 * @param part the view part that owns this action group
 	 */
 	public OpenViewActionGroup(IWorkbenchPart part) {

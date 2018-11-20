@@ -28,6 +28,12 @@ import java.util.Stack;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
 
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.internal.ui.filters.CustomFiltersDialog;
+import org.eclipse.cdt.internal.ui.filters.FilterDescriptor;
+import org.eclipse.cdt.internal.ui.filters.FilterMessages;
+import org.eclipse.cdt.internal.ui.filters.NamePatternFilter;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
@@ -52,14 +58,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.actions.ActionGroup;
-
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.filters.CustomFiltersDialog;
-import org.eclipse.cdt.internal.ui.filters.FilterDescriptor;
-import org.eclipse.cdt.internal.ui.filters.FilterMessages;
-import org.eclipse.cdt.internal.ui.filters.NamePatternFilter;
 
 /**
  * Action group to add the filter action to a view part's tool bar
@@ -226,7 +224,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		fTargetId = ownerId;
 		fViewer = viewer;
 
-		fLRUFilterIdsStack = new Stack<String>();
+		fLRUFilterIdsStack = new Stack<>();
 
 		initializeWithPluginContributions();
 		initializeWithViewDefaults();
@@ -245,7 +243,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 
 	public String[] removeFiltersFor(Object parent, Object element, IContentProvider contentProvider) {
 		String[] enabledFilters = getEnabledFilterIds();
-		Set<String> newFilters = new HashSet<String>();
+		Set<String> newFilters = new HashSet<>();
 		for (String filterName : enabledFilters) {
 			ViewerFilter filter = fInstalledBuiltInFilters.get(filterName);
 			if (filter == null)
@@ -295,7 +293,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 	}
 
 	private String[] getEnabledFilterIds() {
-		Set<String> enabledFilterIds = new HashSet<String>(fEnabledFilterIds.size());
+		Set<String> enabledFilterIds = new HashSet<>(fEnabledFilterIds.size());
 		Iterator<Map.Entry<String, Boolean>> iter = fEnabledFilterIds.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<String, Boolean> entry = iter.next();
@@ -329,7 +327,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 	 * @since 3.0
 	 */
 	private void setRecentlyChangedFilters(Stack<FilterDescriptor> changeHistory) {
-		Stack<String> oldestFirstStack = new Stack<String>();
+		Stack<String> oldestFirstStack = new Stack<>();
 
 		int length = Math.min(changeHistory.size(), MAX_FILTER_MENU_ENTRIES);
 		for (int i = 0; i < length; i++)
@@ -391,7 +389,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 			return;
 		}
 
-		SortedSet<Object> sortedFilters = new TreeSet<Object>(fLRUFilterIdsStack);
+		SortedSet<Object> sortedFilters = new TreeSet<>(fLRUFilterIdsStack);
 		String[] recentlyChangedFilterIds = sortedFilters.toArray(new String[sortedFilters.size()]);
 
 		fFilterIdsUsedInLastViewMenu = new String[recentlyChangedFilterIds.length];
@@ -423,8 +421,8 @@ public class CustomFiltersActionGroup extends ActionGroup {
 		fUserDefinedPatternsEnabled = false;
 
 		FilterDescriptor[] filterDescs = FilterDescriptor.getFilterDescriptors(fTargetId);
-		fFilterDescriptorMap = new HashMap<String, FilterDescriptor>(filterDescs.length);
-		fEnabledFilterIds = new HashMap<String, Boolean>(filterDescs.length);
+		fFilterDescriptorMap = new HashMap<>(filterDescs.length);
+		fEnabledFilterIds = new HashMap<>(filterDescs.length);
 		for (FilterDescriptor filterDesc : filterDescs) {
 			String id = filterDesc.getId();
 			Boolean isEnabled = filterDesc.isEnabled();
@@ -438,7 +436,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 	// ---------- viewer filter handling ----------
 
 	private void installFilters() {
-		fInstalledBuiltInFilters = new HashMap<String, ViewerFilter>(fEnabledFilterIds.size());
+		fInstalledBuiltInFilters = new HashMap<>(fEnabledFilterIds.size());
 		fPatternFilter = new NamePatternFilter();
 		fPatternFilter.setPatterns(getUserAndBuiltInPatterns());
 		fViewer.addFilter(fPatternFilter);
@@ -457,8 +455,8 @@ public class CustomFiltersActionGroup extends ActionGroup {
 
 	private void updateBuiltInFilters() {
 		Set<String> installedFilters = fInstalledBuiltInFilters.keySet();
-		Set<String> filtersToAdd = new HashSet<String>(fEnabledFilterIds.size());
-		Set<String> filtersToRemove = new HashSet<String>(fEnabledFilterIds.size());
+		Set<String> filtersToAdd = new HashSet<>(fEnabledFilterIds.size());
+		Set<String> filtersToRemove = new HashSet<>(fEnabledFilterIds.size());
 		Iterator<Map.Entry<String, Boolean>> iter = fEnabledFilterIds.entrySet().iterator();
 		while (iter.hasNext()) {
 			Map.Entry<String, Boolean> entry = iter.next();
@@ -493,7 +491,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 	}
 
 	private String[] getUserAndBuiltInPatterns() {
-		List<String> patterns = new ArrayList<String>(fUserDefinedPatterns.length);
+		List<String> patterns = new ArrayList<>(fUserDefinedPatterns.length);
 		if (areUserDefinedPatternsEnabled())
 			patterns.addAll(Arrays.asList(fUserDefinedPatterns));
 		FilterDescriptor[] filterDescs = FilterDescriptor.getFilterDescriptors(fTargetId);
@@ -700,7 +698,7 @@ public class CustomFiltersActionGroup extends ActionGroup {
 	private void cleanUpPatternDuplicates() {
 		if (!areUserDefinedPatternsEnabled())
 			return;
-		List<String> userDefinedPatterns = new ArrayList<String>(Arrays.asList(fUserDefinedPatterns));
+		List<String> userDefinedPatterns = new ArrayList<>(Arrays.asList(fUserDefinedPatterns));
 		FilterDescriptor[] filters = FilterDescriptor.getFilterDescriptors(fTargetId);
 
 		for (FilterDescriptor filter : filters) {

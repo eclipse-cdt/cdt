@@ -15,7 +15,7 @@ package org.eclipse.cdt.make.internal.core.scannerconfig.util;
 
 /**
  * Key - Value String Pair
- * 
+ *
  * @author vhirsl
  */
 public class KVStringPair {
@@ -23,7 +23,7 @@ public class KVStringPair {
 	private String value;
 
 	/**
-	 * 
+	 *
 	 */
 	public KVStringPair(String key, String value) {
 		this.key = key;

@@ -42,7 +42,7 @@ import org.eclipse.core.runtime.Path;
  *    same type of container.
  *
  *    <li>This operation can be used to copy and rename elements within
- *    the same container. 
+ *    the same container.
  *
  *    <li>This operation only copies translation units.
  * </ul>
@@ -56,11 +56,11 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	protected ArrayList<ICElement> fCreatedElements;
 
 	/**
-	 * Table specifying deltas for elements being 
+	 * Table specifying deltas for elements being
 	 * copied/moved/renamed. Keyed by elements' project(s), and
 	 * values are the corresponding deltas.
 	 */
-	protected Map<ICProject, CElementDelta> fDeltasPerProject = new HashMap<ICProject, CElementDelta>(1);
+	protected Map<ICProject, CElementDelta> fDeltasPerProject = new HashMap<>(1);
 
 	public CopyResourceElementsOperation(ICElement[] src, ICElement[] dst, boolean force) {
 		super(src, dst, force);
@@ -97,7 +97,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 *                      <li>one rooted in the source project
 	 *                      <li>one rooted in the destination project</ul></ul>
 	 * If the operation is rooted in a single project, the delta is rooted in that project
-	 *       
+	 *
 	 */
 	protected void prepareDeltas(ICElement sourceElement, ICElement destinationElement) {
 		ICProject destProject = destinationElement.getCProject();
@@ -208,7 +208,7 @@ public class CopyResourceElementsOperation extends MultiOperation {
 	 */
 	@Override
 	protected void processElements() throws CModelException {
-		fCreatedElements = new ArrayList<ICElement>(fElementsToProcess.length);
+		fCreatedElements = new ArrayList<>(fElementsToProcess.length);
 		try {
 			super.processElements();
 		} catch (CModelException cme) {

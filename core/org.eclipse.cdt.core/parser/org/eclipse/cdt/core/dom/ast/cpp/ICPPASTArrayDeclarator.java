@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 /**
  * Array declarator for C++
  * @since 5.2
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

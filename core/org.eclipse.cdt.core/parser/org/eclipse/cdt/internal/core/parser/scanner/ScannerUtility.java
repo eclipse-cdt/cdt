@@ -29,24 +29,24 @@ public class ScannerUtility {
 	 * Functions:
 	 *   - replace "/" or "\" by system's separator
 	 *   - replace multiple separators by single one
-	 *   - skip "/./" 
+	 *   - skip "/./"
 	 *   - skip quotes
-	 * 
+	 *
 	 * Note: "/../" is left untouched on purpose in order to work properly under
 	 * circumstances such as this:
-	 * 
+	 *
 	 * header file at include_1/vector:
 	 *   // Is supposed to find the STL vector header:
 	 *   #include <ext/../vector>
-	 *   
-	 * GCC include tree 
+	 *
+	 * GCC include tree
 	 *   include_gcc/ext/...
 	 *              /vector
-	 * 
+	 *
 	 * (ls include_1/ext/../vector does not work either).
-	 * 
+	 *
 	 * @param originalPath - path to process
-	 * @return             - reconciled path   
+	 * @return             - reconciled path
 	 */
 	public static String reconcilePath(String originalPath) {
 		int len = originalPath.length();
@@ -75,7 +75,7 @@ public class ScannerUtility {
 			case QUOTE: // quotes are removed
 				noSepBefore = true;
 				break;
-			case SLASH: // both separators are processed  
+			case SLASH: // both separators are processed
 			case BSLASH: // in the same way
 				if (noSepBefore) {
 					noSepBefore = false;
@@ -83,7 +83,7 @@ public class ScannerUtility {
 				}
 				break;
 			case DOT:
-				// No separator before, not a 1st string symbol. 
+				// No separator before, not a 1st string symbol.
 				if (noSepBefore && j > 0) {
 					aus[j++] = c;
 				} else { // Separator before "."

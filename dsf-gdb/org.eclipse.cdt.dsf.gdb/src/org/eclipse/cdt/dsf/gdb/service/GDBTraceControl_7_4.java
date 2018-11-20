@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *   Marc Khouzam (Ericsson) - Initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 
 /**
  * This class adds extra support for Trace Control for GDB 7.4
- * 
+ *
  * @since 4.4
  */
 public class GDBTraceControl_7_4 extends GDBTraceControl_7_2 {

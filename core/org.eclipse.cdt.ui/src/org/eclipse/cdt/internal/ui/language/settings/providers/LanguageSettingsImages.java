@@ -13,6 +13,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.language.settings.providers;
 
+import org.eclipse.cdt.core.settings.model.ACPathEntry;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
+import org.eclipse.cdt.core.settings.model.ICSettingEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.UNCPathConverter;
+import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -21,18 +31,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.cdt.core.settings.model.ACPathEntry;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
-import org.eclipse.cdt.core.settings.model.ICSettingEntry;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.UNCPathConverter;
-import org.eclipse.cdt.utils.cdtvariables.CdtVariableResolver;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * Helper class to provide unified images for {@link ICLanguageSettingEntry}.
@@ -44,7 +42,7 @@ public class LanguageSettingsImages {
 
 	/**
 	 * Check if the language settings entry should be presented as "project-relative" in UI.
-	 * 
+	 *
 	 * @param entry - language settings entry to check.
 	 * @return {@code true} if the entry should be displayed as "project-relative", {@code false} otherwise.
 	 */
@@ -58,7 +56,7 @@ public class LanguageSettingsImages {
 
 	/**
 	 * Convert path used by {@link ICLanguageSettingEntry} to label representing project-relative portion.
-	 * 
+	 *
 	 * @param path - path to convert to label in project-relative format.
 	 * @return label to be used to display the path in UI.
 	 */
@@ -71,7 +69,7 @@ public class LanguageSettingsImages {
 
 	/**
 	 * Convert label for project-relative path back to path representation carried by {@link ICLanguageSettingEntry}.
-	 * 
+	 *
 	 * @param label - label in project-relative format.
 	 * @return path to be used by {@link ICLanguageSettingEntry}.
 	 */

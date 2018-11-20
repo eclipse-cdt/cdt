@@ -57,7 +57,7 @@ public class AddressBarContributionItem extends ContributionItem {
 
 	/**
 	 * Use this constructor to create an AddressBarContributionItem.
-	 * 
+	 *
 	 * @param action
 	 *            a contribution action.
 	 */
@@ -68,7 +68,7 @@ public class AddressBarContributionItem extends ContributionItem {
 	/**
 	 * After constructing this object, call this method to create an address
 	 * box.
-	 * 
+	 *
 	 * @param parent
 	 *            a ToolBar object. Can be obtain with the getControl() method
 	 *            in the ToolBarManager class.
@@ -121,7 +121,7 @@ public class AddressBarContributionItem extends ContributionItem {
 
 	/**
 	 * Get the address bar text
-	 * 
+	 *
 	 * @return The text in the address bar.
 	 */
 	public String getText() {
@@ -134,7 +134,7 @@ public class AddressBarContributionItem extends ContributionItem {
 	/**
 	 * Set the visibility of the warning icon. Should be set to true when there
 	 * is a problem jumping to the specified address; false otherwise
-	 * 
+	 *
 	 * @param visible
 	 *            True for visible, false for hidden.
 	 */
@@ -146,7 +146,7 @@ public class AddressBarContributionItem extends ContributionItem {
 
 	/**
 	 * Return whether the warning icon is visible or not.
-	 * 
+	 *
 	 * @return True if visible, otherwise false.
 	 */
 	public boolean isWarningIconVisible() {
@@ -157,7 +157,7 @@ public class AddressBarContributionItem extends ContributionItem {
 
 	/**
 	 * Enable the address combo box.
-	 * 
+	 *
 	 * @param enable
 	 *            true to enable, else false.
 	 */
@@ -170,7 +170,7 @@ public class AddressBarContributionItem extends ContributionItem {
 
 	/**
 	 * Creates the combo box and add it to the toolbar.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent, toolbar.
 	 * @return the combo box address control.

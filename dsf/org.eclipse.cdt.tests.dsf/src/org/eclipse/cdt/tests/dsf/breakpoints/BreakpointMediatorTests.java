@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -93,7 +93,7 @@ public class BreakpointMediatorTests {
 							}
 						},
 
-						// Initialize breakpoints service 
+						// Initialize breakpoints service
 						new InitializeServiceStep<DsfTestBreakpoints>(DsfTestBreakpoints.class) {
 							@Override
 							protected void setService(DsfTestBreakpoints service) {
@@ -174,7 +174,7 @@ public class BreakpointMediatorTests {
 	@Test
 	public void proofOfConceptTest() throws Exception {
 
-		ServiceEventWaitor<BreakpointsAddedEvent> waitor = new ServiceEventWaitor<BreakpointsAddedEvent>(fSession,
+		ServiceEventWaitor<BreakpointsAddedEvent> waitor = new ServiceEventWaitor<>(fSession,
 				BreakpointsAddedEvent.class);
 
 		new DsfTestBreakpoint();

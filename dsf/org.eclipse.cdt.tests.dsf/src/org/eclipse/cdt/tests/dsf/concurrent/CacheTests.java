@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -237,7 +237,7 @@ public class CacheTests {
 		// Check state while waiting for data
 		assertFalse(fTestCache.isValid());
 
-		// Set the data without using an executor.  
+		// Set the data without using an executor.
 		fRetrieveRm.setData(1);
 		fRetrieveRm.done();
 
@@ -266,7 +266,7 @@ public class CacheTests {
 		// Check state while waiting for data
 		assertFalse(fTestCache.isValid());
 
-		// Set the data without using an executor.  
+		// Set the data without using an executor.
 		fRetrieveRm.setData(1);
 		fRetrieveRm.done();
 
@@ -283,7 +283,7 @@ public class CacheTests {
 		assertFalse(fTestCache.isValid());
 
 		// Request data from cache
-		List<Query<Integer>> qList = new ArrayList<Query<Integer>>();
+		List<Query<Integer>> qList = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			Query<Integer> q = new TestQuery();
 			fExecutor.execute(q);
@@ -295,7 +295,7 @@ public class CacheTests {
 		// Check state while waiting for data
 		assertFalse(fTestCache.isValid());
 
-		// Set the data without using an executor.  
+		// Set the data without using an executor.
 		fRetrieveRm.setData(1);
 		fRetrieveRm.done();
 
@@ -351,7 +351,7 @@ public class CacheTests {
 		// Retrieval should never have been made.
 		assertEquals(null, fRetrieveRm);
 
-		// The cache has no data so the query should have failed  
+		// The cache has no data so the query should have failed
 		try {
 			q.get();
 			fail("expected an exeption");
@@ -362,7 +362,7 @@ public class CacheTests {
 
 	/**
 	 * Test behavior when a cache object goes into the "disabled" state while an
-	 * update request is ongoing. The subsequent completion of the request should 
+	 * update request is ongoing. The subsequent completion of the request should
 	 * have no effect on the  cache
 	 */
 	@Test
@@ -444,7 +444,7 @@ public class CacheTests {
 
 	@Test
 	public void cancelWhilePendingTest() throws InterruptedException, ExecutionException {
-		// Request data from cache 
+		// Request data from cache
 		Query<Integer> q = new TestQuery();
 		fExecutor.execute(q);
 
@@ -472,13 +472,13 @@ public class CacheTests {
 			}
 		}).get();
 
-		// Validate that cache didn't accept the result after its RM was canceled  
+		// Validate that cache didn't accept the result after its RM was canceled
 		assertCacheInvalidAndWithCanceledRM();
 	}
 
 	@Test
 	public void cancelWhilePendingTest2() throws InterruptedException, ExecutionException {
-		// Request data from cache 
+		// Request data from cache
 		Query<Integer> q = new TestQuery();
 		fExecutor.execute(q);
 
@@ -502,7 +502,7 @@ public class CacheTests {
 		// Status.CANCEL_STATUS when its in the cancel state. So here we
 		// simulate the retrieval logic just aborting its operations and
 		// completing the RM. Note that it hasn't provided the data to the
-		// cache. 
+		// cache.
 		fExecutor.submit(new DsfRunnable() {
 			@Override
 			public void run() {
@@ -515,7 +515,7 @@ public class CacheTests {
 
 	@Test
 	public void cancelWhilePendingTest3() throws InterruptedException, ExecutionException {
-		// Request data from cache 
+		// Request data from cache
 		Query<Integer> q = new TestQuery();
 		fExecutor.execute(q);
 
@@ -535,7 +535,7 @@ public class CacheTests {
 		// Simulate retrieval logic that is regularly checking the RM's cancel
 		// status and has discovered that the request has been canceled. It
 		// aborts its processing, sets STATUS.CANCEL_STATUS in the RM and
-		// completes it. 
+		// completes it.
 		fExecutor.submit(new DsfRunnable() {
 			@Override
 			public void run() {
@@ -556,10 +556,10 @@ public class CacheTests {
 			@Override
 			protected synchronized void canceled() {
 				canceledCalled[0] = true;
-			};
+			}
 		};
 
-		// Request data from cache 
+		// Request data from cache
 		Query<Integer> q = new Query<Integer>() {
 			@Override
 			protected void execute(final DataRequestMonitor<Integer> rm) {
@@ -589,9 +589,9 @@ public class CacheTests {
 
 		assertCacheInvalidAndWithCanceledRM();
 
-		// AbstractCache.canceled() should be called after isCanceled() 
-		// discovers that the client has canceled its request.  The canceled() method is 
-		// called in a separate dispatch cycle, so we have to wait one cycle of the executor 
+		// AbstractCache.canceled() should be called after isCanceled()
+		// discovers that the client has canceled its request.  The canceled() method is
+		// called in a separate dispatch cycle, so we have to wait one cycle of the executor
 		// after is canceled is called.
 		fRetrieveRm.isCanceled();
 		fExecutor.submit(new Runnable() {
@@ -621,10 +621,10 @@ public class CacheTests {
 	}
 
 	/**
-	 * This test forces a race condition where a client that requested data 
+	 * This test forces a race condition where a client that requested data
 	 * cancels.  While shortly after a second client starts a new request.
-	 * The first request's cancel should not interfere with the second 
-	 * request.  
+	 * The first request's cancel should not interfere with the second
+	 * request.
 	 */
 	@Test
 	public void cancelAfterCompletedRaceCondition() throws InterruptedException, ExecutionException {
@@ -657,13 +657,13 @@ public class CacheTests {
 					@Override
 					public synchronized void done() {
 						// Avoid clearing cancel listeners list
-					};
+					}
 
 					@Override
 					protected void handleSuccess() {
 						rm.setData(fTestCache.getData());
 						rm.done();
-					};
+					}
 				};
 
 				fTestCache.update(rmBad[0]);
@@ -758,8 +758,8 @@ public class CacheTests {
 
 	@Test
 	public void cancelWhilePendingWithManyClientsTest() throws InterruptedException, ExecutionException {
-		// Request data from cache 
-		List<Query<Integer>> qList = new ArrayList<Query<Integer>>();
+		// Request data from cache
+		List<Query<Integer>> qList = new ArrayList<>();
 		for (int i = 0; i < 10; i++) {
 			Query<Integer> q = new TestQuery();
 			fExecutor.submit(q).get();

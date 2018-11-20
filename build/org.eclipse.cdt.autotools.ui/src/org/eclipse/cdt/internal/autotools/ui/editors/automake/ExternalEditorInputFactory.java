@@ -67,7 +67,7 @@ public class ExternalEditorInputFactory implements IElementFactory {
 
 	/**
 	 * Save the element state.
-	 * 
+	 *
 	 * @param memento  the storage
 	 * @param input  the element
 	 */

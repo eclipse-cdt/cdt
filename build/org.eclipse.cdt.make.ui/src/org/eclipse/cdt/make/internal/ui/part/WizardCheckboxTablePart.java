@@ -7,13 +7,11 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.make.internal.ui.part;
-
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
@@ -23,6 +21,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @version 	1.0

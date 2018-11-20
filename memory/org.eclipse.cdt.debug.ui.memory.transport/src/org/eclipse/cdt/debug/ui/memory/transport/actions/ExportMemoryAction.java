@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -37,6 +37,7 @@ public class ExportMemoryAction implements IViewActionDelegate {
 
 	private IMemoryRenderingSite fView;
 
+	@Override
 	public void init(IViewPart view) {
 		if (view instanceof IMemoryRenderingSite)
 			fView = (IMemoryRenderingSite) view;
@@ -61,7 +62,7 @@ public class ExportMemoryAction implements IViewActionDelegate {
 	/**
 	 * Returns the memory block and initial base address for the export
 	 * operation.
-	 * 
+	 *
 	 * @return a result object; null is never returned
 	 */
 	static BlockAndAddress getMemoryBlockAndInitialStartAddress(ISelection selection) {
@@ -81,7 +82,7 @@ public class ExportMemoryAction implements IViewActionDelegate {
 			if (obj == null)
 				return BlockAndAddress.EMPTY;
 
-			// Get the initial start address for the operation. 
+			// Get the initial start address for the operation.
 			if (obj instanceof IMemoryRendering) {
 				memBlock = ((IMemoryRendering) obj).getMemoryBlock();
 				if (obj instanceof IRepositionableMemoryRendering) {
@@ -109,6 +110,7 @@ public class ExportMemoryAction implements IViewActionDelegate {
 		return new BlockAndAddress(memBlock, initialStartAddr);
 	}
 
+	@Override
 	public void run(IAction action) {
 
 		ISelection selection = fView.getSite().getSelectionProvider().getSelection();
@@ -122,6 +124,7 @@ public class ExportMemoryAction implements IViewActionDelegate {
 		dialog.getResult();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		action.setEnabled(getMemoryBlockAndInitialStartAddress(selection).block != null);
 	}

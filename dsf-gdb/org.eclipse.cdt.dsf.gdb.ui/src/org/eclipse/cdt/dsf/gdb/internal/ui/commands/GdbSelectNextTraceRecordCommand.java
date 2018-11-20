@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -41,7 +41,7 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * Command to select the next trace record
- * 
+ *
  * @since 2.1
  */
 public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implements ISelectNextTraceRecordHandler {
@@ -99,7 +99,7 @@ public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implem
 											rm.done();
 										}
 									});
-								};
+								}
 							});
 				} else {
 					rm.done();
@@ -146,7 +146,7 @@ public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implem
 										protected void handleSuccess() {
 											rm.setData(!getData());
 											rm.done();
-										};
+										}
 									});
 								} else {
 									rm.setData(false);
@@ -156,7 +156,7 @@ public class GdbSelectNextTraceRecordCommand extends AbstractDebugCommand implem
 								rm.setData(false);
 								rm.done();
 							}
-						};
+						}
 					});
 				} else {
 					rm.setData(false);

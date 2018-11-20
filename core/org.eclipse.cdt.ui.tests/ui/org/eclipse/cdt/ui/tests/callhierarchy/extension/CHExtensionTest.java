@@ -13,17 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.callhierarchy.extension;
 
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyBaseTest;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.tests.callhierarchy.CallHierarchyBaseTest;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
 
 import junit.framework.TestSuite;
 
@@ -75,7 +73,7 @@ public class CHExtensionTest extends CallHierarchyBaseTest {
 		ImageDescriptor imageDesc = AbstractUIPlugin.imageDescriptorFromPlugin(CUIPlugin.PLUGIN_ID,
 				CHLabelProvider.ICON_PATH);
 		assertNotNull(imageDesc);
-		Image image = imageDesc.createImage(); //$NON-NLS-1$
+		Image image = imageDesc.createImage();
 		assertNotNull(image);
 
 		String content = readTaggedComment(FILE_NAME_DSL);

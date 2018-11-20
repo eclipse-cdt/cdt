@@ -16,12 +16,12 @@ package org.eclipse.cdt.utils.debug;
 
 /**
  * DebugReferenceType
- *  
+ *
  */
 public class DebugReferenceType extends DebugDerivedType {
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugReferenceType(DebugType type) {
 		super(type);

@@ -120,7 +120,7 @@ public class MakefileContentOutlinePage extends ContentOutlinePage {
 			} else {
 				directives = new IDirective[0];
 			}
-			List<IDirective> list = new ArrayList<IDirective>(directives.length);
+			List<IDirective> list = new ArrayList<>(directives.length);
 			for (IDirective directive : directives) {
 				if (showMacroDefinition && directive instanceof IMacroDefinition) {
 					list.add(directive);

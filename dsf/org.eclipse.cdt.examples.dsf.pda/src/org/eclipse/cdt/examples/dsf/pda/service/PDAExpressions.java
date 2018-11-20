@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.commands.PDAVarCommand;
 import org.osgi.framework.BundleContext;
 
 /**
- * 
+ *
  */
 public class PDAExpressions extends AbstractDsfService implements ICachingService, IExpressions {
 
@@ -81,7 +81,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 	}
 
 	/**
-	 * PDA expressions are simply variables.  Only the variable name 
+	 * PDA expressions are simply variables.  Only the variable name
 	 * is relevant for its data.
 	 */
 	@Immutable
@@ -227,7 +227,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 
 	@Override
 	public IExpressionDMContext createExpression(IDMContext ctx, String expression) {
-		// Create an expression based on the given context and string expression.  
+		// Create an expression based on the given context and string expression.
 		PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(ctx, PDAThreadDMContext.class);
 		if (threadCtx != null) {
 			// The PDA debugger can only evaluate variables as expressions and only
@@ -240,9 +240,9 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 			return new ExpressionDMContext(getSession().getId(), frameCtx, expression);
 		}
 
-		// If the thread cannot be found in context, return an "invalid" 
+		// If the thread cannot be found in context, return an "invalid"
 		// expression context, because a null return value is not allowed.
-		// Evaluating an invalid expression context will always yield an 
+		// Evaluating an invalid expression context will always yield an
 		// error.
 		return new InvalidExpressionDMContext(getSession().getId(), ctx, expression);
 	}
@@ -259,7 +259,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 
 	@Override
 	public void getExpressionData(final IExpressionDMContext exprCtx, final DataRequestMonitor<IExpressionDMData> rm) {
-		// Since expression data doesn't contain any more information than the 
+		// Since expression data doesn't contain any more information than the
 		// context, it doesn't require any debugger commmands.
 		if (exprCtx instanceof ExpressionDMContext) {
 			rm.setData(new ExpressionDMData(exprCtx.getExpression()));
@@ -276,7 +276,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 			final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
 
 			// First retrieve the stack depth, needed to properly calculate
-			// the frame index that is used by the PDAVarCommand. 
+			// the frame index that is used by the PDAVarCommand.
 			fStack.getStackDepth(frameCtx, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
@@ -312,7 +312,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 			final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
 
 			// First retrieve the stack depth, needed to properly calculate
-			// the frame index that is used by the PDAVarCommand. 
+			// the frame index that is used by the PDAVarCommand.
 			fStack.getStackDepth(frameCtx, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
@@ -383,7 +383,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 			final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
 
 			// First retrieve the stack depth, needed to properly calculate
-			// the frame index that is used by the PDAVarCommand. 
+			// the frame index that is used by the PDAVarCommand.
 			fStack.getStackDepth(frameCtx, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
 				@Override
 				protected void handleSuccess() {
@@ -456,7 +456,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 
 	/**
 	 * Method to write an expression, with an additional parameter to suppress
-	 * issuing of the expression changed event. 
+	 * issuing of the expression changed event.
 	 * @see IExpressions#writeExpression(org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext, String, String, RequestMonitor)
 	 */
 	public void writeExpression(final IExpressionDMContext exprCtx, String formattedExprValue, String formatId,
@@ -489,7 +489,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 			final PDAThreadDMContext threadCtx = DMContexts.getAncestorOfType(exprCtx, PDAThreadDMContext.class);
 			final IFrameDMContext frameCtx = DMContexts.getAncestorOfType(exprCtx, IFrameDMContext.class);
 
-			// Similarly to retrieving the variable, retrieve the 
+			// Similarly to retrieving the variable, retrieve the
 			// stack depth first.
 			fStack.getStackDepth(frameCtx, 0, new DataRequestMonitor<Integer>(getExecutor(), rm) {
 				@Override
@@ -506,7 +506,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 										getSession().dispatchEvent(new ExpressionChangedDMEvent(exprCtx),
 												getProperties());
 									}
-									// An expression changed, clear the cache corresponding to 
+									// An expression changed, clear the cache corresponding to
 									// this event.  Since the var evaluate commands, use the thread
 									// context, we have to clear all the cache entries for that thread.
 									fCommandCache
@@ -523,7 +523,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 
 	@DsfServiceEventHandler
 	public void eventDispatched(IResumedDMEvent e) {
-		// Mark the cache as not available, so that data retrieval commands 
+		// Mark the cache as not available, so that data retrieval commands
 		// will fail.  Also reset the cache unless it was a step command.
 		fCommandCache.setContextAvailable(e.getDMContext(), false);
 		if (!e.getReason().equals(StateChangeReason.STEP)) {
@@ -540,7 +540,7 @@ public class PDAExpressions extends AbstractDsfService implements ICachingServic
 
 	@DsfServiceEventHandler
 	public void eventDispatched(ExpressionChangedDMEvent e) {
-		// An expression changed, clear the cache corresponding to 
+		// An expression changed, clear the cache corresponding to
 		// this event.  Since the var evaluate commands, use the thread
 		// context, we have to clear all the cache entries for that thread.
 		fCommandCache.reset(DMContexts.getAncestorOfType(e.getDMContext(), PDAThreadDMContext.class));

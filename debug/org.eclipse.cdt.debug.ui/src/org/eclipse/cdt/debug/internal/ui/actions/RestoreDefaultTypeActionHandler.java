@@ -87,7 +87,7 @@ public class RestoreDefaultTypeActionHandler extends AbstractHandler {
 	}
 
 	private ICastToType[] getCastToType(Object evaluationContext) {
-		List<ICastToType> castableItems = new ArrayList<ICastToType>();
+		List<ICastToType> castableItems = new ArrayList<>();
 		if (evaluationContext instanceof IEvaluationContext) {
 			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
 			if (s instanceof IStructuredSelection) {

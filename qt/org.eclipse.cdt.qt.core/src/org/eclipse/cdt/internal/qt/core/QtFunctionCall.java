@@ -174,7 +174,7 @@ public class QtFunctionCall {
 			else if (firstNonNull == null)
 				firstNonNull = t;
 			else {
-				list = new ArrayList<T>(withNulls.length);
+				list = new ArrayList<>(withNulls.length);
 				list.add(firstNonNull);
 				list.add(t);
 			}

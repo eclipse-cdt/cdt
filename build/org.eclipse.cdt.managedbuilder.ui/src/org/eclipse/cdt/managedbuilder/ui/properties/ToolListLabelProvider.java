@@ -18,10 +18,10 @@ import java.net.URL;
 import org.eclipse.cdt.managedbuilder.core.IOptionCategory;
 import org.eclipse.cdt.managedbuilder.core.ITool;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.ResourceManager;
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
@@ -46,7 +46,7 @@ public class ToolListLabelProvider extends LabelProvider {
 		Image img = null;
 		URL url = cat.getIconPath();
 
-		// Get the image from the URL. 
+		// Get the image from the URL.
 		if (url != null) {
 			descriptor = ImageDescriptor.createFromURL(url);
 			manager = JFaceResources.getResources(Display.getCurrent());
@@ -82,7 +82,7 @@ public class ToolListLabelProvider extends LabelProvider {
 				return img;
 			}
 		}
-		// Use default icon for display 
+		// Use default icon for display
 		return defaultImage;
 	}
 
@@ -112,7 +112,7 @@ public class ToolListLabelProvider extends LabelProvider {
 
 	/**
 	 * Disposing any images that were allocated for it.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	@Override

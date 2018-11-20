@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -33,11 +33,11 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 /**
- * DSF executor which uses the display thread to run the submitted runnables 
- * and callables.  The implementation is based on the default DSF executor 
+ * DSF executor which uses the display thread to run the submitted runnables
+ * and callables.  The implementation is based on the default DSF executor
  * which still creates its own thread.  However this thread blocks when running
- * each executable in the display thread.   
- * 
+ * each executable in the display thread.
+ *
  * @since 1.0
  */
 public class DisplayDsfExecutor extends DefaultDsfExecutor {
@@ -49,12 +49,12 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 
 	/**
 	 * Factory method for display executors.
-	 * 
+	 *
 	 * <p>
 	 * Call this from the GUI thread unless you are certain an instance has
 	 * already been created for the given display (creation of new instance will
 	 * fail on a non-GUI thread).
-	 * 
+	 *
 	 * @param display
 	 *            Display to create an executor for.
 	 * @return The new (or re-used) executor.
@@ -71,7 +71,7 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 	}
 
 	/**
-	 * The display class used by this executor to execute the submitted runnables. 
+	 * The display class used by this executor to execute the submitted runnables.
 	 */
 	private final Display fDisplay;
 
@@ -98,7 +98,7 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 	}
 
 	/**
-	 * Creates a callable wrapper, which delegates to the display to perform the 
+	 * Creates a callable wrapper, which delegates to the display to perform the
 	 * operation.  The callable blocks the executor thread while each call
 	 * is executed in the display thred.
 	 * @param <V> Type used in the callable.
@@ -150,7 +150,7 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 	}
 
 	/**
-	 * Creates a runnable wrapper, which delegates to the display to perform the 
+	 * Creates a runnable wrapper, which delegates to the display to perform the
 	 * operation.  The runnable blocks the executor thread while each call
 	 * is executed in the display thred.
 	 * @param runnable Runnable to wrap.
@@ -265,7 +265,7 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 
 	/**
 	 * Override to prevent clients from shutting down.  The executor will be
-	 * shut down when the underlying display is discovered to be shut down. 
+	 * shut down when the underlying display is discovered to be shut down.
 	 */
 	@Override
 	public void shutdown() {
@@ -273,11 +273,11 @@ public class DisplayDsfExecutor extends DefaultDsfExecutor {
 
 	/**
 	 * Override to prevent clients from shutting down.  The executor will be
-	 * shut down when the underlying display is discovered to be shut down. 
+	 * shut down when the underlying display is discovered to be shut down.
 	 */
 	@SuppressWarnings({ "cast", "unchecked" })
 	@Override
 	public List<Runnable> shutdownNow() {
-		return (List<Runnable>) Collections.EMPTY_LIST;
+		return Collections.EMPTY_LIST;
 	}
 }

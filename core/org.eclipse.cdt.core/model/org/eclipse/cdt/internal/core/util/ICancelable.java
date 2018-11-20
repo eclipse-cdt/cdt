@@ -15,7 +15,7 @@ package org.eclipse.cdt.internal.core.util;
 
 /**
  * Interface for cancelable objects.
- * 
+ *
  * @since 5.0
  */
 public interface ICancelable {

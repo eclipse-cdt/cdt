@@ -19,10 +19,10 @@ import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * This is a copy of the RulerEnableDisableBreakpointActionDelegate in platform.  
+ * This is a copy of the RulerEnableDisableBreakpointActionDelegate in platform.
  * It updates the toggle action to include an accelertor text in its label.
  * See bug 374153.
- * 
+ *
  * @see org.eclipse.debug.ui.actions.RulerEnableDisableBreakpointActionDelegate
  */
 public class CRulerEnableDisableBreakpointActionDelegate extends AbstractRulerActionDelegate {
@@ -30,6 +30,7 @@ public class CRulerEnableDisableBreakpointActionDelegate extends AbstractRulerAc
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
 	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		return new EnableDisableBreakpointRulerAction(editor, rulerInfo);
 	}

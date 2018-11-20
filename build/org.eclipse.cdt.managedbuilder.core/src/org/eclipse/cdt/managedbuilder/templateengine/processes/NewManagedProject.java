@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Creates a new Project in the workspace.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

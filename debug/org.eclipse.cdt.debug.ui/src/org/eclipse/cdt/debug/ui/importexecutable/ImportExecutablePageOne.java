@@ -467,7 +467,7 @@ public class ImportExecutablePageOne extends WizardPage {
 				if (res != null) {
 					if (Platform.getOS().equals(Platform.OS_MACOSX) && res.endsWith(".app")) //$NON-NLS-1$
 					{
-						// On Mac OS X the file dialog will let you select the 
+						// On Mac OS X the file dialog will let you select the
 						// package but not the executable inside.
 						Path macPath = new Path(res);
 						res = res + "/Contents/MacOS/" + macPath.lastSegment(); //$NON-NLS-1$

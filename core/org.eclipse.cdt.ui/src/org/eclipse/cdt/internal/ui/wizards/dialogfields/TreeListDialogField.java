@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -46,8 +47,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Tree;
-
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  * A list with a button bar. Typical buttons are 'Add', 'Remove', 'Up' and
@@ -92,7 +91,7 @@ public class TreeListDialogField<T> extends DialogField {
 		fTreeViewerAdapter = new TreeViewerAdapter();
 		fParentElement = this;
 
-		fElements = new ArrayList<T>(10);
+		fElements = new ArrayList<>(10);
 
 		fButtonLabels = buttonLabels;
 		if (fButtonLabels != null) {
@@ -148,10 +147,10 @@ public class TreeListDialogField<T> extends DialogField {
 
 	/**
 	 * Sets the viewerSorter.
-	 * 
+	 *
 	 * @param viewerSorter
 	 *        The viewerSorter to set
-	 *        
+	 *
 	 * @deprecated Use {@link #setViewerComparator(ViewerComparator)} instead.
 	 */
 	@Deprecated
@@ -161,7 +160,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 	/**
 	 * Sets the viewerComparator.
-	 * 
+	 *
 	 * @param viewerComparator
 	 *        The viewerComparator to set
 	 */
@@ -186,7 +185,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 	/**
 	 * Checks if the button pressed is handled internally
-	 * 
+	 *
 	 * @return Returns true if button has been handled.
 	 */
 	protected boolean managedButtonPressed(int index) {
@@ -265,8 +264,8 @@ public class TreeListDialogField<T> extends DialogField {
 	/**
 	 * Returns the tree control. When called the first time, the control will be
 	 * created.
-	 * 
-	 * @param parent 
+	 *
+	 * @param parent
 	 *        parent composite when called the first time, or <code>null</code>
 	 *        after.
 	 */
@@ -352,7 +351,7 @@ public class TreeListDialogField<T> extends DialogField {
 	/**
 	 * Returns the composite containing the buttons. When called the first time,
 	 * the control will be created.
-	 * 
+	 *
 	 * @param parent
 	 *        parent composite when called the first time, or <code>null</code>
 	 *        after.
@@ -518,7 +517,7 @@ public class TreeListDialogField<T> extends DialogField {
 	 * Sets the elements shown in the list.
 	 */
 	public void setElements(List<T> elements) {
-		fElements = new ArrayList<T>(elements);
+		fElements = new ArrayList<>(elements);
 		refresh();
 		if (fTree != null) {
 			fTree.expandToLevel(fTreeExpandLevel);
@@ -531,7 +530,7 @@ public class TreeListDialogField<T> extends DialogField {
 	 * can be modified by the user.
 	 */
 	public List<T> getElements() {
-		return new ArrayList<T>(fElements);
+		return new ArrayList<>(fElements);
 	}
 
 	/**
@@ -597,7 +596,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 		if (nElements > 0) {
 			// filter duplicated
-			ArrayList<T> elementsToAdd = new ArrayList<T>(nElements);
+			ArrayList<T> elementsToAdd = new ArrayList<>(nElements);
 
 			for (int i = 0; i < nElements; i++) {
 				T elem = elements.get(i);
@@ -740,7 +739,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 	private List<T> moveUp(List<T> elements, List<?> move) {
 		int nElements = elements.size();
-		List<T> res = new ArrayList<T>(nElements);
+		List<T> res = new ArrayList<>(nElements);
 		T floating = null;
 		for (int i = 0; i < nElements; i++) {
 			T curr = elements.get(i);
@@ -774,7 +773,7 @@ public class TreeListDialogField<T> extends DialogField {
 	}
 
 	private List<T> reverse(List<T> p) {
-		List<T> reverse = new ArrayList<T>(p.size());
+		List<T> reverse = new ArrayList<>(p.size());
 		for (int i = p.size() - 1; i >= 0; i--) {
 			reverse.add(p.get(i));
 		}
@@ -824,7 +823,7 @@ public class TreeListDialogField<T> extends DialogField {
 	 * Returns the selected elements.
 	 */
 	public List<Object> getSelectedElements() {
-		ArrayList<Object> result = new ArrayList<Object>();
+		ArrayList<Object> result = new ArrayList<>();
 		if (fTree != null) {
 			ISelection selection = fTree.getSelection();
 			if (selection instanceof IStructuredSelection) {
@@ -898,7 +897,7 @@ public class TreeListDialogField<T> extends DialogField {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
 		 */
 		@Override

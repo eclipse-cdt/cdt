@@ -15,14 +15,13 @@ package org.eclipse.cdt.internal.ui.buildconsole;
 
 import java.net.URL;
 
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.internal.core.ICConsole;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.cdt.core.ConsoleOutputStream;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsoleManager;
-
-import org.eclipse.cdt.internal.core.ICConsole;
 
 /**
  * CDT console adaptor providing output streams. The adaptor provides means of

@@ -106,7 +106,7 @@ public class OpenIncludeAction extends Action {
 			@SuppressWarnings("unchecked")
 			List<Object> list = ((IStructuredSelection) sel).toList();
 			if (list.size() > 0) {
-				List<IInclude> includes = new ArrayList<IInclude>(list.size());
+				List<IInclude> includes = new ArrayList<>(list.size());
 				for (Object element : list) {
 					if (element instanceof IInclude) {
 						includes.add((IInclude) element);

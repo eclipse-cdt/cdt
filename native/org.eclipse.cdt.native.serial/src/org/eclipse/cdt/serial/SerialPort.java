@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
@@ -194,7 +194,7 @@ public class SerialPort {
 
 	/**
 	 * Create a serial port that connect to the given serial device.
-	 * 
+	 *
 	 * @param portName
 	 *            name for the serial device.
 	 */
@@ -236,7 +236,7 @@ public class SerialPort {
 
 	/**
 	 * List the available serial ports.
-	 * 
+	 *
 	 * @return serial ports
 	 */
 	public static String[] list() throws IOException {
@@ -269,7 +269,7 @@ public class SerialPort {
 	/**
 	 * Return an the SerialPort with the given name or null if it hasn't been allocated yet. This
 	 * would be used by components that need to pause and resume a serial port.
-	 * 
+	 *
 	 * @param portName
 	 * @return
 	 * @since 1.1
@@ -298,7 +298,7 @@ public class SerialPort {
 
 	/**
 	 * Return the name for this serial port.
-	 * 
+	 *
 	 * @return serial port name
 	 */
 	public String getPortName() {
@@ -351,7 +351,7 @@ public class SerialPort {
 				// Sleep for a second since some serial ports take a while to actually close
 				Thread.sleep(500);
 			} catch (InterruptedException e) {
-				// nothing to do 
+				// nothing to do
 			}
 		}
 	}

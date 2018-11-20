@@ -11,11 +11,10 @@
 
 package org.eclipse.cdt.internal.ui;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IAdapterFactory;
-
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IAdapterFactory;
 
 /**
  * An adapter factory that adapts resources to CElements. This was introduced in

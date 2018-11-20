@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowAttributesInfo;
 
 /**
- * 
+ *
  *    -var-show-attributes NAME
  *
  *  List attributes of the specified variable object NAME:
@@ -27,7 +27,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarShowAttributesInfo;
  *    status=ATTR [ ( ,ATTR )* ]
  *
  * where ATTR is `{ { editable | noneditable } | TBD }'.
- * 
+ *
  */
 //DsfMIVarShowAttributesInfo
 

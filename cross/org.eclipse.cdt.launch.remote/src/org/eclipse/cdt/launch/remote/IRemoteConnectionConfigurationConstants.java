@@ -1,14 +1,14 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2016 PalmSource, Inc. and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0 
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * Ewa Matejska    (PalmSource) - Adapted from IGDBServerMILaunchConfigurationConstants
  * Anna Dushistova (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  *******************************************************************************/

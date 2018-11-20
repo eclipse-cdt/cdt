@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,13 +24,13 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * 
+ *
  */
 @SuppressWarnings("restriction")
 public class FileBrowserVMProvider extends AbstractVMProvider {
 	/**
 	 * The object to be set to the viewer that shows contents supplied by this provider.
-	 * @see org.eclipse.jface.viewers.TreeViewer#setInput(Object)  
+	 * @see org.eclipse.jface.viewers.TreeViewer#setInput(Object)
 	 */
 	private final IAdaptable fViewerInputObject = new IAdaptable() {
 		/**
@@ -52,10 +52,10 @@ public class FileBrowserVMProvider extends AbstractVMProvider {
 	};
 
 	/**
-	 * Constructor creates and configures the layout nodes to display file 
-	 * system contents.  
+	 * Constructor creates and configures the layout nodes to display file
+	 * system contents.
 	 * @param adapter The viewer model adapter that this provider is registered with.
-	 * @param presentationContext The presentation context that this provider is 
+	 * @param presentationContext The presentation context that this provider is
 	 * generating contents for.
 	 */
 	public FileBrowserVMProvider(AbstractVMAdapter adapter, IPresentationContext presentationContext) {
@@ -72,7 +72,7 @@ public class FileBrowserVMProvider extends AbstractVMProvider {
 
 	/**
 	 * Returns the input object to be set to the viewer that shows contents
-	 * supplied by this provider.  
+	 * supplied by this provider.
 	 */
 	public Object getViewerInputObject() {
 		return fViewerInputObject;
@@ -86,7 +86,7 @@ public class FileBrowserVMProvider extends AbstractVMProvider {
 		if (isDisposed())
 			return;
 
-		// We're in the UI thread.  Re-dispach to VM Adapter executor thread 
+		// We're in the UI thread.  Re-dispach to VM Adapter executor thread
 		// and then call root layout node.
 		try {
 			getExecutor().execute(new Runnable() {
@@ -98,8 +98,8 @@ public class FileBrowserVMProvider extends AbstractVMProvider {
 				}
 			});
 		} catch (RejectedExecutionException e) {
-			// Ignore.  This exception could be thrown if the provider is being 
-			// shut down.  
+			// Ignore.  This exception could be thrown if the provider is being
+			// shut down.
 		}
 	}
 }

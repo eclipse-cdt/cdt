@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation (Bug 365471)
  *     Marc Khouzam (Ericsson) - Support for different charsets (bug 370462)
@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.Status;
  * Subclass for GDB >= 7.0.
  * This class currently sets non-stop mode, or makes
  * sure target-async is off for all-stop.
- * 
+ *
  * @since 4.1
  */
 public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
@@ -57,7 +57,7 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our steps right after the initialization of the base class.
 			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence") + 1, //$NON-NLS-1$
@@ -72,7 +72,7 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 		return null;
 	}
 
-	/** 
+	/**
 	 * Initialize the members of the FinalLaunchSequence_7_0 class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */
@@ -93,9 +93,9 @@ public class FinalLaunchSequence_7_0 extends FinalLaunchSequence {
 		rm.done();
 	}
 
-	/** 
+	/**
 	 * Rollback method for {@link #stepInitializeFinalLaunchSequence_7_0()}
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@RollBack("stepInitializeFinalLaunchSequence_7_0")
 	public void rollBackInitializeFinalLaunchSequence_7_0(RequestMonitor rm) {

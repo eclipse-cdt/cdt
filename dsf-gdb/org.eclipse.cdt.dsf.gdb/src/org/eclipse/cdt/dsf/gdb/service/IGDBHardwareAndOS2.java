@@ -72,7 +72,7 @@ public interface IGDBHardwareAndOS2 extends IGDBHardwareAndOS {
 	void getResourcesInformation(IDMContext dmc, String resourceClassId, DataRequestMonitor<IResourcesInformation> rm);
 
 	/**
-	 * Information about the CPU/core load for one given CPU or core 
+	 * Information about the CPU/core load for one given CPU or core
 	 */
 	public interface ILoadInfo {
 		/**
@@ -81,15 +81,15 @@ public interface IGDBHardwareAndOS2 extends IGDBHardwareAndOS {
 		public String getLoad();
 
 		/**
-		 * Used to give more details about a CPU's/core's load.  For instance 
-		 * the breakdown of the different load types and their proportion: system, 
+		 * Used to give more details about a CPU's/core's load.  For instance
+		 * the breakdown of the different load types and their proportion: system,
 		 * user, I/O, interrupts, etc.
 		 */
 		public Map<String, String> getDetailedLoad();
 	}
 
 	/**
-	 * Computes CPU/core load information according to context and 
+	 * Computes CPU/core load information according to context and
 	 * asynchronously returns the result in a ILoadInfo object
 	 */
 	void getLoadInfo(IDMContext dmc, DataRequestMonitor<ILoadInfo> rm);

@@ -22,6 +22,8 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -52,15 +54,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
-
 public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	/**
 	 * This is the default listener for any of the Preference
 	 * classes. It is added by the respective factory methods and
-	 * updates the page's preview on each change. 
+	 * updates the page's preview on each change.
 	 */
 	protected final Observer fUpdater = new Observer() {
 		@Override
@@ -99,7 +97,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 		}
 
 		/**
-		 * Set the enabled state of all SWT widgets of this preference. 
+		 * Set the enabled state of all SWT widgets of this preference.
 		 * @param enabled new value
 		 */
 		public final void setEnabled(boolean enabled) {
@@ -133,22 +131,22 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 		}
 
 		/**
-		 * Returns the main control of a preference, which is mainly used to 
+		 * Returns the main control of a preference, which is mainly used to
 		 * manage the focus. This may be <code>null</code> if the preference doesn't
-		 * have a control which is able to have the focus. 
+		 * have a control which is able to have the focus.
 		 * @return The main control
 		 */
 		public abstract Control getControl();
 
 		/**
-		 * To be implemented in subclasses. Update the SWT widgets when the state 
+		 * To be implemented in subclasses. Update the SWT widgets when the state
 		 * of this object has changed (enabled, key, ...).
 		 */
 		protected abstract void updateWidget();
 	}
 
 	/**
-	 * Wrapper around a checkbox and a label. 
+	 * Wrapper around a checkbox and a label.
 	 */
 	protected class ButtonPreference extends Preference {
 		private final String[] fValues;
@@ -475,14 +473,14 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	 * over multiple modify sessions. Each ModifyDialogTabPage has its own instance,
 	 * and it should add all relevant controls upon creation, always in the same sequence.
 	 * This established a mapping of controls to indexes, which allows to restore the focus
-	 * in a later session. 
-	 * The index is saved in the dialog settings, and there is only one common preference for 
+	 * in a later session.
+	 * The index is saved in the dialog settings, and there is only one common preference for
 	 * all tab pages. It is always the currently active tab page which stores its focus
-	 * index. 
+	 * index.
 	 */
 	protected final static class DefaultFocusManager extends FocusAdapter {
 
-		private final static String PREF_LAST_FOCUS_INDEX = "formatter_page.modify_dialog_tab_page.last_focus_index"; //$NON-NLS-1$ 
+		private final static String PREF_LAST_FOCUS_INDEX = "formatter_page.modify_dialog_tab_page.last_focus_index"; //$NON-NLS-1$
 
 		private final IDialogSettings fDialogSettings;
 
@@ -493,8 +491,8 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 
 		public DefaultFocusManager() {
 			fDialogSettings = CUIPlugin.getDefault().getDialogSettings();
-			fItemMap = new HashMap<Control, Integer>();
-			fItemList = new ArrayList<Control>();
+			fItemMap = new HashMap<>();
+			fItemList = new ArrayList<>();
 			fIndex = 0;
 		}
 
@@ -604,11 +602,11 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	/**
 	 * The default focus manager. This widget knows all widgets which can have the focus
 	 * and listens for focusGained events, on which it stores the index of the current
-	 * focus holder. When the dialog is restarted, <code>restoreFocus()</code> sets the 
+	 * focus holder. When the dialog is restarted, <code>restoreFocus()</code> sets the
 	 * focus to the last control which had it.
-	 * 
+	 *
 	 * The standard Preference object are managed by this focus manager if they are created
-	 * using the respective factory methods. Other SWT widgets can be added in subclasses 
+	 * using the respective factory methods. Other SWT widgets can be added in subclasses
 	 * when they are created.
 	 */
 	protected final DefaultFocusManager fDefaultFocusManager;
@@ -659,7 +657,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	}
 
 	/**
-	 * Create the contents of this tab page. Subclasses cannot override this, 
+	 * Create the contents of this tab page. Subclasses cannot override this,
 	 * instead they must implement <code>doCreatePreferences</code>. <code>doCreatePreview</code> may also
 	 * be overridden as necessary.
 	 * @param parent The parent composite
@@ -743,14 +741,14 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	}
 
 	/**
-	 * This method is called after all controls have been allocated, including the preview. 
+	 * This method is called after all controls have been allocated, including the preview.
 	 * It can be used to set the preview text and to create listeners.
 	 *
 	 */
 	protected abstract void initializePage();
 
 	/**
-	 * Create the left side of the modify dialog. This is meant to be implemented by subclasses. 
+	 * Create the left side of the modify dialog. This is meant to be implemented by subclasses.
 	 * @param composite Composite to create in
 	 * @param numColumns Number of columns to use
 	 */
@@ -758,7 +756,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 
 	/**
 	 * Create the right side of the modify dialog. By default, the preview is displayed there.
-	 * Subclasses can override this method in order to customize the right-hand side of the 
+	 * Subclasses can override this method in order to customize the right-hand side of the
 	 * dialog.
 	 * @param composite Composite to create in
 	 * @param numColumns Number of columns to use
@@ -781,7 +779,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	/**
 	 * To be implemented by subclasses. This method should return an instance of CPreview.
 	 * Currently, the choice is between CompilationUnitPreview which contains a valid compilation
-	 * unit, or a SnippetPreview which formats several independent code snippets and displays them 
+	 * unit, or a SnippetPreview which formats several independent code snippets and displays them
 	 * in the same window.
 	 * @param parent Parent composite
 	 * @return Created preview
@@ -817,8 +815,8 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	}
 
 	/**
-	 * Set the status field on the dialog. This can be used by tab pages to report 
-	 * inconsistent input. The OK button is disabled if the kind is IStatus.ERROR. 
+	 * Set the status field on the dialog. This can be used by tab pages to report
+	 * inconsistent input. The OK button is disabled if the kind is IStatus.ERROR.
 	 * @param status Status describing the current page error state
 	 */
 	protected void updateStatus(IStatus status) {
@@ -857,8 +855,8 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 		return gd;
 	}
 
-	/* 
-	 * Convenience method to create a label.  
+	/*
+	 * Convenience method to create a label.
 	 */
 	protected static Label createLabel(int numColumns, Composite parent, String text) {
 		return createLabel(numColumns, parent, text, GridData.FILL_HORIZONTAL);
@@ -900,7 +898,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	}
 
 	/*
-	 * Convenience method to create a NumberPreference. The widget is registered as 
+	 * Convenience method to create a NumberPreference. The widget is registered as
 	 * a potential focus holder, and the default updater is added.
 	 */
 	protected NumberPreference createNumberPref(Composite composite, int numColumns, String name, String key,
@@ -913,7 +911,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	}
 
 	/*
-	 * Convenience method to create a ComboPreference. The widget is registered as 
+	 * Convenience method to create a ComboPreference. The widget is registered as
 	 * a potential focus holder, and the default updater is added.
 	 */
 	protected ComboPreference createComboPref(Composite composite, int numColumns, String name, String key,
@@ -926,7 +924,7 @@ public abstract class ModifyDialogTabPage implements IModifyDialogTabPage {
 	}
 
 	/*
-	 * Convenience method to create a CheckboxPreference. The widget is registered as 
+	 * Convenience method to create a CheckboxPreference. The widget is registered as
 	 * a potential focus holder, and the default updater is added.
 	 */
 	protected CheckboxPreference createCheckboxPref(Composite composite, int numColumns, String name, String key,

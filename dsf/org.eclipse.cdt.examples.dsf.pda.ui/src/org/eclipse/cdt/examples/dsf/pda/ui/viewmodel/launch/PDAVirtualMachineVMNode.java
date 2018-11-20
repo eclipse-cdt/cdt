@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial API and implementation
  *     Wind River Systems - Factored out AbstractContainerVMNode
@@ -36,7 +36,7 @@ import org.eclipse.ui.IMemento;
 
 /**
  * View Model node representing a PDA virtual machine.  It extends
- * the base container node and adds label and memento generation. 
+ * the base container node and adds label and memento generation.
  */
 @SuppressWarnings("restriction")
 public class PDAVirtualMachineVMNode extends AbstractContainerVMNode implements IElementMementoProvider {
@@ -52,11 +52,11 @@ public class PDAVirtualMachineVMNode extends AbstractContainerVMNode implements 
 	@Override
 	protected void updateElementsInSessionThread(IChildrenUpdate update) {
 		// Get the instance of the service.  Note that there is no race condition
-		// in getting the service since this method is called only in the 
+		// in getting the service since this method is called only in the
 		// service executor thread.
 		final PDACommandControl commandControl = getServicesTracker().getService(PDACommandControl.class);
 
-		// Check if the service is available.  If it is not, no elements are 
+		// Check if the service is available.  If it is not, no elements are
 		// updated.
 		if (commandControl == null) {
 			handleFailedUpdate(update);
@@ -90,6 +90,7 @@ public class PDAVirtualMachineVMNode extends AbstractContainerVMNode implements 
 
 	private final String MEMENTO_NAME = "PDAPROGRAM_MEMENTO_NAME"; //$NON-NLS-1$
 
+	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
 
 		for (IElementCompareRequest request : requests) {
@@ -115,6 +116,7 @@ public class PDAVirtualMachineVMNode extends AbstractContainerVMNode implements 
 		}
 	}
 
+	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 
 		for (IElementMementoRequest request : requests) {

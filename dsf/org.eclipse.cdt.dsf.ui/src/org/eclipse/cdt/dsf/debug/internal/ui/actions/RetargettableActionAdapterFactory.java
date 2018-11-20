@@ -20,7 +20,7 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
 
 /**
  * Retargettable Action Adapter Factory for the DSF Disassembly view
- * 
+ *
  * @since 2.1
  */
 public class RetargettableActionAdapterFactory implements IAdapterFactory {

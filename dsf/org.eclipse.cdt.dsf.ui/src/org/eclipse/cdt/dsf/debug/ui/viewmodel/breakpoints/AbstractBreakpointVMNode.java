@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -38,11 +38,11 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * Base class for breakpoint VM Nodes.  Concrete implementations must 
- * implement the breakpoint object to be populated into the view.  
+ * Base class for breakpoint VM Nodes.  Concrete implementations must
+ * implement the breakpoint object to be populated into the view.
  * Also this node only implements the content provider so sub-classes
  * must also implement a label provider, element editor, etc.
- * 
+ *
  * @since 2.1
  */
 public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
@@ -52,7 +52,7 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
 	}
 
 	/**
-	 * Class that creates the element object for the corresponding breakpoints.  
+	 * Class that creates the element object for the corresponding breakpoints.
 	 * This element object will be populated in the breakpoints view to represent
 	 * the given breakpoint.
 	 */
@@ -164,7 +164,7 @@ public abstract class AbstractBreakpointVMNode extends AbstractVMNode {
 			}
 			return flags;
 		} else if (event instanceof ModelProxyInstalledEvent) {
-			// Upon model proxy installed, check whether we need to select a 
+			// Upon model proxy installed, check whether we need to select a
 			// breakpoint in linking with Debug view
 			if (Boolean.TRUE.equals(getVMProvider().getPresentationContext()
 					.getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_TRACK_SELECTION))) {

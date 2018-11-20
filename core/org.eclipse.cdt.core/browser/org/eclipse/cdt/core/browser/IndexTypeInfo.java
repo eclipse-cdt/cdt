@@ -120,7 +120,7 @@ public class IndexTypeInfo implements ITypeInfo, IFunctionInfo {
 	/**
 	 * Creates a type info object suitable for a macro.
 	 * @param index a non-null index in which to locate references
-	 * @param macro a macro to create a type info for 
+	 * @param macro a macro to create a type info for
 	 * @since 4.0.1
 	 */
 	public static IndexTypeInfo create(IIndex index, IIndexMacro macro) {

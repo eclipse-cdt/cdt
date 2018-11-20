@@ -75,7 +75,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 * added as external links.
 	 * If an executable of the same name already exists then the existing linked
 	 * resource's location is replaced by the local location's value.
-	 * 
+	 *
 	 * @param project -
 	 *            project receiving the executables
 	 * @throws CoreException
@@ -206,7 +206,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	 * created by the wizard. The default implementation sets up the project
 	 * and program names.
 	 * @param config the launch configuration created by the wizard
-	 * @param targetProject 
+	 * @param targetProject
 	 */
 	public void setConfigurationDefaults(ILaunchConfigurationWorkingCopy config, ICProject project) {
 
@@ -225,7 +225,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	/**
 	 * The wizard will only display launch configuration types that you support.
 	 * This method will be called for each available type.
-	 * 
+	 *
 	 * @param type -
 	 *            the type of launch configuration
 	 * @return - if the wizard supports this launch configuration type
@@ -235,7 +235,7 @@ public abstract class AbstractImportExecutableWizard extends Wizard implements I
 	/**
 	 * Return true if you want the wizard to ask the user to select
 	 * the binary parser. Otherwise it will only use the default one.
-	 * A subclass can specify the default parser by overriding 
+	 * A subclass can specify the default parser by overriding
 	 * getDefaultBinaryParserID.
 	 * @return - If the binary parser selection combo should be displayed.
 	 */

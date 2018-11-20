@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.parser.cpp;
 import org.eclipse.cdt.core.parser.IToken;
 
 /**
- * Configures the preprocessor for parsing POP C++, 
+ * Configures the preprocessor for parsing POP C++,
  * see <a href=http://gridgroup.tic.hefr.ch/popc/index.php/Documentation>Documentation</a>
  * @since 5.1
  */

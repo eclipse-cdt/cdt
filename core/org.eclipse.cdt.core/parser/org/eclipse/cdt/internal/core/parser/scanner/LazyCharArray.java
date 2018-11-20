@@ -38,12 +38,12 @@ public abstract class LazyCharArray extends AbstractCharArray {
 			fCharEndOffset = charOffset + chars.length;
 			fSourceOffset = sourceOffset;
 			fSourceEndOffset = sourceEndOffset;
-			fCharsReference = new SoftReference<char[]>(chars);
+			fCharsReference = new SoftReference<>(chars);
 		}
 	}
 
 	private int fLength = -1;
-	private List<Chunk> fChunks = new ArrayList<Chunk>();
+	private List<Chunk> fChunks = new ArrayList<>();
 	private StreamHasher fHasher;
 	private long fHash64;
 	// Make a reference to the currently used char[], such that it is not collected.
@@ -182,7 +182,7 @@ public abstract class LazyCharArray extends AbstractCharArray {
 		if (data == null) {
 			data = new char[chunk.fCharEndOffset - chunk.fCharOffset];
 			rereadChunkData(chunk, data);
-			chunk.fCharsReference = new SoftReference<char[]>(data);
+			chunk.fCharsReference = new SoftReference<>(data);
 		}
 		return fCurrentChars = data;
 	}
@@ -193,12 +193,12 @@ public abstract class LazyCharArray extends AbstractCharArray {
 	 */
 	protected abstract void rereadChunkData(Chunk chunk, char[] data);
 
-	/** 
+	/**
 	 * For testing purposes: Simulates that all the data gets collected.
 	 */
 	public void testClearData() {
 		for (Chunk chunk : fChunks) {
-			chunk.fCharsReference = new SoftReference<char[]>(null);
+			chunk.fCharsReference = new SoftReference<>(null);
 		}
 		if (fCurrentChars != null)
 			fCurrentChars = null;

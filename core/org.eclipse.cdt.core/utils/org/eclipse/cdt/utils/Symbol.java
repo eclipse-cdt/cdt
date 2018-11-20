@@ -87,7 +87,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getAdress()
 	 */
 	@Override
@@ -97,7 +97,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getEndLine()
 	 */
 	@Override
@@ -107,7 +107,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getStartLine()
 	 */
 	@Override
@@ -117,7 +117,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getLineNumber(long)
 	 */
 	@Override
@@ -127,7 +127,7 @@ public class Symbol implements ISymbol {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.ISymbol#getSize()
 	 */
 	@Override

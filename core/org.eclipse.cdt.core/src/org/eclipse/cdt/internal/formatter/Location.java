@@ -15,10 +15,10 @@
 package org.eclipse.cdt.internal.formatter;
 
 /**
- * A location maintains positional information both in original source 
+ * A location maintains positional information both in original source
  * and in the output source.
  * It remembers source offsets, line/column and indentation level.
- * 
+ *
  * @since 4.0
  */
 public class Location {

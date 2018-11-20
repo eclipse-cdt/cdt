@@ -27,7 +27,7 @@ public abstract class CDataProxyContainer extends CDataProxy implements ICDataPr
 			public boolean isStatic() {
 				return isWritable();
 			}
-	
+
 			public CDataObject[] getChildren() {
 				ICDataParent data = (ICDataParent)CDataProxyContainer.this.getData(false);
 				return data.getChildren();

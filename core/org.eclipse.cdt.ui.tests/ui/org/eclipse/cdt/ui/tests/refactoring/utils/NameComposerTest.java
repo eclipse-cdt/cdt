@@ -15,11 +15,11 @@ package org.eclipse.cdt.ui.tests.refactoring.utils;
 
 import static org.eclipse.cdt.internal.corext.codemanipulation.StubUtility.trimFieldName;
 import static org.eclipse.cdt.internal.ui.util.NameComposer.createByExample;
-import junit.framework.TestCase;
-
-import org.eclipse.cdt.ui.PreferenceConstants;
 
 import org.eclipse.cdt.internal.ui.util.NameComposer;
+import org.eclipse.cdt.ui.PreferenceConstants;
+
+import junit.framework.TestCase;
 
 public class NameComposerTest extends TestCase {
 	private static final int CAPITALIZATION_ORIGINAL = PreferenceConstants.NAME_STYLE_CAPITALIZATION_ORIGINAL;

@@ -34,7 +34,7 @@ import org.eclipse.core.runtime.Path;
 
 public class CDefaultConfigurationData extends CConfigurationData {
 	protected String fDescription;
-	private HashMap<IPath, CResourceData> fResourceDataMap = new HashMap<IPath, CResourceData>();
+	private HashMap<IPath, CResourceData> fResourceDataMap = new HashMap<>();
 	protected CFolderData fRootFolderData;
 	protected String fName;
 	protected String fId;

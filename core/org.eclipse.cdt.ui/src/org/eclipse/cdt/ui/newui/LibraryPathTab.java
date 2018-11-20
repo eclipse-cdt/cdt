@@ -14,17 +14,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TableColumn;
-
 import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
 import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
 import org.eclipse.cdt.core.settings.model.ICLanguageSettingEntry;
 import org.eclipse.cdt.core.settings.model.ICSettingEntry;
 import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-
 import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TableColumn;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.

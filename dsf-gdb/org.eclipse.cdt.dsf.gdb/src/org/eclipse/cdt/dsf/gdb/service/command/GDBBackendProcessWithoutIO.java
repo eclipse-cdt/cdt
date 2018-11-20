@@ -25,11 +25,11 @@ import org.eclipse.cdt.dsf.mi.service.IMIBackend;
  * This class is therefore a representation of the GDB process that will be
  * added to the launch. This class is not the real GDB process but simply an
  * entry for the launch to handle user actions but no IO.
- * 
+ *
  * This class extends {@link GDBBackendCLIProcess} to re-use its implementation
  * of the {@link Process} abstract methods, but disables all I/O and
  * local CLI handling.
- * 
+ *
  * @since 5.2
  */
 public class GDBBackendProcessWithoutIO extends GDBBackendCLIProcess implements IGDBBackendProcessWithoutIO {

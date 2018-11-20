@@ -116,12 +116,12 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	private static class CfgBuildSet {
-		Map<IProject, Set<String>> fMap = new HashMap<IProject, Set<String>>();
+		Map<IProject, Set<String>> fMap = new HashMap<>();
 
 		public Set<String> getCfgIdSet(IProject project, boolean create) {
 			Set<String> set = fMap.get(project);
 			if (set == null && create) {
-				set = new HashSet<String>();
+				set = new HashSet<>();
 				fMap.put(project, set);
 			}
 			return set;
@@ -326,7 +326,7 @@ public class CommonBuilder extends ACBuilder {
 		};
 
 		OtherConfigVerifier(IBuilder builders[], IConfiguration allCfgs[]) {
-			Set<IConfiguration> buildCfgSet = new HashSet<IConfiguration>();
+			Set<IConfiguration> buildCfgSet = new HashSet<>();
 			for (IBuilder builder : builders) {
 				buildCfgSet.add(builder.getParent().getParent());
 			}
@@ -337,7 +337,7 @@ public class CommonBuilder extends ACBuilder {
 			else
 				otherConfigs = new Configuration[0];
 
-			List<IPath> list = new ArrayList<IPath>(builders.length);
+			List<IPath> list = new ArrayList<>(builders.length);
 			//			buildFullPaths = new IPath[builders.length];
 			for (IBuilder builder : builders) {
 				IPath path = ManagedBuildManager.getBuildFullPath(builder.getParent().getParent(), builder);
@@ -565,7 +565,7 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	private IConfiguration[] filterConfigsToBuild(IConfiguration[] cfgs) {
-		List<IConfiguration> cfgList = new ArrayList<IConfiguration>(cfgs.length);
+		List<IConfiguration> cfgList = new ArrayList<>(cfgs.length);
 		for (IConfiguration cfg : cfgs) {
 			IProject project = cfg.getOwner().getProject();
 			Set<String> set = fBuildSet.getCfgIdSet(project, true);
@@ -593,7 +593,7 @@ public class CommonBuilder extends ACBuilder {
 	}
 
 	private IConfiguration[] getReferencedConfigs(IBuilder[] builders) {
-		Set<IConfiguration> set = new HashSet<IConfiguration>();
+		Set<IConfiguration> set = new HashSet<>();
 		for (IBuilder builder : builders) {
 			IConfiguration cfg = builder.getParent().getParent();
 			IConfiguration refs[] = ManagedBuildManager.getReferencedConfigurations(cfg);
@@ -606,9 +606,9 @@ public class CommonBuilder extends ACBuilder {
 
 	private Set<IProject> getProjectsSet(IConfiguration[] cfgs) {
 		if (cfgs.length == 0)
-			return new HashSet<IProject>(0);
+			return new HashSet<>(0);
 
-		Set<IProject> set = new HashSet<IProject>();
+		Set<IProject> set = new HashSet<>();
 		for (IConfiguration cfg : cfgs) {
 			set.add(cfg.getOwner().getProject());
 		}
@@ -664,7 +664,7 @@ public class CommonBuilder extends ACBuilder {
 		private final boolean fManagedBuildOn;
 		private boolean fRebuild;
 		private boolean fBuild = true;
-		private final List<String> fConsoleMessages = new ArrayList<String>();
+		private final List<String> fConsoleMessages = new ArrayList<>();
 		private IManagedBuilderMakefileGenerator fMakeGen;
 
 		public BuildStatus(IBuilder builder) {

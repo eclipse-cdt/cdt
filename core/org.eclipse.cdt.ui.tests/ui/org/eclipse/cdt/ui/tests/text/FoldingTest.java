@@ -19,17 +19,15 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
+import org.eclipse.cdt.internal.ui.text.folding.DefaultCFoldingStructureProvider.CProjectionAnnotation;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
-import org.eclipse.cdt.internal.ui.text.folding.DefaultCFoldingStructureProvider.CProjectionAnnotation;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -133,8 +131,7 @@ public class FoldingTest extends FoldingTestBase {
 	}
 
 	private void assertNoKeyCollisions() {
-		ProjectionAnnotationModel model = (ProjectionAnnotationModel) fEditor
-				.getAdapter(ProjectionAnnotationModel.class);
+		ProjectionAnnotationModel model = fEditor.getAdapter(ProjectionAnnotationModel.class);
 		assertNotNull(model);
 		int annotations = 0;
 		Set<Object> keys = new HashSet<>();

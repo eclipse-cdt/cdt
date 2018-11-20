@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
 /**
  * Command handler to request the start of tracing
- * 
+ *
  * @since 7.0
  */
 public class StartTracingCommandHandler extends DebugCommandHandler {

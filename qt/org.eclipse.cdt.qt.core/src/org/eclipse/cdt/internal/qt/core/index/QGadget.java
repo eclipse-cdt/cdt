@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQEnum;
 import org.eclipse.cdt.internal.qt.core.pdom.AbstractQtPDOMClass;
+import org.eclipse.cdt.internal.qt.core.pdom.QtPDOMQEnum;
 import org.eclipse.core.runtime.CoreException;
 
 public class QGadget implements IQGadget {
@@ -26,7 +26,7 @@ public class QGadget implements IQGadget {
 	public QGadget(QtIndexImpl qtIndex, CDTIndex cdtIndex, AbstractQtPDOMClass pdomQGadget) throws CoreException {
 		this.name = pdomQGadget.getName();
 
-		this.enums = new ArrayList<IQEnum>();
+		this.enums = new ArrayList<>();
 		for (QtPDOMQEnum pdom : pdomQGadget.getChildren(QtPDOMQEnum.class))
 			this.enums.add(new QEnum(pdom.getName(), pdom.isFlag(), pdom.getEnumerators()));
 	}

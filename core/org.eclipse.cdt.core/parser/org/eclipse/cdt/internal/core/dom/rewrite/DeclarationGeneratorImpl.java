@@ -66,7 +66,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 
 	/**
 	 * Creates a new generator using the given factory.
-	 * 
+	 *
 	 * @param factory The factory to use. If a C++ type is requested, it has to be an instance of
 	 *     {@link ICPPNodeFactory}.
 	 */
@@ -141,7 +141,7 @@ public class DeclarationGeneratorImpl extends DeclarationGenerator {
 		try {
 			// Addition of pointer operators has to be in reverse order, so it's deferred until
 			// the end.
-			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<IASTDeclarator, LinkedList<IASTPointerOperator>>();
+			Map<IASTDeclarator, LinkedList<IASTPointerOperator>> pointerOperatorMap = new HashMap<>();
 
 			// If the type is an array of something, create a declaration of a pointer to something
 			// instead (to allow assignment, etc).

@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.EFSExtensionProvider;
  * Test class that is used to make sure that extensions to the EFSExtensionProvider
  * extension point are picked up.  Overrrides the default behaviour for isVirtual()
  * to return true.
- * 
+ *
  * @author crecoskie
  *
  */

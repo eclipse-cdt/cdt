@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
-/** 
+/**
  * Application is responsible for calling core launch api
  */
 public class NewMain extends Main {

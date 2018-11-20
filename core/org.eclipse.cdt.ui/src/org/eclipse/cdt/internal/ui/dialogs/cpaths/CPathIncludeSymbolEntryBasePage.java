@@ -15,9 +15,8 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.util.List;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Abstract DialogPage for C/C++ Project Paths page for 3.X projects.

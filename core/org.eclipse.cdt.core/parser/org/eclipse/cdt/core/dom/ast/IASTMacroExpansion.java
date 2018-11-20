@@ -50,7 +50,7 @@ public interface IASTMacroExpansion extends IASTNodeLocation {
 	/**
 	 * The source locations for for the macro expansion. These are the locations
 	 * where the expansion in question occurred and was replaced.
-	 * 
+	 *
 	 * @deprecated use {@link IASTNodeLocation#asFileLocation()}.
 	 */
 	@Deprecated

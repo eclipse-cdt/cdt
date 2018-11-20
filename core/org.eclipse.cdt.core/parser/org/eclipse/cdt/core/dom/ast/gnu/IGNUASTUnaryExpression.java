@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *    John Camelon (IBM Rational Software) - Initial API and implementation 
+ *    John Camelon (IBM Rational Software) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast.gnu;
 

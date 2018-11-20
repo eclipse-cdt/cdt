@@ -30,9 +30,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
 public class DeltaAnalyzer {
-	private final List<ITranslationUnit> fForce = new ArrayList<ITranslationUnit>();
-	private final List<ITranslationUnit> fChanged = new ArrayList<ITranslationUnit>();
-	private final List<ITranslationUnit> fRemoved = new ArrayList<ITranslationUnit>();
+	private final List<ITranslationUnit> fForce = new ArrayList<>();
+	private final List<ITranslationUnit> fChanged = new ArrayList<>();
+	private final List<ITranslationUnit> fRemoved = new ArrayList<>();
 	// For testing purposes, only.
 	public static boolean sSuppressPotentialTUs = false;
 

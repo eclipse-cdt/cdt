@@ -21,7 +21,7 @@ import org.eclipse.launchbar.core.internal.Activator;
 /**
  * The launch descriptor type for launch objects built with the Core Build
  * System.
- * 
+ *
  * @since 1.2
  */
 public class CoreBuildContainerLaunchDescriptorType implements ILaunchDescriptorType {

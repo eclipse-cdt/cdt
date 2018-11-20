@@ -110,7 +110,7 @@ public class SizeofCalculator {
 	public SizeofCalculator(IASTTranslationUnit ast) {
 		this.ast = ast;
 		int maxAlignment = 32;
-		Map<String, String> sizeofMacros = new HashMap<String, String>();
+		Map<String, String> sizeofMacros = new HashMap<>();
 		for (IASTPreprocessorMacroDefinition macro : ast.getBuiltinMacroDefinitions()) {
 			String name = macro.getName().toString();
 			if ("__BIGGEST_ALIGNMENT__".equals(name)) { //$NON-NLS-1$

@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNamedTypeSpecifier;
 /**
  * This interface is just as an IASTNamedTypeSpecifier, except that it also
  * includes the abiliy to use the restrict modifier.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

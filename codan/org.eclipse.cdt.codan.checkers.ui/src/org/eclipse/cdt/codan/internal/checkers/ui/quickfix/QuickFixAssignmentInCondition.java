@@ -57,7 +57,7 @@ public class QuickFixAssignmentInCondition extends AbstractAstRewriteQuickFix {
 				IASTNodeLocation leftSubexprLocation = leftSubexprLocations[0];
 				int leftSubexprEnd = leftSubexprLocation.getNodeOffset() + leftSubexprLocation.getNodeLength();
 
-				// Assignment operator will be following the end of the left subexpression. 
+				// Assignment operator will be following the end of the left subexpression.
 				FindReplaceDocumentAdapter adapter = new FindReplaceDocumentAdapter(getDocument());
 				adapter.find(leftSubexprEnd, "=", ///$NON-NLS-1$
 						true, /* forwardSearch */

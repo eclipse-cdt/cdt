@@ -35,7 +35,7 @@ class PDOMCAnnotations {
 
 	/**
 	 * Encodes annotations applicable to functions.
-	 * 
+	 *
 	 * @param function the function whose annotations will be encoded
 	 * @return a bit vector of the annotations
 	 */
@@ -61,7 +61,7 @@ class PDOMCAnnotations {
 
 	/**
 	 * Encodes annotations applicable to variables.
-	 * 
+	 *
 	 * @param variable the IBinding whose annotation will be encoded.
 	 * @return a bit vector of the annotation.
 	 */

@@ -90,7 +90,7 @@ public class ResourceInfoContainer {
 	}
 
 	public List<IResourceInfo> getRcInfoList(final int kind, final boolean includeCurrent) {
-		final List<IResourceInfo> list = new ArrayList<IResourceInfo>();
+		final List<IResourceInfo> list = new ArrayList<>();
 		fRcDataContainer.accept(new IPathSettingsContainerVisitor() {
 
 			@Override

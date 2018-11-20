@@ -34,19 +34,19 @@ public class MapStorageElement implements ICStorageElement {
 	private static final String CHILDREN_KEY = "?children?"; //$NON-NLS-1$
 	private static final String NAME_KEY = "?name?"; //$NON-NLS-1$
 	private static final String VALUE_KEY = "?value?"; //$NON-NLS-1$
-	private List<MapStorageElement> fChildren = new ArrayList<MapStorageElement>();
+	private List<MapStorageElement> fChildren = new ArrayList<>();
 	private String fValue;
 
 	public MapStorageElement(String name, MapStorageElement parent) {
 		fName = name;
 		fParent = parent;
-		fMap = new HashMap<String, String>();
+		fMap = new HashMap<>();
 	}
 
 	public MapStorageElement(Map<String, String> map, MapStorageElement parent) {
 		fName = map.get(getMapKey(NAME_KEY));
 		fValue = map.get(getMapKey(VALUE_KEY));
-		fMap = new HashMap<String, String>(map);
+		fMap = new HashMap<>(map);
 		fParent = parent;
 
 		String children = map.get(getMapKey(CHILDREN_KEY));
@@ -86,7 +86,7 @@ public class MapStorageElement implements ICStorageElement {
 
 		int size = fChildren.size();
 		if (size != 0) {
-			List<String> childrenStrList = new ArrayList<String>(size);
+			List<String> childrenStrList = new ArrayList<>(size);
 			for (int i = 0; i < size; i++) {
 				MapStorageElement child = fChildren.get(i);
 				Map<String, String> childStrMap = child.toStringMap();
@@ -143,7 +143,7 @@ public class MapStorageElement implements ICStorageElement {
 
 	@Override
 	public ICStorageElement[] getChildrenByName(String name) {
-		List<ICStorageElement> children = new ArrayList<ICStorageElement>();
+		List<ICStorageElement> children = new ArrayList<>();
 		for (ICStorageElement child : fChildren)
 			if (name.equals(child.getName()))
 				children.add(child);
@@ -189,7 +189,7 @@ public class MapStorageElement implements ICStorageElement {
 
 	public static HashMap<String, String> decodeMap(String value) {
 		List<String> list = decodeList(value);
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 		char escapeChar = '\\';
 
 		for (int i = 0; i < list.size(); i++) {
@@ -215,7 +215,7 @@ public class MapStorageElement implements ICStorageElement {
 	}
 
 	public static List<String> decodeList(String value) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (value != null) {
 			StringBuilder envStr = new StringBuilder(value);
 			String escapeChars = "|\\"; //$NON-NLS-1$
@@ -313,7 +313,7 @@ public class MapStorageElement implements ICStorageElement {
 
 	@Override
 	public String[] getAttributeNames() {
-		List<String> list = new ArrayList<String>(fMap.size());
+		List<String> list = new ArrayList<>(fMap.size());
 		Set<Entry<String, String>> entrySet = fMap.entrySet();
 		for (Entry<String, String> entry : entrySet) {
 			String key = entry.getKey();

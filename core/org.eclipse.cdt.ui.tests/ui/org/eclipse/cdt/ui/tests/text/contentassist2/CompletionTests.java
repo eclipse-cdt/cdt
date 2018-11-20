@@ -32,16 +32,14 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.Test;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.testplugin.TestScannerProvider;
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-
 import org.eclipse.cdt.internal.ui.text.contentassist.CCompletionProposal;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.jface.text.IDocument;
+
+import junit.framework.Test;
 
 /**
  * A collection of code completion tests.
@@ -922,7 +920,7 @@ public class CompletionTests extends CompletionTestBase {
 	}
 
 	private static void createIncludeFiles(File dir, String[] files) throws IOException {
-		Set<String> includeDirs = new HashSet<String>();
+		Set<String> includeDirs = new HashSet<>();
 		for (String file2 : files) {
 			File file = new File(dir, file2);
 			final File parentFile = file.getParentFile();
@@ -1814,7 +1812,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	template<typename T>
 	//	void foo(vector<vector<T>> v) {
 	//		v.front().f/*cursor*/
-	//	}	
+	//	}
 	public void testDependentScopes_472818d() throws Exception {
 		assertCompletionResults(new String[] { "front()" });
 	}
@@ -1894,7 +1892,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	};
 	//
 	//	struct B {
-	//	  
+	//
 	//	  template<int T>
 	//	  using Test = A<T>;
 	//
@@ -1902,7 +1900,7 @@ public class CompletionTests extends CompletionTestBase {
 	//	    Te/*cursor*/
 	//	  }
 	//
-	//	};	
+	//	};
 	public void testAliasTemplateTypeSpecifier_521820() throws Exception {
 		assertCompletionResults(new String[] { "Test<>" });
 	}

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *      Sergey Prigogin (Google)
@@ -19,6 +19,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -40,18 +50,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICProject;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 
 /**
  * Base for project property and preference pages
@@ -197,17 +195,17 @@ public abstract class PropertyAndPreferencePage extends PreferencePage
 
 	/**
 	 * Handle link activation.
-	 * 
+	 *
 	 * @param link the link
 	 */
 	final void doLinkActivated(Link link) {
-		Map<String, Boolean> data = new HashMap<String, Boolean>();
+		Map<String, Boolean> data = new HashMap<>();
 		data.put(DATA_NO_LINK, Boolean.TRUE);
 
 		if (isProjectPreferencePage()) {
 			openWorkspacePreferences(data);
 		} else {
-			HashSet<ICProject> projectsWithSpecifics = new HashSet<ICProject>();
+			HashSet<ICProject> projectsWithSpecifics = new HashSet<>();
 			try {
 				ICProject[] projects = CoreModel.getDefault().getCModel().getCProjects();
 				for (ICProject curr : projects) {

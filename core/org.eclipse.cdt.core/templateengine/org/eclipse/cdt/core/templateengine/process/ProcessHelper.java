@@ -46,7 +46,7 @@ public class ProcessHelper {
 
 	/**
 	 * This method is to append the given contents into a file.
-	 * 
+	 *
 	 * @param fileContents contents which are appended to the file.
 	 * @param toFile a file to append contents.
 	 * @throws IOException exception while writing contents into a file
@@ -73,7 +73,7 @@ public class ProcessHelper {
 	/**
 	 * This method returns a vector of all replace marker strings. (e.g.,
 	 * $(item), vector contains 'item' as one item) is the end pattern.
-	 * 
+	 *
 	 * @param str A given string possibly containing markers.
 	 * @return the set of names occurring within markers
 	 * @since 4.0
@@ -85,7 +85,7 @@ public class ProcessHelper {
 	/**
 	 * This method returns a vector of all replace marker strings. (e.g.,
 	 * $(item), vector contains 'item' as one item) is the end pattern.
-	 * 
+	 *
 	 * @param str A given string possibly containing markers.
 	 * @param startPattern token to start macro replacement
 	 * @param endPattern token to end macro replacement
@@ -93,7 +93,7 @@ public class ProcessHelper {
 	 * @since 5.5
 	 */
 	public static Set<String> getReplaceKeys(String str, String startPattern, String endPattern) {
-		Set<String> replaceStrings = new HashSet<String>();
+		Set<String> replaceStrings = new HashSet<>();
 		int start = 0;
 		int end = 0;
 		while ((start = str.indexOf(startPattern, start)) >= 0) {
@@ -111,7 +111,7 @@ public class ProcessHelper {
 	/**
 	 * This method takes a URL as parameter to read the contents, and to add
 	 * into a string buffer.
-	 * 
+	 *
 	 * @param source URL to read the contents.
 	 * @return string contents of a file specified in the URL source path.
 	 * @since 4.0
@@ -140,7 +140,7 @@ public class ProcessHelper {
 	/**
 	 * This method reads contents from source, and writes the contents into
 	 * destination file.
-	 * 
+	 *
 	 * @param source URL to read the contents.
 	 * @param dest destination file to write the contents.
 	 * @since 4.0
@@ -177,7 +177,7 @@ public class ProcessHelper {
 	 * @param projectHandle
 	 * @param parentFolder
 	 * @throws CoreException
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static void mkdirs(IProject projectHandle, IFolder parentFolder) throws CoreException {
@@ -195,7 +195,7 @@ public class ProcessHelper {
 	 * @param macros
 	 * @param valueStore
 	 * @return the macro value after expanding the macros.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static String getValueAfterExpandingMacros(String string, Set<String> macros,
@@ -208,7 +208,7 @@ public class ProcessHelper {
 	 * @param macros
 	 * @param valueStore
 	 * @return the macro value after expanding the macros.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public static String getValueAfterExpandingMacros(String string, Set<String> macros, Map<String, String> valueStore,
@@ -225,7 +225,7 @@ public class ProcessHelper {
 	/**
 	 * @param macro
 	 * @return the replacement marker string
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static String getReplaceMarker(String macro) {

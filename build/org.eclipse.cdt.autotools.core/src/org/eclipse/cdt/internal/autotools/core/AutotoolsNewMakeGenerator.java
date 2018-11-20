@@ -195,7 +195,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	 * Check whether the build has been cancelled. Cancellation requests
 	 * propagated to the caller by throwing
 	 * <code>OperationCanceledException</code>.
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.OperationCanceledException#OperationCanceledException()
 	 */
 	protected void checkCancel() {
@@ -208,7 +208,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	 * Return or create the makefile needed for the build. If we are creating
 	 * the resource, set the derived bit to true so the CM system ignores the
 	 * contents. If the resource exists, respect the existing derived setting.
-	 * 
+	 *
 	 * @param makefilePath
 	 * @return IFile
 	 */
@@ -242,7 +242,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 	/**
 	 * Create a directory.
-	 * 
+	 *
 	 * @param boolean
 	 * @return whether the directory was created
 	 */
@@ -449,7 +449,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 							rc = runCommand(runInCfgLauncher ? configureLauncher : localCommandLauncher, makeCmd,
 									buildLocation, makeargs,
 									AutotoolsPlugin.getFormattedString("MakeGenerator.clean.builddir", //$NON-NLS-1$
-											new String[] { buildDir }), errMsg, console, consoleStart);
+											new String[] { buildDir }),
+									errMsg, console, consoleStart);
 							consoleStart = false;
 						}
 					}
@@ -478,7 +479,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 				if (makefile == null || !makefile.exists()) {
 					rc = runScript(configureLauncher, configfile, buildLocation, null,
 							AutotoolsPlugin.getFormattedString("MakeGenerator.run.config.status", //$NON-NLS-1$
-									new String[] { buildDir }), errMsg, console, null, consoleStart);
+									new String[] { buildDir }),
+							errMsg, console, null, consoleStart);
 					consoleStart = false;
 				}
 			}
@@ -532,7 +534,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 							rc = runScript(runInCfgLauncher ? configureLauncher : localCommandLauncher, reconfCmdPath,
 									getSourcePath(), reconfArgs,
 									AutotoolsPlugin.getFormattedString("MakeGenerator.autoreconf", //$NON-NLS-1$
-											new String[] { buildDir }), errMsg, console, null, consoleStart);
+											new String[] { buildDir }),
+									errMsg, console, null, consoleStart);
 							consoleStart = false;
 							refresh();
 						}
@@ -540,7 +543,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 						if (rc != IStatus.ERROR && configurePath.toFile().exists()) {
 							rc = runScript(configureLauncher, configurePath, buildLocation, configArgs,
 									AutotoolsPlugin.getFormattedString("MakeGenerator.gen.makefile", //$NON-NLS-1$
-											new String[] { buildDir }), errMsg, console, configureEnvs, false);
+											new String[] { buildDir }),
+									errMsg, console, configureEnvs, false);
 							if (rc != IStatus.ERROR) {
 								File makefileFile = buildLocation.append(MAKEFILE).toFile();
 								addMakeTargetsToManager(makefileFile);
@@ -554,7 +558,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					}
 				}
 			}
-			// If nothing this far, look for a Makefile.cvs file which needs to be run. 
+			// If nothing this far, look for a Makefile.cvs file which needs to be run.
 			else if (makefileCvsExists()) {
 				String[] makeargs = new String[1];
 				IPath makeCmd = builder.getBuildCommand();
@@ -602,7 +606,8 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					if (configurePath.toFile().exists()) {
 						rc = runScript(configureLauncher, configurePath, buildLocation, configArgs,
 								AutotoolsPlugin.getFormattedString("MakeGenerator.gen.makefile", //$NON-NLS-1$
-										new String[] { buildDir }), errMsg, console, configureEnvs, false);
+										new String[] { buildDir }),
+								errMsg, console, configureEnvs, false);
 						if (rc != IStatus.ERROR) {
 							File makefileFile = buildLocation.append(MAKEFILE).toFile();
 							addMakeTargetsToManager(makefileFile);
@@ -1012,8 +1017,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 					env = envList.toArray(new String[envList.size()]);
 				}
 
-				launcher.execute(new Path(SHELL_COMMAND), //$NON-NLS-1$
-						new String[] { "-c", "echo $OSTYPE" }, //$NON-NLS-1$ //$NON-NLS-2$
+				launcher.execute(new Path(SHELL_COMMAND), new String[] { "-c", "echo $OSTYPE" }, //$NON-NLS-1$ //$NON-NLS-2$
 						env, buildLocation, SubMonitor.convert(monitor));
 				if (launcher.waitAndRead(out, out) == ICommandLauncher.OK)
 					winOSType = out.toString().trim();
@@ -1348,7 +1352,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 
 	/**
 	 * This output method saves the information into the .cdtproject metadata file.
-	 * 
+	 *
 	 * @param doc
 	 * @throws CoreException
 	 */
@@ -1382,7 +1386,7 @@ public class AutotoolsNewMakeGenerator extends MarkerGenerator {
 	/**
 	 * This method parses the given Makefile and produces MakeTargets for all targets so the
 	 * end-user can access them from the MakeTargets popup-menu.
-	 * 
+	 *
 	 * @param makefileFile the Makefile to parse
 	 * @throws CoreException
 	 */

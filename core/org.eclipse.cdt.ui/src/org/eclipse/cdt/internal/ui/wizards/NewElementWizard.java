@@ -15,6 +15,9 @@ package org.eclipse.cdt.internal.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -33,11 +36,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.actions.WorkbenchRunnableAdapter;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 public abstract class NewElementWizard extends Wizard implements INewWizard {
 	private IWorkbench fWorkbench;

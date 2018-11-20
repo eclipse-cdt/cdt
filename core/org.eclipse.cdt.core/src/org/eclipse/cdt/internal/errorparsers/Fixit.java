@@ -39,7 +39,7 @@ public class Fixit {
 
 	/**
 	 * Get line number.
-	 * 
+	 *
 	 * @return 1-based line number of fix-it
 	 */
 	public int getLineNumber() {
@@ -48,7 +48,7 @@ public class Fixit {
 
 	/**
 	 * Get column number.
-	 * 
+	 *
 	 * @return 1-based column number of fix-it
 	 */
 	public int getColumnNumber() {
@@ -57,7 +57,7 @@ public class Fixit {
 
 	/**
 	 * Get length.
-	 * 
+	 *
 	 * @return length of change for fix-it
 	 */
 	public int getLength() {

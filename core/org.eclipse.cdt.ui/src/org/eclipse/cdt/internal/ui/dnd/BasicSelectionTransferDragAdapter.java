@@ -57,7 +57,7 @@ public class BasicSelectionTransferDragAdapter extends DragSourceAdapter impleme
 	 * be dragged.
 	 * <p>
 	 * Subclasses may override.
-	 * 
+	 *
 	 * @param selection containing the elements to be dragged
 	 */
 	protected boolean isDragable(ISelection selection) {

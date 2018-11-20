@@ -18,6 +18,15 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.BadLocationException;
@@ -26,17 +35,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
-
-import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
-import org.eclipse.cdt.core.dom.ast.IASTFieldReference;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.model.ICLanguageKeywords;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
 
 public class KeywordCompletionProposalComputer extends ParsingBasedProposalComputer {
 
@@ -61,7 +59,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 		// keywords are matched case-sensitive
 		final int relevance = RelevanceConstants.CASE_MATCH_RELEVANCE + RelevanceConstants.KEYWORD_TYPE_RELEVANCE;
 
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 
 		ICLanguageKeywords languageKeywords = null;
 		ITranslationUnit tu = context.getTranslationUnit();
@@ -123,7 +121,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 
 	/**
 	 * Checks whether the given invocation context looks valid for template completion.
-	 * 
+	 *
 	 * @param context  the content assist invocation context
 	 * @return <code>false</code> if the given invocation context looks like a field reference
 	 */
@@ -148,7 +146,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 
 	/**
 	 * Test whether the invocation offset is inside or before the preprocessor directive keyword.
-	 * 
+	 *
 	 * @param context  the invocation context
 	 * @return <code>true</code> if the invocation offset is inside or before the directive keyword
 	 */
@@ -173,7 +171,7 @@ public class KeywordCompletionProposalComputer extends ParsingBasedProposalCompu
 
 	/**
 	 * Check if the invocation offset is inside a preprocessor directive.
-	 * 
+	 *
 	 * @param context  the content asist invocation context
 	 * @return <code>true</code> if invocation offset is inside a preprocessor directive
 	 */

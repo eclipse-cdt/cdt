@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Mikhail Khodjaiants (Mentor), Marc Khouzam (Ericsson)
@@ -118,11 +118,11 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 		if (Boolean.TRUE.equals(
 				getPresentationContext().getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION))) {
 			if (fUseAggressiveBpFilter) {
-				// Aggressive filtering of breakpoints.  Only return bps that are installed on the target.  
+				// Aggressive filtering of breakpoints.  Only return bps that are installed on the target.
 				ISelection debugContext = getDebugContext();
 				if (debugContext instanceof IStructuredSelection) {
 					// Use a set to avoid duplicates
-					final Set<IBreakpoint> bps = new HashSet<IBreakpoint>();
+					final Set<IBreakpoint> bps = new HashSet<>();
 
 					int count = 0;
 					final ImmediateCountingRequestMonitor crm = new ImmediateCountingRequestMonitor(rm) {
@@ -167,7 +167,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 			} else {
 				// Original behavior of bp filtering.  Return all bp of type ICBreakpoint
 				IBreakpoint[] allBreakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints();
-				List<IBreakpoint> filteredBPs = new ArrayList<IBreakpoint>(allBreakpoints.length);
+				List<IBreakpoint> filteredBPs = new ArrayList<>(allBreakpoints.length);
 				for (IBreakpoint bp : allBreakpoints) {
 					if (bp instanceof ICBreakpoint && bp.getModelIdentifier().equals(CDebugCorePlugin.PLUGIN_ID)) {
 						filteredBPs.add(bp);
@@ -293,7 +293,7 @@ public class GdbBreakpointVMProvider extends BreakpointVMProvider {
 									}
 
 									if (getData().length > 0) {
-										final Set<IBreakpoint> bps = new HashSet<IBreakpoint>(getData().length);
+										final Set<IBreakpoint> bps = new HashSet<>(getData().length);
 										final CountingRequestMonitor crm = new CountingRequestMonitor(
 												ImmediateExecutor.getInstance(), rm) {
 

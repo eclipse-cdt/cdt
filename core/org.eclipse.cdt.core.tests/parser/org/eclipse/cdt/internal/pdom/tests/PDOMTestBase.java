@@ -55,7 +55,7 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
-/** 
+/**
  * @author Doug Schaefer
  */
 public class PDOMTestBase extends BaseTestCase {

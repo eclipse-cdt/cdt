@@ -17,9 +17,9 @@ import java.util.Set;
 
 /**
  * An event that indicates the format of certain elements has changed.
- * Even when a viewer is configured to be in a manual update mode, there is a need to 
+ * Even when a viewer is configured to be in a manual update mode, there is a need to
  * update the labels/states of elements.
- * 
+ *
  * @since 2.2
  */
 public class ElementFormatEvent {
@@ -44,7 +44,7 @@ public class ElementFormatEvent {
 
 	/**
 	 * Get the elements for which the format has changed.
-	 * 
+	 *
 	 * @return the elements
 	 */
 	public Set<Object> getElements() {
@@ -54,7 +54,7 @@ public class ElementFormatEvent {
 	/**
 	 * Get the depth to which the change of format applies, with respect to the
 	 * affected elements and their children.
-	 * 
+	 *
 	 * @return the apply depth.
 	 */
 	public int getApplyDepth() {

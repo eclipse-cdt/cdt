@@ -25,7 +25,7 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 
 /**
- * Tokenizing autoconf parser, based on original work by Jeff Johnston 
+ * Tokenizing autoconf parser, based on original work by Jeff Johnston
  * @author eswartz
  */
 public class AutoconfParser {
@@ -57,7 +57,10 @@ public class AutoconfParser {
 	private IAutoconfMacroDetector macroDetector;
 
 	private static final String M4_BUILTINS = "define undefine defn pushdef popdef indir builtin ifdef ifelse shift reverse cond " //$NON-NLS-1$
-			+ "dumpdef traceon traceoff debugmode debugfile dnl changequote changecom changeword " + "m4wrap " + "include sinclude divert undivert divnum len index regexp substr translit patsubst " + "format incr decr eval syscmd esyscmd sysval mkstemp maketemp errprint m4exit " + "__file__ __line__ __program__ ";
+			+ "dumpdef traceon traceoff debugmode debugfile dnl changequote changecom changeword " + "m4wrap "
+			+ "include sinclude divert undivert divnum len index regexp substr translit patsubst "
+			+ "format incr decr eval syscmd esyscmd sysval mkstemp maketemp errprint m4exit "
+			+ "__file__ __line__ __program__ ";
 
 	private static List<String> m4builtins = new ArrayList<>();
 	static {
@@ -65,7 +68,7 @@ public class AutoconfParser {
 	}
 
 	/**
-	 * Create a parser for autoconf-style sources.  
+	 * Create a parser for autoconf-style sources.
 	 * @param errorHandler
 	 * @param macroDetector
 	 * @param macroValidator
@@ -114,7 +117,7 @@ public class AutoconfParser {
 
 	static class BlockEndCondition extends Exception {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 		private Token token;
@@ -131,7 +134,7 @@ public class AutoconfParser {
 
 	static class ExprEndCondition extends Exception {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 		private Token token;
@@ -167,7 +170,7 @@ public class AutoconfParser {
 
 	/**
 	 * Parse a block of nodes, which starts with an expression and contains
-	 * subnodes.  Divide text into macro calls and recognized shell constructs.  
+	 * subnodes.  Divide text into macro calls and recognized shell constructs.
 	 * Anything else is not accounted for.
 	 * @param parent
 	 */
@@ -252,7 +255,7 @@ public class AutoconfParser {
 	/**
 	 * Parse a case statement.  Scoop up statements into case conditional blocks.
 	 * <pre>
-	 * 'case' EXPR 'in' 
+	 * 'case' EXPR 'in'
 	 * 		{ EXPR ')'  { STMTS } ';;' }
 	 * 'esac'
 	 * </pre>
@@ -418,7 +421,7 @@ public class AutoconfParser {
 				break;
 
 			// Check for shell constructs.  These should appear at the start of a line
-			// or after a semicolon.  If they don't,  just report an error and continue, 
+			// or after a semicolon.  If they don't,  just report an error and continue,
 			// to be tolerant of our own lax parsing.
 
 			// 3.a) Check dollar variables
@@ -769,7 +772,7 @@ public class AutoconfParser {
 	/**
 	 * Creates the appropriate macro type object depending on the
 	 * macro name.
-	 * 
+	 *
 	 * @return
 	 */
 	private AutoconfMacroElement createMacroElement(String name) {
@@ -781,7 +784,7 @@ public class AutoconfParser {
 
 	/**
 	 * Check whether the given token is part of a macro, and parse it as such
-	 * if necessary.  
+	 * if necessary.
 	 * @param parent
 	 * @param token
 	 * @return Token last read for the macro call
@@ -861,17 +864,17 @@ public class AutoconfParser {
 	private void validateMacroParameterCount(AutoconfMacroElement macro, Token token, int count) {
 		if (macro.getParameterCount() < count) {
 			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooFew", macro.getName(),
-					Integer.valueOf(2))); //$NON-NLS-1$ 
+					Integer.valueOf(2)));
 		} else if (macro.getParameterCount() > count) {
 			handleError(token, AutoconfEditorMessages.getFormattedString("M4MacroArgsTooMany", macro.getName(),
-					Integer.valueOf(2))); //$NON-NLS-1$
+					Integer.valueOf(2)));
 		}
 	}
 
 	/**
 	 * Start parsing a macro call at a suspected macro expansion location.
 	 * @param macro
-	 * @param line the line containing the start of the 
+	 * @param line the line containing the start of the
 	 * @param parent
 	 * @return last token parsed
 	 */
@@ -910,7 +913,7 @@ public class AutoconfParser {
 	 * Parse the arguments for the given macro. These are not interpreted as
 	 * shell constructs but just as text with possibly more macro expansions
 	 * inside.
-	 * 
+	 *
 	 * @param macro
 	 * @return final token (')')
 	 *

@@ -108,7 +108,7 @@ public class QtFactory {
 		@Override
 		public QtVersion access(IIndex index) throws CoreException {
 			// Multiple macros might be found, sort the values and choose the highest version.
-			SortedSet<String> versions = new TreeSet<String>();
+			SortedSet<String> versions = new TreeSet<>();
 			try {
 				for (IIndexMacro macro : index.findMacros(QT_VERSION, IndexFilter.ALL, null))
 					versions.add(new String(macro.getExpansion()).toLowerCase());

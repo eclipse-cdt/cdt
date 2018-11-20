@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 
 /**
  * Represents a member of a class. Adds in the visibility attribute.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

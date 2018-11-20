@@ -42,7 +42,7 @@ public final class BindingCollector extends NamedNodeCollector {
 
 	/**
 	 * Collects all bindings with given name, passing the filter.
-	 * 
+	 *
 	 * @param linkage
 	 * @param name
 	 * @param filter

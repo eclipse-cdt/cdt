@@ -59,7 +59,7 @@ public class TracepointActionsPreferencePage extends PreferencePage implements I
 				actionsList.HandleDeleteButton();
 			}
 		});
-		String helpContextID = GdbUIPlugin.PLUGIN_ID + "." + contextHelpID; //$NON-NLS-1$	
+		String helpContextID = GdbUIPlugin.PLUGIN_ID + "." + contextHelpID; //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(super.getControl(), helpContextID);
 
 		return container;

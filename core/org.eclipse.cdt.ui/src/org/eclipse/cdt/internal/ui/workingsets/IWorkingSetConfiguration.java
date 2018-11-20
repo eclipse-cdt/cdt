@@ -16,11 +16,10 @@ package org.eclipse.cdt.internal.ui.workingsets;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 
 /**
  * <p>
@@ -45,40 +44,40 @@ import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
  * working-set configuration that includes none of the projects that currently are members of the working set,
  * is active.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public interface IWorkingSetConfiguration extends IWorkingSetConfigurationElement {
 	/**
 	 * Obtains the working set element that contains me.
-	 * 
+	 *
 	 * @return my working set
 	 */
 	IWorkingSetProxy getWorkingSet();
 
 	/**
 	 * Queries my name.
-	 * 
+	 *
 	 * @return my name
 	 */
 	String getName();
 
 	/**
 	 * Obtains the project configuration element for the specified project.
-	 * 
+	 *
 	 * @param projectName
 	 *            a project name
-	 * 
+	 *
 	 * @return that project's configuration element
-	 * 
+	 *
 	 * @throws IllegalArgumentException
 	 *             if the specified project is not a member of my working set
-	 * 
+	 *
 	 * @see #getProjectConfigurations()
 	 */
 	IWorkingSetProjectConfiguration getProjectConfiguration(String projectName);
@@ -87,7 +86,7 @@ public interface IWorkingSetConfiguration extends IWorkingSetConfigurationElemen
 	 * Obtains the configuration elements for all of the projects in my working set. These include any
 	 * projects that were not in my working set when I was last updated, and does not include any projects
 	 * that were in my working set when I was last updated but that no longer are.
-	 * 
+	 *
 	 * @return my project configuration elements
 	 */
 	Collection<IWorkingSetProjectConfiguration> getProjectConfigurations();
@@ -96,9 +95,9 @@ public interface IWorkingSetConfiguration extends IWorkingSetConfigurationElemen
 	 * Queries whether I am currently active in the workspace. I am active if and only if for every the
 	 * projects in my working set, its active configuration is the one that I specify for it. As a special
 	 * case, the configurations of an empty working set can never be active.
-	 * 
+	 *
 	 * @return whether I am currently active in the workspace
-	 * 
+	 *
 	 * @see #activate()
 	 */
 	boolean isActive();
@@ -106,14 +105,14 @@ public interface IWorkingSetConfiguration extends IWorkingSetConfigurationElemen
 	/**
 	 * Updates the workspace to set, for each project in my working set, the active configuration that I
 	 * specify for it. This method has no effect if I am already active.
-	 * 
+	 *
 	 * @see #isActive()
 	 */
 	void activate();
 
 	/**
 	 * Builds my project configurations in the workspace.
-	 * 
+	 *
 	 * @param monitor
 	 *            for reporting progress of the working-set build
 	 * @return the aggregate status of the individual
@@ -124,13 +123,13 @@ public interface IWorkingSetConfiguration extends IWorkingSetConfigurationElemen
 	/**
 	 * Creates a <i>snapshot</i> (also known as a "working copy") of myself, providing a mutable view suitable
 	 * for editing.
-	 * 
+	 *
 	 * @param workingSet
 	 *            my parent working set snapshot
 	 * @param workspace
 	 *            a workspace snapshot that captures the baseline state of the workspace and the working set
 	 *            configurations that are to be edited
-	 * 
+	 *
 	 * @return a working-copy snapshot of myself
 	 */
 	ISnapshot createSnapshot(IWorkingSetProxy.ISnapshot workingSet, WorkspaceSnapshot workspace);
@@ -142,12 +141,12 @@ public interface IWorkingSetConfiguration extends IWorkingSetConfigurationElemen
 	/**
 	 * The snapshot ("working copy") view of a working set configuration. It defines additional API for the
 	 * manipulation of working set configurations.
-	 * 
+	 *
 	 * @noimplement This interface is not intended to be implemented by clients.
 	 * @noextend This interface is not intended to be extended by clients.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	interface ISnapshot extends IWorkingSetConfiguration, IWorkingSetConfigurationElement.ISnapshot {
@@ -165,17 +164,17 @@ public interface IWorkingSetConfiguration extends IWorkingSetConfigurationElemen
 		 * A working set only ever has at most one read-only configuration, though it may have multiple active
 		 * configurations if some of its configurations are equivalent.
 		 * </p>
-		 * 
+		 *
 		 * @return whether I am the read-only active configuration of my working set
 		 */
 		boolean isReadOnly();
 
 		/**
 		 * Sets my name, which must be unique amongst the configurations in my working set.
-		 * 
+		 *
 		 * @param name
 		 *            my new, unique name
-		 * 
+		 *
 		 * @throws IllegalArgumentException
 		 *             if the new name is <code>null</code> or empty, or if it is already used by another
 		 *             configuration of the same working set

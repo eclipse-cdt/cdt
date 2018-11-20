@@ -120,7 +120,7 @@ public interface ICDebugConstants {
 	 * persisted global value when a debug session ends, using the mode that
 	 * session is in at that time. In other words, the most recently terminated
 	 * debug session dictates the initial mode of the next new debug session.
-	 * 
+	 *
 	 * Temporary. See bugs 79872 and 80323.
 	 */
 	public static final String PREF_INSTRUCTION_STEP_MODE_ON = PLUGIN_ID + "cDebug.Disassembly.instructionStepOn"; //$NON-NLS-1$
@@ -145,10 +145,10 @@ public interface ICDebugConstants {
 	/**
 	 * Preference key for toggle breakpoint model identifier. Debugger that contribute custom
 	 * CBreakpoint should set the system property with this key to true. when this system property
-	 * is set to true, the standard ICBreakpoint toggle breakpoint factory enablement will take 
+	 * is set to true, the standard ICBreakpoint toggle breakpoint factory enablement will take
 	 * into account for non-standard ICElement input.
-	 * 
+	 *
 	 * @since 7.1
 	 */
-	public static final String PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER = PLUGIN_ID + ".toggleBreakpointModel"; //$NON-NLS-1$    
+	public static final String PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER = PLUGIN_ID + ".toggleBreakpointModel"; //$NON-NLS-1$
 }

@@ -20,19 +20,17 @@ import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
-
 /**
- * The code formatter preference page. 
+ * The code formatter preference page.
  */
 public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 	private static final String FORMATTER_DIALOG_PREFERENCE_KEY = "formatter_page"; //$NON-NLS-1$
@@ -75,7 +73,7 @@ public class CodeFormatterConfigurationBlock extends ProfileConfigurationBlock {
 			"#include <math.h>\n\n" + //$NON-NLS-1$
 			"class Point {" + //$NON-NLS-1$
 			"public:" + //$NON-NLS-1$
-			"Point(double x, double y) : x(x), y(y) {}" + //$NON-NLS-1$ 
+			"Point(double x, double y) : x(x), y(y) {}" + //$NON-NLS-1$
 			"double distance(const Point& other) const;" + //$NON-NLS-1$
 			"\n\n" + //$NON-NLS-1$
 			"double x;" + //$NON-NLS-1$

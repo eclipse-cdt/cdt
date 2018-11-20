@@ -31,7 +31,7 @@ import org.eclipse.debug.core.model.IProcess;
 
 /**
  * Specialization for GDB >= 7.3.
- * 
+ *
  * @since 4.7
  */
 public class MIInferiorProcess_7_3 extends MIInferiorProcess {

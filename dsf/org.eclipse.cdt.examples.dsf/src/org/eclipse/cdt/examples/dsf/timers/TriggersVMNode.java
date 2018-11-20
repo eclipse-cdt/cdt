@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -48,7 +48,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  * View model node that defines how alarm DMContexts are displayed in the view.  Alarm
  * nodes are fairly static, once they are created their label doesn't change.
- * @see TriggerDMContext 
+ * @see TriggerDMContext
  */
 @SuppressWarnings("restriction")
 class TriggersVMNode extends AbstractDMVMNode
@@ -168,7 +168,7 @@ class TriggersVMNode extends AbstractDMVMNode
 
 	@Override
 	public int getDeltaFlags(Object e) {
-		// Since the label for triggers doesn't change, this node will generate 
+		// Since the label for triggers doesn't change, this node will generate
 		// delta info only if the list of alarms is changed.
 		if (e instanceof AlarmService.TriggersChangedEvent) {
 			return IModelDelta.CONTENT;
@@ -179,7 +179,7 @@ class TriggersVMNode extends AbstractDMVMNode
 	@Override
 	public void buildDelta(Object event, VMDelta parentDelta, int nodeOffset, RequestMonitor requestMonitor) {
 		if (event instanceof AlarmService.TriggersChangedEvent) {
-			// The list of alarms has changed, which means that the parent 
+			// The list of alarms has changed, which means that the parent
 			// node needs to refresh its contents, which in turn will re-fetch the
 			// elements from this node.
 			parentDelta.setFlags(parentDelta.getFlags() | IModelDelta.CONTENT);

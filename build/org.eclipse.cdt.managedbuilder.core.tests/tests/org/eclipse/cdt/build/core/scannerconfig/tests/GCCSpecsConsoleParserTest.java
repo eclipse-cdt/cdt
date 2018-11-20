@@ -16,11 +16,11 @@ package org.eclipse.cdt.build.core.scannerconfig.tests;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCSpecsConsoleParser;
+
+import junit.framework.TestCase;
 
 public class GCCSpecsConsoleParserTest extends TestCase {
 	GCCSpecsConsoleParser parser;

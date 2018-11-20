@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,15 +24,15 @@ import org.eclipse.core.runtime.Platform;
  * exercised on the submitter's thread. This executor is useful for clients that
  * need to create <code>RequestMonitor</code> objects, but which do not have
  * their own executor.
- * 
+ *
  * @see RequestMonitor
- * 
+ *
  * @since 1.0
  */
 public class ImmediateExecutor implements Executor {
 
 	/**
-	 * Debug flag used for tracking runnables that were never executed, 
+	 * Debug flag used for tracking runnables that were never executed,
 	 * or executed multiple times.
 	 */
 	protected static boolean DEBUG_EXECUTOR = false;
@@ -44,7 +44,7 @@ public class ImmediateExecutor implements Executor {
 	private static ImmediateExecutor fInstance = new ImmediateExecutor();
 
 	/**
-	 * The default constructor is hidden. {@link #getInstance()} should be 
+	 * The default constructor is hidden. {@link #getInstance()} should be
 	 * used instead.
 	 */
 	private ImmediateExecutor() {

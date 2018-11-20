@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.IPath;
 public class CDefaultFolderData extends CFolderData {
 	protected IPath fPath;
 	//	protected boolean fIsExcluded;
-	protected List<CLanguageData> fLanguageDatas = new ArrayList<CLanguageData>();
+	protected List<CLanguageData> fLanguageDatas = new ArrayList<>();
 	protected String fName;
 	protected String fId;
 	protected CConfigurationData fCfg;

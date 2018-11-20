@@ -36,7 +36,7 @@ public final class DebugVariableKind {
 	private int id;
 
 	/**
-	 * 
+	 *
 	 */
 	private DebugVariableKind(int id) {
 		this.id = id;

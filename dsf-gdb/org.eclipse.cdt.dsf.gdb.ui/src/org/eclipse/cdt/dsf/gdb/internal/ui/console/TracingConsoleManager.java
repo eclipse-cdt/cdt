@@ -32,7 +32,7 @@ import org.eclipse.ui.console.IConsole;
  * based on launch events and preference events.
  * TracingConsoles are always running but are only shown in the console
  * view if enabled by the user preference.
- * 
+ *
  * @since 2.1
  * This class was moved from package org.eclipse.cdt.dsf.gdb.internal.ui.tracing
  */
@@ -46,7 +46,7 @@ public class TracingConsoleManager implements ILaunchesListener2, IPropertyChang
 
 	/**
 	 * The minimum number of characters that should be kept when truncating
-	 * the console output. 
+	 * the console output.
 	 */
 	private static final int MIN_NUMBER_OF_CHARS_TO_KEEP = 5000;
 

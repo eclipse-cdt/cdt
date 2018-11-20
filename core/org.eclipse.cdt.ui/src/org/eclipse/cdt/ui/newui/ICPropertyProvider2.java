@@ -15,7 +15,7 @@ package org.eclipse.cdt.ui.newui;
 
 /**
  * Interface provides an additional method to the CDT model property page.
- * 
+ *
  * @see ICPropertyProvider
  * @since 5.7
  */

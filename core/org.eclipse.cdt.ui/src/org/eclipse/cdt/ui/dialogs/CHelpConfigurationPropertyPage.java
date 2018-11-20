@@ -18,6 +18,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.CHelpProviderManager;
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
+import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,19 +42,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.dialogs.PropertyPage;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
-
-import org.eclipse.cdt.internal.ui.CHelpProviderManager;
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.text.CHelpBookDescriptor;
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 
 /**
  * This class defines a project property page
@@ -91,7 +89,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements IWor
 					/* 0 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_CheckAll,
 					/* 1 */ CUIMessages.CHelpConfigurationPropertyPage_buttonLabels_UncheckAll };
 
-			fCHelpBookList = new CheckedListDialogField<CHelpBookDescriptor>(null, buttonLabels,
+			fCHelpBookList = new CheckedListDialogField<>(null, buttonLabels,
 					new CHelpBookListLabelProvider());
 			fCHelpBookList.setLabelText(CUIMessages.CHelpConfigurationPropertyPage_HelpBooks);
 			fCHelpBookList.setCheckAllButtonIndex(0);
@@ -138,7 +136,7 @@ public class CHelpConfigurationPropertyPage extends PropertyPage implements IWor
 
 		private List<CHelpBookDescriptor> getEnabledEntries(List<CHelpBookDescriptor> list) {
 			int size = list.size();
-			List<CHelpBookDescriptor> desList = new ArrayList<CHelpBookDescriptor>();
+			List<CHelpBookDescriptor> desList = new ArrayList<>();
 
 			for (int i = 0; i < size; i++) {
 				CHelpBookDescriptor el = list.get(i);

@@ -54,10 +54,10 @@ import org.eclipse.core.runtime.Status;
 
 public abstract class ToolListModification implements IToolListModification {
 	//	private Tool []fTools;
-	private HashSet<String> fInputExtsSet = new HashSet<String>();
+	private HashSet<String> fInputExtsSet = new HashSet<>();
 	private ResourceInfo fRcInfo;
-	private LinkedHashMap<Tool, IToolModification> fProjCompInfoMap = new LinkedHashMap<Tool, IToolModification>();
-	private HashMap<Tool, IToolModification> fSysCompInfoMap = new HashMap<Tool, IToolModification>();
+	private LinkedHashMap<Tool, IToolModification> fProjCompInfoMap = new LinkedHashMap<>();
+	private HashMap<Tool, IToolModification> fSysCompInfoMap = new HashMap<>();
 	private Tool[] fAllSysTools;
 	private HashSet<ITool> fFilteredOutSysTools;
 	//	private LinkedHashMap fRealToToolMap = new LinkedHashMap();
@@ -197,8 +197,8 @@ public abstract class ToolListModification implements IToolListModification {
 						IRealBuildObjectAssociation.OBJECT_TOOL,
 						(PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>>) storage);
 
-				fCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
-				fInCompatibleTools = new HashMap<Tool, ToolCompatibilityInfoElement>();
+				fCompatibleTools = new HashMap<>();
+				fInCompatibleTools = new HashMap<>();
 				Tool sysTools[] = getTools(false, true);
 				@SuppressWarnings("unchecked")
 				Map<Tool, List<ConflictMatch>> conflictMap = (Map<Tool, List<ConflictMatch>>) conflicts.fObjToConflictListMap;
@@ -247,7 +247,7 @@ public abstract class ToolListModification implements IToolListModification {
 						fOperations = new ModificationOperation[0];
 					}
 				} else {
-					List<ModificationOperation> opList = new ArrayList<ModificationOperation>(
+					List<ModificationOperation> opList = new ArrayList<>(
 							fCompatibleTools.size() + 1);
 					Set<Tool> keySet = fCompatibleTools.keySet();
 					for (Tool tool : keySet) {
@@ -353,7 +353,7 @@ public abstract class ToolListModification implements IToolListModification {
 					fOperations = new ModificationOperation[] { new ModificationOperation(this, null) };
 				} else {
 					Map<Tool, IToolModification> projMap = getMap(true);
-					List<ModificationOperation> opList = new ArrayList<ModificationOperation>(projMap.size());
+					List<ModificationOperation> opList = new ArrayList<>(projMap.size());
 					for (IToolModification tm : projMap.values()) {
 						ProjToolCompatibilityStatusInfo info = (ProjToolCompatibilityStatusInfo) tm;
 						if (info.getCompatibleTools().containsKey(fRealTool)
@@ -396,7 +396,7 @@ public abstract class ToolListModification implements IToolListModification {
 
 	private Set<Tool> getAddCompatibleSysTools() {
 		if (fAddCapableTools == null) {
-			fAddCapableTools = new HashSet<Tool>(Arrays.asList(getAllSysTools()));
+			fAddCapableTools = new HashSet<>(Arrays.asList(getAllSysTools()));
 			PerTypeMapStorage<IRealBuildObjectAssociation, Set<IPath>> storage = getCompleteObjectStore();
 			ConflictMatchSet conflicts = ToolChainModificationManager.getInstance()
 					.getConflictInfo(IRealBuildObjectAssociation.OBJECT_TOOL, storage);
@@ -529,7 +529,7 @@ public abstract class ToolListModification implements IToolListModification {
 		if (fAllSysTools == null) {
 			ITool[] allSys = ManagedBuildManager.getRealTools();
 			fAllSysTools = filterTools((Tool[]) allSys);
-			HashSet<ITool> set = new HashSet<ITool>(Arrays.asList(allSys));
+			HashSet<ITool> set = new HashSet<>(Arrays.asList(allSys));
 			set.removeAll(Arrays.asList(fAllSysTools));
 			fFilteredOutSysTools = set;
 		}
@@ -695,7 +695,7 @@ public abstract class ToolListModification implements IToolListModification {
 				addSet = rmSet;
 		}
 
-		List<ITool> list = new ArrayList<ITool>();
+		List<ITool> list = new ArrayList<>();
 		list.addAll(map.values());
 		clearToolInfo(map.values().toArray(new Tool[map.size()]));
 
@@ -710,7 +710,7 @@ public abstract class ToolListModification implements IToolListModification {
 	}
 
 	private HashMap<ITool, ITool> createRealToToolMap(/*boolean includeFilteredOut*/) {
-		HashMap<ITool, ITool> map = new HashMap<ITool, ITool>();
+		HashMap<ITool, ITool> map = new HashMap<>();
 		Set<Entry<Tool, IToolModification>> entries = fProjCompInfoMap.entrySet();
 		for (Entry<Tool, IToolModification> entry : entries) {
 			map.put(entry.getKey(), entry.getValue().getTool());

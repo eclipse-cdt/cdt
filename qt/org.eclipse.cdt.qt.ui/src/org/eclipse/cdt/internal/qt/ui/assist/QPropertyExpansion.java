@@ -348,14 +348,14 @@ public class QPropertyExpansion {
 		// it is added as an unspecified attribute.  If the loop completes, then we create a list of proposals
 		// for from that unspecified list.
 
-		List<Attribute> unspecifiedAttributes = new ArrayList<Attribute>();
+		List<Attribute> unspecifiedAttributes = new ArrayList<>();
 		for (IQProperty.Attribute attr : IQProperty.Attribute.values()) {
 			if (attr.hasValue && (prevIdentifier != null && attr.identifier.equals(prevIdentifier.ident))) {
 
 				Collection<QPropertyAttributeProposal> attrProposals = QPropertyAttributeProposal.buildProposals(attr,
 						context, type, name);
 				if (attrProposals != null) {
-					List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+					List<ICompletionProposal> proposals = new ArrayList<>();
 					for (QPropertyAttributeProposal value : attrProposals)
 						if (prefix == null || value.getIdentifier().startsWith(prefix))
 							proposals.add(value.createProposal(prefix, context.getInvocationOffset()));
@@ -373,7 +373,7 @@ public class QPropertyExpansion {
 				unspecifiedAttributes.add(new Attribute(attr));
 		}
 
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 		for (Attribute attr : unspecifiedAttributes) {
 			ICompletionProposal proposal = attr.getProposal(contextId, context);
 			if (proposal != null)

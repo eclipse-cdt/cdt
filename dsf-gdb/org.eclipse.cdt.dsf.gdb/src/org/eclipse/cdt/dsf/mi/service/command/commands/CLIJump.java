@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
  * jump LINESPEC
  * jump LOCATION
  *          Resume execution at line LINESPEC or at address given by LOCATION.
- *          
+ *
  * @since 3.0
  */
 public class CLIJump extends CLICommand<MIInfo> {

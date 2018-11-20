@@ -9,26 +9,10 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Markus Schorn - initial API and implementation 
+ *     Markus Schorn - initial API and implementation
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.ltk.core.refactoring.Change;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
-import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
-import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
-import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.IWorkingSetManager;
-import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -44,6 +28,21 @@ import org.eclipse.cdt.core.index.IIndexManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.ltk.core.refactoring.Change;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
+import org.eclipse.ltk.core.refactoring.participants.RenameProcessor;
+import org.eclipse.ltk.core.refactoring.participants.SharableParticipants;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * This is the processor used for the rename. It decides which of the delegates to
@@ -145,7 +144,7 @@ public class CRenameProcessor extends RenameProcessor {
 	}
 
 	/**
-	 * Change the binding for the renaming of constructors and destructor to the class.  
+	 * Change the binding for the renaming of constructors and destructor to the class.
 	 */
 	private void updateBinding() {
 		IBinding binding = fArgument.getBinding();
@@ -285,7 +284,7 @@ public class CRenameProcessor extends RenameProcessor {
 
 	/**
 	 * Sets the name of the working set. If the name of the working set is invalid,
-	 * it's set to an empty string. 
+	 * it's set to an empty string.
 	 */
 	public void setWorkingSetName(String workingSet) {
 		fWorkingSetName = checkWorkingSet(workingSet);

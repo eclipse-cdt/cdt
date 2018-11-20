@@ -100,7 +100,7 @@ public class AST2SpecTestBase extends AST2TestBase {
 	//		} catch (CoreException e) {
 	//			e.printStackTrace();
 	//		}
-	//		
+	//
 	//		return parse(codeReader, lang, useGNUExtensions, expectNoProblems);
 	//    }
 
@@ -175,8 +175,8 @@ public class AST2SpecTestBase extends AST2TestBase {
 			shouldVisitNames = true;
 		}
 
-		public List<IASTName> nameList = new ArrayList<IASTName>();
-		public List<String> problemBindings = new ArrayList<String>();
+		public List<IASTName> nameList = new ArrayList<>();
+		public List<String> problemBindings = new ArrayList<>();
 		public int numNullBindings = 0;
 
 		@Override

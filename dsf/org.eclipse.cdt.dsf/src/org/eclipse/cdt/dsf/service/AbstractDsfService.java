@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Jonah Graham (Kichwa Coders) - Bug 317173 - cleanup warnings
@@ -29,9 +29,9 @@ import org.osgi.framework.ServiceRegistration;
 
 /**
  * Standard base implementation of the DSF service.  This is a convenience
- * class that provides the basic functionality that all DSF services have 
+ * class that provides the basic functionality that all DSF services have
  * to implement.
- * 
+ *
  * @since 1.0
  */
 abstract public class AbstractDsfService implements IDsfService, IDsfStatusConstants {
@@ -54,7 +54,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 	/** Properties that this service was registered with */
 	private String fFilter;
 
-	/** 
+	/**
 	 * Only constructor, requires a reference to the session that this
 	 * service  belongs to.
 	 * @param session
@@ -75,7 +75,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 	 * {@link Constants#OBJECTCLASS} property associated with the service after
 	 * it has been registered. It also adds a property that designates the dsf
 	 * session ID.
-	 * 
+	 *
 	 * @see org.eclipse.cdt.dsf.service.IDsfService#getProperties()
 	 */
 	@SuppressWarnings("rawtypes")
@@ -123,7 +123,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 	}
 
 	/**
-	 * Sub-classes should return the bundle context of the plugin, which the 
+	 * Sub-classes should return the bundle context of the plugin, which the
 	 * service belongs to.
 	 */
 	abstract protected BundleContext getBundleContext();
@@ -135,7 +135,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 
 	/**
 	 * Registers this DSF/OSGi service.
-	 * 
+	 *
 	 * @param classes
 	 *            The class names under which the service can be located. For
 	 *            convenience, [classes] need not contain {@link IDsfService} or
@@ -163,13 +163,13 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 		 * If this service has already been registered, make sure we
 		 * keep the names it has been registered with.  However, we
 		 * must trigger a new registration or else OSGI will keep the two
-		 * registration separate. 
+		 * registration separate.
 		 */
 		if (fRegistration != null) {
 			String[] previousClasses = (String[]) fRegistration.getReference().getProperty(Constants.OBJECTCLASS);
 
 			// Use a HashSet to avoid duplicates
-			Set<String> newClasses = new HashSet<String>();
+			Set<String> newClasses = new HashSet<>();
 			newClasses.addAll(Arrays.asList(previousClasses));
 			newClasses.addAll(Arrays.asList(classes));
 			classes = newClasses.toArray(new String[0]);
@@ -189,7 +189,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 			unregister();
 		}
 		/*
-		 * Ensure that the list of classes contains the base DSF service 
+		 * Ensure that the list of classes contains the base DSF service
 		 * interface, as well as the actual class type of this object.
 		 */
 		if (!Arrays.asList(classes).contains(IDsfService.class.getName())) {
@@ -214,16 +214,16 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 		fRegistration = getBundleContext().registerService(classes, this, properties);
 
 		/*
-		 * Retrieve the OBJECTCLASS property directly from the service 
-		 * registration info.  This is the best bet for getting an accurate 
+		 * Retrieve the OBJECTCLASS property directly from the service
+		 * registration info.  This is the best bet for getting an accurate
 		 * value.
 		 */
 		fProperties.put(Constants.OBJECTCLASS, fRegistration.getReference().getProperty(Constants.OBJECTCLASS));
 
 		/*
-		 * Create the filter for this service based on all the properties.  If 
+		 * Create the filter for this service based on all the properties.  If
 		 * there is a single service instance per session, or if the properties
-		 * parameter uniquely identifies this service instance among other 
+		 * parameter uniquely identifies this service instance among other
 		 * instances in this session.  Then this filter will fetch this service
 		 * and only this service from OSGi.
 		 */
@@ -243,7 +243,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 			Object value = properties.get(key);
 			if (value instanceof Object[]) {
 				/*
-				 * For arrays, add a test to check that every element in array 
+				 * For arrays, add a test to check that every element in array
 				 * is present.  This is here mainly to handle OBJECTCLASS property.
 				 */
 				for (Object arrayValue : (Object[]) value) {
@@ -265,7 +265,7 @@ abstract public class AbstractDsfService implements IDsfService, IDsfStatusConst
 		return filter.toString();
 	}
 
-	/** 
+	/**
 	 * De-registers this service.
 	 *
 	 */

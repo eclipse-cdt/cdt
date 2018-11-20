@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial implementation
  *     Anton Gorenkov - Need to use a process factory (Bug 210366)
@@ -46,7 +46,7 @@ public interface IGdbDebugConstants {
 	public static final String PROCESS_TYPE_CREATION_ATTR = PREFIX + "createProcessType"; //$NON-NLS-1$
 
 	/**
-	 * Attribute value of PROCESS_TYPE_CREATION_ATTR to be passed to DebugPlugin.newProcess to 
+	 * Attribute value of PROCESS_TYPE_CREATION_ATTR to be passed to DebugPlugin.newProcess to
 	 * require the creation of an InferiorRuntimeProcess instead of a RuntimeProcess
 	 * (which is used by default).
 	 * @since 4.1
@@ -54,7 +54,7 @@ public interface IGdbDebugConstants {
 	public static final String INFERIOR_PROCESS_CREATION_VALUE = PREFIX + "inferiorProcess"; //$NON-NLS-1$
 
 	/**
-	 * Attribute value of PROCESS_TYPE_CREATION_ATTR to be passed to DebugPlugin.newProcess to 
+	 * Attribute value of PROCESS_TYPE_CREATION_ATTR to be passed to DebugPlugin.newProcess to
 	 * require the creation of an GdbProcess instead of a RuntimeProcess
 	 * (which is used by default).
 	 * @since 4.1

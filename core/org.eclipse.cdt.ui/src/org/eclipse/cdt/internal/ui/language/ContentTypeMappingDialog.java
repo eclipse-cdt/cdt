@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,16 +18,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 
 public abstract class ContentTypeMappingDialog extends Dialog {
 
@@ -44,8 +42,8 @@ public abstract class ContentTypeMappingDialog extends Dialog {
 
 	public ContentTypeMappingDialog(Shell parentShell) {
 		super(parentShell);
-		fContentTypeNamesToIDsMap = new HashMap<String, String>();
-		fLanguageNamesToIDsMap = new HashMap<String, String>();
+		fContentTypeNamesToIDsMap = new HashMap<>();
+		fLanguageNamesToIDsMap = new HashMap<>();
 	}
 
 	public String getSelectedContentTypeName() {

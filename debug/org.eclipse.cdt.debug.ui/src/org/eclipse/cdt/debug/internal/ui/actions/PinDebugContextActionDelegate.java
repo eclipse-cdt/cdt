@@ -45,7 +45,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.WorkbenchPart;
 
 /**
- * Pin the selected debug context for the view. 
+ * Pin the selected debug context for the view.
  */
 public class PinDebugContextActionDelegate implements IViewActionDelegate, IActionDelegate2, IDebugContextListener {
 	private IViewPart fPart;
@@ -209,7 +209,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		String description = ""; //$NON-NLS-1$
 
 		if (provider != null) {
-			Set<String> labels = new HashSet<String>();
+			Set<String> labels = new HashSet<>();
 			for (IPinElementHandle handle : provider.getPinHandles()) {
 				String tmp = getLabel(handle);
 				if (tmp != null && tmp.trim().length() != 0)
@@ -267,7 +267,7 @@ public class PinDebugContextActionDelegate implements IViewActionDelegate, IActi
 		if (provider != null) {
 			Set<IPinElementHandle> handles = provider.getPinHandles();
 
-			// if handles have different toolbar icon descriptor or different pin color, than use a 
+			// if handles have different toolbar icon descriptor or different pin color, than use a
 			// multi-pin toolbar icon
 			if (useMultiPinImage(handles))
 				imageDesc = CDTSharedImages.getImageDescriptor(CDTSharedImages.IMG_VIEW_PIN_ACTION_MULTI);

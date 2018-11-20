@@ -453,7 +453,7 @@ public class CBreakIterator extends BreakIterator {
 
 	/**
 	 * Enables breaks at word boundaries inside a camel case identifier.
-	 *  
+	 *
 	 * @param camelCaseBreakEnabled <code>true</code> to enable, <code>false</code> to disable.
 	 */
 	public void setCamelCaseBreakEnabled(boolean camelCaseBreakEnabled) {

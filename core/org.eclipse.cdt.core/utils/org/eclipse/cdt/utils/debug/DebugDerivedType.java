@@ -16,14 +16,14 @@ package org.eclipse.cdt.utils.debug;
 
 /**
  * DebugDerivedType
- *  
+ *
  */
 public abstract class DebugDerivedType extends DebugType {
 
 	DebugType component;
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugDerivedType(DebugType type) {
 		component = type;

@@ -159,7 +159,7 @@ public class UpdateConfigureTest {
 	}
 
 	/**
-	 * Test getting and updating configuration options for an Autotools Project. The top-level 
+	 * Test getting and updating configuration options for an Autotools Project. The top-level
 	 * contains autogen.sh which will build configure, but not run it.
 	 * @throws Exception
 	 */

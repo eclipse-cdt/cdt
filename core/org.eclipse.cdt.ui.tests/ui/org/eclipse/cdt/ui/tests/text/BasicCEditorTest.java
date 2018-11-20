@@ -20,9 +20,26 @@ import java.lang.ref.WeakReference;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.testplugin.Accessor;
+import org.eclipse.cdt.ui.testplugin.DisplayHelper;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.testplugin.FileTool;
+import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -53,32 +70,12 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.testplugin.Accessor;
-import org.eclipse.cdt.ui.testplugin.DisplayHelper;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.testplugin.FileTool;
-import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.core.model.ExternalTranslationUnit;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.editor.CEditorMessages;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Basic CEditor tests.
- * 
+ *
  * @since 4.0
  */
 public class BasicCEditorTest extends BaseUITestCase {
@@ -465,7 +462,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 	/**
 	 * Type characters into the styled text.
-	 * 
+	 *
 	 * @param characters the characters to type
 	 */
 	private void type(CharSequence characters) {
@@ -475,7 +472,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 	/**
 	 * Type a character into the styled text.
-	 * 
+	 *
 	 * @param character the character to type
 	 */
 	private void type(char character) {
@@ -484,7 +481,7 @@ public class BasicCEditorTest extends BaseUITestCase {
 
 	/**
 	 * Type a character into the styled text.
-	 * 
+	 *
 	 * @param character the character to type
 	 * @param keyCode the key code
 	 * @param stateMask the state mask

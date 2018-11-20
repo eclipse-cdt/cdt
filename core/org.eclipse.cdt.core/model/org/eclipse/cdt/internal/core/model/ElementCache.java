@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.util.OverflowingLRUCache;
 
 /**
  * An LRU cache of <code>CElements</code>.
- * 
+ *
  * This class is similar to the JDT ElementCache class.
  */
 public class ElementCache<T> extends OverflowingLRUCache<IOpenable, T> {
@@ -64,6 +64,6 @@ public class ElementCache<T> extends OverflowingLRUCache<IOpenable, T> {
 	 */
 	@Override
 	protected OverflowingLRUCache<IOpenable, T> newInstance(int size, int overflow) {
-		return new ElementCache<T>(size, overflow);
+		return new ElementCache<>(size, overflow);
 	}
 }

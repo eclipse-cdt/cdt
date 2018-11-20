@@ -19,12 +19,12 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *      -exec-continue [--all | --thread-group ID]
- * 
+ *
  *   Asynchronous command.  Resumes the execution of the inferior program
  *   until a breakpoint is encountered, or until the inferior exits.
- * 
+ *
  */
 public class MIExecContinue extends MICommand<MIInfo> {
 	public MIExecContinue(IExecutionDMContext dmc) {

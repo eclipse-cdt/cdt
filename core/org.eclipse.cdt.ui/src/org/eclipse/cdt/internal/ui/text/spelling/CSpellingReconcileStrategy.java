@@ -15,6 +15,9 @@
 
 package org.eclipse.cdt.internal.ui.text.spelling;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.IProblemRequestor;
+import org.eclipse.cdt.core.parser.IProblem;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.text.BadLocationException;
@@ -30,10 +33,6 @@ import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 import org.eclipse.ui.texteditor.spelling.SpellingReconcileStrategy;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.IProblemRequestor;
-import org.eclipse.cdt.core.parser.IProblem;
 
 /**
  * Reconcile strategy for spell checking comments.

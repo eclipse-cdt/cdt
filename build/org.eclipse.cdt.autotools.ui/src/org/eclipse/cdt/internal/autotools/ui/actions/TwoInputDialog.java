@@ -84,7 +84,7 @@ public class TwoInputDialog extends InputDialog {
 
 	/**
 	 * Returns the text area.
-	 * 
+	 *
 	 * @return the text area
 	 */
 	protected Text getSecondText() {
@@ -93,7 +93,7 @@ public class TwoInputDialog extends InputDialog {
 
 	/**
 	 * Returns the string typed into this input dialog.
-	 * 
+	 *
 	 * @return the input string
 	 */
 	public String getSecondValue() {

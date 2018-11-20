@@ -17,6 +17,7 @@ package org.eclipse.cdt.utils;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeInt;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeLong;
 import static org.eclipse.cdt.internal.core.ByteUtils.makeShort;
+
 import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;

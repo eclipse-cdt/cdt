@@ -42,10 +42,10 @@ import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
  * mainPage.setDescription("Add C or C++ a Nature to a project.");
  * </pre>
  * </p>
- * 
+ *
  * @deprecated as of CDT 4.0. This page was used for 3.X style projects.
  * It is left here for compatibility reasons only.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -85,7 +85,7 @@ public class ConvertToMakeProjectWizardPage extends ConvertProjectWizardPage {
 	 */
 	@Override
 	public boolean isCandidate(IProject project) {
-		return true; // all 
+		return true; // all
 	}
 
 	@Override

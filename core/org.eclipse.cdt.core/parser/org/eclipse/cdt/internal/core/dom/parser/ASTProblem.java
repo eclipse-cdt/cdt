@@ -32,7 +32,7 @@ import com.ibm.icu.text.MessageFormat;
 public class ASTProblem extends ASTNode implements IASTProblem {
 	protected static final Map<Integer, String> errorMessages;
 	static {
-		errorMessages = new HashMap<Integer, String>();
+		errorMessages = new HashMap<>();
 		errorMessages.put(Integer.valueOf(PREPROCESSOR_POUND_ERROR),
 				ParserMessages.getString("ScannerProblemFactory.error.preproc.error")); //$NON-NLS-1$
 		errorMessages.put(Integer.valueOf(PREPROCESSOR_POUND_WARNING),

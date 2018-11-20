@@ -24,6 +24,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ErrorParserManager;
+import org.eclipse.cdt.core.IErrorParserNamed;
+import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.ui.dialogs.IInputStatusValidator;
+import org.eclipse.cdt.ui.dialogs.InputStatusDialog;
+import org.eclipse.cdt.ui.dialogs.RegexErrorParserOptionPage;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -56,25 +73,6 @@ import org.osgi.service.prefs.BackingStoreException;
 
 import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ErrorParserManager;
-import org.eclipse.cdt.core.IErrorParserNamed;
-import org.eclipse.cdt.core.errorparsers.RegexErrorParser;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.ui.dialogs.IInputStatusValidator;
-import org.eclipse.cdt.ui.dialogs.InputStatusDialog;
-import org.eclipse.cdt.ui.dialogs.RegexErrorParserOptionPage;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.newui.Messages;
-
 /**
  * This class represents Error Parser Tab in Project Properties or workspace Preferences
  *
@@ -101,8 +99,8 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 	private static Map<String, IErrorParserNamed> fExtensionErrorParsers = null;
 
-	private final Map<String, IErrorParserNamed> fAvailableErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
-	private final Map<String, ICOptionPage> fOptionsPageMap = new HashMap<String, ICOptionPage>();
+	private final Map<String, IErrorParserNamed> fAvailableErrorParsers = new LinkedHashMap<>();
+	private final Map<String, ICOptionPage> fOptionsPageMap = new HashMap<>();
 	private ICOptionPage fCurrentOptionsPage = null;
 
 	private Composite fCompositeForOptionsPage;
@@ -237,7 +235,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 
 	private void initMapParsers() {
 		if (fExtensionErrorParsers == null) {
-			fExtensionErrorParsers = new LinkedHashMap<String, IErrorParserNamed>();
+			fExtensionErrorParsers = new LinkedHashMap<>();
 			String[] idsExt = ErrorParserManager.getErrorParserExtensionIds();
 			for (String idExt : idsExt) {
 				IErrorParserNamed errorParserExt = ErrorParserManager.getErrorParserExtensionCopy(idExt);
@@ -261,7 +259,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			} else {
 				ids = srcCfgDesc.getBuildSetting().getErrorParserIDs();
 			}
-			Set<String> setIds = new LinkedHashSet<String>(Arrays.asList(ids));
+			Set<String> setIds = new LinkedHashSet<>(Arrays.asList(ids));
 			setIds.addAll(fAvailableErrorParsers.keySet());
 			fTableViewer.setInput(setIds.toArray(new String[0]));
 		} else {
@@ -553,7 +551,7 @@ public class ErrorParsTab extends AbstractCPropertyTab {
 			if (fCfgDesc == null) {
 				// Build Settings page
 				try {
-					List<IErrorParserNamed> errorParsersList = new ArrayList<IErrorParserNamed>(fTable.getItemCount());
+					List<IErrorParserNamed> errorParsersList = new ArrayList<>(fTable.getItemCount());
 					for (TableItem item : fTable.getItems()) {
 						if (item.getData() instanceof String) {
 							String id = (String) item.getData();

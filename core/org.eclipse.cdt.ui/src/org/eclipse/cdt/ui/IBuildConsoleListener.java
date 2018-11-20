@@ -18,7 +18,7 @@ package org.eclipse.cdt.ui;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @see IBuildConsoleEvent
  */
 public interface IBuildConsoleListener {

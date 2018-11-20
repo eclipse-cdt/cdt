@@ -25,7 +25,7 @@ import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.disassembly.commands.OpenDisassemblyHandler: 
+ * org.eclipse.cdt.debug.internal.ui.disassembly.commands.OpenDisassemblyHandler:
  * //TODO Add description.
  */
 public class OpenDisassemblyHandler extends AbstractHandler {

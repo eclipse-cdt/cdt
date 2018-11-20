@@ -18,11 +18,11 @@ import org.eclipse.cdt.dsf.gdb.service.IGDBTraceControl.STOP_REASON_ENUM;
 
 /**
  * -trace-status result.
- * 
+ *
  * ^done,supported="1",running="1",frames="0",buffer-size="5242880",buffer-free="5242880"
  * ^done,supported="1",running="0",stop-reason="request",frames="0",buffer-size="5242880",buffer-free="5242880"
  * ^done,supported="1",running="0",stop-reason="passcount",stopping-tracepoint="7",frames="3",buffer-size="5242880",buffer-free="5242862"
- * 
+ *
  * Field presence:
  *   With GDB 7.2:
  *        "supported"

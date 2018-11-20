@@ -16,6 +16,8 @@ package org.eclipse.cdt.internal.ui.workingsets;
 
 import java.util.Collection;
 
+import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -46,16 +48,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.cdt.ui.CDTSharedImages;
-
-import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
-
 /**
  * A block of UI controls for management of working set configurations. These collect the selection of project
  * configurations for the member projects of the working sets into named presets.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public class WorkingSetConfigurationBlock {
@@ -75,7 +73,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Initializes me. I take the most recently used working set as my initial selection.
-	 * 
+	 *
 	 * @param workspace
 	 *            the workspace snapshot to edit
 	 */
@@ -85,7 +83,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Initializes me with my initial selection.
-	 * 
+	 *
 	 * @param workspace
 	 *            the workspace snapshot to edit
 	 * @param initialSelection
@@ -99,7 +97,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Queries the working set filter, if any, that restricts the display of working sets.
-	 * 
+	 *
 	 * @return my working-set filter
 	 */
 	public IFilter getWorkingSetFilter() {
@@ -108,7 +106,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Assigns a filter to restrict the working sets that are shown.
-	 * 
+	 *
 	 * @param filter
 	 *            a working-set filter
 	 */
@@ -118,10 +116,10 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Creates the contents of the working set configuration management control block.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite in which to create my controls
-	 * 
+	 *
 	 * @return my controls
 	 */
 	public Control createContents(Composite parent) {
@@ -140,13 +138,13 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Creates the "working set configurations" pane in the upper part of the sash form.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param layoutFactory
 	 *            a layout-factory to use to lay out the composite in a grid, possibly pre-configured. Its use
 	 *            is optional
-	 * 
+	 *
 	 * @return the working set configurations pane
 	 */
 	protected Composite createWorkingSetConfigsArea(Composite parent, GridLayoutFactory layoutFactory) {
@@ -223,13 +221,13 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Creates the "project configurations" pane in the lower part of the sash form.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent composite
 	 * @param layoutFactory
 	 *            a layout-factory to use to lay out the composite in a grid, possibly pre-configured. Its use
 	 *            is optional
-	 * 
+	 *
 	 * @return the project configurations pane
 	 */
 	protected Composite createProjectConfigsArea(Composite parent, GridLayoutFactory layoutFactory) {
@@ -274,7 +272,7 @@ public class WorkingSetConfigurationBlock {
 	 * Builds the projects that were reconfigured by the dialog, if any. The user is prompted (if prompting is
 	 * not disabled via the preference) before building. The user has the options to build, not build, or
 	 * cancel. The result indicates cancellation.
-	 * 
+	 *
 	 * @return <code>true</code> if the user opted to save changes and exit the dialog (with or without
 	 *         build); <code>false</code> if the user cancelled and the dialog should remain open and unsaved
 	 */
@@ -325,7 +323,7 @@ public class WorkingSetConfigurationBlock {
 
 	/**
 	 * Simple content provider for the working set configurations tree.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
 	 */
 	private class WSConfigsContentProvider implements ITreeContentProvider {
@@ -348,7 +346,7 @@ public class WorkingSetConfigurationBlock {
 				return workingSets;
 			}
 
-			Collection<IWorkingSetProxy> result = new java.util.ArrayList<IWorkingSetProxy>();
+			Collection<IWorkingSetProxy> result = new java.util.ArrayList<>();
 
 			for (IWorkingSetProxy next : workingSets) {
 				if (workingSetFilter.select(next)) {
@@ -392,7 +390,7 @@ public class WorkingSetConfigurationBlock {
 	 * Label provider for working sets and their configurations. The active configuration is highlighted in
 	 * bold and affixed with an "(active)" decoration. The special read-only configuration is further
 	 * differentiated with an italic font.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
 	 */
 	private class WSConfigsLabelProvider extends LabelProvider implements IFontProvider {

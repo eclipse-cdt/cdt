@@ -271,7 +271,7 @@ public class MinGW {
 	 * <br>
 	 * If you use this do not cache results to ensure user preferences are
 	 * accounted for. Please rely on internal caching.
-	 * 
+	 *
 	 * @return MinGW root ("/") path in Windows format.
 	 */
 	public static String getMinGWHome() {
@@ -307,7 +307,7 @@ public class MinGW {
 	 * <br>
 	 * If you use this do not cache results to ensure user preferences are
 	 * accounted for. Please rely on internal caching.
-	 * 
+	 *
 	 * @return MSys root ("/") path in Windows format.
 	 */
 	public static String getMSysHome() {

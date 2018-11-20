@@ -16,10 +16,6 @@ package org.eclipse.cdt.core.envvar;
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
@@ -36,6 +32,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class IEnvironmentVariableManagerTests extends TestCase {
 	/**
@@ -614,7 +614,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	/**
 	 * This test checks if an environment variable is only processed as a list
 	 * if it matches a certain pattern. ([^:]+:)+[^:]* (; on Windows)
-	 * 
+	 *
 	 * If a variable is a list, it is split into a String array depending on the
 	 * delimiter given. At some point, this array is used to build a new
 	 * String representing the list, separated by the delimiter. This should
@@ -622,7 +622,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 	 * variable has a value of ':' without the quotes, it shouldn't processed as
 	 * a list even if it contains a delimiter because if it was, it would give
 	 * an empty string when built since there are no items in the list.
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testBug284843() throws Exception {
@@ -675,7 +675,7 @@ public class IEnvironmentVariableManagerTests extends TestCase {
 
 	/**
 	 * Test case to test environment variable change notifications
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testEnvironmentChangeListener() throws Exception {

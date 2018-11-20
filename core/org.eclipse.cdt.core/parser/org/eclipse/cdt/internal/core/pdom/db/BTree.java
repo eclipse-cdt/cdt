@@ -49,7 +49,7 @@ public class BTree {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param db the database containing the B-tree
 	 * @param rootPointer offset into database of the pointer to the root node
 	 */
@@ -93,7 +93,7 @@ public class BTree {
 	 * Inserts the record into the b-tree. We don't insert if the key was already there,
 	 * in which case we return the record that matched. In other cases, we just return
 	 * the record back.
-	 * 
+	 *
 	 * @param record  offset of the record
 	 */
 	public long insert(long record) throws CoreException {
@@ -220,11 +220,11 @@ public class BTree {
 	 * If the specified record is not present then this routine has no effect.
 	 * <p>
 	 * Specifying a record r for which there is another record q existing in the B-tree
-	 * where cmp.compare(r,q)==0 && r!=q will also have no effect   
+	 * where cmp.compare(r,q)==0 && r!=q will also have no effect
 	 * <p>
 	 * N.B. The record is not deleted itself - its storage is not deallocated.
 	 * The reference to the record in the btree is deleted.
-	 *  
+	 *
 	 * @param record the record to delete
 	 * @throws CoreException
 	 */
@@ -533,7 +533,7 @@ public class BTree {
 	/**
 	 * Visits all nodes beginning when the visitor comparator
 	 * returns >= 0 until the visitor visit returns falls.
-	 * 
+	 *
 	 * @param visitor
 	 */
 	public void accept(IBTreeVisitor visitor) throws CoreException {

@@ -17,14 +17,13 @@ package org.eclipse.cdt.internal.ui.text.spelling;
 import java.util.LinkedList;
 import java.util.Locale;
 
+import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.DefaultSpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckIterator;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 import com.ibm.icu.text.BreakIterator;
-
-import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.DefaultSpellChecker;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellCheckIterator;
 
 /**
  * Iterator to spell check multiline comment regions.
@@ -49,7 +48,7 @@ public class SpellCheckIterator implements ISpellCheckIterator {
 	protected int fPrevious = 0;
 
 	/** The sentence breaks */
-	private final LinkedList<Integer> fSentenceBreaks = new LinkedList<Integer>();
+	private final LinkedList<Integer> fSentenceBreaks = new LinkedList<>();
 
 	/** Does the current word start a sentence? */
 	private boolean fStartsSentence = false;

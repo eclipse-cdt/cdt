@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Use new FinalLaunchSequence_7_0 as base class (Bug 365471)
@@ -36,7 +36,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Subclass for GDB >= 7.2.
- * 
+ *
  * @since 4.0
  */
 public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
@@ -52,7 +52,7 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our steps right after the initialization of the base class.
 			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_0") + 1, //$NON-NLS-1$
@@ -65,7 +65,7 @@ public class FinalLaunchSequence_7_2 extends FinalLaunchSequence_7_0 {
 		return null;
 	}
 
-	/** 
+	/**
 	 * Initialize the members of the FinalLaunchSequence_7_2 class.
 	 * This step is mandatory for the rest of the sequence to complete.
 	 */

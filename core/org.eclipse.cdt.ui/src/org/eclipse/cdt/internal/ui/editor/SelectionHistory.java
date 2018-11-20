@@ -16,11 +16,10 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.Stack;
 
+import org.eclipse.cdt.core.model.ISourceRange;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-
-import org.eclipse.cdt.core.model.ISourceRange;
 
 public class SelectionHistory {
 
@@ -32,7 +31,7 @@ public class SelectionHistory {
 	public SelectionHistory(CEditor editor) {
 		Assert.isNotNull(editor);
 		fEditor = editor;
-		fHistory = new Stack<ISourceRange>();
+		fHistory = new Stack<>();
 		fSelectionListener = new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {

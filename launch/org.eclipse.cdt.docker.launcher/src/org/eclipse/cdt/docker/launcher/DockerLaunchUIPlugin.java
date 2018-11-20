@@ -24,7 +24,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle
- * 
+ *
  * @noextend This class is not intended to be subclassed by Clients
  */
 public class DockerLaunchUIPlugin extends AbstractUIPlugin {
@@ -43,11 +43,12 @@ public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		plugin = this;
@@ -56,11 +57,12 @@ public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext
 	 * )
 	 */
+	@Override
 	public void stop(BundleContext context) throws Exception {
 		plugin = null;
 		super.stop(context);
@@ -93,7 +95,7 @@ public class DockerLaunchUIPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Convenience method which returns the unique identifier of this plugin.
-	 * 
+	 *
 	 * @return The identifier.
 	 */
 	public static String getUniqueIdentifier() {

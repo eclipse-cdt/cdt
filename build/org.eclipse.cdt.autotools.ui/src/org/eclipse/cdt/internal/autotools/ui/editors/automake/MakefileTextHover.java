@@ -28,14 +28,14 @@ import org.eclipse.ui.IEditorPart;
 
 /**
  * MakefileTextHover
- *  
+ *
  */
 public class MakefileTextHover implements ITextHover {
 
 	private IEditorPart fEditor;
 
 	/**
-	 *  
+	 *
 	 */
 	public MakefileTextHover(IEditorPart editor) {
 		fEditor = editor;

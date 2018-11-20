@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 Alena Laskavaia 
+ * Copyright (c) 2009, 2016 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
  * Convenience implementation of checker that works on index-based AST of a
  * C/C++
  * program.
- * 
+ *
  * Clients may extend this class.
  */
 public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblemPreferences
@@ -97,7 +97,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IRunnableInEditorChecker#processModel(Object,
 	 * ICheckerInvocationContext)
 	 */
@@ -148,7 +148,7 @@ public abstract class AbstractIndexAstChecker extends AbstractCheckerWithProblem
 	/**
 	 * Checks if problem should be reported, in this case it will check line
 	 * comments, later can add filters or what not.
-	 * 
+	 *
 	 * @param problem - problem kind
 	 * @param loc - location
 	 * @param args - arguments

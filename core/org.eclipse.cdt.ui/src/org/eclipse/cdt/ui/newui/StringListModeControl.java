@@ -17,6 +17,7 @@ package org.eclipse.cdt.ui.newui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -25,8 +26,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * Local UI control for multiple configurations string list mode redirecting to
@@ -38,7 +37,7 @@ public class StringListModeControl {
 	private static final String STRING_LIST_MODE_PREFERENCE_PAGE = "org.eclipse.cdt.managedbuilder.ui.preferences.PrefPage_MultiConfig"; //$NON-NLS-1$
 	private ICPropertyProvider page;
 	private Link linkStringListMode;
-	private List<Listener> listeners = new ArrayList<Listener>();
+	private List<Listener> listeners = new ArrayList<>();
 
 	/**
 	 * Constructor.

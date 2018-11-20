@@ -30,7 +30,7 @@ public class DiscardExternalDefsAction extends IndexAction {
 	public DiscardExternalDefsAction(TreeViewer viewer, IndexView view) {
 		super(view, viewer, CUIPlugin.getResourceString("IndexView.ToggleExternals.name"), IAction.AS_CHECK_BOX); //$NON-NLS-1$
 		setToolTipText(CUIPlugin.getResourceString("IndexView.ToggleExternals.tooltip")); //$NON-NLS-1$
-		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$	
+		CPluginImages.setImageDescriptors(this, CPluginImages.T_LCL, "public_co.gif"); //$NON-NLS-1$
 	}
 
 	@Override

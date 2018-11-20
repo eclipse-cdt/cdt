@@ -77,7 +77,7 @@ public class AutoconfMacroRule implements IRule {
 
 	/**
 	 * Returns the characters in the buffer to the scanner.
-	 * 
+	 *
 	 * @param scanner
 	 *            the scanner to be used
 	 */

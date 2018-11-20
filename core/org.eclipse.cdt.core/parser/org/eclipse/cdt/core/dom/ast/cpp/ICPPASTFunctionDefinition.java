@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
 /**
  * In c++ the a function definition for a constructor may contain member initializers.
  * @since 5.1
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

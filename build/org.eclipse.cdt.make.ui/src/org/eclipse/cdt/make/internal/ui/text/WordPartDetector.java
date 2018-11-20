@@ -136,7 +136,7 @@ public class WordPartDetector {
 
 	/**
 	 * Check if the cursor is in macro.
-	 * 
+	 *
 	 * @return {@code true} if the cursor is located in macro, {@code false} otherwise.
 	 */
 	public boolean isMacro() {
@@ -145,7 +145,7 @@ public class WordPartDetector {
 
 	/**
 	 * Check if the cursor is in function call $(call user-fun).
-	 * 
+	 *
 	 * @return {@code true} if the cursor is located in function call, {@code false} otherwise.
 	 */
 	public boolean isFunctionCall() {
@@ -154,7 +154,7 @@ public class WordPartDetector {
 
 	/**
 	 * Check if the cursor sits on an include directive line.
-	 * 
+	 *
 	 * @return {@code true} if the cursor is located on include line, {@code false} otherwise.
 	 */
 	public boolean isIncludeDirective() {

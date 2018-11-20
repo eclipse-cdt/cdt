@@ -21,6 +21,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,19 +37,14 @@ import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IMemento;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * Default implementation of the {@link IWorkingSetProjectConfiguration} interface. Clients may extend this
  * class to implement additional project configuration settings.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfiguration {
 	private final IWorkingSetConfiguration workingSetConfig;
@@ -54,7 +53,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 
 	/**
 	 * Initializes me with my parent working set configuration.
-	 * 
+	 *
 	 * @param parent
 	 *            my parent working set configuration
 	 */
@@ -75,7 +74,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 	/**
 	 * Sets my project name. Note that this <b>does not</b> change the name of the project that I represent.
 	 * Rather, it changes <i>which</i> project I represent.
-	 * 
+	 *
 	 * @param projectName
 	 *            my new project name
 	 */
@@ -221,9 +220,9 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 
 	/**
 	 * Default implementation of the mutable project configuration snapshot.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	public static class Snapshot extends WorkingSetProjectConfiguration
@@ -236,7 +235,7 @@ public class WorkingSetProjectConfiguration implements IWorkingSetProjectConfigu
 		 * Initializes me with the project that I represent and the workspace snapshot. I discover the
 		 * currently defined configurations for my project and initially select the one that is currently
 		 * active, or the first available if none is active (which would be odd).
-		 * 
+		 *
 		 * @param parent
 		 *            my parent working set configuration
 		 * @param projectConfig

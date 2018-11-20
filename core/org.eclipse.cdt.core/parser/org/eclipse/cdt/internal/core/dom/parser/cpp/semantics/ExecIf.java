@@ -73,7 +73,7 @@ public class ExecIf implements ICPPExecution {
 			if (newConditionExprEval.getValue().numberValue().intValue() != 0) {
 				/*
 				 * We can't just "return newThenClauseExec" here, because the condition
-				 * might have side effects so it needs to be preserved in the instantiated 
+				 * might have side effects so it needs to be preserved in the instantiated
 				 * execution even if one of its branch has become null
 				 */
 				newThenClauseExec = thenClauseExec.instantiate(context, maxDepth);

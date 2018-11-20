@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.index.tests;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -32,6 +30,8 @@ import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
 import org.eclipse.cdt.core.dom.ast.c.ICCompositeTypeScope;
 import org.eclipse.cdt.core.index.IIndexBinding;
+
+import junit.framework.TestSuite;
 
 /**
  * For testing PDOM binding resolution

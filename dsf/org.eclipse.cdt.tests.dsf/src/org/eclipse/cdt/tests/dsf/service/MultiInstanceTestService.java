@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -47,7 +47,7 @@ public class MultiInstanceTestService extends AbstractDsfService {
 	}
 
 	private void doInitialize(RequestMonitor requestMonitor) {
-		Hashtable<String, String> properties = new Hashtable<String, String>();
+		Hashtable<String, String> properties = new Hashtable<>();
 		properties.put(PROP_INSTANCE_ID, fInstanceId);
 		register(new String[] { MultiInstanceTestService.class.getName() }, properties);
 		requestMonitor.done();

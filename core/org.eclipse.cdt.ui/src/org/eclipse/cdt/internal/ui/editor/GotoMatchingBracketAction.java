@@ -14,12 +14,10 @@
 
 package org.eclipse.cdt.internal.ui.editor;
 
-import org.eclipse.jface.action.Action;
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.action.Action;
+import org.eclipse.ui.PlatformUI;
 
 public class GotoMatchingBracketAction extends Action {
 

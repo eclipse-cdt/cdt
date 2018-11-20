@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.PlatformObject;
 
 /**
  * A class that encapsulates the pin element handle and implements <code>IPinHandleLableProvider</code>.
- * 
+ *
  * @since 7.1
  */
 public class PinElementHandle extends PlatformObject implements IPinElementHandle {
@@ -45,7 +45,7 @@ public class PinElementHandle extends PlatformObject implements IPinElementHandl
 
 	/**
 	 * Sets the debug context.
-	 * 
+	 *
 	 * @param debugContext the new debug context
 	 */
 	public synchronized void setDebugContext(Object debugContext) {

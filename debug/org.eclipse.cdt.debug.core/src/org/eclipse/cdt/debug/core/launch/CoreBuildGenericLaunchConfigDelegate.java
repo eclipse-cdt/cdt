@@ -31,7 +31,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 /**
  * Delegate for Generic Launches over the Generic Launch Target. Can be
  * overriden to support launch customization for similar targets.
- * 
+ *
  * @since 8.3
  */
 public class CoreBuildGenericLaunchConfigDelegate extends CoreBuildLaunchConfigDelegate {

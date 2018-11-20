@@ -29,7 +29,7 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 	public MIDataListRegisterNamesInfo(MIOutput rr) {
 		super(rr);
 		names = null;
-		List<String> aList = new ArrayList<String>();
+		List<String> aList = new ArrayList<>();
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord outr = out.getMIResultRecord();
@@ -50,7 +50,7 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 	}
 
 	/*
-	 * Returns the register names. 
+	 * Returns the register names.
 	 */
 	public String[] getRegisterNames() {
 
@@ -67,8 +67,8 @@ public class MIDataListRegisterNamesInfo extends MIInfo {
 			if (values[i] instanceof MIConst) {
 				String str = ((MIConst) values[i]).getCString();
 
-				/* this cannot filter nulls because index is critical in retreival 
-				 * and index is assigned in the layers above. The MI spec allows 
+				/* this cannot filter nulls because index is critical in retreival
+				 * and index is assigned in the layers above. The MI spec allows
 				 * empty returns, for some register names. */
 				if (str != null && !str.isEmpty()) {
 					realNameCount++;

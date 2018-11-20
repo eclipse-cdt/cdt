@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
-/** 
+/**
  * Handles the access to the content types of the platform.
  * @author markus.schorn@windriver.com
  */
@@ -179,7 +179,7 @@ public class CContentTypes {
 	}
 
 	/**
-	 * Implementation for {@link CCorePlugin#setUseProjectSpecificContentTypes(IProject, boolean)}. 
+	 * Implementation for {@link CCorePlugin#setUseProjectSpecificContentTypes(IProject, boolean)}.
 	 */
 	public static void setUseProjectSpecificContentTypes(IProject project, boolean val) {
 		ProjectScope projectScope = new ProjectScope(project);

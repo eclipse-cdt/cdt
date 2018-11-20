@@ -17,10 +17,10 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * ISourceFileProvider supplies a list of source files used by a given Executable.
- * 
+ *
  * @author Ken Ryall
  * @since 6.0
- * 
+ *
  */
 
 public interface ISourceFilesProvider {
@@ -34,7 +34,7 @@ public interface ISourceFilesProvider {
 	 * The priority is used by the Executables Manager when multiple ISourceFilesProviders are available.
 	 * ISourceFilesProvider.getSourceFiles will be called for each one in priority order and will use the
 	 * first one that returns a non empty result.
-	 * 
+	 *
 	 * @param executable
 	 * @return the priority level to be used for this ISourceFilesProvider
 	 */

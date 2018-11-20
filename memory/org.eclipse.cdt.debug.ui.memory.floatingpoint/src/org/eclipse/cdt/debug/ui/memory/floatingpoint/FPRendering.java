@@ -195,7 +195,7 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
 		/*
 		 * The event model in the traditional renderer is written to expect a suspend first
-		 * which will cause it to save its current  data set away in an archive.  Then when 
+		 * which will cause it to save its current  data set away in an archive.  Then when
 		 * the state change comes through it will compare and refresh showing a difference.
 		 */
 		int flags = delta.getFlags();
@@ -207,9 +207,9 @@ public class FPRendering extends AbstractMemoryRendering implements IRepositiona
 	}
 
 	/*
-	 * We use the model proxy which is supplied by the TCF implementation to provide the knowledge of memory 
+	 * We use the model proxy which is supplied by the TCF implementation to provide the knowledge of memory
 	 * change notifications. The older backends ( the reference model, Wind River Systems Inc. ) are written
-	 * to generate the Debug Model events. TCF follows the "ModelDelta/IModelProxy" implementation  that the 
+	 * to generate the Debug Model events. TCF follows the "ModelDelta/IModelProxy" implementation  that the
 	 * platform renderers use. So this implementation acts as a shim. If the older Debug Events come in then
 	 * fine. If the newer model deltas come in fine also.
 	 */

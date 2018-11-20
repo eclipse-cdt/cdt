@@ -16,6 +16,15 @@ package org.eclipse.cdt.internal.ui.text.doctools;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -34,17 +43,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener;
-
-import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.ExternalEditorInput;
 
 /**
  * Listens to change in doc-comment ownership and reinitializes
@@ -99,7 +97,7 @@ public class EditorReopener implements IDocCommentOwnershipListener {
 	 * This could be smarter in determining smaller sets of editors to re-open
 	 */
 	private IEditorPart[] getEditorsToRepon(IWorkbenchWindow window, IResource resource) {
-		List<IEditorPart> needReopening = new ArrayList<IEditorPart>();
+		List<IEditorPart> needReopening = new ArrayList<>();
 		if (window.getActivePage() != null) {
 			IEditorReference[] es = window.getActivePage().getEditorReferences();
 			for (int i = 0; i < es.length; i++) {

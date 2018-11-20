@@ -24,7 +24,7 @@ import org.eclipse.cdt.internal.core.model.CShiftData;
  *
  * @see IElementChangedListener
  * @see ICElementDelta
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -34,7 +34,7 @@ public class ElementChangedEvent extends EventObject {
 	 */
 	private static final long serialVersionUID = 3257572793326252855L;
 	/**
-	 * Event type constant (bit mask) indicating an after-the-fact 
+	 * Event type constant (bit mask) indicating an after-the-fact
 	 * report of creations, deletions, and modifications
 	 * to one or more C element(s) expressed as a hierarchical
 	 * C element delta as returned by <code>getDelta()</code>.
@@ -50,19 +50,19 @@ public class ElementChangedEvent extends EventObject {
 	 */
 	public static final int POST_CHANGE = 1;
 	/**
-	 * Event type constant (bit mask) indicating an after-the-fact 
+	 * Event type constant (bit mask) indicating an after-the-fact
 	 * report of creations, deletions, and modifications
 	 * to one or more C element(s) expressed as a hierarchical
 	 * C element delta as returned by <code>getDelta</code>.
 	 *
 	 * Note: this notification occurs during the corresponding PRE_AUTO_BUILD
 	 * resource change notification. The delta, which is notified here, only contains
-	 * information relative to the previous CModel operations (in other words, 
-	 * it ignores the possible resources which have changed outside C operations). 
+	 * information relative to the previous CModel operations (in other words,
+	 * it ignores the possible resources which have changed outside C operations).
 	 * In particular, it is possible that the CModel be inconsistent with respect to
 	 * resources, which got modified outside CModel operations (it will only be
 	 * fully consistent once the POST_CHANGE notification has occurred).
-	 * 
+	 *
 	 * @see ICElementDelta
 	 * @see org.eclipse.core.resources.IResourceChangeEvent
 	 * @see #getDelta()
@@ -72,7 +72,7 @@ public class ElementChangedEvent extends EventObject {
 	@Deprecated
 	public static final int PRE_AUTO_BUILD = 2;
 	/**
-	 * Event type constant (bit mask) indicating an after-the-fact 
+	 * Event type constant (bit mask) indicating an after-the-fact
 	 * report of creations, deletions, and modifications
 	 * to one or more C element(s) expressed as a hierarchical
 	 * C element delta as returned by <code>getDelta</code>.
@@ -92,16 +92,16 @@ public class ElementChangedEvent extends EventObject {
 	 *    Source text is changed somewhere in function body
 	 *    No global data affected for any C element
 	 *    but element offsets should be recalculated now.
-	 *    
-	 *    Note: usually, CShifData object is sent with 
+	 *
+	 *    Note: usually, CShifData object is sent with
 	 *    this event as ICElementDelta
-	 *    
+	 *
 	 * @see CShiftData
 	 */
 	public static final int POST_SHIFT = 5;
 
 	/*
-	 * Event type indicating the nature of this event. 
+	 * Event type indicating the nature of this event.
 	 * It can be a combination either:
 	 *  - POST_CHANGE
 	 *  - PRE_AUTO_BUILD

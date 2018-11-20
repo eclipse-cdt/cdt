@@ -30,7 +30,7 @@ public abstract class PathEntryContainerInitializer {
 	public abstract void initialize(IPath containerPath, ICProject project) throws CoreException;
 
 	/**
-	* Returns <code>true</code> if this container initializer can be requested to perform updates 
+	* Returns <code>true</code> if this container initializer can be requested to perform updates
 	* on its own container values. If so, then an update request will be performed using
 	* <code>PathEntryContainerInitializer#requestPathEntryContainerUpdate</code>/
 	* <p>
@@ -45,14 +45,14 @@ public abstract class PathEntryContainerInitializer {
 	}
 
 	/**
-	 * Request a registered container definition to be updated according to a container suggestion. The container suggestion 
-	 * only acts as a place-holder to pass along the information to update the matching container definition(s) held by the 
-	 * container initializer. In particular, it is not expected to store the container suggestion as is, but rather adjust 
+	 * Request a registered container definition to be updated according to a container suggestion. The container suggestion
+	 * only acts as a place-holder to pass along the information to update the matching container definition(s) held by the
+	 * container initializer. In particular, it is not expected to store the container suggestion as is, but rather adjust
 	 * the actual container definition based on suggested changes.
 	 * <p>
 	 * IMPORTANT: In reaction to receiving an update request, a container initializer will update the corresponding
-	 * container definition (after reconciling changes) at its earliest convenience, using 
-	 * <code>CoreModel#setPathContainer(IPath, ICProject[], IPathEntryContainer[], IProgressMonitor)</code>. 
+	 * container definition (after reconciling changes) at its earliest convenience, using
+	 * <code>CoreModel#setPathContainer(IPath, ICProject[], IPathEntryContainer[], IProgressMonitor)</code>.
 	 * Until it does so, the update will not be reflected in the Java Model.
 	 * <p>
 	 * In order to anticipate whether the container initializer allows to update its containers, the predicate

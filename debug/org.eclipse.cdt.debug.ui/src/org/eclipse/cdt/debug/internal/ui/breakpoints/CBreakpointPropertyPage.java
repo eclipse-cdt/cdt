@@ -122,7 +122,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 		/**
 		 * Only store if the text control is enabled
-		 * 
+		 *
 		 * @see FieldEditor#doStore()
 		 */
 		@Override
@@ -296,7 +296,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 		@Override
 		protected boolean doCheckState() {
-			// Check that the file name supplied is absolute and exists so that we can 
+			// Check that the file name supplied is absolute and exists so that we can
 			// associate it to an IResource later for creating a breakpoint marker.
 			String stringValue = getStringValue();
 			if (stringValue == null) {
@@ -560,16 +560,16 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	private IAdaptable fElement;
 
-	/** 
+	/**
 	 * Indicates if the page currently aims to create
 	 * a breakpoint that already exits.
 	 */
 	private boolean fDuplicateBreakpoint;
 
 	/**
-	 * The preference store used to interface between the breakpoint and the 
+	 * The preference store used to interface between the breakpoint and the
 	 * breakpoint preference page.  This preference store is initialized only
-	 * when the preference store cannot be retrieved from the preference 
+	 * when the preference store cannot be retrieved from the preference
 	 * dialog's element.
 	 * @see #getPreferenceStore()
 	 */
@@ -577,7 +577,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	/**
 	 * Constructor for CBreakpointPropertyPage.
-	 * 
+	 *
 	 * @param breakpoint
 	 */
 	public CBreakpointPropertyPage() {
@@ -608,7 +608,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	/**
 	 * Method createTypeSpecificLabelFieldEditors.
-	 * 
+	 *
 	 * @param breakpoint
 	 */
 	private void createTypeSpecificLabelFieldEditors(ICBreakpoint breakpoint) {
@@ -651,7 +651,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	private String getBreakpointMainLabel(ICBreakpoint breakpoint) {
 		if (breakpoint instanceof ICWatchpoint && breakpoint.getMarker() != null) {
-			// For an existing breakpoint, calculate watchpoint label based 
+			// For an existing breakpoint, calculate watchpoint label based
 			// on read/write type.
 			boolean isReadType = getPreferenceStore().getBoolean(ICWatchpoint.READ);
 			boolean isWriteType = getPreferenceStore().getBoolean(ICWatchpoint.WRITE);
@@ -750,7 +750,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	protected void createWatchMemorySpaceEditor(Composite parent) {
 		ICBreakpoint breakpoint = getBreakpoint();
 		if (breakpoint == null || breakpoint.getMarker() == null) {
-			// XXX: In pre-CDI removal this set up additional field by getting memory space 
+			// XXX: In pre-CDI removal this set up additional field by getting memory space
 			// from ICDIMemorySpaceManagement. post-CDT removal memory space is still displayed
 			// (else below) but cannot be set on new breakpoints
 		} else {
@@ -1021,7 +1021,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 					} else if (con.getMarkerType().equalsIgnoreCase(ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER)) {
 						if (breakpoint.getMarker() == null) {
 							setupArgsComposite(parent);
-							fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", fEventArgsComposite); //$NON-NLS-1$			    			
+							fieldEditor = con.getFieldEditor(con.getId(), con.getLabel() + ":", fEventArgsComposite); //$NON-NLS-1$
 							if (fieldEditor != null) {
 								addEditorToComposite(fieldEditor);
 								fEventArgsComposite.setVisible(true);
@@ -1085,8 +1085,8 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 	private void setupEventTypeFieldEditor(ICBreakpointsUIContribution[] cons, ICBreakpoint breakpoint,
 			String conMainElement, Composite parent) {
 		String id = null;
-		ArrayList<String> eventTypeValueList = new ArrayList<String>();
-		ArrayList<String> eventTypeLabelList = new ArrayList<String>();
+		ArrayList<String> eventTypeValueList = new ArrayList<>();
+		ArrayList<String> eventTypeLabelList = new ArrayList<>();
 
 		// The filter of the debugModelIds should already be done.
 		for (ICBreakpointsUIContribution con : cons) {
@@ -1114,7 +1114,7 @@ public class CBreakpointPropertyPage extends FieldEditorPreferencePage implement
 
 	void addEditorToComposite(FieldEditor fieldEditor) {
 		if (fEventArgsFEs == null) {
-			fEventArgsFEs = new ArrayList<FieldEditor>();
+			fEventArgsFEs = new ArrayList<>();
 		}
 		fEventArgsFEs.add(fieldEditor);
 	}

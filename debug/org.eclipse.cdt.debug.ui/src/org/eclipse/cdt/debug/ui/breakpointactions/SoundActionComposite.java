@@ -45,7 +45,7 @@ public class SoundActionComposite extends Composite {
 
 	/**
 	 * Create the composite
-	 * 
+	 *
 	 * @param parent
 	 * @param style
 	 * @param page
@@ -153,7 +153,7 @@ public class SoundActionComposite extends Composite {
 	private void rebuildRecentSoundsCombo() {
 		combo_1.removeAll();
 
-		ArrayList<File> sortedSounds = new ArrayList<File>(soundActionPage.getRecentSounds());
+		ArrayList<File> sortedSounds = new ArrayList<>(soundActionPage.getRecentSounds());
 		Collections.sort(sortedSounds);
 
 		for (Iterator<File> iter = sortedSounds.iterator(); iter.hasNext();) {

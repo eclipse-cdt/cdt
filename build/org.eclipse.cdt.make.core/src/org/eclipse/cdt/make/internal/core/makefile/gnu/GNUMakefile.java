@@ -169,8 +169,8 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 	protected void parse(URI fileURI, MakefileReader reader) throws IOException {
 		String line;
 		Rule[] rules = null;
-		Stack<Directive> conditions = new Stack<Directive>();
-		Stack<VariableDefinition> defines = new Stack<VariableDefinition>();
+		Stack<Directive> conditions = new Stack<>();
+		Stack<VariableDefinition> defines = new Stack<>();
 		int startLine = 0;
 		int endLine = 0;
 
@@ -585,7 +585,7 @@ public class GNUMakefile extends AbstractMakefile implements IGNUMakefile {
 		String[] directories;
 		StringTokenizer st = new StringTokenizer(line);
 		int count = st.countTokens();
-		List<String> dirs = new ArrayList<String>(count);
+		List<String> dirs = new ArrayList<>(count);
 		if (count > 0) {
 			for (int i = 0; i < count; i++) {
 				if (count == 0) {

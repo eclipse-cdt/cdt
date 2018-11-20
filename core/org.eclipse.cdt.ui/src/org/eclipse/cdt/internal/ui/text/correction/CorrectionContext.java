@@ -14,11 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.correction;
 
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.TextInvocationContext;
-
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.ui.text.IInvocationContext;
+import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.jface.text.source.TextInvocationContext;
 
 public class CorrectionContext extends TextInvocationContext implements IInvocationContext {
 	private ITranslationUnit fTranslationUnit;

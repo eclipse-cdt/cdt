@@ -459,7 +459,7 @@ public class AdditionalInput implements IAdditionalInput {
 				libNames = options[i].getLibraries();
 			} else if (type == IOption.LIBRARY_PATHS) {
 				if (null == libPaths)
-					libPaths = new ArrayList<String>();
+					libPaths = new ArrayList<>();
 				libPaths.addAll(Arrays.asList(restoreLibraryPaths(options[i])));
 			}
 		}
@@ -541,9 +541,9 @@ public class AdditionalInput implements IAdditionalInput {
 
 	/**
 	 * Gets an EFS file-store for the specified path or URI, which may be a local filesystem path or may be a more abstract URI.
-	 * 
+	 *
 	 * @param pathOrURI a local filesystem path or URI
-	 * 
+	 *
 	 * @return the file store, if one could be determined
 	 */
 	private static IFileStore getEFSFile(String pathOrURI) {

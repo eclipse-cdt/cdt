@@ -21,14 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
-
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.templateengine.TemplateEngineHelper;
 import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
 import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
@@ -36,6 +28,13 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
 import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.cdt.utils.ui.controls.FileListControl;
 import org.eclipse.cdt.utils.ui.controls.IFileListChangeListener;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This gives a Label and StringList Widget.
@@ -62,7 +61,7 @@ public class UIStringListWidget extends InputUIElement {
 	 */
 	public UIStringListWidget(UIAttributes attribute) {
 		super(attribute);
-		itemsList = new ArrayList<String>();
+		itemsList = new ArrayList<>();
 	}
 
 	/**
@@ -70,7 +69,7 @@ public class UIStringListWidget extends InputUIElement {
 	 */
 	@Override
 	public Map<String, String> getValues() {
-		Map<String, String> retMap = new HashMap<String, String>();
+		Map<String, String> retMap = new HashMap<>();
 		String itemString = ""; //$NON-NLS-1$
 		for (int i = 0; i < itemsList.size(); i++) {
 			itemString = itemString + itemsList.get(i) + "|"; //$NON-NLS-1$

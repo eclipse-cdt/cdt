@@ -34,7 +34,7 @@ public final class DebugParameterKind {
 	private int id;
 
 	/**
-	 * 
+	 *
 	 */
 	private DebugParameterKind(int id) {
 		this.id = id;

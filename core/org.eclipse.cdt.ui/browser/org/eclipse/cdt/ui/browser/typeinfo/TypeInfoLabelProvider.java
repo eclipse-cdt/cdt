@@ -17,11 +17,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.browser.typeinfo;
 
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.cdt.core.browser.IFunctionInfo;
 import org.eclipse.cdt.core.browser.IQualifiedTypeName;
 import org.eclipse.cdt.core.browser.ITypeInfo;
@@ -32,9 +27,12 @@ import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.IVariableDeclaration;
-import org.eclipse.cdt.ui.CDTSharedImages;
-
 import org.eclipse.cdt.internal.core.model.FunctionDeclaration;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -187,7 +185,7 @@ public class TypeInfoLabelProvider extends LabelProvider {
 			if (ref != null) {
 				path = ref.getPath();
 
-				// IndexTypeInfo may not have an enclosing project 
+				// IndexTypeInfo may not have an enclosing project
 				ICProject cproject = typeRef.getEnclosingProject();
 				IProject project = cproject == null ? null : cproject.getProject();
 

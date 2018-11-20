@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Modified for new functionality
@@ -43,7 +43,7 @@ import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 
 /**
- * 
+ *
  */
 public class LaunchVMProvider extends AbstractLaunchVMProvider implements IDebugEventSetListener, ILaunchesListener2 {
 

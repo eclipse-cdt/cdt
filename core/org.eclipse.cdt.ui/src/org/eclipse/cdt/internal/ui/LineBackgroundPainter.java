@@ -62,11 +62,11 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/** The viewer's widget */
 	private StyledText fTextWidget;
 	/** Text positions (cursor line position is always at index 0 */
-	private List<Position> fPositions = new ArrayList<Position>();
+	private List<Position> fPositions = new ArrayList<>();
 	/** Cached text positions */
-	private List<Position> fLastPositions = new ArrayList<Position>();
+	private List<Position> fLastPositions = new ArrayList<>();
 	/** Temporary changed positions */
-	private List<Position> fChangedPositions = new ArrayList<Position>();
+	private List<Position> fChangedPositions = new ArrayList<>();
 	/** Cursor line position */
 	private Position fCursorLine = new TypedPosition(0, 0, CURSOR_LINE_TYPE);
 	/** Saved cursor line position */
@@ -76,7 +76,7 @@ public class LineBackgroundPainter implements IPainter, LineBackgroundListener {
 	/** Whether cursor line highlighting is active */
 	private boolean fCursorLineActive;
 	/** Map of position type to color */
-	private Map<String, Color> fColorMap = new HashMap<String, Color>();
+	private Map<String, Color> fColorMap = new HashMap<>();
 
 	/**
 	 * Creates a new painter for the given text viewer.

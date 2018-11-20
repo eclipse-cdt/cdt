@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Abeer Bagul (Tensilica) - Updated error message (Bug 339048)
@@ -103,11 +103,11 @@ public class GdbPlugin extends Plugin {
 		return fgBundleContext;
 	}
 
-	/** 
-	 * Shuts down any active launches.  We must shutdown any active sessions 
+	/**
+	 * Shuts down any active launches.  We must shutdown any active sessions
 	 * and services associated with this plugin before this plugin is stopped.
 	 * Any attempts to use the plugins {@link BundleContext} after the plugin
-	 * is shut down will result in exceptions. 
+	 * is shut down will result in exceptions.
 	 */
 	private void shutdownActiveLaunches() {
 
@@ -136,8 +136,8 @@ public class GdbPlugin extends Plugin {
 					break;
 				}
 
-				// The Query.get() method is a synchronous call which blocks until the 
-				// query completes.  
+				// The Query.get() method is a synchronous call which blocks until the
+				// query completes.
 				try {
 					launchShutdownQuery.get(1, TimeUnit.MINUTES);
 				} catch (InterruptedException e) {
@@ -190,7 +190,7 @@ public class GdbPlugin extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -200,7 +200,7 @@ public class GdbPlugin extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message to log
 	 */
@@ -210,7 +210,7 @@ public class GdbPlugin extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */

@@ -28,7 +28,7 @@ import java.util.HashMap;
  */
 public class SimpleScanner {
 	private static final int EOFCHAR = -1;
-	protected static HashMap<String, Integer> fgKeywords = new HashMap<String, Integer>();
+	protected static HashMap<String, Integer> fgKeywords = new HashMap<>();
 
 	protected Token fCurrentToken;
 	protected ScannerContext fContext;
@@ -698,7 +698,7 @@ public class SimpleScanner {
 
 	/**
 	 * Matches a preprocessor directive.
-	 * 
+	 *
 	 * @return a preprocessor token
 	 */
 	private Token matchPPDirective() {

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Enter type comment.
- * 
+ *
  * @since Jul 14, 2003
  */
 public class SourceLookupFactory {

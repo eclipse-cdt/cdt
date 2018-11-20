@@ -74,10 +74,10 @@ public class SourceFilesViewer extends BaseViewer {
 
 	TreeColumn originalLocationColumn;
 	private Tree sourceFilesTree;
-	/** Tradeoff expensiveness of checking filesystem against likelihood 
+	/** Tradeoff expensiveness of checking filesystem against likelihood
 	 * that files will be added/removed/changed in the given time period */
 	static final long FILE_CHECK_DELTA = 30 * 1000;
-	private static LRUCache<Object, TranslationUnitInfo> translationUnitInfoCache = new LRUCache<Object, TranslationUnitInfo>(
+	private static LRUCache<Object, TranslationUnitInfo> translationUnitInfoCache = new LRUCache<>(
 			1024);
 
 	public SourceFilesViewer(ExecutablesView view, Composite parent, int style) {
@@ -110,9 +110,9 @@ public class SourceFilesViewer extends BaseViewer {
 				// TODO: be more selective; we don't know what TUs go with which executables yet
 				flushTranslationUnitCache();
 
-				// Note that we don't invoke a viewer refresh. Our content 
-				// provider needs to also be listening for this notification. 
-				// It's up to him to invoke a refresh on us if the model has 
+				// Note that we don't invoke a viewer refresh. Our content
+				// provider needs to also be listening for this notification.
+				// It's up to him to invoke a refresh on us if the model has
 				// been affected by the Executable change
 			}
 		});
@@ -304,7 +304,7 @@ public class SourceFilesViewer extends BaseViewer {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	static void flushTranslationUnitCache() {
 		synchronized (translationUnitInfoCache) {

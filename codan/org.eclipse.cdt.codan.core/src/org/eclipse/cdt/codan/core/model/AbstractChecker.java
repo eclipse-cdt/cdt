@@ -80,7 +80,7 @@ public abstract class AbstractChecker implements IChecker {
 	 * @since 2.0
 	 */
 	public List<IProblem> getProblemsByMainId(String id, IResource file) {
-		ArrayList<IProblem> list = new ArrayList<IProblem>();
+		ArrayList<IProblem> list = new ArrayList<>();
 		IProblemProfile resourceProfile = CheckersRegistry.getInstance().getResourceProfile(file);
 		IProblem[] problems = resourceProfile.getProblems();
 		for (int i = 0; i < problems.length; i++) {

@@ -15,6 +15,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.CollapseAllAction;
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
@@ -40,18 +50,6 @@ import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.actions.NewWizardMenu;
 import org.eclipse.ui.actions.WorkingSetFilterActionGroup;
 import org.eclipse.ui.ide.IDEActionFactory;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.actions.CustomFiltersActionGroup;
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
-
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.actions.CollapseAllAction;
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
-import org.eclipse.cdt.internal.ui.editor.OpenIncludeAction;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
 
 /**
  * The main action group for the cview. This contains a few actions and several

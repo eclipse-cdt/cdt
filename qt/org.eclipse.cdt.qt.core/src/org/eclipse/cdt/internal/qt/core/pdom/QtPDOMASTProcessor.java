@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 public class QtPDOMASTProcessor extends IPDOMASTProcessor.Abstract {
 	@Override
 	public int process(IASTTranslationUnit ast, IIndexSymbols symbols) throws CoreException {
-		ast.accept(new QtASTVisitor(symbols, (LocationMap) ast.getAdapter(LocationMap.class)));
+		ast.accept(new QtASTVisitor(symbols, ast.getAdapter(LocationMap.class)));
 		return ILinkage.QT_LINKAGE_ID;
 	}
 }

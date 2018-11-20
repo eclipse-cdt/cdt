@@ -95,14 +95,14 @@ public class QtPDOMProperty extends QtPDOMBinding {
 
 	public void setAttributes(Attribute[] attributes) throws CoreException {
 		long rec = getDB().getRecPtr(Field.Attributes.getRecord(record));
-		QtPDOMArray<Attribute> pdomArray = new QtPDOMArray<Attribute>(getQtLinkage(), Attribute.Codec, rec);
+		QtPDOMArray<Attribute> pdomArray = new QtPDOMArray<>(getQtLinkage(), Attribute.Codec, rec);
 		rec = pdomArray.set(attributes);
 		getDB().putRecPtr(Field.Attributes.getRecord(record), rec);
 	}
 
 	public Attribute[] getAttributes() throws CoreException {
 		long rec = getDB().getRecPtr(Field.Attributes.getRecord(record));
-		QtPDOMArray<Attribute> pdomArray = new QtPDOMArray<Attribute>(getQtLinkage(), Attribute.Codec, rec);
+		QtPDOMArray<Attribute> pdomArray = new QtPDOMArray<>(getQtLinkage(), Attribute.Codec, rec);
 		return pdomArray.get();
 	}
 

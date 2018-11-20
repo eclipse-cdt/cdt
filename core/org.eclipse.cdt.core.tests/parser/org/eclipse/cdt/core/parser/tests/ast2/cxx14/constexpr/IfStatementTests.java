@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -37,7 +37,7 @@ public class IfStatementTests extends TestBase {
 	//	constexpr int f() {
 	//		if (true) {
 	//			return 1;
-	//		} 
+	//		}
 	//		return 0;
 	//	}
 
@@ -49,7 +49,7 @@ public class IfStatementTests extends TestBase {
 	//	constexpr int f() {
 	//		if (false) {
 	//			return 1;
-	//		} 
+	//		}
 	//      return 0;
 	//	}
 

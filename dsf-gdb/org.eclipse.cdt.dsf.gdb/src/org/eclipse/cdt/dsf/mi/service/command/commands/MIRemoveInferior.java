@@ -17,12 +17,12 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
-/**	
+/**
  *   -remove-inferior GROUPID
  *   ^done
- *   
+ *
  *   Remove the specified inferior.
- *   
+ *
  *   @since 4.0
  */
 public class MIRemoveInferior extends MICommand<MIInfo> {

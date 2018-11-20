@@ -19,25 +19,25 @@ package org.eclipse.cdt.debug.core.model;
 public interface ICDebugElementStatus {
 
 	/**
-	 * Status severity constant (value 0) indicating this status represents 
+	 * Status severity constant (value 0) indicating this status represents
 	 * the nominal case.
 	 */
 	public static final int OK = 0;
 
 	/**
-	 * Status severity constant (value 1) indicating indicating this status 
+	 * Status severity constant (value 1) indicating indicating this status
 	 * represents a warning.
 	 */
 	public static final int WARNING = 1;
 
 	/**
-	 * Status severity constant (value 2) indicating indicating this status 
+	 * Status severity constant (value 2) indicating indicating this status
 	 * represents an error.
 	 */
 	public static final int ERROR = 2;
 
 	/**
-	 * Returns whether this status indicates everything is okay 
+	 * Returns whether this status indicates everything is okay
 	 * (neither warning, nor error).
 	 *
 	 * @return <code>true</code> if this status has severity
@@ -53,7 +53,7 @@ public interface ICDebugElementStatus {
 	 * <li><code>OK</code> - everything is just fine</li>
 	 * </ul>
 	 *
-	 * @return the severity: one of <code>OK</code>, <code>ERROR</code>, 
+	 * @return the severity: one of <code>OK</code>, <code>ERROR</code>,
 	 * or <code>WARNING</code>
 	 */
 	int getSeverity();

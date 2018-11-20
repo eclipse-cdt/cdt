@@ -39,7 +39,7 @@ import org.eclipse.core.runtime.Path;
  * @since 5.0
  */
 public class StandaloneIndexerInputAdapter extends IndexerInputAdapter {
-	private final HashMap<String, IIndexFileLocation> fIflCache = new HashMap<String, IIndexFileLocation>();
+	private final HashMap<String, IIndexFileLocation> fIflCache = new HashMap<>();
 	private final FileExistsCache fExistsCache;
 
 	private final StandaloneIndexer fIndexer;

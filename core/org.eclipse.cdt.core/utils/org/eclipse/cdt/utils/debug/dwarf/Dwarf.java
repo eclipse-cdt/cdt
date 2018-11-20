@@ -98,7 +98,7 @@ public class Dwarf {
 			code = c;
 			tag = t;
 			hasChildren = h;
-			attributes = new ArrayList<Attribute>();
+			attributes = new ArrayList<>();
 		}
 	}
 
@@ -173,9 +173,9 @@ public class Dwarf {
 		int identifierCase;
 	}
 
-	Map<String, ByteBuffer> dwarfSections = new HashMap<String, ByteBuffer>();
-	Map<String, ByteBuffer> dwarfAltSections = new HashMap<String, ByteBuffer>();
-	Map<Integer, Map<Long, AbbreviationEntry>> abbreviationMaps = new HashMap<Integer, Map<Long, AbbreviationEntry>>();
+	Map<String, ByteBuffer> dwarfSections = new HashMap<>();
+	Map<String, ByteBuffer> dwarfAltSections = new HashMap<>();
+	Map<Integer, Map<Long, AbbreviationEntry>> abbreviationMaps = new HashMap<>();
 
 	boolean isLE;
 
@@ -221,7 +221,7 @@ public class Dwarf {
 						// 1. try and open the file in the same directory as the executable
 						debugFile = p.append(debugName).toFile();
 						if (!debugFile.exists()) {
-							// 2. try and open the file in the .debug directory where the executable is 
+							// 2. try and open the file in the .debug directory where the executable is
 							debugFile = p.append(".debug").append(debugName).toFile(); //$NON-NLS-1$
 							if (!debugFile.exists())
 								// 3. try and open /usr/lib/debug/$(EXEPATH)/$(DEBUGINFO_NAME)
@@ -452,7 +452,7 @@ public class Dwarf {
 
 					// read the abbrev section.
 					Map<Long, AbbreviationEntry> abbrevs = parseDebugAbbreviation(header);
-					// A 4-byte or 12-byte unsigned integer representing the length of the .debug_info 
+					// A 4-byte or 12-byte unsigned integer representing the length of the .debug_info
 					// contribution for that compilation unit, not including the length field itself.
 					ByteBuffer entryBuffer = data.slice();
 					entryBuffer.limit(((int) header.length) - (header.offsetSize == 8 ? 11 : 7));
@@ -470,7 +470,7 @@ public class Dwarf {
 	}
 
 	/**
-	 *  
+	 *
 	 */
 	class InitialLengthValue {
 		/**
@@ -479,14 +479,14 @@ public class Dwarf {
 		long length;
 
 		/**
-		 * section offset size in bytes. 
+		 * section offset size in bytes.
 		 */
 		byte offsetSize; //
 	}
 
 	/**
-	 * Read section length field from the beginning of dwarf section. 
-	 * 
+	 * Read section length field from the beginning of dwarf section.
+	 *
 	 * <p>See Chapter 7.4 32-Bit and 64-Bit DWARF Formats</p>
 	 * @param data - byte buffer positioned at the start of section length record
 	 * @return section length info. Cannot be null.
@@ -511,7 +511,7 @@ public class Dwarf {
 		Integer key = Integer.valueOf(header.abbreviationOffset);
 		Map<Long, AbbreviationEntry> abbrevs = abbreviationMaps.get(key);
 		if (abbrevs == null) {
-			abbrevs = new HashMap<Long, AbbreviationEntry>();
+			abbrevs = new HashMap<>();
 			abbreviationMaps.put(key, abbrevs);
 			ByteBuffer data = dwarfSections.get(DWARF_DEBUG_ABBREV);
 			if (data != null) {
@@ -555,7 +555,7 @@ public class Dwarf {
 			AbbreviationEntry entry = abbrevs.get(Long.valueOf(code));
 			if (entry != null) {
 				int len = entry.attributes.size();
-				List<AttributeValue> list = new ArrayList<AttributeValue>(len);
+				List<AttributeValue> list = new ArrayList<>(len);
 				try {
 					for (int i = 0; i < len; i++) {
 						Attribute attr = entry.attributes.get(i);

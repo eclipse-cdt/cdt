@@ -34,7 +34,7 @@ public abstract class AbstractDisassemblyBreakpointRulerAction extends AbstractD
 
 	/**
 	 * Create breakpoint ruler action.
-	 * 
+	 *
 	 * @param disassemblyPart
 	 * @param rulerInfo
 	 */
@@ -45,7 +45,7 @@ public abstract class AbstractDisassemblyBreakpointRulerAction extends AbstractD
 	/**
 	 * Returns the breakpoint at the last line of mouse activity in the ruler
 	 * or <code>null</code> if none.
-	 * 
+	 *
 	 * @return breakpoint associated with activity in the ruler or <code>null</code>
 	 */
 	protected IBreakpoint getBreakpoint() {

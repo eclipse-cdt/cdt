@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,13 +17,13 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 import org.eclipse.cdt.examples.dsf.pda.service.PDAVirtualMachineDMContext;
 
 /**
- * Resumes the execution of the whole virtual machine  
- * 
+ * Resumes the execution of the whole virtual machine
+ *
  * <pre>
  *    C: vmresume
  *    R: ok
  *    E: vmresumed client
- *    
+ *
  * Errors:
  *    error: vm already running
  * </pre>

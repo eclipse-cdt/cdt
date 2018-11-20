@@ -22,14 +22,13 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IBasicType;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
+import org.eclipse.cdt.ui.PreferenceConstants;
 
 public class GetterSetterNameGenerator {
-	private static Set<String> generateGetterSettersPreferenceKeys = new HashSet<String>();
+	private static Set<String> generateGetterSettersPreferenceKeys = new HashSet<>();
 	static {
 		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_GETTER_CAPITALIZATION);
 		generateGetterSettersPreferenceKeys.add(PreferenceConstants.NAME_STYLE_GETTER_WORD_DELIMITER);
@@ -56,7 +55,7 @@ public class GetterSetterNameGenerator {
 
 	/**
 	 * Generates getter name for a given field name.
-	 * 
+	 *
 	 * @param fieldName the name of the field
 	 * @param namesToAvoid the set of names to avoid
 	 * @return the generated getter name, or <code>null</code> if a valid name could not be
@@ -82,7 +81,7 @@ public class GetterSetterNameGenerator {
 
 	/**
 	 * Generates setter name for a given field name.
-	 * 
+	 *
 	 * @param fieldName the name of the field
 	 * @param namesToAvoid the set of names to avoid
 	 * @return the generated setter name, or <code>null</code> if a valid name could not be

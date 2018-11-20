@@ -17,7 +17,7 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
 
 /**
  * Handler interface to perform an Uncall operation (reverse debugging)
- * 
+ *
  * @since 7.0
  */
 public interface IUncallHandler extends IDebugCommandHandler {

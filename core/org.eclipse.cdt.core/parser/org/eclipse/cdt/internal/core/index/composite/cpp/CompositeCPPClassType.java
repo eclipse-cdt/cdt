@@ -216,7 +216,7 @@ class CompositeCPPClassType extends CompositeCPPBinding implements ICPPClassType
 	protected <T extends IBinding> T[] wrapBindings(T[] bindings) {
 		T[] result = Arrays.copyOf(bindings, bindings.length);
 		for (int i = 0; i < bindings.length; i++) {
-			// Cannot assume the incoming binding is an index binding in all cases. 
+			// Cannot assume the incoming binding is an index binding in all cases.
 			result[i] = (T) cf.getCompositeBinding(adaptBinding(bindings[i]));
 		}
 		return result;

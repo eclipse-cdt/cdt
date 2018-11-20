@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.MenuItem;
 /**
  * Dynamic menu contribution that shows available number formats in the current
  * selection of the view.
- * 
+ *
  * @since 2.2
  */
 public class ElementNumberFormatsContribution extends NumberFormatsContribution {
@@ -118,7 +118,7 @@ public class ElementNumberFormatsContribution extends NumberFormatsContribution 
 		}
 
 		IVMNode[] nodes = new IVMNode[elementPaths.length];
-		final List<SelectFormatAction> actions = new ArrayList<SelectFormatAction>(availableFormats.size());
+		final List<SelectFormatAction> actions = new ArrayList<>(availableFormats.size());
 		for (String formatId : availableFormats) {
 			actions.add(new SelectFormatAction((IElementFormatProvider) provider, context, nodes, viewerInput,
 					elementPaths, formatId));

@@ -17,10 +17,9 @@ package org.eclipse.cdt.internal.ui.text.correction;
 import org.eclipse.cdt.core.model.ICModelMarker;
 import org.eclipse.cdt.core.parser.IPersistableProblem;
 import org.eclipse.cdt.core.parser.IProblem;
-import org.eclipse.cdt.ui.text.IProblemLocation;
-
 import org.eclipse.cdt.internal.ui.editor.CMarkerAnnotation;
 import org.eclipse.cdt.internal.ui.editor.ICAnnotation;
+import org.eclipse.cdt.ui.text.IProblemLocation;
 
 public class ProblemLocation implements IProblemLocation {
 	private final int fId;

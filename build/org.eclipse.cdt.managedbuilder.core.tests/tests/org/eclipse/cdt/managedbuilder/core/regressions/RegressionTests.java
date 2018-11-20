@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.regressions;
 
-import org.eclipse.cdt.managedbuilder.core.regressions.Bug_303953;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

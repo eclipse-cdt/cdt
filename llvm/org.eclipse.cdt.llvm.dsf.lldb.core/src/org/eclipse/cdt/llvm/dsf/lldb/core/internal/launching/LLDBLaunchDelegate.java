@@ -61,6 +61,7 @@ public class LLDBLaunchDelegate extends GdbLaunchDelegate {
 		return new LLDBServiceFactory(version, config);
 	}
 
+	@Override
 	protected GdbLaunch createGdbLaunch(ILaunchConfiguration configuration, String mode, ISourceLocator locator)
 			throws CoreException {
 		return new LLDBLaunch(configuration, mode, locator);

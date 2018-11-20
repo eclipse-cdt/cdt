@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -36,13 +36,13 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 	private TestsRunnerProvidersManager testsRunnersManager;
 
 	/** Testing sessions history list (the first is the newest). */
-	private LinkedList<TestingSession> sessions = new LinkedList<TestingSession>();
+	private LinkedList<TestingSession> sessions = new LinkedList<>();
 
 	/** Currently active testing session. */
 	private TestingSession activeSession;
 
 	/** Listeners collection. */
-	private List<ITestingSessionsManagerListener> listeners = new ArrayList<ITestingSessionsManagerListener>();
+	private List<ITestingSessionsManagerListener> listeners = new ArrayList<>();
 
 	/** The size limit of the testing sessions history. */
 	private int historySizeLimit = 10;
@@ -55,7 +55,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 	/**
 	 * Tries to find the last testing session for the specified launch
 	 * configuration and Tests Runner provide plug-in.
-	 * 
+	 *
 	 * <p>
 	 * Usually testing frameworks do not provide the information about tests
 	 * hierarchy and total tests count before the testing is finished. So we try
@@ -68,7 +68,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 	 * </ul>
 	 * This function tries to find a such session.
 	 * </p>
-	 * 
+	 *
 	 * @param launchConfiguration required launch configuration
 	 * @param testsRunnerProviderInfo required Tests Runner provide plug-in
 	 * @return testing session or null if not found
@@ -95,7 +95,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Creates a new testing session for the specified launch.
-	 * 
+	 *
 	 * @param launch launch
 	 * @return new testing session
 	 */
@@ -113,7 +113,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Returns the testing sessions history (the first is the newest).
-	 * 
+	 *
 	 * @return testing sessions list
 	 */
 	public List<? extends ITestingSession> getSessions() {
@@ -123,7 +123,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 	/**
 	 * Rewrites the testing sessions history with the specified list. Truncates
 	 * the history if necessary.
-	 * 
+	 *
 	 * @return testing sessions list
 	 */
 	public void setSessions(List<ITestingSession> newSessions) {
@@ -136,7 +136,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Returns the testing sessions history size.
-	 * 
+	 *
 	 * @return history size
 	 */
 	public int getSessionsCount() {
@@ -145,7 +145,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Accesses the currently active testing session.
-	 * 
+	 *
 	 * @return testing session
 	 */
 	public ITestingSession getActiveSession() {
@@ -154,7 +154,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Sets the new active testing session.
-	 * 
+	 *
 	 * @param newActiveSession testing session
 	 */
 	public void setActiveSession(ITestingSession newActiveSession) {
@@ -189,7 +189,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Returns the size limit of the testing sessions history.
-	 * 
+	 *
 	 * @return history size limit
 	 */
 	public int getHistorySizeLimit() {
@@ -198,7 +198,7 @@ public class TestingSessionsManager implements ILaunchConfigurationListener {
 
 	/**
 	 * Sets the size limit of the testing sessions history.
-	 * 
+	 *
 	 * @param historySizeLimit new history size limit
 	 */
 	public void setHistorySizeLimit(int historySizeLimit) {

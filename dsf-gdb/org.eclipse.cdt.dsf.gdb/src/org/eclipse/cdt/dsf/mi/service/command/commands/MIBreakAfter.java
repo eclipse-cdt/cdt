@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *  -break-after NUMBER COUNT
  *
  *  The breakpoint number NUMBER is not in effect until it has been hit

@@ -20,7 +20,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
 /**
  * Jump node is node that connects unusual control pass, such as goto, break and
  * continue
- * 
+ *
  */
 public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 	private IConnectorNode jump;
@@ -42,7 +42,7 @@ public class JumpNode extends AbstractSingleIncomingNode implements IJumpNode {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.cfg.IJumpNode#getJumpNode()
 	 */
 	@Override

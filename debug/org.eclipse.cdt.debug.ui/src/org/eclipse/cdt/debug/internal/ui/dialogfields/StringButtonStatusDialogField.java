@@ -87,7 +87,7 @@ public class StringButtonStatusDialogField extends StringButtonDialogField {
 		fWidthHintString = null;
 	}
 
-	// ------- layout helpers	
+	// ------- layout helpers
 
 	/*
 	 * @see DialogField#doFillIntoGrid
@@ -133,7 +133,7 @@ public class StringButtonStatusDialogField extends StringButtonDialogField {
 		return gd;
 	}
 
-	// ------- ui creation	
+	// ------- ui creation
 
 	/**
 	 * Creates or returns the created status label widget.

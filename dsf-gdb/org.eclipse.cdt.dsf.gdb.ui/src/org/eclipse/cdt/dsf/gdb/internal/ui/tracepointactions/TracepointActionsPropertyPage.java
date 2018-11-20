@@ -31,7 +31,7 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * Property page for Tracepoint actions
- * 
+ *
  * @since 2.1
  */
 public class TracepointActionsPropertyPage extends PropertyPage {
@@ -117,7 +117,7 @@ public class TracepointActionsPropertyPage extends PropertyPage {
 
 	/**
 	 * Clean up attached actions that were just deleted from the GlobalActionList
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	protected void HandleDeleteButton() {

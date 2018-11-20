@@ -19,7 +19,7 @@
  * Anna Dushistova       (MontaVista) - [181517][usability] Specify commands to be run before remote application launch
  * Anna Dushistova       (MontaVista) - [223728] [remotecdt] connection combo is not populated until RSE is activated
  * Anna Dushistova       (MontaVista) - [267951] [remotecdt] Support systemTypes without files subsystem
- * Anna Dushistova  (Mentor Graphics) - adapted from RemoteCMainTab 
+ * Anna Dushistova  (Mentor Graphics) - adapted from RemoteCMainTab
  * Anna Dushistova  (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  * Anna Dushistova  (Mentor Graphics) - [318052] [remote launch] Properties are not saved/used
  * Anna Dushistova       (MontaVista) - [375067] [remote] Automated remote launch does not support project-less debug
@@ -118,6 +118,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		/* If the local binary path changes, modify the remote binary location */
 		fProgText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				setLocalPathForRemotePath();
 			}
@@ -129,7 +130,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 
 	/*
 	 * isValid
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid
 	 */
 	@Override
@@ -194,6 +195,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		connectionCombo.setLayoutData(gd);
 		connectionCombo.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent e) {
 				useDefaultsFromConnection();
 				updateConnectionButtons();
@@ -260,6 +262,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		remoteProgText.setLayoutData(gd);
 		remoteProgText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -288,6 +291,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 		preRunText.setLayoutData(gd);
 		preRunText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -649,7 +653,7 @@ public class RemoteCDSFMainTab extends CMainTab {
 
 	/*
 	 * performApply
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply
 	 */
 	@Override

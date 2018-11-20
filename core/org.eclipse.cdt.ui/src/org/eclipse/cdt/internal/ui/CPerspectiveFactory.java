@@ -15,16 +15,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui;
 
+import org.eclipse.cdt.internal.ui.wizards.CWizardRegistry;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.search.ui.NewSearchUI;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.navigator.resources.ProjectExplorer;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.wizards.CWizardRegistry;
 
 public class CPerspectiveFactory implements IPerspectiveFactory {
 	/**

@@ -35,7 +35,7 @@ public interface IModifyDialogTabPage {
 	/**
 	 * A map containing key value pairs this tab page
 	 * is must modify.
-	 * 
+	 *
 	 * @param workingValues the values to work with
 	 */
 	public void setWorkingValues(Map<String, String> workingValues);
@@ -45,21 +45,21 @@ public interface IModifyDialogTabPage {
 	 * a value in the map passed to {@link #setWorkingValues(Map)}
 	 * changes. The listener can also be informed about status
 	 * changes.
-	 * 
+	 *
 	 * @param modifyListener the listener to inform
 	 */
 	public void setModifyListener(IModificationListener modifyListener);
 
 	/**
 	 * Create the contents of this tab page.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @return created content control
 	 */
 	public Composite createContents(Composite parent);
 
 	/**
-	 * This is called when the page becomes visible. 
+	 * This is called when the page becomes visible.
 	 * Common tasks to do include:
 	 * <ul><li>Updating the preview.</li>
 	 * <li>Setting the focus</li>

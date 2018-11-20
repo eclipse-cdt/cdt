@@ -10,17 +10,13 @@
  *
  * Contributors:
  *    Veaceslav Bacu (Freescale Semiconductor Inc.) - initial API and implementation (bug 348884)
- *    
+ *
  *******************************************************************************/
 
 package org.eclipse.cdt.utils;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
@@ -31,6 +27,10 @@ import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
 import org.eclipse.cdt.internal.core.cdtvariables.StorableCdtVariable;
 import org.eclipse.core.resources.IProject;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class StorableCdtVariablesTest extends TestCase {
 
@@ -67,7 +67,7 @@ public class StorableCdtVariablesTest extends TestCase {
 		}
 		{
 			ICdtVariable[] vars = supplier.getMacros(desc);
-			List<String> macroStrings = new ArrayList<String>();
+			List<String> macroStrings = new ArrayList<>();
 			for (ICdtVariable var : vars) {
 				macroStrings.add(var.getName() + '=' + var.getStringValue());
 			}
@@ -85,7 +85,7 @@ public class StorableCdtVariablesTest extends TestCase {
 		}
 		{
 			ICdtVariable[] vars = supplier.getMacros(desc);
-			List<String> macroStrings = new ArrayList<String>();
+			List<String> macroStrings = new ArrayList<>();
 			for (ICdtVariable var : vars) {
 				macroStrings.add(var.getName() + '=' + var.getStringValue());
 			}

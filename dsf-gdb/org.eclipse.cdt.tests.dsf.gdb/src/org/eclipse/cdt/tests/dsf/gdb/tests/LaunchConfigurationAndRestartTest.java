@@ -99,7 +99,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		assumeLocalSession();
 		removeTeminatedLaunchesBeforeTest();
 		setLaunchAttributes();
-		// Can't run the launch right away because each test needs to first set some 
+		// Can't run the launch right away because each test needs to first set some
 		// parameters.  The individual tests will be responsible for starting the launch.
 
 		// Looks up line tags in source file(s).
@@ -324,14 +324,14 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	}
 
 	/**
-	 * This test will tell the launch to set a new environment variable LAUNCHTEST.  
+	 * This test will tell the launch to set a new environment variable LAUNCHTEST.
 	 * We will then check that this new variable can be read by the program.
 	 */
 	@Test
 	public void testSettingEnvironment() throws Throwable {
 		setLaunchAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true);
 
-		Map<String, String> map = new HashMap<String, String>(1);
+		Map<String, String> map = new HashMap<>(1);
 		map.put("LAUNCHTEST", "IS SET");
 		setLaunchAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		doLaunch();
@@ -384,7 +384,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 	/**
 	 * This test will tell the launch to clear the environment variables and then
-	 * set a new environment variable LAUNCHTEST.  We will then check that the variable 
+	 * set a new environment variable LAUNCHTEST.  We will then check that the variable
 	 * $HOME cannot be found by the program and that the new variable LAUNCHTEST can be
 	 * read by the program.
 	 */
@@ -392,7 +392,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	public void testClearingAndSettingEnvironment() throws Throwable {
 		setLaunchAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, false);
 
-		Map<String, String> map = new HashMap<String, String>(1);
+		Map<String, String> map = new HashMap<>(1);
 		map.put("LAUNCHTEST", "IS SET");
 		setLaunchAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, map);
 		doLaunch();
@@ -446,7 +446,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	/**
 	 * This test will tell the launch to set some arguments for the program.  We will
 	 * then check that the program has the same arguments.
-	 * 
+	 *
 	 * NOTE: The main setting arguments tests are in {@link CommandLineArgsTest}, this
 	 * test remains here to test interaction of command line arguments are restarting.
 	 * See {@link #testSettingArgumentsRestart()}
@@ -527,7 +527,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	}
 
 	/**
-	 * This test will tell the launch to "stop on main" at method stopAtOther(), 
+	 * This test will tell the launch to "stop on main" at method stopAtOther(),
 	 * which we will then verify.
 	 */
 	@Test
@@ -551,7 +551,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	}
 
 	/**
-	 * This test will set a breakpoint at some place in the program and will tell 
+	 * This test will set a breakpoint at some place in the program and will tell
 	 * the launch to NOT "stop on main".  We will verify that the first stop is
 	 * at the breakpoint that we set.
 	 */
@@ -596,7 +596,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		assumeGdbVersionAtLeast(ITestConstants.SUFFIX_GDB_7_3);
 		doLaunch();
 
-		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
+		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<>(
 				getGDBLaunch().getSession(), ICommandControlShutdownDMEvent.class);
 
 		// The target is currently stopped.  We resume to get it running
@@ -606,7 +606,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		shutdownEventWaitor.waitForEvent(TestsPlugin.massageTimeout(1000));
 
 		IProcess[] launchProcesses = getGDBLaunch().getProcesses();
-		;
+
 		for (IProcess proc : launchProcesses) {
 			if (proc instanceof InferiorRuntimeProcess) {
 				assertThat(proc.getAttribute(IGdbDebugConstants.INFERIOR_EXITED_ATTR), is(notNullValue()));
@@ -635,10 +635,10 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	 * The pending breakpoint setting only affects CLI commands so we have
 	 * to test with one.  We don't have classes to set breakpoints using CLI,
 	 * but we do for tracepoints, which is the same for this test.
-	 * 
+	 *
 	 * The pending breakpoint feature only works with tracepoints starting
 	 * with GDB 7.0.
-	 * 
+	 *
 	 * We could run this test before 7.0 but we would have to use a breakpoint
 	 * set using CLI commands.
 	 */
@@ -714,7 +714,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 
 		// Now step backwards to make sure reverse was enabled
 
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 2;
@@ -750,7 +750,7 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	}
 
 	/**
-	 * This test will tell the launch to "stop on main" at method stopAtOther(), 
+	 * This test will tell the launch to "stop on main" at method stopAtOther(),
 	 * with reverse debugging enabled.  We will then verify that the launch is properly
 	 * stopped at stopAtOther() and that it can go backwards until main() (this will
 	 * confirm that reverse debugging was enabled at the very start).
@@ -779,8 +779,8 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 		assertTrue("Expected to stop at stopAtOther but got " + frame.getFunction(),
 				frame.getFunction().equals("stopAtOther"));
 
-		// Now step backwards all the way to the start to make sure reverse was enabled from the very start   	
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		// Now step backwards all the way to the start to make sure reverse was enabled from the very start
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 3;
@@ -817,10 +817,10 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 	}
 
 	/**
-	 * This test will set a breakpoint at the last line of the program and will tell 
-	 * the launch to NOT "stop on main", with reverse debugging enabled.  We will 
+	 * This test will set a breakpoint at the last line of the program and will tell
+	 * the launch to NOT "stop on main", with reverse debugging enabled.  We will
 	 * verify that the first stop is at the last line of the program but that the program
-	 * can run backwards until main() (this will confirm that reverse debugging was 
+	 * can run backwards until main() (this will confirm that reverse debugging was
 	 * enabled at the very start).
 	 */
 	@Test
@@ -853,8 +853,8 @@ public class LaunchConfigurationAndRestartTest extends BaseParametrizedTestCase 
 						+ Integer.toString(frame.getLine()),
 				frame.getFunction().equals("main") && frame.getLine() == LAST_LINE_IN_MAIN);
 
-		// Now step backwards all the way to the start to make sure reverse was enabled from the very start   	
-		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(fSession,
+		// Now step backwards all the way to the start to make sure reverse was enabled from the very start
+		final ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				MIStoppedEvent.class);
 
 		final int REVERSE_NUM_STEPS = 3;

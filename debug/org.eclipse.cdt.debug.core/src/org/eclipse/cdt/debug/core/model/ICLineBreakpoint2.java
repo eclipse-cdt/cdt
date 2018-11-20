@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,18 +17,18 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Line breakpoint extension that allows a breakpoint to be relocated by a 
- * debugger to a valid source line.  
- * <p>Clients which can determine a valid source based on debuggers symbol 
- * information should call the various <code>setInstalled...</code> methods with 
- * the corrected location attributes. Note, there is no <code>setInstalledSourceHandle</code>, 
+ * Line breakpoint extension that allows a breakpoint to be relocated by a
+ * debugger to a valid source line.
+ * <p>Clients which can determine a valid source based on debuggers symbol
+ * information should call the various <code>setInstalled...</code> methods with
+ * the corrected location attributes. Note, there is no <code>setInstalledSourceHandle</code>,
  * clients should call {@link ICBreakpoint#setSourceHandle(String)}.  If multiple
- * clients try to change the installed breakpoint location, the last call will 
- * take precedence.  This way debuggers may update the location upon active debug 
+ * clients try to change the installed breakpoint location, the last call will
+ * take precedence.  This way debuggers may update the location upon active debug
  * context change.  <br/>
- * The original breakpoint location as configured by the user can always be 
+ * The original breakpoint location as configured by the user can always be
  * retrieved using the <code>getRequested...</code> methods.
- * </p>   
+ * </p>
  * @since 7.2
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
@@ -55,27 +55,27 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
 
 	/**
 	 * Breakpoint attribute storing the original requested file name this breakpoint
-	 * is set in. 
+	 * is set in.
 	 * This attribute is a <code>String</code>.
 	 */
-	public static final String REQUESTED_SOURCE_HANDLE = "requestedSourceHandle"; //$NON-NLS-1$ 
+	public static final String REQUESTED_SOURCE_HANDLE = "requestedSourceHandle"; //$NON-NLS-1$
 
 	/**
 	 * Breakpoint attribute which is set if the installed line number of a
 	 * breakpoint is changed.
-	 * 
+	 *
 	 * Triggers an update of the installed location, if set.
-	 * 
+	 *
 	 * This attribute is a <code>Boolean</code>.
-	 * 
+	 *
 	 * @since 8.0
 	 */
 	public static final String RESET_INSTALLED_LOCATION = "resetInstalledLocation"; //$NON-NLS-1$
 
 	/**
-	 * Returns the line number where the breakpoint was set before it was relocated to a 
-	 * valid source line.  
-	 * 
+	 * Returns the line number where the breakpoint was set before it was relocated to a
+	 * valid source line.
+	 *
 	 * @return Returns the requested line number attribute.
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -83,8 +83,8 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
 	public int getRequestedLine() throws CoreException;
 
 	/**
-	 * Sets the line number where the breakpoint should be set.  
-	 * 
+	 * Sets the line number where the breakpoint should be set.
+	 *
 	 * @param The requested line number attribute.
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -92,9 +92,9 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
 	public void setRequestedLine(int line) throws CoreException;
 
 	/**
-	 * Returns starting source index where the breakpoint was set before it 
-	 * was moved to a valid source location.  
-	 * 
+	 * Returns starting source index where the breakpoint was set before it
+	 * was moved to a valid source location.
+	 *
 	 * @return Returns the requested start index attribute.
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -103,7 +103,7 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
 
 	/**
 	 * Sets the starting source index where the breakpoint should be set.
-	 * 
+	 *
 	 * @param The requested start index attribute.
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -111,9 +111,9 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
 	public void setRequestedCharStart(int charStart) throws CoreException;
 
 	/**
-	 * Returns ending source index where the breakpoint was set before it 
-	 * was moved to a valid source location.  
-	 * 
+	 * Returns ending source index where the breakpoint was set before it
+	 * was moved to a valid source location.
+	 *
 	 * @return Returns the requested end index attribute.
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -122,7 +122,7 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
 
 	/**
 	 * Sets the staring source index where the breakpoint should be set.
-	 * 
+	 *
 	 * @param The requested end index attribute.
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -130,9 +130,9 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
 	public void setRequestedCharEnd(int charEnd) throws CoreException;
 
 	/**
-	 * Returns the file name where the breakpoint was set before it was relocated to a 
+	 * Returns the file name where the breakpoint was set before it was relocated to a
 	 * valid file.
-	 * 
+	 *
 	 * @return Returns the requested file name.
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -141,8 +141,8 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
 
 	/**
 	 * Sets the file name where the breakpoint should be set.  May be an empty string
-	 * if the file is not known.  
-	 * 
+	 * if the file is not known.
+	 *
 	 * @param Requested file name.
 	 * @exception CoreException if unable to access the property on this breakpoint's
 	 *  underlying marker
@@ -150,42 +150,42 @@ public interface ICLineBreakpoint2 extends ICLineBreakpoint, ICBreakpoint2 {
 	public void setRequestedSourceHandle(String fileName) throws CoreException;
 
 	/**
-	 * Sets the line number where the breakpoint is actually installed.   This 
-	 * method only updates the {@link IMarker#LINE_NUMBER} attribute and the 
-	 * breakpoint message. 
-	 * 
+	 * Sets the line number where the breakpoint is actually installed.   This
+	 * method only updates the {@link IMarker#LINE_NUMBER} attribute and the
+	 * breakpoint message.
+	 *
 	 * @param line Installed line number
-	 * @throws CoreException if unable to access the property 
+	 * @throws CoreException if unable to access the property
 	 *  on this breakpoint's underlying marker
 	 */
 	public void setInstalledLineNumber(int line) throws CoreException;
 
 	/**
-	 * Sets the start index where the breakpoint is actually installed. This method 
-	 * only updates the {@link IMarker#CHAR_START} attribute and the breakpoint 
-	 * message. 
-	 * 
+	 * Sets the start index where the breakpoint is actually installed. This method
+	 * only updates the {@link IMarker#CHAR_START} attribute and the breakpoint
+	 * message.
+	 *
 	 * @param charStart Installed char start
 	 * @throws CoreException
 	 */
 	public void setInstalledCharStart(int charStart) throws CoreException;
 
 	/**
-	 * Sets the end index where the breakpoint is actually installed.  This method 
-	 * only updates the {@link IMarker#CHAR_END} attribute and the breakpoint 
-	 * message. 
-	 * 
+	 * Sets the end index where the breakpoint is actually installed.  This method
+	 * only updates the {@link IMarker#CHAR_END} attribute and the breakpoint
+	 * message.
+	 *
 	 * @param charEnd Installed char start
 	 * @throws CoreException
 	 */
 	public void setInstalledCharEnd(int charStart) throws CoreException;
 
 	/**
-	 * Resets the breakpoint location back to the values specified by the 
+	 * Resets the breakpoint location back to the values specified by the
 	 * REQUESTED_* attributes.  This operation should be called automatically
 	 * by the implementation when the install count is reset to 0, and does
 	 * not need to be called by the client at that time.
-	 * 
+	 *
 	 * @throws CoreException
 	 */
 	public void resetInstalledLocation() throws CoreException;

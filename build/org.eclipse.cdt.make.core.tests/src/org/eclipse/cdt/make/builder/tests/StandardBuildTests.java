@@ -14,10 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.builder.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import java.io.IOException;
 
 import org.eclipse.cdt.core.CCProjectNature;
@@ -38,6 +34,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class StandardBuildTests extends TestCase {
 	private static final boolean OFF = false;

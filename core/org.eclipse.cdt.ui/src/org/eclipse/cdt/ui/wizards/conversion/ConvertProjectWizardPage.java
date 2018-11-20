@@ -16,6 +16,14 @@ package org.eclipse.cdt.ui.wizards.conversion;
 
 import java.util.Vector;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
@@ -51,16 +59,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /**
  * <p>
@@ -404,7 +402,7 @@ public abstract class ConvertProjectWizardPage extends WizardPage {
 
 		IWorkspace workspace = CUIPlugin.getWorkspace();
 		IProject[] projects = workspace.getRoot().getProjects();
-		Vector<IProject> candidates = new Vector<IProject>(projects.length);
+		Vector<IProject> candidates = new Vector<>(projects.length);
 		IProject next = null;
 
 		// ensure we only present open, valid candidates to the user

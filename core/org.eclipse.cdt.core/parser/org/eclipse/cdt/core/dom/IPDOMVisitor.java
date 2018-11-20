@@ -23,7 +23,7 @@ public interface IPDOMVisitor {
 	 * Walks the nodes in a PDOM. Returns true to visit the children of
 	 * the node, or false to skip to the next sibling of this node.
 	 * Throw CoreException to stop the visit.
-	 *  
+	 *
 	 * @param node being visited
 	 * @return whether to visit children
 	 */
@@ -31,7 +31,7 @@ public interface IPDOMVisitor {
 
 	/**
 	 * All children have been visited, about to go back to the parent.
-	 * 
+	 *
 	 * @param node that has just completed visitation
 	 * @throws CoreException
 	 */

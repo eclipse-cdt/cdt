@@ -25,7 +25,7 @@ public interface IAsmLabel extends ICElement, ISourceManipulation, ISourceRefere
 	/**
 	 * Test whether this label is declared global.
 	 * A global label is available to the linker.
-	 * 
+	 *
 	 * @return  <code>true</code> if the label is global
 	 */
 	boolean isGlobal();

@@ -26,7 +26,7 @@ import org.eclipse.cdt.ui.newui.AbstractSinglePage;
 import org.eclipse.core.runtime.IPath;
 
 /**
- * Bug #183341 : Single property page which does not  
+ * Bug #183341 : Single property page which does not
  * require separate cPropertyTab to display data.
  */
 public abstract class AbstractSingleBuildPage extends AbstractSinglePage {

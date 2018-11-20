@@ -78,19 +78,19 @@ public class MIInstruction extends AbstractInstruction {
 	 *   - Function name
 	 *   - Offset
 	 *   - Instruction
-	 * 
+	 *
 	 *   {address="0x000107c0",func-name="main",offset="4",inst="mov 2, %o0"},
 	 *   {address="0x000107c4",func-name="main",offset="8",inst="sethi %hi(0x11800), %o2"},
 	 *   ...,
 	 *   {address="0x00010820",func-name="main",offset="100",inst="restore "}
-	 * 
+	 *
 	 * 	An instruction may also contain:
 	 *    - Opcode bytes
-	 *    
+	 *
 	 *  {address="0x004016b9",func-name="main",offset="9",opcodes="e8 a2 05 00 00",
 	 *  	inst="call   0x401c60 <__main>"},
 	 *  ...,
-	 *    
+	 *
 	 *  In addition, the opcode and arguments are extracted form the assembly instruction.
 	 */
 	private void parse(MITuple tuple) {
@@ -155,7 +155,7 @@ public class MIInstruction extends AbstractInstruction {
 				continue;
 			}
 
-			if (var.equals("opcodes")) { //$NON-NLS-1$	
+			if (var.equals("opcodes")) { //$NON-NLS-1$
 				try {
 					rawOpcodes = decodeOpcodes(str);
 					opcodeSize = Integer.valueOf(str.replace(" ", "").length() / 2); //$NON-NLS-1$//$NON-NLS-2$
@@ -170,7 +170,7 @@ public class MIInstruction extends AbstractInstruction {
 	/**
 	 * Decode given string representation of a non-negative integer. A
 	 * hexadecimal encoded integer is expected to start with <code>0x</code>.
-	 * 
+	 *
 	 * @param string
 	 *            decimal or hexadecimal representation of an non-negative integer
 	 * @return address value as <code>BigInteger</code>
@@ -185,7 +185,7 @@ public class MIInstruction extends AbstractInstruction {
 	/**
 	 * Decode given string representation of a space separated hex encoded byte
 	 * array
-	 * 
+	 *
 	 * @param string
 	 *            space separated hexadecimal byte array
 	 * @return opcode bytes as <code>BigInteger</code>

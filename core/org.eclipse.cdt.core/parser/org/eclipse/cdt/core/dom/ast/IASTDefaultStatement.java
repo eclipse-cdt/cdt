@@ -18,7 +18,7 @@ package org.eclipse.cdt.core.dom.ast;
  * a statement is part of the clause. For the AST, just go on to the next
  * statement to find it. It's really only there to ensure that there is at least
  * one statement following this clause.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

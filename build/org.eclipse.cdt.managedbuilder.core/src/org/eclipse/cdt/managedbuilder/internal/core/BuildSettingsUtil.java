@@ -68,7 +68,7 @@ public class BuildSettingsUtil {
 
 	public static ITool[] getDependentTools(IConfiguration cfg, ITool tool) {
 		IResourceInfo rcInfos[] = cfg.getResourceInfos();
-		List<ITool> list = new ArrayList<ITool>();
+		List<ITool> list = new ArrayList<>();
 		for (int i = 0; i < rcInfos.length; i++) {
 			calcDependentTools(rcInfos[i], tool, list);
 		}
@@ -81,7 +81,7 @@ public class BuildSettingsUtil {
 
 	public static List<ITool> calcDependentTools(ITool tools[], ITool tool, List<ITool> list) {
 		if (list == null)
-			list = new ArrayList<ITool>();
+			list = new ArrayList<>();
 
 		for (int i = 0; i < tools.length; i++) {
 			ITool superTool = tools[i];
@@ -98,7 +98,7 @@ public class BuildSettingsUtil {
 	public static void copyCommonSettings(ITool fromTool, ITool toTool) {
 		Tool fromT = (Tool) fromTool;
 		Tool toT = (Tool) toTool;
-		List<OptionStringValue> values = new ArrayList<OptionStringValue>();
+		List<OptionStringValue> values = new ArrayList<>();
 		for (int i = 0; i < COMMON_SETTINGS_IDS.length; i++) {
 			int type = COMMON_SETTINGS_IDS[i];
 			IOption[] toOptions = toT.getOptionsOfType(type);
@@ -211,7 +211,7 @@ public class BuildSettingsUtil {
 	}
 
 	public static ITool[] getToolsBySuperClassId(ITool[] tools, String id) {
-		List<ITool> retTools = new ArrayList<ITool>();
+		List<ITool> retTools = new ArrayList<>();
 		if (id != null) {
 			for (int i = 0; i < tools.length; i++) {
 				ITool targetTool = tools[i];

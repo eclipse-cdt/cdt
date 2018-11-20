@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  *    info sharedlibrary
  *
  */

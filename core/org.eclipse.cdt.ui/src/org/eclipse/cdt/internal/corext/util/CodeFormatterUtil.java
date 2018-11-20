@@ -15,13 +15,12 @@ package org.eclipse.cdt.internal.corext.util;
 
 import java.util.Map;
 
-import org.eclipse.text.edits.TextEdit;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ToolFactory;
 import org.eclipse.cdt.core.formatter.CodeFormatter;
 import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.text.edits.TextEdit;
 
 public class CodeFormatterUtil {
 	/**

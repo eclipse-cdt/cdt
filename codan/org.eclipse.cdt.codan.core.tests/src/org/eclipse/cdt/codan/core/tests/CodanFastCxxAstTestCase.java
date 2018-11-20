@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.tests;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import org.eclipse.cdt.codan.core.CodanRuntime;
 import org.eclipse.cdt.codan.core.model.IChecker;
@@ -45,8 +46,7 @@ import org.eclipse.cdt.internal.core.dom.parser.c.GNUCSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.GNUCPPSourceParser;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import junit.framework.TestCase;
 
 /**
  * TODO: add description
@@ -147,7 +147,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 		}
 	}
 
-	private ArrayList<ProblemInstance> codanproblems = new ArrayList<CodanFastCxxAstTestCase.ProblemInstance>();
+	private ArrayList<ProblemInstance> codanproblems = new ArrayList<>();
 
 	void runCodan(String code) {
 		tu = parse(code);
@@ -157,6 +157,7 @@ public abstract class CodanFastCxxAstTestCase extends TestCase {
 	void runCodan(IASTTranslationUnit tu) {
 		IProblemReporter problemReporter = CodanRuntime.getInstance().getProblemReporter();
 		CodanRuntime.getInstance().setProblemReporter(new IProblemReporter() {
+			@Override
 			public void reportProblem(String problemId, IProblemLocation loc, Object... args) {
 				codanproblems.add(new ProblemInstance(problemId, loc, args));
 			}

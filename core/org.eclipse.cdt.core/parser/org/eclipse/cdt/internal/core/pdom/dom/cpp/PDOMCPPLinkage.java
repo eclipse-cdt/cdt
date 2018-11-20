@@ -196,7 +196,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 	private final static int RECORD_SIZE = FIRST_NAMESPACE_CHILD_OFFSET + Database.PTR_SIZE;
 
 	// Only used when writing to database, which is single-threaded
-	private final LinkedList<Runnable> postProcesses = new LinkedList<Runnable>();
+	private final LinkedList<Runnable> postProcesses = new LinkedList<>();
 
 	public PDOMCPPLinkage(PDOM pdom, long record) {
 		super(pdom, record);
@@ -618,7 +618,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		IBinding binding = name.resolveBinding();
 
 		try {
-			// For the duration of this call, record the name being added 
+			// For the duration of this call, record the name being added
 			// to the index as the point of instantiation for name lookups.
 			CPPSemantics.pushLookupPoint(name);
 
@@ -902,7 +902,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 			binding = ((ICPPSpecialization) binding).getSpecializedBinding();
 		}
 		if (binding instanceof ICPPPartialSpecialization) {
-			// A template partial specialization inherits the visibility of its primary template. 
+			// A template partial specialization inherits the visibility of its primary template.
 			binding = ((ICPPPartialSpecialization) binding).getPrimaryTemplate();
 		}
 		if (binding instanceof ICPPAliasTemplateInstance) {
@@ -1029,7 +1029,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 							pdomBinding = createBinding(type, method, fileLocalRec);
 						} else if (!getPDOM().hasLastingDefinition(pdomBinding)) {
 							pdomBinding.update(this, method);
-							old.remove((ICPPMethod) pdomBinding);
+							old.remove(pdomBinding);
 
 							// Update the tags based on the tags from the new binding.  This was in
 							// PDOMBinding.update, but not all subclasses (e.g., PDOMCPPFunction)
@@ -1533,7 +1533,7 @@ class PDOMCPPLinkage extends PDOMLinkage implements IIndexCPPBindingConstants {
 		if (rec == 0) {
 			return ICPPUsingDirective.EMPTY_ARRAY;
 		}
-		LinkedList<ICPPUsingDirective> uds = new LinkedList<ICPPUsingDirective>();
+		LinkedList<ICPPUsingDirective> uds = new LinkedList<>();
 		do {
 			PDOMCPPUsingDirective ud = new PDOMCPPUsingDirective(this, rec);
 			uds.addFirst(ud);

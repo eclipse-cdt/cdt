@@ -19,7 +19,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Class scope, declaration start, with NO prefix
  * Bug#50344 :Wrong completion in Class scope if before the first declaration
  *

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -28,11 +28,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * Layout node for the standard platform debug model IProcess object. This 
- * node requires that an ILaunch object be found as an ancestor of this node.  
- * It does not implement the label provider functionality, so the default 
+ * Layout node for the standard platform debug model IProcess object. This
+ * node requires that an ILaunch object be found as an ancestor of this node.
+ * It does not implement the label provider functionality, so the default
  * adapters should be used to retrieve the label.
- * 
+ *
  * This version is specific to DSF-GDB to no longer show the inferiors.
  */
 public class GdbStandardProcessVMNode extends StandardProcessVMNode {
@@ -43,7 +43,7 @@ public class GdbStandardProcessVMNode extends StandardProcessVMNode {
 
 	@Override
 	public String toString() {
-		return "GdbStandardProcessVMNode"; //$NON-NLS-1$ 
+		return "GdbStandardProcessVMNode"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -51,16 +51,16 @@ public class GdbStandardProcessVMNode extends StandardProcessVMNode {
 		for (IChildrenUpdate update : updates) {
 			ILaunch launch = findLaunch(update.getElementPath());
 			if (launch == null) {
-				// There is no launch in the parent of this node.  This means that the 
-				// layout is misconfigured.  
+				// There is no launch in the parent of this node.  This means that the
+				// layout is misconfigured.
 				assert false;
 				update.done();
 				continue;
 			}
 
 			/*
-			 * Assume that the process objects are stored within the launch, and 
-			 * retrieve them on dispatch thread.  
+			 * Assume that the process objects are stored within the launch, and
+			 * retrieve them on dispatch thread.
 			 */
 			int count = 0;
 			for (IProcess process : launch.getProcesses()) {
@@ -122,7 +122,7 @@ public class GdbStandardProcessVMNode extends StandardProcessVMNode {
 	}
 
 	/**
-	 * Recursively searches the VMC for Launch VMC, and returns its ILaunch.  
+	 * Recursively searches the VMC for Launch VMC, and returns its ILaunch.
 	 * Returns null if an ILaunch is not found.
 	 */
 	private ILaunch findLaunch(TreePath path) {

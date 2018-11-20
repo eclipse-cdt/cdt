@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     Freescale Semiconductor. - initial API and implementation
  *******************************************************************************/
@@ -48,7 +48,7 @@ public final class VMViewerUpdateTracing {
 	 * classes. Note that for optimization reasons, we expect the caller to
 	 * first check that DEBUG_VMUPDATES is true before invoking us; we do not
 	 * check it here (other than to assert it).
-	 * 
+	 *
 	 * @return true if this class's activity should be traced
 	 */
 	public static boolean matchesFilterRegex(Class<?> clazz) {

@@ -84,7 +84,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTAttributeList;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCapture;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCastExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCatchHandler;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier.ICPPASTBaseSpecifier;
@@ -138,6 +137,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTSwitchStatement;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateId;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateName;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateSpecialization;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplatedTypeTemplateParameter;
@@ -800,7 +800,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 						idExpression = setRange(getNodeFactory().newIdExpression(name), name);
 
 						// If the name was one of the completion names, add it to the completion
-						// node again now that it has a new parent. This ensures that completion 
+						// node again now that it has a new parent. This ensures that completion
 						// proposals are offered for both contexts that the name appears in.
 						ASTCompletionNode completionNode = (ASTCompletionNode) getCompletionNode();
 						if (completionNode != null && completionNode.containsName(name)) {
@@ -2179,7 +2179,7 @@ public class GNUCPPSourceParser extends AbstractGNUSourceCodeParser {
 		}
 
 		if (LT(1) == IToken.tELLIPSIS) {
-			// Note this will probably change with C++20 such that the 
+			// Note this will probably change with C++20 such that the
 			// pack expansion of a CPPASTInitCapture will be part of the IASTDeclarator
 			// and not the capture. [See: P0780R2]
 			result.setIsPackExpansion(true);

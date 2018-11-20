@@ -51,6 +51,7 @@ public class SelectionManager implements ISelectionProvider {
 		m_source = (source == null) ? this : source;
 		m_label = label;
 		m_selectionListeners = new ListenerList(this, label + ", listener list") {
+			@Override
 			public void raise(Object listener, Object event) {
 				if (listener instanceof ISelectionChangedListener && event instanceof SelectionChangedEvent) {
 					ISelectionChangedListener typedListener = (ISelectionChangedListener) listener;
@@ -76,6 +77,7 @@ public class SelectionManager implements ISelectionProvider {
 	// --- ISelectionProvider implementation ---
 
 	/** Adds selection changed listener. */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		if (listener == null)
 			return;
@@ -85,6 +87,7 @@ public class SelectionManager implements ISelectionProvider {
 	}
 
 	/** Removes selection changed listener. */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		if (listener == null)
 			return;
@@ -92,11 +95,13 @@ public class SelectionManager implements ISelectionProvider {
 	}
 
 	/** Returns current selection. */
+	@Override
 	public ISelection getSelection() {
 		return m_selection;
 	}
 
 	/** Sets selection, and raises change event. */
+	@Override
 	public void setSelection(ISelection selection) {
 		setSelection(selection, true);
 	}

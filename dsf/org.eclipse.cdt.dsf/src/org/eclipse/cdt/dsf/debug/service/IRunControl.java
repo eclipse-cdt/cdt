@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson			  - Modified for additional functionality
@@ -22,13 +22,13 @@ import org.eclipse.cdt.dsf.datamodel.IDMEvent;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
- * This interface provides access to controlling and monitoring the execution 
- * state of a process being debugged.  This interface does not actually 
+ * This interface provides access to controlling and monitoring the execution
+ * state of a process being debugged.  This interface does not actually
  * provide methods for creating or destroying execution contexts, it doesn't
  * even have methods for getting labels.  That's because it is expected that
- * higher level services, ones that deal with processes, kernels, or target 
- * features will provide that functionality. 
- * 
+ * higher level services, ones that deal with processes, kernels, or target
+ * features will provide that functionality.
+ *
  * @since 1.0
  */
 public interface IRunControl extends IDsfService {
@@ -41,9 +41,9 @@ public interface IRunControl extends IDsfService {
 	}
 
 	/**
-	 * Context representing a process, kernel, or some other logical container 
+	 * Context representing a process, kernel, or some other logical container
 	 * for execution contexts, which by itself can perform run-control
-	 * operations. 
+	 * operations.
 	 */
 
 	public interface IContainerDMContext extends IExecutionDMContext {
@@ -55,7 +55,7 @@ public interface IRunControl extends IDsfService {
 
 		/** @since 2.1 */
 		EVENT_BREAKPOINT
-	};
+	}
 
 	/**
 	 * Indicates that the given thread has suspended.
@@ -76,8 +76,8 @@ public interface IRunControl extends IDsfService {
 	 */
 	public interface IContainerSuspendedDMEvent extends ISuspendedDMEvent {
 		/**
-		 * Returns the contexts which triggered the resume, which could be 
-		 * an empty array if not known. 
+		 * Returns the contexts which triggered the resume, which could be
+		 * an empty array if not known.
 		 */
 		IExecutionDMContext[] getTriggeringContexts();
 	}
@@ -87,7 +87,7 @@ public interface IRunControl extends IDsfService {
 	 */
 	public interface IContainerResumedDMEvent extends IResumedDMEvent {
 		/**
-		 * Returns the contexts which triggered the resume, which could be an 
+		 * Returns the contexts which triggered the resume, which could be an
 		 * empty array if not known.
 		 */
 		IExecutionDMContext[] getTriggeringContexts();
@@ -95,20 +95,20 @@ public interface IRunControl extends IDsfService {
 
 	/**
 	 * Indicates that a new execution context was created but may not have
-	 * started execution yet.  
+	 * started execution yet.
 	 * @since 2.8
 	 */
 	public interface ICreatedDMEvent extends IDMEvent<IExecutionDMContext> {
 	}
 
 	/**
-	 * Indicates that a new execution context was started.  
+	 * Indicates that a new execution context was started.
 	 */
 	public interface IStartedDMEvent extends IDMEvent<IExecutionDMContext> {
 	}
 
 	/**
-	 * Indicates that an execution context has exited. 
+	 * Indicates that an execution context has exited.
 	 */
 	public interface IExitedDMEvent extends IDMEvent<IExecutionDMContext> {
 	}
@@ -119,9 +119,9 @@ public interface IRunControl extends IDsfService {
 	public interface IExecutionDMData extends IDMData {
 
 		/**
-		 * Reason for the last change in execution state.  Could be 
-		 * <code>null</code> if the service does not support tracking this 
-		 * information. 
+		 * Reason for the last change in execution state.  Could be
+		 * <code>null</code> if the service does not support tracking this
+		 * information.
 		 */
 		StateChangeReason getStateChangeReason();
 	}
@@ -151,8 +151,8 @@ public interface IRunControl extends IDsfService {
 	public void getExecutionContexts(IContainerDMContext c, DataRequestMonitor<IExecutionDMContext[]> rm);
 
 	/*
-	 * Run control commands.  They all require the IExecutionContext object on 
-	 * which they perform the operations.  
+	 * Run control commands.  They all require the IExecutionContext object on
+	 * which they perform the operations.
 	 */
 	void canResume(IExecutionDMContext context, DataRequestMonitor<Boolean> rm);
 
@@ -170,7 +170,7 @@ public interface IRunControl extends IDsfService {
 		 * @since 2.0
 		 */
 		INSTRUCTION_STEP_RETURN
-	};
+	}
 
 	boolean isStepping(IExecutionDMContext context);
 

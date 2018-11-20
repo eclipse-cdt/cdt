@@ -147,7 +147,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 
 	/**
 	 * Assumption to make sure test only runs on remote test session.
-	 * 
+	 *
 	 * This method is better than {@link #isRemoteSession()} as it can be called
 	 * at any time and does not require launch attributes to be set-up
 	 */
@@ -159,7 +159,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 
 	/**
 	 * Assumption to make sure test only runs on non-remote test session.
-	 * 
+	 *
 	 * This method is better than {@link #isRemoteSession()} as it can be called
 	 * at any time and does not require launch attributes to be set-up
 	 */
@@ -219,7 +219,7 @@ public abstract class BaseParametrizedTestCase extends BaseTestCase {
 			String[] actualParts = actual.split("\\."); //$NON-NLS-1$
 
 			String comparableActualString = actual;
-			if (expectedParts.length == 2 // If the expected version does not care about the maintenance number 
+			if (expectedParts.length == 2 // If the expected version does not care about the maintenance number
 					&& actualParts.length > 2) { // and the actual version has a maintenance number (and possibly more)
 				// We should ignore the maintenance number.
 				// For example, if we expect 7.12, then the actual

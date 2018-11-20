@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software System
@@ -20,6 +20,51 @@ package org.eclipse.cdt.ui.text;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICLanguageKeywords;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.internal.core.model.ProgressMonitorAndCanceler;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
+import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CCodeScanner;
+import org.eclipse.cdt.internal.ui.text.CCommentScanner;
+import org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy;
+import org.eclipse.cdt.internal.ui.text.CDoubleClickSelector;
+import org.eclipse.cdt.internal.ui.text.CFormattingStrategy;
+import org.eclipse.cdt.internal.ui.text.COutlineInformationControl;
+import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
+import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
+import org.eclipse.cdt.internal.ui.text.CReconciler;
+import org.eclipse.cdt.internal.ui.text.CStringAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CStringDoubleClickSelector;
+import org.eclipse.cdt.internal.ui.text.HTMLAnnotationHover;
+import org.eclipse.cdt.internal.ui.text.PartitionDamager;
+import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
+import org.eclipse.cdt.internal.ui.text.TokenStore;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
+import org.eclipse.cdt.internal.ui.text.c.hover.CInformationProvider;
+import org.eclipse.cdt.internal.ui.text.c.hover.CMacroExpansionExplorationControl;
+import org.eclipse.cdt.internal.ui.text.c.hover.CMacroExpansionInformationProvider;
+import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.correction.CCorrectionAssistant;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.typehierarchy.THInformationControl;
+import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
+import org.eclipse.cdt.ui.CElementContentProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ILanguageUI;
+import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -69,60 +114,12 @@ import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICLanguageKeywords;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.ui.CElementContentProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ILanguageUI;
-import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
-
-import org.eclipse.cdt.internal.core.model.ProgressMonitorAndCanceler;
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
-import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CCodeScanner;
-import org.eclipse.cdt.internal.ui.text.CCommentScanner;
-import org.eclipse.cdt.internal.ui.text.CCompositeReconcilingStrategy;
-import org.eclipse.cdt.internal.ui.text.CDoubleClickSelector;
-import org.eclipse.cdt.internal.ui.text.CFormattingStrategy;
-import org.eclipse.cdt.internal.ui.text.COutlineInformationControl;
-import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
-import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
-import org.eclipse.cdt.internal.ui.text.CReconciler;
-import org.eclipse.cdt.internal.ui.text.CStringAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CStringDoubleClickSelector;
-import org.eclipse.cdt.internal.ui.text.HTMLAnnotationHover;
-import org.eclipse.cdt.internal.ui.text.PartitionDamager;
-import org.eclipse.cdt.internal.ui.text.SingleTokenCScanner;
-import org.eclipse.cdt.internal.ui.text.TokenStore;
-import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
-import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverProxy;
-import org.eclipse.cdt.internal.ui.text.c.hover.CInformationProvider;
-import org.eclipse.cdt.internal.ui.text.c.hover.CMacroExpansionExplorationControl;
-import org.eclipse.cdt.internal.ui.text.c.hover.CMacroExpansionInformationProvider;
-import org.eclipse.cdt.internal.ui.text.contentassist.CContentAssistProcessor;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.internal.ui.text.correction.CCorrectionAssistant;
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.typehierarchy.THInformationControl;
-import org.eclipse.cdt.internal.ui.typehierarchy.THInformationProvider;
-
 /**
  * Configuration for a <code>SourceViewer</code> which shows C/C++ code.
  * <p>
  * This class may be instantiated and subclassed by clients.
  * </p>
- * 
+ *
  * @since 5.1
  */
 public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
@@ -581,7 +578,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	/**
 	 * Computes and returns the indent prefixes for space indentation
 	 * and the given <code>tabWidth</code>.
-	 * 
+	 *
 	 * @param tabWidth the display tab width
 	 * @return the indent prefixes
 	 * @see #getIndentPrefixes(ISourceViewer, String)
@@ -605,7 +602,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	/**
 	 * Creates and returns a String with <code>count</code> spaces.
-	 * 
+	 *
 	 * @param count	the space count
 	 * @return the string with the spaces
 	 */
@@ -653,7 +650,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 
 	/**
 	 * Returns whether spaces should be used exclusively for indentation.
-	 * 
+	 *
 	 * @param sourceViewer
 	 * @return <code>true</code> if spaces should be used for indentation
 	 */
@@ -933,7 +930,7 @@ public class CSourceViewerConfiguration extends TextSourceViewerConfiguration {
 	 * Creates macro exploration presenter.
 	 * @param sourceViewer
 	 * @return Presenter with macro exploration view.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public IInformationPresenter getMacroExplorationPresenter(ISourceViewer sourceViewer) {

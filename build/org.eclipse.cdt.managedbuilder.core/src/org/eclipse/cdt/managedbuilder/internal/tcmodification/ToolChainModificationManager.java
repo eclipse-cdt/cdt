@@ -134,7 +134,7 @@ public class ToolChainModificationManager implements IToolChainModificationManag
 				continue;
 
 			if (tmp == null)
-				tmp = new HashSet<IRealBuildObjectAssociation>();
+				tmp = new HashSet<>();
 			else
 				tmp.clear();
 
@@ -199,8 +199,8 @@ public class ToolChainModificationManager implements IToolChainModificationManag
 		//2. get variants for applicable ones
 
 		//1.first filter applicable to not-this
-		List<ConflictMatch> conflictList = new ArrayList<ConflictMatch>();
-		Map<IRealBuildObjectAssociation, List<ConflictMatch>> objToConflictMatchMap = new HashMap<IRealBuildObjectAssociation, List<ConflictMatch>>();
+		List<ConflictMatch> conflictList = new ArrayList<>();
+		Map<IRealBuildObjectAssociation, List<ConflictMatch>> objToConflictMatchMap = new HashMap<>();
 
 		ObjectSetListBasedDefinition[] defs = RulesManager.getInstance()
 				.getRules(ObjectSetListBasedDefinition.CONFLICT);
@@ -230,7 +230,7 @@ public class ToolChainModificationManager implements IToolChainModificationManag
 				os.retainMatches(objSet);
 
 				if (objSet.size() != 0) {
-					List<IObjectSet> remainingList = new ArrayList<IObjectSet>(Arrays.asList(oss));
+					List<IObjectSet> remainingList = new ArrayList<>(Arrays.asList(oss));
 					remainingList.remove(os);
 
 					IObjectSet[] remaining = remainingList.toArray(new IObjectSet[remainingList.size()]);
@@ -238,7 +238,7 @@ public class ToolChainModificationManager implements IToolChainModificationManag
 					Set<IRealBuildObjectAssociation> skipSet2 = skip != null
 							? (Set<IRealBuildObjectAssociation>) skip.getSet(type, false)
 							: null;
-					Set<IRealBuildObjectAssociation> matchingObjects = new HashSet<IRealBuildObjectAssociation>();
+					Set<IRealBuildObjectAssociation> matchingObjects = new HashSet<>();
 					getMatchingObjects(type, remaining, skipSet2, null, matchingObjects);
 					if (matchingObjects.size() != 0) {
 						ConflictMatch conflict = new ConflictMatch(objType, rtToPathMap, type, matchingObjects);

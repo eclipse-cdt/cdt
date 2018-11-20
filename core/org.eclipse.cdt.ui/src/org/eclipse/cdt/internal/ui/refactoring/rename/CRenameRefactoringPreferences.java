@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.rename;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
-
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.jface.dialogs.IDialogSettings;
 
 public class CRenameRefactoringPreferences {
 	private static final String DIALOG_SETTINGS_KEY = "CRenameRefactoringInputPage"; //$NON-NLS-1$

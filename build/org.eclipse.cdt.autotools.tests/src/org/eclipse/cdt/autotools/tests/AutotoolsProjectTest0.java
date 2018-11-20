@@ -43,7 +43,7 @@ public class AutotoolsProjectTest0 {
 	}
 
 	/**
-	 * Test sample project which has a hello world program. The top-level 
+	 * Test sample project which has a hello world program. The top-level
 	 * configure is found in the top-level directory.  The hello world source
 	 * is found in sample/hello.c.
 	 * @throws Exception

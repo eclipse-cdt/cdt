@@ -27,30 +27,30 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IContainerDMContext;
 public interface IMultiDetach {
 
 	/**
-	 * Checks whether it is possible to detach the debugger from at least one 
+	 * Checks whether it is possible to detach the debugger from at least one
 	 * of the specified processes.
-	 * 
+	 *
 	 * @param dmcs The contexts to detach the debugger from. Each context
 	 *             should have {@link IContainerDMContext} as an ancestor.
-	 * @param rm Request monitor returning whether there is at least one context 
+	 * @param rm Request monitor returning whether there is at least one context
 	 *           that can be detached from the debugger.
 	 */
 	void canDetachDebuggerFromSomeProcesses(IDMContext[] dmcs, DataRequestMonitor<Boolean> rm);
 
 	/**
 	 * Checks whether it is possible to detach the debugger from all of the specified processes.
-	 * 
+	 *
 	 * @param dmc The contexts  to detach the debugger from. Each context
 	 *            should have {@link IContainerDMContext} as an ancestor.
-	 * @param rm Request monitor returning whether all processes specified by the given contexts 
+	 * @param rm Request monitor returning whether all processes specified by the given contexts
 	 *           that can be detached from the debugger.
 	 */
 	void canDetachDebuggerFromAllProcesses(IDMContext[] dmcs, DataRequestMonitor<Boolean> rm);
 
 	/**
-	 * Request to detach debugger from the specified processes. Only contexts 
+	 * Request to detach debugger from the specified processes. Only contexts
 	 * that are in a state that can be detached will be affected, others will be ignored.
-	 * 
+	 *
 	 * @param dmc The contexts  to detach the debugger from. Each context
 	 *            should have {@link IContainerDMContext} as an ancestor.
 	 */

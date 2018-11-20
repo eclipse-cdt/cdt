@@ -25,9 +25,9 @@ import java.util.List;
 import org.eclipse.cdt.core.IAddress;
 import org.eclipse.cdt.core.IAddressFactory;
 import org.eclipse.cdt.core.IBinaryParser;
-import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.core.IBinaryParser.IBinaryFile;
 import org.eclipse.cdt.core.IBinaryParser.ISymbol;
+import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.Addr32;
 import org.eclipse.cdt.utils.Addr32Factory;
 import org.eclipse.cdt.utils.BinaryObjectAdapter;
@@ -252,7 +252,7 @@ public class MachOBinaryObject extends BinaryObjectAdapter {
 	protected ISymbol[] loadSymbols(MachOHelper helper) throws IOException {
 		CPPFilt cppfilt = null;
 		try {
-			ArrayList<Symbol> list = new ArrayList<Symbol>();
+			ArrayList<Symbol> list = new ArrayList<>();
 			// Hack should be remove when Elf is clean
 			helper.getMachO().setCppFilter(false);
 			cppfilt = getCPPFilt();

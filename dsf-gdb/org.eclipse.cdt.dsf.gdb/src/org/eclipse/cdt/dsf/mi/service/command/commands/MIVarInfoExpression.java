@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoExpressionInfo;
 
 /**
- * 
+ *
  *     -var-info-expression NAME
  *
  *  Returns what is represented by the variable object NAME:
@@ -27,7 +27,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoExpressionInfo;
  *     lang=LANG-SPEC,exp=EXPRESSION
  *
  * where LANG-SPEC is `{"C" | "C++" | "Java"}'.
- * 
+ *
  */
 
 //MIVarInfoExpression.java

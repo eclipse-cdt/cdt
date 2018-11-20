@@ -30,7 +30,7 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * Dynamic menu contribution that restores the element number format in the current
  * selection of the view to view's preference.
- * 
+ *
  * We pull 'restore to preference' menu item out from ElementNumberFormatsContribution
  * so that clients can add extra contribution before or after it. See 371012.
  * @since 2.3

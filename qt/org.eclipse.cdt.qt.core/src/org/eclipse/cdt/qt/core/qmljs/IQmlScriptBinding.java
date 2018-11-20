@@ -17,7 +17,7 @@ public interface IQmlScriptBinding extends IQmlBinding {
 	@Override
 	default public String getType() {
 		return "QMLScriptBinding"; //$NON-NLS-1$
-	};
+	}
 
 	public boolean isBlock();
 

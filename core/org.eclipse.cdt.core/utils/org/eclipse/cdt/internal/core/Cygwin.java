@@ -235,7 +235,7 @@ public class Cygwin {
 	 * <br><br>
 	 * If you use this do not cache results to ensure user preferences are accounted for.
 	 * Please rely on internal caching.
-	 * 
+	 *
 	 * @return Location of Cygwin root folder "/" on file system in Windows format.
 	 */
 	public static String getCygwinHome() {

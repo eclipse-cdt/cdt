@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *******************************************************************************/
@@ -19,10 +19,10 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIStackInfoDepthInfo;
 
 /**
- * 
+ *
  *     -stack-info-depth [maxDepth]
  *
- * 
+ *
  */
 public class MIStackInfoDepth extends MICommand<MIStackInfoDepthInfo> {
 

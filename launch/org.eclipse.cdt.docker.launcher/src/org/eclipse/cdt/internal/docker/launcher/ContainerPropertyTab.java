@@ -686,7 +686,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 				return;
 			}
 			connection.removeImageListener(containerTab);
-			ArrayList<String> imageNames = new ArrayList<String>();
+			ArrayList<String> imageNames = new ArrayList<>();
 			displayedImages = new ArrayList<>();
 			for (IDockerImage image : images) {
 				java.util.List<String> tags = image.repoTags();
@@ -981,7 +981,7 @@ public class ContainerPropertyTab extends AbstractCBuildPropertyTab
 				@Override
 				public void run() {
 					connection.removeImageListener(containerTab);
-					ArrayList<String> imageNames = new ArrayList<String>();
+					ArrayList<String> imageNames = new ArrayList<>();
 					displayedImages = new ArrayList<>();
 					for (IDockerImage image : finalList) {
 						java.util.List<String> tags = image.repoTags();

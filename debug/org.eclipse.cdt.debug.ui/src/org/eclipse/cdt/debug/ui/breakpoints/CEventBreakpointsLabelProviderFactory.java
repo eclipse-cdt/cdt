@@ -1,6 +1,6 @@
 /*******************************************************************************
  * Copyright (c) 2008, 2016 QNX Software Systems and others.
- * 
+ *
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,8 +87,8 @@ public class CEventBreakpointsLabelProviderFactory implements IAdapterFactory {
 		 * particularly the code that determines the proper overlays. This
 		 * adapter is actually only called from within CDebugModelPresentation
 		 * and we know it will do the right thing for an event breakpoint if we
-		 * return null here. 
-		 * 
+		 * return null here.
+		 *
 		 * @see org.eclipse.jface.viewers.LabelProvider#getImage(java.lang.Object)
 		 */
 		@Override

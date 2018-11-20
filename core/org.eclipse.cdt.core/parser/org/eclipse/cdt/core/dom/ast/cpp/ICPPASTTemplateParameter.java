@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
  * Base interface for all template parameters.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

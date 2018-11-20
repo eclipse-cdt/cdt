@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -20,12 +20,12 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.expressions.PropertyTester;
 
 /**
- * Property tester for reverse debugging information available through the given 
+ * Property tester for reverse debugging information available through the given
  * object.  The object being tested is an {@link IDMVMContext}.
  * <p>
  * One property is supported:
  * <ul>
- * <li> "isReverseDebuggingEnabled" - Checks whether reverse debugging is currently 
+ * <li> "isReverseDebuggingEnabled" - Checks whether reverse debugging is currently
  * enabled given the receiver.</li>
  * </ul>
  * </p>

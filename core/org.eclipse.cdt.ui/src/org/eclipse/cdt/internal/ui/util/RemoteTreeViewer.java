@@ -42,11 +42,11 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 	class ExpansionJob extends UIJob {
 
 		private Object element;
-		private List<Object> parents = new ArrayList<Object>(); // top down
+		private List<Object> parents = new ArrayList<>(); // top down
 
 		/**
 		 * Constucts a job to expand the given element.
-		 * 
+		 *
 		 */
 		public ExpansionJob() {
 			super("Expansion"); //$NON-NLS-1$
@@ -111,11 +111,11 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 
 		private IStructuredSelection selection;
 		private Object first;
-		private List<Object> parents = new ArrayList<Object>(); // top down
+		private List<Object> parents = new ArrayList<>(); // top down
 
 		/**
 		 * Constucts a job to select the given element.
-		 * 
+		 *
 		 */
 		public SelectionJob() {
 			super("Selection"); //$NON-NLS-1$
@@ -177,7 +177,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 
 	/**
 	 * Constructs a remote tree viewer parented by the given composite.
-	 *   
+	 *
 	 * @param parent parent composite
 	 */
 	public RemoteTreeViewer(Composite parent) {
@@ -190,7 +190,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 	/**
 	 * Constructs a remote tree viewer parented by the given composite
 	 * with the given style.
-	 * 
+	 *
 	 * @param parent parent composite
 	 * @param style style bits
 	 */
@@ -203,7 +203,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 
 	/**
 	 * Constructs a remote tree viewer with the given tree.
-	 * 
+	 *
 	 * @param tree tree widget
 	 */
 	public RemoteTreeViewer(Tree tree) {
@@ -234,7 +234,7 @@ public class RemoteTreeViewer extends ProblemTreeViewer {
 	/**
 	 * The given element is being removed from the tree. Cancel
 	 * any deferred updates for the element.
-	 * 
+	 *
 	 * @param element
 	 */
 	protected void validateDeferredUpdates(Object element) {

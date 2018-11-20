@@ -21,12 +21,12 @@ import java.util.ArrayList;
 // ---------------------------------------------------------------------------
 
 /**
- * Utility class for managing a list of event listeners. 
+ * Utility class for managing a list of event listeners.
  * Maintains a list of listener instances, and dispatches events to them.
  *
  * To use this class, create a derived type that implements the raise(listener, event)
  * method to appropriately delegate an event to a listener.
- *  
+ *
  * Note: it is the responsibility of the user of this class to check types
  * of listeners and events (for example, by having strongly-typed add/remove methods
  * that delegate to the add/remove methods on this class).
@@ -78,7 +78,7 @@ abstract public class ListenerList {
 	/** Adds a listener */
 	public synchronized void addListener(Object listener) {
 		if (m_listeners == null) {
-			m_listeners = new ArrayList<Object>();
+			m_listeners = new ArrayList<>();
 		}
 		if (!m_listeners.contains(listener)) {
 			m_listeners.add(listener);
@@ -105,12 +105,12 @@ abstract public class ListenerList {
 		synchronized (this) {
 			// keep the lock on the listener list as brief as possible
 			if (m_listeners != null) {
-				listeners = new ArrayList<Object>(m_listeners);
+				listeners = new ArrayList<>(m_listeners);
 			}
 		}
 		int count = (listeners == null) ? 0 : listeners.size();
 		for (int i = 0; i < count; i++) {
-			Object listener = (Object) listeners.get(i);
+			Object listener = listeners.get(i);
 			try {
 				raise(listener, event);
 			} catch (Throwable t) {
@@ -123,9 +123,9 @@ abstract public class ListenerList {
 	 * Dispatches typed event to specified listener
 	 * Intended to be overloaded by derived class to cast listener and event
 	 * to appropriate type and invoke appropriate listener method(s).
-	 * 
+	 *
 	 * For example:
-	 * 
+	 *
 	 * 	ListenerList m_listeners =
 	 *      new ListenerList(this, "VisualizerViewer event listeners")
 	 *	{

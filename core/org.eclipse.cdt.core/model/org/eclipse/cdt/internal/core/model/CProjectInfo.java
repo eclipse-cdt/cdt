@@ -31,7 +31,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
-/** 
+/**
  * Info for ICProject.
  */
 
@@ -72,7 +72,7 @@ class CProjectInfo extends OpenableInfo {
 		if (nonCResources != null)
 			return nonCResources;
 
-		List<IResource> notChildren = new ArrayList<IResource>();
+		List<IResource> notChildren = new ArrayList<>();
 		try {
 			if (res instanceof IContainer) {
 				ICProject cproject = getElement().getCProject();

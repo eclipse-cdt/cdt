@@ -23,9 +23,9 @@ import org.eclipse.cdt.make.internal.core.scannerconfig.util.CygpathTranslator;
 import org.eclipse.core.resources.IProject;
 
 /**
- * Implementation class for gathering the built-in compiler settings for 
+ * Implementation class for gathering the built-in compiler settings for
  * Cygwin-based targets.
- * 
+ *
  * @since 2.0
  */
 public class DefaultGnuWinScannerInfoCollector extends DefaultGCCScannerInfoCollector {

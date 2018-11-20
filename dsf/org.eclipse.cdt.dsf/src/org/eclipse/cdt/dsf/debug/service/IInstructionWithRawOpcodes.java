@@ -21,7 +21,7 @@ import java.math.BigInteger;
  * Implementers must extend {@link AbstractInstruction} instead of implementing
  * this interface directly.
  * </p>
- * 
+ *
  * @since 2.5
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.

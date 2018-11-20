@@ -13,16 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import junit.framework.Test;
 
 /**
  * Test the correct response to the value of {@link ContentAssistPreference#SHOW_CAMEL_CASE_MATCHES}.

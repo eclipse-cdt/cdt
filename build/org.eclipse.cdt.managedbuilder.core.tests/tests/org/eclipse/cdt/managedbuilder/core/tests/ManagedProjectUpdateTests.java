@@ -17,10 +17,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.managedbuilder.core.IManagedBuildInfo;
 import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.projectconverter.UpdateManagedProjectManager;
@@ -40,6 +36,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class ManagedProjectUpdateTests extends TestCase {
 	private IPath resourcesLocation = new Path(
@@ -84,7 +84,7 @@ public class ManagedProjectUpdateTests extends TestCase {
 			}
 		});
 
-		ArrayList<IProject> projectList = new ArrayList<IProject>(projectZips.length);
+		ArrayList<IProject> projectList = new ArrayList<>(projectZips.length);
 		for (int i = 0; i < projectZips.length; i++) {
 			try {
 				String projectName = projectZips[i].getName();

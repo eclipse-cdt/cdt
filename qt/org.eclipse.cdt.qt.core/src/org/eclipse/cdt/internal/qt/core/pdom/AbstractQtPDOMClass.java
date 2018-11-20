@@ -63,7 +63,7 @@ public abstract class AbstractQtPDOMClass extends QtPDOMBinding {
 
 		IBinding cppBinding = getPDOM().findBinding(cppName);
 		if (cppBinding != null) {
-			IPDOMBinding cppPDOMBinding = (IPDOMBinding) cppBinding.getAdapter(IPDOMBinding.class);
+			IPDOMBinding cppPDOMBinding = cppBinding.getAdapter(IPDOMBinding.class);
 			if (cppPDOMBinding != null) {
 				if (cppPDOMBinding.getLinkage() != null
 						&& cppPDOMBinding.getLinkage().getLinkageID() == ILinkage.CPP_LINKAGE_ID)
@@ -105,7 +105,7 @@ public abstract class AbstractQtPDOMClass extends QtPDOMBinding {
 	}
 
 	public <T extends QtPDOMBinding> List<T> getChildren(Class<T> cls) throws CoreException {
-		QtPDOMVisitor.All<T> collector = new QtPDOMVisitor.All<T>(cls);
+		QtPDOMVisitor.All<T> collector = new QtPDOMVisitor.All<>(cls);
 		try {
 			children.accept(collector);
 		} catch (CoreException e) {

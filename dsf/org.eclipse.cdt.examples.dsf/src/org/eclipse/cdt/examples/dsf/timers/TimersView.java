@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -46,9 +46,9 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.part.ViewPart;
 
 /**
- * Example view which displays data from timers and alarms services. It starts 
- * a new DSF session and configures the services for it.  Then it configures 
- * a data model provider to process the service data and display it in a 
+ * Example view which displays data from timers and alarms services. It starts
+ * a new DSF session and configures the services for it.  Then it configures
+ * a data model provider to process the service data and display it in a
  * flexible-hierarchy asynchronous viewer.
  */
 @SuppressWarnings("restriction")
@@ -91,29 +91,29 @@ public class TimersView extends ViewPart {
 	}
 
 	/**
-	 * This is a call-back that will allow us to create the viewer and 
+	 * This is a call-back that will allow us to create the viewer and
 	 * initialize it.  For this view, it creates the DSF session, along
-	 * with its services.  Then it creates the viewer model adapter and 
+	 * with its services.  Then it creates the viewer model adapter and
 	 * registers it with the session.
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		// Create the Flexible Hierarchy viewer.  Also create a presentation
-		// context which will be given to the content/label provider adapters 
-		// to distinguish this view from other flexible-hierarchy views. 
+		// context which will be given to the content/label provider adapters
+		// to distinguish this view from other flexible-hierarchy views.
 		fPresentationContext = new PresentationContext(ID_VIEW_TIMERS);
 		fViewer = new TreeModelViewer(parent, SWT.VIRTUAL | SWT.FULL_SELECTION, fPresentationContext);
 
-		// Create the executor, which will be used exclusively with this view, 
-		// as well as a session and a services tracker for managing references 
+		// Create the executor, which will be used exclusively with this view,
+		// as well as a session and a services tracker for managing references
 		// to services.
 		fExecutor = new DefaultDsfExecutor();
 		fSession = DsfSession.startSession(fExecutor, "Timers(DSF Example)");
 		fServices = new DsfServicesTracker(DsfExamplesPlugin.getBundleContext(), fSession.getId());
 
-		// Start the services using a sequence.  The sequence runs in the 
-		// session executor thread, therefore the thread calling this method 
-		// has to block using Future.get() until the sequence it completes.  
+		// Start the services using a sequence.  The sequence runs in the
+		// session executor thread, therefore the thread calling this method
+		// has to block using Future.get() until the sequence it completes.
 		// The Future.get() will throw an exception if the sequence fails.
 		ServicesStartupSequence startupSeq = new ServicesStartupSequence(fSession);
 		fSession.getExecutor().execute(startupSeq);
@@ -125,7 +125,7 @@ public class TimersView extends ViewPart {
 			assert false;
 		}
 
-		// Create the flexible hierarchy content/label adapter. Then register 
+		// Create the flexible hierarchy content/label adapter. Then register
 		// it with the session.
 		fTimersVMAdapter = new TimersVMAdapter(fSession, fPresentationContext);
 		fSession.registerModelAdapter(IElementContentProvider.class, fTimersVMAdapter);
@@ -133,7 +133,7 @@ public class TimersView extends ViewPart {
 		fSession.registerModelAdapter(IColumnPresentationFactory.class, fTimersVMAdapter);
 
 		// Create the input object for the view.  This object needs to return
-		// the VM adapter through the IAdaptable interface when queried for the 
+		// the VM adapter through the IAdaptable interface when queried for the
 		// flexible hierarchy adapters.
 		final IAdaptable viewerInputObject = new IAdaptable() {
 			/**
@@ -163,7 +163,7 @@ public class TimersView extends ViewPart {
 	public void dispose() {
 		try {
 			// First dispose the view model, which is the client of services.
-			// This operation needs to be performed in the session executor 
+			// This operation needs to be performed in the session executor
 			// thread.  Block using Future.get() until this call completes.
 			fSession.getExecutor().submit(new Runnable() {
 				@Override
@@ -240,7 +240,7 @@ public class TimersView extends ViewPart {
 				fExecutor.execute(new Runnable() {
 					@Override
 					public void run() {
-						// Only need to create the new timer, the events will 
+						// Only need to create the new timer, the events will
 						// cause the view to refresh.
 						fServices.getService(TimerService.class).startTimer();
 					}
@@ -297,7 +297,7 @@ public class TimersView extends ViewPart {
 				if (!(selectedElement instanceof IDMVMContext))
 					return;
 				final IDMContext selectedCtx = ((IDMVMContext) selectedElement).getDMContext();
-				// Based on the context from the selection, call the 
+				// Based on the context from the selection, call the
 				// appropriate service to remove the item.
 				if (selectedCtx instanceof TimerDMContext) {
 					fExecutor.execute(new Runnable() {

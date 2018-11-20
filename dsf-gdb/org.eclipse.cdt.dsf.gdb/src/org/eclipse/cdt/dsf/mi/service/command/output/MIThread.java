@@ -25,7 +25,7 @@ import org.eclipse.cdt.dsf.concurrent.Immutable;
 
 /**
  * GDB/MI Thread tuple parsing.
- * 
+ *
  * @since 1.1
  */
 @Immutable
@@ -163,7 +163,7 @@ public class MIThread {
 		return new MIThread(threadId, targetId, osId, parentId, topFrame, details, state, core, name);
 	}
 
-	// Note that windows gdbs returns lower case "thread" , so the matcher needs to be case-insensitive. 
+	// Note that windows gdbs returns lower case "thread" , so the matcher needs to be case-insensitive.
 	private static Pattern fgOsIdPattern1 = Pattern
 			.compile("([Tt][Hh][Rr][Ee][Aa][Dd]\\s*)(0x[0-9a-fA-F]+|-?\\d+)(\\s*\\([Ll][Ww][Pp]\\s*)(\\d*)", 0); //$NON-NLS-1$
 	private static Pattern fgOsIdPattern2 = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*\\d+\\.(\\d+)", 0); //$NON-NLS-1$
@@ -208,7 +208,7 @@ public class MIThread {
 		return null;
 	}
 
-	private static Pattern fgIdPattern = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*(\\d+)\\.\\d+", 0); //$NON-NLS-1$ 
+	private static Pattern fgIdPattern = Pattern.compile("[Tt][Hh][Rr][Ee][Aa][Dd]\\s*(\\d+)\\.\\d+", 0); //$NON-NLS-1$
 
 	/**
 	 * This is used to parse the same ID fed to {@link #parseOsId(String)}. The
@@ -220,7 +220,7 @@ public class MIThread {
 		// General format:
 		//      "Thread 162.32942"
 		//              ^^^
-		// PLEASE UPDATE MIThreadTests.java IF YOU TWEAK THIS CODE    	
+		// PLEASE UPDATE MIThreadTests.java IF YOU TWEAK THIS CODE
 
 		Matcher matcher = fgIdPattern.matcher(str);
 		if (matcher.find()) {

@@ -63,8 +63,8 @@ public class CommandTimeoutTest extends BaseParametrizedTestCase {
 	public void doBeforeTest() throws Exception {
 		removeTeminatedLaunchesBeforeTest();
 		setLaunchAttributes();
-		// Can't run the launch right away because each test needs to first set some 
-		// parameters.  The individual tests will be responsible for starting the launch. 
+		// Can't run the launch right away because each test needs to first set some
+		// parameters.  The individual tests will be responsible for starting the launch.
 	}
 
 	@Override
@@ -97,7 +97,7 @@ public class CommandTimeoutTest extends BaseParametrizedTestCase {
 		doLaunch();
 
 		final DsfSession session = getGDBLaunch().getSession();
-		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<ICommandControlShutdownDMEvent>(
+		ServiceEventWaitor<ICommandControlShutdownDMEvent> shutdownEventWaitor = new ServiceEventWaitor<>(
 				session, ICommandControlShutdownDMEvent.class);
 
 		// Send the command that will timeout
@@ -142,7 +142,7 @@ public class CommandTimeoutTest extends BaseParametrizedTestCase {
 		// Timeout must be shorter than the launch's timeout of 2 seconds (see BaseTestCase.doLaunch())
 		node.putInt(IGdbDebugPreferenceConstants.PREF_COMMAND_TIMEOUT_VALUE, 1000);
 
-		// Setup a remote launch so that it sends a "-target-remote" as part of the 
+		// Setup a remote launch so that it sends a "-target-remote" as part of the
 		// launch steps...
 		setLaunchAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_START_MODE,
 				IGDBLaunchConfigurationConstants.DEBUGGER_MODE_REMOTE);
@@ -161,7 +161,7 @@ public class CommandTimeoutTest extends BaseParametrizedTestCase {
 	}
 
 	/**
-	 * Checks whether the given exception is an instance of {@link CoreException} 
+	 * Checks whether the given exception is an instance of {@link CoreException}
 	 * with the status code 20100 which indicates that a gdb command has been timed out.
 	 * 20100 comes from GDBControl.STATUS_CODE_COMMAND_TIMED_OUT which is private
 	 */

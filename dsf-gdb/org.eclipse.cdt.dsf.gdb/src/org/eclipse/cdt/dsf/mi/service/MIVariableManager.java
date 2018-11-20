@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Monta Vista - initial API and implementation
  *     Ericsson    - Modified for handling of multiple execution contexts
@@ -99,25 +99,25 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Manages a list of variable objects as created through GDB/MI commands.
- * 
+ *
  * This class is passed expression-meta-commands which have their own cache.
  * Therefore, we don't use the standard MICommandCache in this class.
  * In fact, we can't even use it, because many variableObject MI commands,
  * should not be cached as they alter the state of the back-end.
- * 
+ *
  * Design details:
  * ==============
- * 
+ *
  * GDB variable object information
  * -------------------------------
- * o Variable objects are recursively hierarchical, where children can be created through 
+ * o Variable objects are recursively hierarchical, where children can be created through
  *   the parent.
  * o A varObject created with -var-create is a ROOT
  * o A varObject created with -var-list-children, is not a root
- * o Only varObject with no children or varObjects that are pointers can change values 
- *   and therefore 
+ * o Only varObject with no children or varObjects that are pointers can change values
+ *   and therefore
  *   those objects can be used with -var-assign
- * o After a program stops, a varObject must be 'updated' before used 
+ * o After a program stops, a varObject must be 'updated' before used
  * o Only root varObject can be updated with -var-update, which will trigger all
  *   of the root's descendants to be updated.
  * o Once updated, a varObject need not be updated until the program resumes again;
@@ -130,44 +130,44 @@ import org.eclipse.core.runtime.Status;
  *   expression as the out-of-scope varObject
  * o deleting a varObject will delete all its descendants, therefore, it is only
  *   necessary to delete roots
- * 
- * 
+ *
+ *
  * Class details
  * -------------
  * - We have an MIVariableObject class which represents a variable object in GDB
- * 
+ *
  * - MIVariableObject includes a buffered value for each allowed format.
- * 
+ *
  * - We have an MIRootVariableObject class inheriting from MIVariableObject to describe
  *   root varObjects created with -var-create.  Objects created with -var-list-children
- *   are MIVariableObjects only.  The root class will keep track of if the root object 
- *   needs to be updated, if the root object is out-of-scope, and of a list of all 
- *   modifiable descendants of this root.  The list of modifiable descendants is 
- *   accessed using the gdb-given name to allow quick updates from the -var-update 
+ *   are MIVariableObjects only.  The root class will keep track of if the root object
+ *   needs to be updated, if the root object is out-of-scope, and of a list of all
+ *   modifiable descendants of this root.  The list of modifiable descendants is
+ *   accessed using the gdb-given name to allow quick updates from the -var-update
  *   result (see below.)
- * 
+ *
  * - we do not use -var-list-children for arrays, but create them manually
- *  
- * - when the program stops, we should mark all roots as needing to be updated. 
+ *
+ * - when the program stops, we should mark all roots as needing to be updated.
  * To achieve this efficiently, we have a dedicated list of roots that are updated.
  * When the program stops, we go through this list, remove each element and mark it
  * as needing to be updated.
- * 
+ *
  * - when a varObject is accessed, if its root must be updated, the var-update
  * command shall be used.  The result of that command will indicate all
  * modifiable descendants that have changed.  We also use --all-values with -var-update
  * to get the new value (in the current format) for each modified descendant.  Using the list of modifiable
  * descendants of the root, we can quickly update the changed ones to invalidate their buffered
  * values and store the new current format value.
- * 
+ *
  * - all values of non-modifiable varObjects (except arrays) will be set to {...}
  * without going to the back-end
- * 
+ *
  * - requesting the value of an array varObject will trigger the creation of a new
  * varObject for the array's address.  Note that we must still use a variable
  * object and not the command -data-evaluate-expression, because we still need to get
  * the array address in multiple formats.
- * 
+ *
  * - we keep an LRU (Least Recently Used) structure of all variable objects.  This LRU
  * will be bounded to a maximum allowed number of variable objects.  Whenever we get an
  * object from the LRU cleanup will be done if the maximum size has been reached.
@@ -182,7 +182,7 @@ import org.eclipse.core.runtime.Status;
  * its root is out-of-scope) the following should be done:
  *  - replace the varObject in the LRU with a newly created one in GDB
  *  - if the old object was a root, delete it in GDB.
- *  
+ *
  * - In GDB, -var-update will only report a change if -var-evaluate-expression has
  *   changed -- in the current format--.  This means that situations like
  *    double z = 1.2;
@@ -200,19 +200,19 @@ import org.eclipse.core.runtime.Status;
  *   Note that versions of GDB after 6.7 will allows to issue -var-evaluate-expression
  *   with a specified format, therefore allowing us to never use -var-set-format, and
  *   consequently, to easily keep the display format of all variable objects to natural.
- *   
+ *
  * Notes on Dynamic Variable Objects (varobj)
  * ------------------------------------------
  *   - with version 7.0, gdb support so-called pretty printers.
- *   
+ *
  *   - pretty printers are registered for certain types
- *   
+ *
  *   - if there is a pretty printer registered for the type of a variable,
  *     the pretty printer provides the value and the children of that variable
- *     
+ *
  *   - a varobj whose value and/or children are provided by a pretty printer,
  *     are referred to as dynamic variable objects
- *     
+ *
  *   - dynamic varobjs change the game: it's not wise to ask it about all its
  *     children, not even the number of children it has. The reason is that
  *     in order to find out about the number of children the pretty printer
@@ -220,17 +220,17 @@ import org.eclipse.core.runtime.Status;
  *     is not yet initialized, the set of children are random, and thus might
  *     be huge. Even worse, there are data structures where fetching all
  *     children may result in an endless loop. The Eclipse debugger then hangs.
- *     
+ *
  *   - In order to avoid this, we will always fetch up to a certain maximum
  *     number of children. Furthermore, it is possible to find out whether there
  *     are more children available. In the UI, all the currently fetched
  *     children are available. In addition, if there are more children
  *     available, a special node will be appended to indicate that there is
  *     more the user could fetch.
- *     
+ *
  *   - Dynamic varobjs can change their value, as leaf varobjs can do.
  *     Especially, children can be added or removed during an update.
- *     
+ *
  *   - There is no expression for children of dynamic varobjs (at least not
  *     yet, http://sourceware.org/bugzilla/show_bug.cgi?id=10252 would fix that).
  *     The reason -var-info-path-expression returns garbage for children of
@@ -242,7 +242,7 @@ import org.eclipse.core.runtime.Status;
  *     within this parent for each non-root variable, and later use
  *       -var-list-children parent indexInParent (indexInParent + 1)
  *     in order to create the MI variable anew.
- *     
+ *
  *   - The fetching of children for dynamic varobjs becomes a bit more complicated.
  *     For the traditional varobjs, once children where requested, all children
  *     were fetched. For dynamic varobjs, we can no longer fetch all children.
@@ -260,7 +260,7 @@ public class MIVariableManager implements ICommandControl {
 
 	/**
 	 * Stores the information about children of a variable object.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	protected static class ChildrenInfo {
@@ -291,7 +291,7 @@ public class MIVariableManager implements ICommandControl {
 
 	/**
 	 * Stores the information about the children count of a variable object.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	protected static class ChildrenCountInfo {
@@ -380,7 +380,7 @@ public class MIVariableManager implements ICommandControl {
 		/** @since 4.0 */
 		protected LinkedList<DataRequestMonitor<ChildrenInfo>> fetchChildrenPending;
 
-		// The children of this variable, if any.  
+		// The children of this variable, if any.
 		// Null means we didn't fetch them yet, while an empty array means no children
 		private ExpressionInfo[] fChildren = null;
 		// we need to keep track of fake children because they are in the LRU and need to be removed in some cases.
@@ -399,8 +399,8 @@ public class MIVariableManager implements ICommandControl {
 
 		private boolean fFetchingChildren = false;
 
-		/** 
-		 * In case of base class variables that are accessed in a derived class 
+		/**
+		 * In case of base class variables that are accessed in a derived class
 		 * we cannot trust var-info-path-expression because of a bug in gdb.
 		 * We have to use a workaround and apply it to the complete hierarchy of this varObject.
 		 * Bug 320277
@@ -476,7 +476,7 @@ public class MIVariableManager implements ICommandControl {
 		/**
 		 * @return <code>true</code> if value and children of this varobj are
 		 *         currently provided by a pretty printer.
-		 *         
+		 *
 		 * @since 4.0
 		 */
 		public boolean isDynamic() {
@@ -488,7 +488,7 @@ public class MIVariableManager implements ICommandControl {
 		 *         method returns whether there are children in addition to the
 		 *         currently fetched, i.e. whether there are more children than
 		 *         {@link #getNumChildrenHint()} returns.
-		 *         
+		 *
 		 * @since 4.0
 		 */
 		public boolean hasMore() {
@@ -500,14 +500,14 @@ public class MIVariableManager implements ICommandControl {
 		 */
 		public MIDisplayHint getDisplayHint() {
 			return fDisplayHint;
-		};
+		}
 
 		/**
 		 * @since 4.3
 		 */
 		public void setDisplayHint(MIDisplayHint displayHint) {
 			this.fDisplayHint = displayHint;
-		};
+		}
 
 		/**
 		 * @since 4.0
@@ -521,27 +521,27 @@ public class MIVariableManager implements ICommandControl {
 			return fGdbType;
 		}
 
-		/** 
+		/**
 		 * Returns a hint to the number of children.  This hint is often correct,
 		 * except when we are dealing with C++ complex structures where
 		 * GDB has 'private/public/protected' as children.
-		 * 
+		 *
 		 * Use <code>isNumChildrenHintTrustworthy()</code> to know if the
 		 * hint can be trusted.
-		 * 
+		 *
 		 * Note that a hint of 0 children can always be trusted, except for
 		 * <code>{@link #fHasMore} == true</code>.
-		 * 
+		 *
 		 * @since 3.0 */
 		public int getNumChildrenHint() {
 			return fNumChildrenHint;
 		}
 
-		/** 
-		 * Returns whether the number of children hint can be 
+		/**
+		 * Returns whether the number of children hint can be
 		 * trusted for this variable object.
-		 * 
-		 * @since 3.0 
+		 *
+		 * @since 3.0
 		 */
 		public boolean isNumChildrenHintTrustworthy() {
 			// We cannot trust the hint about the number of children when we are
@@ -577,8 +577,8 @@ public class MIVariableManager implements ICommandControl {
 			return (getGDBType() == null) ? false : getGDBType().getType() == GDBType.FUNCTION;
 		}
 
-		// A complex variable is one with children.  However, it must not be a pointer since a pointer 
-		// does have children, but is still a 'simple' variable, as it can be modified.  
+		// A complex variable is one with children.  However, it must not be a pointer since a pointer
+		// does have children, but is still a 'simple' variable, as it can be modified.
 		// A reference can be modified too, because it can be a reference to the base class before initialization
 		// and after initialization it can become a reference to the derived class (if gdb shows the value type and
 		// children taking into account RTTI ("set print object on")).
@@ -593,7 +593,7 @@ public class MIVariableManager implements ICommandControl {
 
 		/**
 		 * @return Whether this varobj can safely be asked for all its children.
-		 * 
+		 *
 		 * @since 4.0
 		 */
 		public boolean isSafeToAskForAllChildren() {
@@ -634,7 +634,7 @@ public class MIVariableManager implements ICommandControl {
 		 *            children currently fetched by gdb.
 		 * @param hasMore
 		 *            Whether their are more children to fetch.
-		 *            
+		 *
 		 * @since 4.0
 		 */
 		public void setExpressionData(ExpressionInfo info, String typeName, int num, boolean hasMore) {
@@ -689,7 +689,7 @@ public class MIVariableManager implements ICommandControl {
 
 		/**
 		 * @param newChildren
-		 * 
+		 *
 		 * @since 4.0
 		 */
 		public void addChildren(ExpressionInfo[] newChildren) {
@@ -714,7 +714,7 @@ public class MIVariableManager implements ICommandControl {
 
 		/**
 		 * @param newChildren
-		 * 
+		 *
 		 * @since 4.0
 		 */
 		protected void addChildren(ExpressionInfo[][] newChildren) {
@@ -737,7 +737,7 @@ public class MIVariableManager implements ICommandControl {
 
 		/**
 		 * @param newNumChildren
-		 * 
+		 *
 		 * @since 4.0
 		 */
 		public void shrinkChildrenTo(int newNumChildren) {
@@ -761,7 +761,7 @@ public class MIVariableManager implements ICommandControl {
 		/**
 		 * Removes the specified child from LRU and makes the cleanup on its
 		 * children (if any).
-		 * 
+		 *
 		 * @since 4.3
 		 */
 		public void cleanupChild(ExpressionInfo child) {
@@ -781,7 +781,7 @@ public class MIVariableManager implements ICommandControl {
 		 * Removes all the children (real and fake) of the variable object from
 		 * LRU cache and from variable object itself. It is used when the type
 		 * of variable was changed.
-		 * 
+		 *
 		 * @since 4.1
 		 */
 		public void cleanupChildren() {
@@ -830,7 +830,7 @@ public class MIVariableManager implements ICommandControl {
 
 		/**
 		 * @param success
-		 * 
+		 *
 		 * @since 4.0
 		 */
 		protected void creationCompleted(boolean success) {
@@ -883,7 +883,7 @@ public class MIVariableManager implements ICommandControl {
 						if (isSuccess()) {
 							outOfScope = getRootToUpdate().isOutOfScope();
 							// This request monitor is the one that should re-create
-							// the variable object if the old one was out-of-scope							
+							// the variable object if the old one was out-of-scope
 							rm.setData(outOfScope);
 							rm.done();
 
@@ -913,7 +913,7 @@ public class MIVariableManager implements ICommandControl {
 		 * Process an update on this variable object.
 		 *
 		 * @param update What has changed.
-		 * 
+		 *
 		 * @since 4.0
 		 */
 		protected void processChange(final MIVarChange update, final RequestMonitor rm) {
@@ -926,8 +926,8 @@ public class MIVariableManager implements ICommandControl {
 				updateLimit(IMIExpressions.CHILD_COUNT_LIMIT_UNSPECIFIED);
 			}
 
-			// These properties of the variable will probably not change, 
-			// but if they are - we should handle it properly.  
+			// These properties of the variable will probably not change,
+			// but if they are - we should handle it properly.
 			setDisplayHint(update.getDisplayHint());
 			fExprInfo.setDynamic(update.isDynamic());
 
@@ -1092,11 +1092,11 @@ public class MIVariableManager implements ICommandControl {
 		public void deleteInGdb() {
 		}
 
-		/** 
+		/**
 		 * This method returns the value of the variable object attributes by
 		 * using -var-show-attributes.
 		 * Currently, the only attribute available is 'editable'.
-		 *  
+		 *
 		 * @param rm
 		 *            The data request monitor that will hold the value returned
 		 */
@@ -1124,14 +1124,14 @@ public class MIVariableManager implements ICommandControl {
 			}
 		}
 
-		/** 
+		/**
 		 * This method returns the value of the variable object.
 		 * This operation translates to multiple MI commands which affect the state of the
 		 * variable object in the back-end; therefore, we must make sure the object is not
 		 * locked doing another operation, and we must lock the object once it is our turn
 		 * to use it.
-		 * 
-		 * @param dmc  
+		 *
+		 * @param dmc
 		 *            The context containing the format to be used for the evaluation
 		 * @param rm
 		 *            The data request monitor that will hold the value returned
@@ -1218,8 +1218,8 @@ public class MIVariableManager implements ICommandControl {
 			}
 		}
 
-		/** 
-		 * This method evaluates a variable object 
+		/**
+		 * This method evaluates a variable object
 		 */
 		private void evaluate(final DataRequestMonitor<FormattedValueDMData> rm) {
 			fCommandControl.queueCommand(
@@ -1280,9 +1280,9 @@ public class MIVariableManager implements ICommandControl {
 		/**
 		 * This method returns the list of children of the variable object
 		 * passed as a parameter.
-		 * 
+		 *
 		 * @param exprDmc
-		 * 
+		 *
 		 * @param clientNumChildrenLimit
 		 *            If the current limit for the given expression is smaller,
 		 *            this limit will be applied.
@@ -1349,9 +1349,9 @@ public class MIVariableManager implements ICommandControl {
 
 		/**
 		 * Fetch the out-standing children.
-		 * 
+		 *
 		 * @param exprDmc
-		 * 
+		 *
 		 * @param clientNumChildrenLimit
 		 *            If the current limit for the given expression is smaller,
 		 *            this limit will be applied.
@@ -1664,14 +1664,14 @@ public class MIVariableManager implements ICommandControl {
 								} else if (fHasCastToBaseClassWorkaround) {
 									// We had to use the "CastToBaseClass" workaround in the hierarchy, so we
 									// know -var-info-path-expression won't work in this case.  We have to
-									// build the expression ourselves again to keep the workaround as part 
+									// build the expression ourselves again to keep the workaround as part
 									// of the child's expression.
 									childPathRm.setData(new ChildFullExpressionInfo(
 											buildChildExpression(exprDmc.getExpression(), child.getExp())));
 									childPathRm.done();
 								} else {
 									// To build the child id, we need the fully qualified expression which we
-									// can get from -var-info-path-expression starting from GDB 6.7 
+									// can get from -var-info-path-expression starting from GDB 6.7
 									fCommandControl.queueCommand(
 											fCommandFactory.createMIVarInfoPathExpression(
 													getRootToUpdate().getControlDMContext(), child.getVarName()),
@@ -1691,7 +1691,7 @@ public class MIVariableManager implements ICommandControl {
 															// If the name of a child equals its type then it could be a base class.
 															// The exception is when the name of the actual variable is identical with the type name (bad coding style :-))
 															// The only way to tell the difference is to check if the parent is a fake (public/private/protected).
-															// 
+															//
 															// What we could do instead, is make sure we are using C++ (using -var-info-expression).  That would
 															// be safer.  However, at this time, there does not seem to be a way to create a variable with the same
 															// name and type using plain C, so we are safe.
@@ -1758,14 +1758,14 @@ public class MIVariableManager implements ICommandControl {
 		/**
 		 * Create a child variable of this MIVariableObject and initialize
 		 * it from the given MIVar data.
-		 * 
+		 *
 		 * @param childId
 		 * @param childFullExpression
 		 * @param indexInParent
 		 * @param childData
-		 * 
+		 *
 		 * @return The new child.
-		 * 
+		 *
 		 * @since 4.0
 		 */
 		protected MIVariableObject createChild(final VariableObjectId childId, final String childFullExpression,
@@ -1783,7 +1783,7 @@ public class MIVariableManager implements ICommandControl {
 		 * @param clientLimit
 		 * @return True, if the client specified limit requires to check for
 		 *         further children.
-		 *         
+		 *
 		 * @since 4.0
 		 */
 		protected boolean requiresAdditionalChildren(int clientLimit) {
@@ -1794,7 +1794,7 @@ public class MIVariableManager implements ICommandControl {
 		 * @param newLimit
 		 *            The new limit on the number of children being asked for or
 		 *            being updated.
-		 * 
+		 *
 		 * @return The new limit.
 		 * @since 4.0
 		 */
@@ -1820,7 +1820,7 @@ public class MIVariableManager implements ICommandControl {
 		/**
 		 * Obtain the children of the given fake child (public, protected, or
 		 * private) and insert them into a list of children at a given position.
-		 * 
+		 *
 		 * @param fakeChild
 		 * @param frameCtxProvider
 		 * @param realChildren
@@ -1861,7 +1861,7 @@ public class MIVariableManager implements ICommandControl {
 
 			final String CAST_PREFIX = "struct "; //$NON-NLS-1$
 
-			// Before doing the cast, let's surround the child expression (base class name) with quotes 
+			// Before doing the cast, let's surround the child expression (base class name) with quotes
 			// if it contains a :: which indicates a namespace
 			String childNameForCast = childExpr.contains("::") ? "'" + childExpr + "'" : childExpr; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			String childFullExpression;
@@ -1879,7 +1879,7 @@ public class MIVariableManager implements ICommandControl {
 		/**
 		 * This method builds a child expression based on its parent's expression.
 		 * It is a fallback solution for when GDB doesn't support the var-info-path-expression.
-		 * 
+		 *
 		 * This method does not take care of inherited classes such as
 		 * class foo : bar {
 		 * ...
@@ -1915,15 +1915,15 @@ public class MIVariableManager implements ICommandControl {
 		/**
 		 * This method returns the count of children of the variable object
 		 * passed as a parameter.
-		 * 
+		 *
 		 * @param exprDmc
-		 * 
+		 *
 		 * @param numChildrenLimit
 		 *            No need to check for more than this number of children.
 		 *            However, it is legal to return a higher count if
 		 *            we already new from earlier call that there are more
 		 *            children.
-		 *            
+		 *
 		 * @param rm
 		 *            The data request monitor that will hold the count of
 		 *            children returned
@@ -1947,9 +1947,9 @@ public class MIVariableManager implements ICommandControl {
 			});
 		}
 
-		/** 
+		/**
 		 * This method request the back-end to change the value of the variable object.
-		 * 
+		 *
 		 * @param value
 		 *            The new value.
 		 *  @param formatId
@@ -1970,7 +1970,7 @@ public class MIVariableManager implements ICommandControl {
 			// First deal with the format.  For GDB, the way to specify a format is to prefix the value with
 			// 0x for hex, 0 for octal etc  So we need to make sure that 'value' has this prefix.
 			// Note that there is no way to specify a binary format for GDB up to and including
-			// GDB 6.7.1, so we convert 'value' into a decimal format.  
+			// GDB 6.7.1, so we convert 'value' into a decimal format.
 			// If the formatId is NATURAL, we do nothing for now because it is more complicated.
 			// For example for a bool, a value of "true" is correct and should be left as is,
 			// but for a pointer a value of 16 should be sent to GDB as 0x16.  To figure this out,
@@ -2029,8 +2029,8 @@ public class MIVariableManager implements ICommandControl {
 							// We must also mark all variable objects
 							// as out-of-date. This is because some variable objects may be affected
 							// by this one having changed.
-							// e.g., 
-							//    int i;  
+							// e.g.,
+							//    int i;
 							//    int* pi = &i;
 							// Here, if 'i' is changed by the user, then 'pi' will also change
 							// Since there is no way to know this unless we keep track of all addresses,
@@ -2046,7 +2046,7 @@ public class MIVariableManager implements ICommandControl {
 		}
 
 		private boolean isAccessQualifier(String str) {
-			return str.equals("private") || str.equals("public") || str.equals("protected"); //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$ 
+			return str.equals("private") || str.equals("public") || str.equals("protected"); //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$
 		}
 
 		/**
@@ -2063,7 +2063,7 @@ public class MIVariableManager implements ICommandControl {
 		/**
 		 * @param exprCtx
 		 * @param rm
-		 * 
+		 *
 		 * @since 4.0
 		 */
 		public void create(final IExpressionDMContext exprCtx, final RequestMonitor rm) {
@@ -2140,7 +2140,7 @@ public class MIVariableManager implements ICommandControl {
 
 	/**
 	 * Method to allow to override the MIVariableObject creation
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	protected MIVariableObject createVariableObject(VariableObjectId id, MIVariableObject parentObj) {
@@ -2149,7 +2149,7 @@ public class MIVariableManager implements ICommandControl {
 
 	/**
 	 * Method to allow to override the MIVariableObject creation
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	protected MIVariableObject createVariableObject(VariableObjectId id, MIVariableObject parentObj,
@@ -2179,7 +2179,7 @@ public class MIVariableManager implements ICommandControl {
 		public MIRootVariableObject(VariableObjectId id) {
 			super(id, null);
 			currentState = STATE_NOT_CREATED;
-			modifiableDescendants = new HashMap<String, MIVariableObject>();
+			modifiableDescendants = new HashMap<>();
 		}
 
 		public ICommandControlDMContext getControlDMContext() {
@@ -2207,7 +2207,7 @@ public class MIVariableManager implements ICommandControl {
 		 * Removes the descendant with the specified name from the collection of
 		 * modifiable descendants. Does nothing if there is no child with such
 		 * name.
-		 * 
+		 *
 		 * @since 4.1
 		 */
 		public void removeModifiableDescendant(String gdbName) {
@@ -2352,7 +2352,7 @@ public class MIVariableManager implements ICommandControl {
 										// We -must- also remove this entry from our LRU.  If we don't
 										// we can end-up with a race condition that create this object
 										// twice, or have an infinite loop while never re-creating the object.
-										// The can happen if we update a child first then we request 
+										// The can happen if we update a child first then we request
 										// the root later,
 										lruVariableList.remove(getInternalId());
 
@@ -2392,7 +2392,7 @@ public class MIVariableManager implements ICommandControl {
 													}
 													pendingRm.done();
 												}
-											};
+											}
 										});
 									}
 								} else {
@@ -2417,7 +2417,7 @@ public class MIVariableManager implements ICommandControl {
 		 * This method request the back-end to delete a variable object.
 		 * We check if the GDB name has been filled to confirm that this object
 		 * was actually successfully created on the back-end.
-		 * Only root variable objects are deleted, while children are left in GDB 
+		 * Only root variable objects are deleted, while children are left in GDB
 		 * to be deleted automatically when their root is deleted.
 		 */
 		@Override
@@ -2452,15 +2452,15 @@ public class MIVariableManager implements ICommandControl {
 
 	/**
 	 * This class represents an unique identifier for a variable object.
-	 * 
+	 *
 	 * The following must be considered to obtain a unique name:
 	 *     - the expression itself
-	 *     - the execution context 
+	 *     - the execution context
 	 *     - relative depth of frame based on the frame context and the total depth of the stack
-	 *     
+	 *
 	 * Note that if no frameContext is specified (only Execution, or even only Container), which can
 	 * characterize a global variable for example, we will only use the available information.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public class VariableObjectId {
@@ -2468,8 +2468,8 @@ public class MIVariableManager implements ICommandControl {
 		// See bug 187718.  So we store the expression itself, and it's parent execution context.
 		private String fExpression = null;
 		private IExecutionDMContext fExecContext = null;
-		// We need the depth of the frame.  The frame level is not sufficient because 
-		// the same frame will have a different level based on the current depth of the stack 
+		// We need the depth of the frame.  The frame level is not sufficient because
+		// the same frame will have a different level based on the current depth of the stack
 		private Integer fFrameId = null;
 
 		public VariableObjectId() {
@@ -2547,10 +2547,10 @@ public class MIVariableManager implements ICommandControl {
 	 * make space. Removing means that a GDB request to delete the object is
 	 * generated.  We must also take into consideration the fact that GDB will
 	 * automatically delete children of a variable object, when deleting the parent
-	 * variable object.  Our solution to that is to tweak the LRU to make sure that 
-	 * children are always older than their parents, to guarantee the children will 
+	 * variable object.  Our solution to that is to tweak the LRU to make sure that
+	 * children are always older than their parents, to guarantee the children will
 	 * always be delete before their parents.
-	 * 
+	 *
 	 */
 	private static class LRUVariableCache extends LinkedHashMap<VariableObjectId, MIVariableObject> {
 		public static final long serialVersionUID = 0;
@@ -2634,17 +2634,17 @@ public class MIVariableManager implements ICommandControl {
 	private IExpressions fExpressionService;
 
 	// Typically, there will only be one listener, since only the ExpressionService will use this class
-	private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
+	private final List<ICommandListener> fCommandProcessors = new ArrayList<>();
 
 	/** Our least recently used cache */
 	private final LRUVariableCache lruVariableList;
 
 	/** The list of root variable objects that have been updated */
-	private final LinkedList<MIRootVariableObject> updatedRootList = new LinkedList<MIRootVariableObject>();
+	private final LinkedList<MIRootVariableObject> updatedRootList = new LinkedList<>();
 
 	/**
 	 * MIVariableManager constructor
-	 * 
+	 *
 	 * @param session
 	 *            The session we are working with
 	 * @param tracker
@@ -2701,15 +2701,15 @@ public class MIVariableManager implements ICommandControl {
 		return fGDBTypeParser;
 	}
 
-	/** 
+	/**
 	 * This method returns a variable object based on the specified
 	 * ExpressionDMC, creating it in GDB if it was not created already.
 	 * The method guarantees that the variable is finished creating and that
 	 * is it not out-of-scope.
-	 * 
+	 *
 	 * @param exprCtx
 	 *            The expression context to which the variable object is applied to.
-	 * 
+	 *
 	 * @param rm
 	 *            The data request monitor that will contain the requested variable object
 	 */
@@ -2756,8 +2756,8 @@ public class MIVariableManager implements ICommandControl {
 							 * its root is out-of-scope) the following should be done:
 							 *
 							 * - create a new varObject for the expression (as a root varObject) and insert it
-							 * in the LRU.  Make sure that when creating children of this new varObject, they 
-							 * will replace any old children with the same name in the LRU (this is ok since the 
+							 * in the LRU.  Make sure that when creating children of this new varObject, they
+							 * will replace any old children with the same name in the LRU (this is ok since the
 							 * children being replaced are also out-of-scope).
 							 */
 
@@ -2813,7 +2813,7 @@ public class MIVariableManager implements ICommandControl {
 			// Need to set parent when it is known.
 			final MIVariableObject newVarObj = createVariableObject(id, null, true);
 
-			// We must put this object in our map right away, in case it is 
+			// We must put this object in our map right away, in case it is
 			// requested again, before it completes its creation.
 			// Note that this will replace any old entry with the same id.
 			lruVariableList.put(id, newVarObj);
@@ -2839,7 +2839,7 @@ public class MIVariableManager implements ICommandControl {
 								} else {
 									// Object was not created, remove it from our list
 									lruVariableList.remove(id);
-									// We avoid this race condition by sending the notifications _after_ removing 
+									// We avoid this race condition by sending the notifications _after_ removing
 									// the object from the LRU, to avoid any new requests being queue.
 									// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=231655
 									newVarObj.creationCompleted(false);
@@ -2851,7 +2851,7 @@ public class MIVariableManager implements ICommandControl {
 					} else {
 						// Object was not created, remove it from our list
 						lruVariableList.remove(id);
-						// We avoid this race condition by sending the notifications _after_ removing 
+						// We avoid this race condition by sending the notifications _after_ removing
 						// the object from the LRU, to avoid any new requests being queue.
 						// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=231655
 						newVarObj.creationCompleted(false);
@@ -2869,7 +2869,7 @@ public class MIVariableManager implements ICommandControl {
 		// in comparison to variable objects that are children of other variable objects.
 		final MIRootVariableObject newVarObj = createRootVariableObject(id);
 
-		// We must put this object in our map right away, in case it is 
+		// We must put this object in our map right away, in case it is
 		// requested again, before it completes its creation.
 		// Note that this will replace any old entry with the same id.
 		lruVariableList.put(id, newVarObj);
@@ -2892,11 +2892,11 @@ public class MIVariableManager implements ICommandControl {
 					// It is important to do this call after we have removed the id
 					// from our LRU; this is to avoid the following:
 					//   The same varObj is requested before it was removed from the LRU
-					//   but after we called creationCompleted().  
-					//   In this case, the request for this varObj would be queued, but  
+					//   but after we called creationCompleted().
+					//   In this case, the request for this varObj would be queued, but
 					//   since creationCompleted() already sent the notifications
 					//   the newly queue request will never get serviced.
-					// We avoid this race condition by sending the notifications _after_ removing 
+					// We avoid this race condition by sending the notifications _after_ removing
 					// the object from the LRU, to avoid any new requests being queue.
 					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=231655
 					newVarObj.creationCompleted(false);
@@ -2918,9 +2918,9 @@ public class MIVariableManager implements ICommandControl {
 		return exprCtx;
 	}
 
-	/** 
+	/**
 	 * This method requests the back-end to change the value of an expression.
-	 * 
+	 *
 	 * @param ctx
 	 *            The context of the expression we want to change
 	 * @param expressionValue
@@ -2954,7 +2954,7 @@ public class MIVariableManager implements ICommandControl {
 
 		// The MIVariableManager does not buffer commands itself, but sends them directly to the real
 		// MICommandControl service.  Therefore, we must immediately tell our calling cache that the command
-		// has been sent, since we can never cancel it.  Note that this removes any option of coalescing, 
+		// has been sent, since we can never cancel it.  Note that this removes any option of coalescing,
 		// but coalescing was not applicable to variableObjects anyway.
 		processCommandSent(token);
 
@@ -3089,9 +3089,9 @@ public class MIVariableManager implements ICommandControl {
 
 	/*
 	 *   This is the command which allows the user to retract a previously issued command. The
-	 *   state of the command  is that it is in the waiting queue  and has not yet been handed 
+	 *   state of the command  is that it is in the waiting queue  and has not yet been handed
 	 *   to the back-end yet.
-	 *   
+	 *
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#removeCommand(org.eclipse.cdt.dsf.mi.service.command.commands.ICommand)
 	 */
@@ -3103,12 +3103,12 @@ public class MIVariableManager implements ICommandControl {
 	}
 
 	/*
-	 *  This command allows the user to try and cancel commands  which have been handed off to the 
+	 *  This command allows the user to try and cancel commands  which have been handed off to the
 	 *  back-end. Some back-ends support this with extended GDB/MI commands. If the support is there
 	 *  then we will attempt it.  Because of the bidirectional nature of the GDB/MI command stream
 	 *  there is no guarantee that this will work. The response to the command could be on its way
 	 *  back when the cancel command is being issued.
-	 *  
+	 *
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.mi.service.command.IDebuggerControl#cancelCommand(org.eclipse.cdt.dsf.mi.service.command.commands.ICommand)
 	 */
@@ -3182,7 +3182,7 @@ public class MIVariableManager implements ICommandControl {
 	public void eventDispatched(ITraceRecordSelectedChangedDMEvent e) {
 		// We have a big limitation with tracepoints!
 		// GDB usually only reports a depth of 1, for every trace record, no
-		// matter where it occurred.  This means that our naming scheme for VariableObjectId 
+		// matter where it occurred.  This means that our naming scheme for VariableObjectId
 		// fails miserably because all objects will have the same depth and we will confuse
 		// them.  Until we find a good solution, we have to clear our entire list of
 		// of variable objects (and delete them in GDB to avoid having too many).
@@ -3201,13 +3201,13 @@ public class MIVariableManager implements ICommandControl {
 	 *
 	 * This method can be overridden to easily disable the workaround, for versions
 	 * of GDB that no longer have the bug.
-	 * 
+	 *
 	 * See http://sourceware.org/bugzilla/show_bug.cgi?id=11912
 	 * and Bug 320277.
-	 * 
+	 *
 	 * The bug was fixed in GDB 7.3.1.
-	 * 
-	 * @since 4.1 
+	 *
+	 * @since 4.1
 	 */
 	protected boolean needFixForGDBBug320277() {
 		return true;

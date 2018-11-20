@@ -45,8 +45,8 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	/**
 	 * Creates a file object for the given location and linkage or returns an existing one.
 	 * @param fileLocation an IIndexFileLocation representing the location of the file.
-	 * @param sigMacros the macro definitions at the inclusion point. 
-	 * @return the existing IIndexFragmentFile for this location, or a newly created one. 
+	 * @param sigMacros the macro definitions at the inclusion point.
+	 * @return the existing IIndexFragmentFile for this location, or a newly created one.
 	 * @throws CoreException
 	 */
 	IIndexFragmentFile addFile(int linkageID, IIndexFileLocation fileLocation, ISignificantMacros sigMacros)
@@ -56,8 +56,8 @@ public interface IWritableIndexFragment extends IIndexFragment {
 	 * Creates a file object for the given location and linkage. The created file object is not added to
 	 * the file index.
 	 * @param fileLocation an IIndexFileLocation representing the location of the file.
-	 * @param sigMacros the macro definitions at the inclusion point. 
-	 * @return a newly created IIndexFragmentFile. 
+	 * @param sigMacros the macro definitions at the inclusion point.
+	 * @return a newly created IIndexFragmentFile.
 	 * @throws CoreException
 	 */
 	IIndexFragmentFile addUncommittedFile(int linkageID, IIndexFileLocation fileLocation, ISignificantMacros sigMacros)
@@ -74,7 +74,7 @@ public interface IWritableIndexFragment extends IIndexFragment {
 
 	/**
 	 * Removes an uncommitted file if there is one. Used to recover from a failed index update.
-	 *  
+	 *
 	 * @throws CoreException
 	 */
 	void clearUncommittedFile() throws CoreException;

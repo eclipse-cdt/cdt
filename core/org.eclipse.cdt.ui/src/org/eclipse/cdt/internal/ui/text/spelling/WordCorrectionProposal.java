@@ -15,18 +15,16 @@
 
 package org.eclipse.cdt.internal.ui.text.spelling;
 
+import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.IInvocationContext;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.IInvocationContext;
-
-import org.eclipse.cdt.internal.ui.text.IHtmlTagConstants;
 
 /**
  * Proposal to correct the incorrectly spelled word.

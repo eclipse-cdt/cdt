@@ -16,6 +16,10 @@ package org.eclipse.cdt.internal.ui.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.viewers.ColumnLayoutData;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -25,11 +29,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.ColumnLayoutData;
-import org.eclipse.jface.viewers.ColumnPixelData;
-import org.eclipse.jface.viewers.ColumnWeightData;
-
 /**
  * A special composite to layout columns inside a table. The composite is needed since we have
  * to layout the columns "before" the actual table gets layouted. Hence we can't use a normal
@@ -37,7 +36,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
  */
 public class TableLayoutComposite extends Composite {
 
-	private List<ColumnLayoutData> columns = new ArrayList<ColumnLayoutData>();
+	private List<ColumnLayoutData> columns = new ArrayList<>();
 
 	/**
 	 * Creates a new <code>TableLayoutComposite</code>.

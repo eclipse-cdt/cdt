@@ -39,8 +39,8 @@ public abstract class AbstractLanguage extends PlatformObject implements ILangua
 		return getId();
 	}
 
-	/** 
-	 * @deprecated replaced by {@link #getASTTranslationUnit(FileContent, IScannerInfo, 
+	/**
+	 * @deprecated replaced by {@link #getASTTranslationUnit(FileContent, IScannerInfo,
 	 * IncludeFileContentProvider, IIndex, int, IParserLogService)}
 	 */
 	@Deprecated

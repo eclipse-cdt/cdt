@@ -17,8 +17,6 @@ import java.io.FileNotFoundException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IInclude;
@@ -26,9 +24,11 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.ExpectedStrings;
 
+import junit.framework.TestSuite;
+
 /**
  * @author Peter Graves
- * 
+ *
  * This file contains a set of generic tests for the core C model's TranslationUnit class.
  * There is nothing exotic here, mostly just sanity type tests.
  */
@@ -78,7 +78,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	 * Simple sanity tests for the getElement() call
 	 */
 	public void testGetElement() throws Exception {
-		Deque<String> missing = new ArrayDeque<String>();
+		Deque<String> missing = new ArrayDeque<>();
 		ITranslationUnit tu = CProjectHelper.findTranslationUnit(testProject, "exetest.c");
 
 		for (int x = 0; x < expectedStringList.length; x++) {
@@ -180,7 +180,7 @@ public class TranslationUnitTests extends TranslationUnitBaseTest {
 	// This test is disabled because it fails consistently due to a collision between content types
 	// "asmSource" defined in org.eclipse.cdt.core and
 	// "org.eclipse.cdt.managedbuilder.llvm.ui.llvmAssemblyCode" defined in
-	// org.eclipse.cdt.managedbuilder.llvm.ui. 
+	// org.eclipse.cdt.managedbuilder.llvm.ui.
 	//	public void testAssemblyContentType_Bug186774() {
 	//		assertEquals(CCorePlugin.CONTENT_TYPE_ASMSOURCE, CoreModel.getRegistedContentTypeId(testProject.getProject(), "test.s"));
 	//		assertEquals(CCorePlugin.CONTENT_TYPE_ASMSOURCE, CoreModel.getRegistedContentTypeId(testProject.getProject(), "test.S"));

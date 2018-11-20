@@ -40,8 +40,8 @@ public class MatchObjectElement {
 	public static class TypeToStringAssociation {
 		private int fType;
 		private String fString;
-		private static ObjectTypeBasedStorage<TypeToStringAssociation> fTypeAssociationStorage = new ObjectTypeBasedStorage<TypeToStringAssociation>();
-		private static Map<String, TypeToStringAssociation> fStringAssociationStorage = new HashMap<String, TypeToStringAssociation>();
+		private static ObjectTypeBasedStorage<TypeToStringAssociation> fTypeAssociationStorage = new ObjectTypeBasedStorage<>();
+		private static Map<String, TypeToStringAssociation> fStringAssociationStorage = new HashMap<>();
 
 		public static TypeToStringAssociation TOOL = new TypeToStringAssociation(
 				IRealBuildObjectAssociation.OBJECT_TOOL, "tool"); //$NON-NLS-1$
@@ -125,7 +125,7 @@ public class MatchObjectElement {
 
 		PatternElement(IConfigurationElement el, int defaultSearchType, int defaultIdType) {
 			String tmp = el.getAttribute(ATTR_OBJECT_IDS);
-			fIds = new HashSet<String>(Arrays.asList(CDataUtil.stringToArray(tmp, DELIMITER)));
+			fIds = new HashSet<>(Arrays.asList(CDataUtil.stringToArray(tmp, DELIMITER)));
 
 			int type = 0;
 			tmp = el.getAttribute(ATTR_PATTERN_TYPE_SEARCH_SCOPE);
@@ -193,7 +193,7 @@ public class MatchObjectElement {
 			if (el.fType != fType)
 				throw new IllegalArgumentException();
 
-			HashSet<String> set = new HashSet<String>();
+			HashSet<String> set = new HashSet<>();
 			set.addAll(fIds);
 			set.addAll(el.fIds);
 			return new PatternElement(set, fType);
@@ -219,7 +219,7 @@ public class MatchObjectElement {
 
 		fObjectType = assoc.getType();
 
-		Map<PatternTypeKey, PatternElement> patternMap = new HashMap<PatternTypeKey, PatternElement>();
+		Map<PatternTypeKey, PatternElement> patternMap = new HashMap<>();
 		int defaultSearchType = PatternElement.DEFAULT_PATTERN_SEARCH_TYPE;
 		int defaultIdType = PatternElement.DEFAULT_PATTERN_ID_TYPE;
 

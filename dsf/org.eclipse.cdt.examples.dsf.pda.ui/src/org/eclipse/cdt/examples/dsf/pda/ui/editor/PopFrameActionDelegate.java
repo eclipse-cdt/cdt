@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -29,12 +29,14 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
+	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void run(IAction action) {
 		/*
 		try {
@@ -46,6 +48,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		/*	if (selection instanceof IStructuredSelection) {
 				IStructuredSelection ss = (IStructuredSelection) selection;
@@ -53,7 +56,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 				if (element instanceof PDAStackFrame) {
 					PDAStackFrame frame = (PDAStackFrame) element;
 					//#ifdef ex5
-		//#				// TODO: Exercise 5 - enable the action if the frame's thread supports it				
+		//#				// TODO: Exercise 5 - enable the action if the frame's thread supports it
 					//#else
 					fThread = (PDAThread) frame.getThread();
 					try {
@@ -63,7 +66,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 					return;
 					//#endif
 				}
-				
+
 			}
 			action.setEnabled(false);
 			*/
@@ -72,12 +75,14 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		//fThread = null;
 	}
@@ -85,6 +90,7 @@ public class PopFrameActionDelegate implements IObjectActionDelegate, IActionDel
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		run(action);
 	}

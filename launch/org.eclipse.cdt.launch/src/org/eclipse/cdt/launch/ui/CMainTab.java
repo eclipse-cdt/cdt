@@ -71,10 +71,10 @@ import org.eclipse.ui.dialogs.TwoPaneElementSelector;
 public class CMainTab extends CAbstractMainTab {
 
 	/**
-	 * Tab identifier used for ordering of tabs added using the 
+	 * Tab identifier used for ordering of tabs added using the
 	 * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
 	 * extension point.
-	 *   
+	 *
 	 * @since 6.0
 	 */
 	public static final String TAB_ID = "org.eclipse.cdt.cdi.launch.mainTab"; //$NON-NLS-1$
@@ -106,7 +106,7 @@ public class CMainTab extends CAbstractMainTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -162,7 +162,7 @@ public class CMainTab extends CAbstractMainTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
@@ -203,7 +203,7 @@ public class CMainTab extends CAbstractMainTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
@@ -417,7 +417,7 @@ public class CMainTab extends CAbstractMainTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
@@ -530,7 +530,7 @@ public class CMainTab extends CAbstractMainTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
@@ -630,7 +630,7 @@ public class CMainTab extends CAbstractMainTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	@Override
@@ -640,7 +640,7 @@ public class CMainTab extends CAbstractMainTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	@Override

@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Class_Reference, with prefix
  * Bug#50711 : Wrong completion kind in a new expression
  *

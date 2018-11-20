@@ -17,7 +17,7 @@ import org.eclipse.debug.core.commands.IDebugCommandHandler;
 
 /**
  * Handler interface to perform a reverse StepOver operation
- * 
+ *
  * @since 7.0
  */
 public interface IReverseStepOverHandler extends IDebugCommandHandler {

@@ -14,8 +14,8 @@
 package org.eclipse.cdt.make.ui.views;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
-import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.dnd.MakeTargetDndUtil;
 import org.eclipse.cdt.make.ui.TargetSourceContainer;
 import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;

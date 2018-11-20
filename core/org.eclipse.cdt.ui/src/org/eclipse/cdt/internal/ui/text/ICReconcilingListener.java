@@ -14,14 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Interface of an object listening to (AST-) reconciling.
  * Inspired by JDT.
- * 
+ *
  * @since 4.0
  */
 public interface ICReconcilingListener {
@@ -32,7 +31,7 @@ public interface ICReconcilingListener {
 
 	/**
 	 * Called after reconciling has been finished.
-	 * 
+	 *
 	 * @param ast
 	 *            the translation unit AST or <code>null</code> if the working
 	 *            copy was consistent or reconciliation has been cancelled

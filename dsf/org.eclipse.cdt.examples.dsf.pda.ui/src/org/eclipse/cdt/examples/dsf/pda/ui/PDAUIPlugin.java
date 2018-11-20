@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -64,28 +64,28 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 	/**
 	 * Managed colors
 	 */
-	private Map<RGB, Color> fColors = new HashMap<RGB, Color>();
+	private Map<RGB, Color> fColors = new HashMap<>();
 
 	/**
-	 * Active adapter sets.  They are accessed using the DSF session ID 
-	 * which owns the debug services. 
+	 * Active adapter sets.  They are accessed using the DSF session ID
+	 * which owns the debug services.
 	 */
 	private Map<String, SessionAdapterSet> fSessionAdapterSets = Collections
 			.synchronizedMap(new HashMap<String, SessionAdapterSet>());
 
 	/**
 	 * Map of launches for which adapter sets have already been disposed.
-	 * This map (used as a set) is maintained in order to avoid re-creating an 
-	 * adapter set after the launch was removed from the launch manager, but 
-	 * while the launch is still being held by other classes which may 
-	 * request its adapters.  A weak map is used to avoid leaking 
+	 * This map (used as a set) is maintained in order to avoid re-creating an
+	 * adapter set after the launch was removed from the launch manager, but
+	 * while the launch is still being held by other classes which may
+	 * request its adapters.  A weak map is used to avoid leaking
 	 * memory once the launches are no longer referenced.
 	 * <p>
-	 * Access to this map is synchronized using the fSessionAdapterSets 
+	 * Access to this map is synchronized using the fSessionAdapterSets
 	 * instance.
 	 * </p>
 	 */
-	private Map<ILaunch, Object> fDisposedSessionAdapterSets = new WeakHashMap<ILaunch, Object>();
+	private Map<ILaunch, Object> fDisposedSessionAdapterSets = new WeakHashMap<>();
 
 	private void disposeAdapterSet(PDALaunch launch) {
 		String sessionId = launch.getSession().getId();
@@ -150,7 +150,7 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 	 * Declares a workbench image given the path of the image file (relative to
 	 * the workbench plug-in). This is a helper method that creates the image
 	 * descriptor and passes it to the main <code>declareImage</code> method.
-	 * 
+	 *
 	 * @param symbolicName the symbolic name of the image
 	 * @param path the path of the image file relative to the base of the workbench
 	 * plug-ins install directory
@@ -164,7 +164,7 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 
 	/**
 	 * Returns the color described by the given RGB.
-	 * 
+	 *
 	 * @param rgb
 	 * @return color
 	 */
@@ -183,7 +183,7 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 		// new set of adapters.
 		SessionAdapterSet adapterSet;
 		synchronized (fSessionAdapterSets) {
-			// The adapter set for the given launch was already disposed.  
+			// The adapter set for the given launch was already disposed.
 			// Return a null adapter.
 			if (fDisposedSessionAdapterSets.containsKey(launch)) {
 				return null;
@@ -218,6 +218,7 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 		}
 	}
 
+	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		// Dispose the set of adapters for a launch only after the launch is
 		// removed from the view.  If the launch is terminated, the adapters
@@ -229,12 +230,15 @@ public class PDAUIPlugin extends AbstractUIPlugin implements ILaunchesListener2 
 		}
 	}
 
+	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 	}
 
+	@Override
 	public void launchesAdded(ILaunch[] launches) {
 	}
 
+	@Override
 	public void launchesChanged(ILaunch[] launches) {
 	}
 

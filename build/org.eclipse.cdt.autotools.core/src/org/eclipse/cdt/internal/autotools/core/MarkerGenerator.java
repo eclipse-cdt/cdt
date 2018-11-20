@@ -161,7 +161,7 @@ public abstract class MarkerGenerator {
 	/**
 	 * Removes the IMarkers for the project specified in the argument if the
 	 * project exists, and is open.
-	 * 
+	 *
 	 * @param project
 	 */
 	public void removeAllMarkers(IProject project) {

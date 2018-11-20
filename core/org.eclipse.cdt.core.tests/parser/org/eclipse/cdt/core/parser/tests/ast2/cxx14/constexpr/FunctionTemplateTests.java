@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -165,7 +165,7 @@ public class FunctionTemplateTests extends TestBase {
 	//		constexpr Integer& operator++() { ++i; return *this; }
 	//		constexpr Integer& operator*=(Integer const& rhs) { i *= rhs.i; return *this; }
 	//	};
-	//	
+	//
 	//	template<typename T>
 	//	constexpr int fac(T n) {
 	//		T total{1};
@@ -310,7 +310,7 @@ public class FunctionTemplateTests extends TestBase {
 	//	template<int N>
 	//	constexpr int f() {
 	//		S s{N};
-	//		return s.get();	
+	//		return s.get();
 	//	}
 
 	//	constexpr int x = f<10>();
@@ -328,7 +328,7 @@ public class FunctionTemplateTests extends TestBase {
 	//	template<typename T>
 	//	constexpr bool f() {
 	//		Number n{T{}};
-	//		return n.isFloatingPoint();	
+	//		return n.isFloatingPoint();
 	//	}
 	//	constexpr bool x = f<double>();
 	public void testInstantiationOfConstructorInFunctionTemplate2() throws Exception {

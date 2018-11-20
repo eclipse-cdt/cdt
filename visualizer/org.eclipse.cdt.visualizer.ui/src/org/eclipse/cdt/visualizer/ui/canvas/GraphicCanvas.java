@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Listener;
 /**
  * Viewer canvas -- base class for canvas that displays a collection
  * of persistent, repositionable graphic objects.
- * 
+ *
  * Note: painting is done in order objects were added,
  * so objects added last are drawn "on top" of others.
  * Use raise/lower methods to change the object z-ordering, if needed.
@@ -46,8 +46,9 @@ public class GraphicCanvas extends BufferedCanvas {
 	/** Constructor. */
 	public GraphicCanvas(Composite parent) {
 		super(parent);
-		m_objects = new ArrayList<IGraphicObject>();
+		m_objects = new ArrayList<>();
 		Listener mouseListener = new Listener() {
+			@Override
 			public void handleEvent(Event event) {
 				switch (event.type) {
 				case SWT.MouseEnter:
@@ -66,6 +67,7 @@ public class GraphicCanvas extends BufferedCanvas {
 	}
 
 	/** Dispose method. */
+	@Override
 	public void dispose() {
 		if (m_objects != null) {
 			m_objects.clear();
@@ -113,6 +115,7 @@ public class GraphicCanvas extends BufferedCanvas {
 	// --- painting methods ---
 
 	/** Paints elements on canvas. */
+	@Override
 	public void paintCanvas(GC gc) {
 		// paint background first
 		clearCanvas(gc);

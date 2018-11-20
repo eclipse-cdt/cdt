@@ -49,10 +49,10 @@ import org.eclipse.core.runtime.Preferences;
 
 /**
  * This class is a helper for creating general CDT projects
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
- * 
+ *
  * Note that this class is used by ISVs, see bug 318063.
  */
 public class ProjectCreatedActions {
@@ -79,7 +79,7 @@ public class ProjectCreatedActions {
 	 * <li>Autoexpands the project in the C/C++ Projects view
 	 * </ul>
 	 * <p>
-	 * 
+	 *
 	 * @return an IManagedBuildInfo instance (from which the IManagedProject can be retrieved)
 	 */
 	public IManagedBuildInfo createProject(IProgressMonitor monitor, String indexerId, boolean isCProject)
@@ -117,7 +117,7 @@ public class ProjectCreatedActions {
 		ManagedProject newManagedProject = new ManagedProject(project, configs[0].getProjectType());
 		info.setManagedProject(newManagedProject);
 
-		original2newConfigs = new HashMap<IConfiguration, IConfiguration>();
+		original2newConfigs = new HashMap<>();
 		ICConfigurationDescription active = null;
 		for (IConfiguration cfg : configs) {
 			if (cfg != null) {
@@ -144,7 +144,7 @@ public class ProjectCreatedActions {
 				if (buildProperty != null && buildProperty.getValue() != null
 						&& PROP_VAL.equals(buildProperty.getValue().getId())) {
 					active = cfgDes;
-				} else if (active == null) {// select at least first configuration 
+				} else if (active == null) {// select at least first configuration
 					active = cfgDes;
 				}
 			}
@@ -180,7 +180,7 @@ public class ProjectCreatedActions {
 	}
 
 	public Set<IConfiguration> getNewConfigurations(Collection<IConfiguration> originalConfigs) {
-		Set<IConfiguration> result = new HashSet<IConfiguration>();
+		Set<IConfiguration> result = new HashSet<>();
 		for (IConfiguration cfg : originalConfigs) {
 			result.add(getNewConfiguration(cfg));
 		}

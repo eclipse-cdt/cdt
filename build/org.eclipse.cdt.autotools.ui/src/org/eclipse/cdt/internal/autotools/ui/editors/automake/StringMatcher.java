@@ -50,13 +50,13 @@ public class StringMatcher {
 	}
 
 	/**
-	 * Find the first occurrence of the pattern between <code>start</code)(inclusive) 
-	 * and <code>end</code>(exclusive).  
-	 * @param text the String object to search in 
+	 * Find the first occurrence of the pattern between <code>start</code)(inclusive)
+	 * and <code>end</code>(exclusive).
+	 * @param text the String object to search in
 	 * @param start the starting index of the search range, inclusive
 	 * @param end the ending index of the search range, exclusive
-	 * @return an <code>StringMatcher.Position</code> object that keeps the starting 
-	 * (inclusive) and ending positions (exclusive) of the first occurrence of the 
+	 * @return an <code>StringMatcher.Position</code> object that keeps the starting
+	 * (inclusive) and ending positions (exclusive) of the first occurrence of the
 	 * pattern in the specified range of the text; return null if not found or subtext
 	 * is empty (start==end). A pair of zeros is returned if pattern is empty string
 	 * Note that for pattern like "*abc*" with leading and trailing stars, position of "abc"
@@ -102,7 +102,7 @@ public class StringMatcher {
 	}
 
 	/**
-	 * StringMatcher constructor takes in a String object that is a simple 
+	 * StringMatcher constructor takes in a String object that is a simple
 	 * pattern which may contain  *  for 0 and many characters and
 	 *  ?  for exactly one character. Also takes as parameter a boolean object
 	 * specifying if case should be ignored
@@ -114,14 +114,14 @@ public class StringMatcher {
 	}
 
 	/**
-	 * StringMatcher constructor takes in a String object that is a simple 
+	 * StringMatcher constructor takes in a String object that is a simple
 	 * pattern which may contain  *  for 0 and many characters and
-	 *  ?  for exactly one character.  
+	 *  ?  for exactly one character.
 	 *
-	 * Literal '*' and '?' characters must be escaped in the pattern 
+	 * Literal '*' and '?' characters must be escaped in the pattern
 	 * e.g., "\*" means literal "*", etc.
 	 *
-	 * Escaping any other character (including the escape character itself), 
+	 * Escaping any other character (including the escape character itself),
 	 * just results in that character in the pattern.
 	 * e.g., "\a" means "a" and "\\" means "\"
 	 *
@@ -153,12 +153,12 @@ public class StringMatcher {
 	}
 
 	/**
-	 * Given the starting (inclusive) and the ending (exclusive) poisitions in the   
-	 * <code>text</code>, determine if the given substring matches with aPattern  
+	 * Given the starting (inclusive) and the ending (exclusive) poisitions in the
+	 * <code>text</code>, determine if the given substring matches with aPattern
 	 * @return true if the specified portion of the text matches the pattern
-	 * @param text  a String object that contains the substring to match 
+	 * @param text  a String object that contains the substring to match
 	 * @param start marks the starting position (inclusive) of the substring
-	 * @param end marks the ending index (exclusive) of the substring 
+	 * @param end marks the ending index (exclusive) of the substring
 	 */
 	public boolean match(String text, int start, int end) {
 		if (null == fPattern || null == text)
@@ -226,9 +226,9 @@ public class StringMatcher {
 	}
 
 	/**
-	 * match the given <code>text</code> with the pattern 
+	 * match the given <code>text</code> with the pattern
 	 * @return true if matched eitherwise false
-	 * @param text a String object 
+	 * @param text a String object
 	 */
 	public boolean match(String text) {
 		return match(text, 0, text.length());
@@ -306,11 +306,11 @@ public class StringMatcher {
 		temp.copyInto(fSegments);
 	}
 
-	/** 
+	/**
 	 * @param text a string which contains no wildcard
 	 * @param start the starting index in the text for search, inclusive
 	 * @param end the stopping point of search, exclusive
-	 * @return the starting index in the text of the pattern , or -1 if not found 
+	 * @return the starting index in the text of the pattern , or -1 if not found
 	 */
 	protected int posIn(String text, int start, int end) { //no wild card in pattern
 		int max = end - fLength;
@@ -330,12 +330,12 @@ public class StringMatcher {
 		return -1;
 	}
 
-	/** 
+	/**
 	 * @param text a simple regular expression that may only contain '?'(s)
 	 * @param start the starting index in the text for search, inclusive
 	 * @param end the stopping point of search, exclusive
 	 * @param p a simple regular expression that may contains '?'
-	 * @return the starting index in the text of the pattern , or -1 if not found 
+	 * @return the starting index in the text of the pattern , or -1 if not found
 	 */
 	protected int regExpPosIn(String text, int start, int end, String p) {
 		int plen = p.length();
@@ -372,12 +372,12 @@ public class StringMatcher {
 		return true;
 	}
 
-	/** 
+	/**
 	 * @param text the string to match
 	 * @param start the starting index in the text for search, inclusive
 	 * @param end the stopping point of search, exclusive
 	 * @param p a string that has no wildcard
-	 * @return the starting index in the text of the pattern , or -1 if not found 
+	 * @return the starting index in the text of the pattern , or -1 if not found
 	 */
 	protected int textPosIn(String text, int start, int end, String p) {
 

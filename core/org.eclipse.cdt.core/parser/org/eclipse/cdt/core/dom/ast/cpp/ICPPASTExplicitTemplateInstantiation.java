@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
  * This interface represents an explicit template instantiation.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -50,14 +50,14 @@ public interface ICPPASTExplicitTemplateInstantiation extends IASTDeclaration {
 
 	/**
 	 * Get the owned declaration.
-	 * 
+	 *
 	 * @return <code>IASTDeclaration</code>
 	 */
 	public IASTDeclaration getDeclaration();
 
 	/**
 	 * Set the owned declaration.
-	 * 
+	 *
 	 * @param declaration
 	 *            <code>IASTDeclaration</code>
 	 */
@@ -77,7 +77,7 @@ public interface ICPPASTExplicitTemplateInstantiation extends IASTDeclaration {
 
 	/**
 	 * Returns {@link #STATIC}, {@link #INLINE}, {@link #EXTERN}, or <code>0</code>.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public int getModifier();

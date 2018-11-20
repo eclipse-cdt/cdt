@@ -15,7 +15,8 @@
 package org.eclipse.cdt.core.parser.tests.rewrite.changegenerator;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 
 import java.io.IOException;
 

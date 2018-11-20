@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * CDT Visualizer Viewer interface.
- * 
+ *
  * An IVisualizerViewer is a simple container for multiple
  * IVisualizers, where the currently selected IVisualizer
  * determines which IVisualizer control is displayed in the viewer.

@@ -29,7 +29,7 @@ public class PDOMASTProcessorManager {
 
 	private static final String EXTENSION_POINT = "PDOMASTProcessor"; //$NON-NLS-1$
 
-	private static final List<PDOMASTProcessorDesc> processors = new ArrayList<PDOMASTProcessorDesc>();
+	private static final List<PDOMASTProcessorDesc> processors = new ArrayList<>();
 	static {
 		// Load the extensions
 		IConfigurationElement[] elements = Platform.getExtensionRegistry()
@@ -52,7 +52,7 @@ public class PDOMASTProcessorManager {
 			IPDOMASTProcessor processor = desc.getProcessorFor(ast);
 			if (processor != null) {
 				if (list == null)
-					list = new ArrayList<IPDOMASTProcessor>();
+					list = new ArrayList<>();
 				list.add(processor);
 			}
 		}

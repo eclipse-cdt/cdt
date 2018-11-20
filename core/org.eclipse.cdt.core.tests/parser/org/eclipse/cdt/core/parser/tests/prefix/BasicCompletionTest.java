@@ -122,7 +122,7 @@ public class BasicCompletionTest extends CompletionTestBase {
 
 	//	template <typename T> class CT {};
 	//	template <typename T> class B: public A<T> {
-	//	public: 
+	//	public:
 	//       void doit(){}
 	//	};
 	//	int main() {

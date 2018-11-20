@@ -7,13 +7,11 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.dom.lrparser.gnu.GCCLanguage;
@@ -22,6 +20,8 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.ast2.AST2TemplateTests;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestSuite;
 
 @SuppressWarnings("restriction")
 public class LRTemplateTests extends AST2TemplateTests {
@@ -174,7 +174,7 @@ public class LRTemplateTests extends AST2TemplateTests {
 	public void testFunctionCallOnDependentName_337686() throws Exception {
 	}
 
-	//variadic template 
+	//variadic template
 	@Override
 	public void testVariadicFunctionTemplate_333389() throws Exception {
 	}
@@ -184,7 +184,7 @@ public class LRTemplateTests extends AST2TemplateTests {
 	public void testRRefVsRef_351927() throws Exception {
 	}
 
-	//Variadic template arguments 
+	//Variadic template arguments
 	@Override
 	public void testTemplateTemplateParameterMatching_352859() throws Exception {
 	}

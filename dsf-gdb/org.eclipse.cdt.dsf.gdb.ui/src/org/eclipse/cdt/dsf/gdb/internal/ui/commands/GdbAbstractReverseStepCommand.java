@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -38,7 +38,7 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * Base class handling the work of a Reverse Step command.
- *  
+ *
  * @since 2.1
  */
 @Immutable

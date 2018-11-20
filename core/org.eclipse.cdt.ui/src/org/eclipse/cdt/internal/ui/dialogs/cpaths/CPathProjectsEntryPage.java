@@ -16,6 +16,17 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICModel;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -28,22 +39,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICModel;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-
 /**
  * Projects tab for C/C++ Project Paths page for 3.X projects.
- * 
+ *
  * @deprecated as of CDT 4.0. This tab was used for property pages
  * for 3.X style projects.
  */
@@ -62,7 +60,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 		String[] buttonLabels = new String[] { CPathEntryMessages.ProjectsEntryPage_projects_checkall_button,
 				CPathEntryMessages.ProjectsEntryWorkbookPage_projects_uncheckall_button };
 
-		fProjectsList = new CheckedListDialogField<CPElement>(null, buttonLabels, new CPElementLabelProvider());
+		fProjectsList = new CheckedListDialogField<>(null, buttonLabels, new CPElementLabelProvider());
 		fProjectsList.setDialogFieldListener(listener);
 		fProjectsList.setLabelText(CPathEntryMessages.ProjectsEntryPage_projects_label);
 		fProjectsList.setCheckAllButtonIndex(0);
@@ -79,7 +77,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -88,7 +86,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	@Override
@@ -97,7 +95,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -138,13 +136,13 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 	void updateProjectsList(ICProject currCProject) {
 		ICModel cmodel = currCProject.getCModel();
 
-		List<CPElement> projects = new ArrayList<CPElement>();
-		final List<CPElement> checkedProjects = new ArrayList<CPElement>();
+		List<CPElement> projects = new ArrayList<>();
+		final List<CPElement> checkedProjects = new ArrayList<>();
 		try {
 			ICProject[] cprojects = cmodel.getCProjects();
 
 			// a vector remembering all projects that dont have to be added anymore
-			List<IResource> existingProjects = new ArrayList<IResource>(cprojects.length);
+			List<IResource> existingProjects = new ArrayList<>(cprojects.length);
 			existingProjects.add(currCProject.getProject());
 
 			// add the projects-cpentries that are already on the C Path
@@ -213,7 +211,7 @@ public class CPathProjectsEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
 	@Override

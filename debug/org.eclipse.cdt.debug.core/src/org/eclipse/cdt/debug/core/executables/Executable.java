@@ -47,8 +47,8 @@ public class Executable extends PlatformObject {
 
 	/**
 	 * Poorly named. This does not determine if the the file is an executable
-	 * but rather a binary. Use {@link #isBinaryFile(IPath)} instead. 
-	 * 
+	 * but rather a binary. Use {@link #isBinaryFile(IPath)} instead.
+	 *
 	 * @deprecated use {@link #isBinaryFile(IPath)}
 	 */
 	@Deprecated
@@ -62,7 +62,7 @@ public class Executable extends PlatformObject {
 	 * shared library. A binary can be an executable but it can also be an
 	 * instruction-containing artifact of a build, which typically is linked to
 	 * make an executable (.e.,g .o and .obj files)
-	 * 
+	 *
 	 * @param path
 	 * @return
 	 * @since 7.1
@@ -139,8 +139,8 @@ public class Executable extends PlatformObject {
 		this.name = new File(path.toOSString()).getName();
 		this.resource = resource;
 		this.remappers = sourceFileRemappings;
-		remappedPaths = new HashMap<ITranslationUnit, String>();
-		sourceFiles = new ArrayList<ITranslationUnit>();
+		remappedPaths = new HashMap<>();
+		sourceFiles = new ArrayList<>();
 		refreshSourceFiles = true;
 		remapSourceFiles = true;
 	}
@@ -303,11 +303,11 @@ public class Executable extends PlatformObject {
 	 * source files referenced in the executable. Digging into the binary for
 	 * that list can be expensive, so we cache the results. However, if the
 	 * executable is rebuilt, the cache can no longer be trusted.
-	 * 
+	 *
 	 * Note that calling this also invalidates any mappings we have cached, so
 	 * there is no need to call both this method and
 	 * {@link #setRemapSourceFiles(boolean)}. That latter is automatic.
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	public void setRefreshSourceFiles(boolean refreshSourceFiles) {
@@ -333,19 +333,19 @@ public class Executable extends PlatformObject {
 	 * in an executable to a usable path on the local machine. E.g., a user
 	 * debugging an executable built by someone else likely needs to configure
 	 * source locator(s) to point Eclipse to his local copy of the sources.
-	 * 
+	 *
 	 * <p>
 	 * Remapping source paths is expensive, so we cache the results. However, if
 	 * applicable source locators have been added, removed or changed, then the
 	 * cache can no longer be trusted.
-	 * 
+	 *
 	 * <p>
 	 * Note that we separately cache the (unmapped) file specifications
 	 * referenced in the executable, as that is also expensive to fetch. Calling
 	 * this method does not invalidate that cache. However, that cache can be
 	 * invalidated via {@link #setRefreshSourceFiles(boolean)}, which also ends
 	 * up invalidating any mappings we have cached.
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void setRemapSourceFiles(boolean remapSourceFiles) {

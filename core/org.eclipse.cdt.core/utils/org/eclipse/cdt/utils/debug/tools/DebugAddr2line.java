@@ -55,19 +55,9 @@ public class DebugAddr2line {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IAddr2line#dispose()
-	 */
 	public void dispose() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IAddr2line#getStartLine(long)
-	 */
 	public int getStartLine(long address) throws IOException {
 		DebugSym entry = symreq.getEntry(address);
 		if (entry != null) {
@@ -76,11 +66,6 @@ public class DebugAddr2line {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IAddr2line#getEndLine(long)
-	 */
 	public int getEndLine(long address) throws IOException {
 		DebugSym entry = symreq.getEntry(address);
 		if (entry != null) {
@@ -89,11 +74,6 @@ public class DebugAddr2line {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IAddr2line#getFunction(long)
-	 */
 	public String getFunction(long address) throws IOException {
 		DebugSym entry = symreq.getEntry(address);
 		if (entry != null) {
@@ -102,11 +82,6 @@ public class DebugAddr2line {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IAddr2line#getFileName(long)
-	 */
 	public String getFileName(long address) throws IOException {
 		DebugSym entry = symreq.getEntry(address);
 		if (entry != null) {

@@ -50,19 +50,11 @@ import org.eclipse.core.runtime.IPath;
  */
 public class DefaultGCCDependencyCalculator3 implements IManagedDependencyGenerator2 {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType#getCalculatorType()
-	 */
 	@Override
 	public int getCalculatorType() {
 		return TYPE_BUILD_COMMANDS;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#getDependencyFileExtension(org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.core.ITool)
-	 */
 	@Override
 	public String getDependencyFileExtension(IConfiguration buildContext, ITool tool) {
 		return IManagedBuilderMakefileGenerator.DEP_EXT;
@@ -86,10 +78,6 @@ public class DefaultGCCDependencyCalculator3 implements IManagedDependencyGenera
 		return new DefaultGCCDependencyCalculator3Commands(source, buildContext, tool, topBuildDirectory);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator2#postProcessDependencyFile(org.eclipse.core.runtime.IPath, org.eclipse.cdt.managedbuilder.core.IConfiguration, org.eclipse.cdt.managedbuilder.core.ITool, org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public boolean postProcessDependencyFile(IPath dependencyFile, IConfiguration buildContext, ITool tool,
 			IPath topBuildDirectory) {

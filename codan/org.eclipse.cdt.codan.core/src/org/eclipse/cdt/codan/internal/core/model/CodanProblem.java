@@ -94,11 +94,6 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		this.enabled = checked;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#clone()
-	 */
 	@Override
 	public Object clone() {
 		CodanProblem prob;
@@ -121,11 +116,6 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		return rootPreference;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMessagePattern()
-	 */
 	@Override
 	public String getMessagePattern() {
 		return messagePattern;
@@ -141,34 +131,17 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		this.messagePattern = messagePattern;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblem#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		return description;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.IProblemWorkingCopy#setDescription(java
-	 * .lang.String)
-	 */
 	@Override
 	public void setDescription(String desc) {
 		checkSet();
 		this.description = desc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblem#getMarkerType()
-	 */
 	@Override
 	public String getMarkerType() {
 		return markerType;
@@ -184,21 +157,11 @@ public class CodanProblem extends CodanProblemElement implements IProblemWorking
 		this.markerType = markerType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblemMultiple#isMultiple()
-	 */
 	@Override
 	public boolean isMultiple() {
 		return multiple;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblemMultiple#isOriginal()
-	 */
 	@Override
 	public boolean isOriginal() {
 		return !id.contains(CheckersRegistry.CLONE_SUFFIX);

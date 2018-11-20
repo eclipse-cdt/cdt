@@ -72,11 +72,6 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		super(parser, path, type);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
-	 */
 	@Override
 	public ISymbol[] getSymbols() {
 		if (hasChanged() || symbols == null) {
@@ -89,11 +84,6 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		return symbols;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
-	 */
 	@Override
 	protected BinaryObjectInfo getBinaryObjectInfo() {
 		if (hasChanged() || info == null) {
@@ -106,11 +96,6 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		return info;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getName()
-	 */
 	@Override
 	public String getName() {
 		if (header != null) {
@@ -119,11 +104,6 @@ public class SOMBinaryObject extends BinaryObjectAdapter {
 		return super.getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryFile#getContents()
-	 */
 	@Override
 	public InputStream getContents() throws IOException {
 		InputStream stream = null;

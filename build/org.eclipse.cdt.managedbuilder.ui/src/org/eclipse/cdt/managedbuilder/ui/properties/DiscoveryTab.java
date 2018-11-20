@@ -128,13 +128,6 @@ public class DiscoveryTab extends AbstractCBuildPropertyTab implements IBuildInf
 
 	private StatusMessageLine fStatusLine;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets
-	 * .Composite)
-	 */
 	@Override
 	public void createControls(Composite parent) {
 		super.createControls(parent);

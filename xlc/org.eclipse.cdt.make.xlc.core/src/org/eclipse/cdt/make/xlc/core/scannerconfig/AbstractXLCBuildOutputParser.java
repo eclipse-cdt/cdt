@@ -104,13 +104,6 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 		return COMPILER_INVOCATION;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#processLine
-	 * (java.lang.String)
-	 */
 	@Override
 	public boolean processLine(String line) {
 		if (line.trim().length() == 0) {
@@ -189,13 +182,6 @@ public abstract class AbstractXLCBuildOutputParser implements IScannerInfoConsol
 		return num;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#shutdown
-	 * ()
-	 */
 	@Override
 	public void shutdown() {
 		if (getUtility() != null) {

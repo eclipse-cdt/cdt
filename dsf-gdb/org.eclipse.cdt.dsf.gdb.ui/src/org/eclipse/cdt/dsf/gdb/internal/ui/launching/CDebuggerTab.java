@@ -342,11 +342,6 @@ public class CDebuggerTab extends CLaunchConfigurationTab {
 		return super.getShell();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 		ICDebuggerPage debuggerPage = getDynamicTab();

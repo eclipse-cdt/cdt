@@ -550,30 +550,15 @@ public class CPathOutputEntryPage extends CPathBasePage {
 		fOutputList.selectElements(new StructuredSelection(selElements));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
-	 */
 	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IPathEntry.CDT_OUTPUT;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
-	 */
 	@Override
 	public void performDefaults() {
 	}

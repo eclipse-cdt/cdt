@@ -1213,13 +1213,6 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector#
-	 * deleteAllPaths(org.eclipse.core.resources.IResource)
-	 */
 	public void deleteAllPaths(IResource resource) {
 		synchronized (fLock) {
 			if (resource instanceof IProject && fProjectSettingsMap != null) {
@@ -1228,13 +1221,6 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector#
-	 * deleteAllSymbols(org.eclipse.core.resources.IResource)
-	 */
 	public void deleteAllSymbols(IResource resource) {
 		synchronized (fLock) {
 			if (resource instanceof IProject && fProjectSettingsMap != null) {
@@ -1243,13 +1229,6 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector#
-	 * deletePath(org.eclipse.core.resources.IResource, java.lang.String)
-	 */
 	public void deletePath(IResource resource, String path) {
 		synchronized (fLock) {
 			if (resource instanceof IProject && fProjectSettingsMap != null) {
@@ -1258,13 +1237,6 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector#
-	 * deleteSymbol(org.eclipse.core.resources.IResource, java.lang.String)
-	 */
 	public void deleteSymbol(IResource resource, String symbol) {
 		synchronized (fLock) {
 			if (resource instanceof IProject && fProjectSettingsMap != null) {
@@ -1384,13 +1356,6 @@ public class PerFileXLCScannerInfoCollector implements IScannerInfoCollector3, I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.make.internal.core.scannerconfig2.PerFileSICollector#
-	 * getAllSymbols()
-	 */
 	protected Map<String, String> getAllSymbols() {
 		synchronized (fLock) {
 			IProject project = this.getInfoContext().getProject();

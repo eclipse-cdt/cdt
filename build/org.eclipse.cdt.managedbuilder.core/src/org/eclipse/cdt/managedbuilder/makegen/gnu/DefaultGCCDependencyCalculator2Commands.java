@@ -150,10 +150,6 @@ public class DefaultGCCDependencyCalculator2Commands implements IManagedDependen
 		this(source, (IResource) null, buildContext, tool, topBuildDirectory);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#areCommandsGeneric()
-	 */
 	@Override
 	public boolean areCommandsGeneric() {
 		if (genericCommands == null)
@@ -161,10 +157,6 @@ public class DefaultGCCDependencyCalculator2Commands implements IManagedDependen
 		return genericCommands.booleanValue();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getDependencyCommandOptions()
-	 */
 	@Override
 	public String[] getDependencyCommandOptions() {
 
@@ -196,10 +188,6 @@ public class DefaultGCCDependencyCalculator2Commands implements IManagedDependen
 		return options;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getDependencyFiles()
-	 */
 	@Override
 	public IPath[] getDependencyFiles() {
 		//  The source file is project relative and the dependency file is top build directory relative
@@ -217,57 +205,33 @@ public class DefaultGCCDependencyCalculator2Commands implements IManagedDependen
 		return paths;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getPostToolDependencyCommands()
-	 */
 	@Override
 	public String[] getPostToolDependencyCommands() {
 		// Nothing
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyCommands#getPreToolDependencyCommands()
-	 */
 	@Override
 	public String[] getPreToolDependencyCommands() {
 		// Nothing
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getBuildContext()
-	 */
 	@Override
 	public IBuildObject getBuildContext() {
 		return buildContext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getSource()
-	 */
 	@Override
 	public IPath getSource() {
 		return source;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTool()
-	 */
 	@Override
 	public ITool getTool() {
 		return tool;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTopBuildDirectory()
-	 */
 	@Override
 	public IPath getTopBuildDirectory() {
 		return topBuildDirectory;

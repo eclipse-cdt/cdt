@@ -241,10 +241,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
 		return provider;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateHasElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate)
-	 */
 	@Override
 	protected void updateHasElementsInSessionThread(IHasChildrenUpdate update) {
 		IRunControl runControl = getServicesTracker().getService(IRunControl.class);
@@ -288,10 +284,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
 				});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#updateElementsInSessionThread(org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate)
-	 */
 	@Override
 	protected void updateElementsInSessionThread(final IChildrenUpdate update) {
 		IStack stackService = getServicesTracker().getService(IStack.class);
@@ -531,10 +523,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
 		update.setLabel(label.toString(), 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#getContextsForEvent(org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, java.lang.Object, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	public void getContextsForEvent(final VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
 		if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
@@ -557,10 +545,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
 		super.getContextsForEvent(parentDelta, e, rm);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
-	 */
 	@Override
 	public int getDeltaFlags(Object e) {
 		// This node generates delta if the timers have changed, or if the
@@ -595,10 +579,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
 		return IModelDelta.NO_CHANGE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, int, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void buildDelta(final Object e, final VMDelta parent, final int nodeOffset, final RequestMonitor rm) {
 		if (e instanceof IContainerSuspendedDMEvent) {
@@ -833,10 +813,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
-	 */
 	@Override
 	public void compareElements(IElementCompareRequest[] requests) {
 
@@ -863,10 +839,6 @@ public class StackFramesVMNode extends AbstractDMVMNode
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
-	 */
 	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 

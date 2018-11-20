@@ -34,20 +34,10 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 
 	private ICSignal fSignal = null;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
-	 */
 	@Override
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
-	 */
 	@Override
 	public void run(IAction action) {
 		if (getSignal() != null) {
@@ -75,11 +65,6 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
-	 */
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {

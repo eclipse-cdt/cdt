@@ -195,10 +195,6 @@ public class GdbPinProvider implements IPinProvider {
 		return label;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.ui.IPinProvider#isPinnable(org.eclipse.ui.IWorkbenchPart, java.lang.Object)
-	 */
 	@Override
 	public boolean isPinnable(IWorkbenchPart part, Object debugContext) {
 		if (debugContext instanceof IAdaptable) {
@@ -207,10 +203,6 @@ public class GdbPinProvider implements IPinProvider {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.ui.IPinProvider#pin(org.eclipse.ui.IWorkbenchPart, java.lang.Object, org.eclipse.cdt.debug.ui.IPinModelListener)
-	 */
 	@Override
 	public IPinElementHandle pin(IWorkbenchPart part, Object debugContext, IPinModelListener listener) {
 		Object pinContext = debugContext;
@@ -249,10 +241,6 @@ public class GdbPinProvider implements IPinProvider {
 		return handle;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.ui.IPinProvider#unpin(org.eclipse.ui.IWorkbenchPart, org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle)
-	 */
 	@Override
 	public void unpin(IWorkbenchPart part, IPinElementHandle handle) {
 		// remove the handle from the cache
@@ -268,10 +256,6 @@ public class GdbPinProvider implements IPinProvider {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.ui.IPinProvider#isPinnedTo(java.lang.Object, org.eclipse.cdt.debug.ui.IPinProvider.IPinElementHandle)
-	 */
 	@Override
 	public boolean isPinnedTo(Object debugContext, IPinElementHandle handle) {
 		Object handleDebugContext = handle.getDebugContext();

@@ -27,11 +27,6 @@ import org.eclipse.swt.widgets.Display;
  */
 public class TraditionalRenderingPreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();

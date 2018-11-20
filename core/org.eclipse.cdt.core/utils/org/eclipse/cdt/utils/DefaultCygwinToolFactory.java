@@ -29,11 +29,6 @@ public class DefaultCygwinToolFactory extends DefaultGnuToolFactory implements I
 		super(ext);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.CygwinToolsProvider#getCygPath()
-	 */
 	@Override
 	public CygPath getCygPath() {
 		IPath cygPathPath = getCygPathPath();

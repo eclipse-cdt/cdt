@@ -54,11 +54,6 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 
 	protected Text fCPPFiltCommandText;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
@@ -119,11 +114,6 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
-	 */
 	@Override
 	public void performDefaults() {
 		String cppfilt = null;
@@ -139,11 +129,6 @@ public class MachOBinaryParserPage extends AbstractCOptionPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Group comp = new Group(parent, SWT.SHADOW_ETCHED_IN);

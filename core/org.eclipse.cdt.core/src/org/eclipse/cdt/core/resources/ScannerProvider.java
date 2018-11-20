@@ -92,11 +92,6 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#getScannerInformation(org.eclipse.core.resources.IResource)
-	 */
 	@Override
 	public IScannerInfo getScannerInformation(IResource resource) {
 		IPath resPath = resource.getFullPath();
@@ -149,12 +144,6 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		return new ScannerInfo(null, null, null, null, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#subscribe(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
 	@Override
 	public synchronized void subscribe(IResource resource, IScannerInfoChangeListener listener) {
 		if (resource == null || listener == null) {
@@ -175,12 +164,6 @@ public class ScannerProvider extends AbstractCExtension implements IScannerInfoP
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.parser.IScannerInfoProvider#unsubscribe(org.eclipse.core.resources.IResource,
-	 *      org.eclipse.cdt.core.parser.IScannerInfoChangeListener)
-	 */
 	@Override
 	public synchronized void unsubscribe(IResource resource, IScannerInfoChangeListener listener) {
 		if (resource == null || listener == null) {

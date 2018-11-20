@@ -47,10 +47,6 @@ public class UndoCTextFileChange extends UndoTextFileChange {
 		mUndoEdit = undo;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ltk.core.refactoring.UndoTextFileChange#perform(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public Change perform(IProgressMonitor pm) throws CoreException {
 		if (pm == null) {

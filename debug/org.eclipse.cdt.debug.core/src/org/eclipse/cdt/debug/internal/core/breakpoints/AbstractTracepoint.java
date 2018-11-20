@@ -99,10 +99,6 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 		return ensureMarker().getAttribute(ICLineBreakpoint.FUNCTION, ""); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICBreakpoint#isConditional()
-	 */
 	@Override
 	public boolean isConditional() throws CoreException {
 		return (super.isConditional() || getPassCount() > 0);
@@ -124,19 +120,11 @@ public abstract class AbstractTracepoint extends CBreakpoint implements ICTracep
 		setAttribute(ICLineBreakpoint.FUNCTION, function);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICTracepoint#getPassCount()
-	 */
 	@Override
 	public int getPassCount() throws CoreException {
 		return ensureMarker().getAttribute(PASS_COUNT, 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.ICTracepoint#setPassCount(int)
-	 */
 	@Override
 	public void setPassCount(int passCount) throws CoreException {
 		setAttribute(PASS_COUNT, passCount);

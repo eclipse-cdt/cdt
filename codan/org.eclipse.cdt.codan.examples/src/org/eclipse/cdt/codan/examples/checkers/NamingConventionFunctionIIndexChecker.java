@@ -36,13 +36,6 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 	public static final String PARAM_KEY = "pattern"; //$NON-NLS-1$
 	private static final String ER_ID = "org.eclipse.cdt.codan.examples.checkers.NamingConventionFunctionProblem"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICIndexChecker#processUnit(org.eclipse
-	 * .cdt.core.model.ITranslationUnit)
-	 */
 	@Override
 	public void processUnit(ITranslationUnit unit) {
 		final IProblem pt = getProblemById(ER_ID, getFile());
@@ -68,13 +61,6 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.model.ICheckerWithPreferences#initParameters
-	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
-	 */
 	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);

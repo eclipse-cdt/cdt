@@ -4223,11 +4223,6 @@ public class Tool extends HoldsOptions
 		return isExtensionElement();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.managedbuilder.core.IOptionCategory#getApplicabilityCalculator()
-	 */
 	@Override
 	public IOptionCategoryApplicability getApplicabilityCalculator() {
 		// Tool does not have any ApplicabilityCalculator.

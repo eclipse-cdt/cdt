@@ -110,11 +110,6 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getCPPFilt()
-	 */
 	protected CPPFilt getCPPFilt() {
 		ICygwinToolsFactroy factory = getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
@@ -123,11 +118,6 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getObjdump()
-	 */
 	protected Objdump getObjdump() {
 		ICygwinToolsFactroy factory = getBinaryParser().getAdapter(ICygwinToolsFactroy.class);
 		if (factory != null) {
@@ -262,12 +252,6 @@ public class CygwinPEBinaryObject extends PEBinaryObject {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryObject#addSymbols(org.eclipse.cdt.utils.coff.Coff.Symbol[],
-	 *      byte[], java.util.List)
-	 */
 	@Override
 	protected void addSymbols(Coff.Symbol[] peSyms, byte[] table, List<Symbol> list) {
 		for (Coff.Symbol peSym : peSyms) {

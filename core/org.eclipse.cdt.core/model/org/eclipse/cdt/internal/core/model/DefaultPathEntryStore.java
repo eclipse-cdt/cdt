@@ -366,11 +366,6 @@ public class DefaultPathEntryStore implements IPathEntryStore, ICDescriptorListe
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.ICDescriptorListener#descriptorChanged(org.eclipse.cdt.core.CDescriptorEvent)
-	 */
 	@Override
 	public void descriptorChanged(CDescriptorEvent event) {
 		if (event.getType() == CDescriptorEvent.CDTPROJECT_CHANGED

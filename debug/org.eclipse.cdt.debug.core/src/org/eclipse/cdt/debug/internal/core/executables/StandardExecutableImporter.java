@@ -56,12 +56,6 @@ public class StandardExecutableImporter implements IExecutableImporter {
 
 	public static final String DEBUG_PROJECT_ID = "org.eclipse.cdt.debug"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.core.executables.IExecutableImporter#importExecutables(java.lang.String[],
-	 *      org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public boolean importExecutables(String[] fileNames, IProgressMonitor monitor) {
 		monitor.beginTask("Import Executables", fileNames.length); //$NON-NLS-1$

@@ -58,11 +58,6 @@ import org.eclipse.ui.model.WorkbenchLabelProvider;
  */
 public class ResourceExclusionContributor extends RefreshExclusionContributor {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.resources.RefreshExclusionContributor#createExclusion()
-	 */
 	@Override
 	public RefreshExclusion createExclusion() {
 		ResourceExclusion newExclusion = new ResourceExclusion();
@@ -73,13 +68,6 @@ public class ResourceExclusionContributor extends RefreshExclusionContributor {
 		return newExclusion;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.ui.resources.RefreshExclusionContributor#createProperiesUI(org.eclipse.swt.widgets.
-	 * Composite, org.eclipse.cdt.core.resources.RefreshExclusion)
-	 */
 	@Override
 	public void createProperiesUI(Composite parent, final RefreshExclusion exclusion) {
 		final Shell shell = parent.getShell();

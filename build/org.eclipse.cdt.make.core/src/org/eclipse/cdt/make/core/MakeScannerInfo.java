@@ -71,21 +71,11 @@ public class MakeScannerInfo implements IScannerInfo {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
-	 */
 	@Override
 	public synchronized String[] getIncludePaths() {
 		return getPathList().toArray(new String[getPathList().size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
-	 */
 	@Override
 	public synchronized Map<String, String> getDefinedSymbols() {
 		// Return the defined symbols for the default configuration

@@ -241,11 +241,6 @@ public class InternalASTServiceProvider implements IASTServiceProvider {
 				IncludeFileContentProvider.adapt(fileCreator));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.dom.IASTServiceProvider#getSupportedDialects()
-	 */
 	public String[] getSupportedDialects() {
 		return dialects;
 	}

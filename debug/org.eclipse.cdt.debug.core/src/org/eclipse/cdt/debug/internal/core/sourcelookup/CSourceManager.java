@@ -41,11 +41,6 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		setSourceLocator(sourceLocator);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getLineNumber(IStackFrameInfo)
-	 */
 	@Override
 	public int getLineNumber(IStackFrame frame) {
 		if (getCSourceLocator() != null) {
@@ -57,19 +52,11 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getSourceLocations()
-	 */
 	@Override
 	public ICSourceLocation[] getSourceLocations() {
 		return (getCSourceLocator() != null) ? getCSourceLocator().getSourceLocations() : new ICSourceLocation[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSourceLocations(ICSourceLocation[])
-	 */
 	@Override
 	public void setSourceLocations(ICSourceLocation[] locations) {
 		if (getCSourceLocator() != null) {
@@ -77,10 +64,6 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#contains(IResource)
-	 */
 	@Override
 	public boolean contains(IResource resource) {
 		return (getCSourceLocator() != null) ? getCSourceLocator().contains(resource) : false;
@@ -100,10 +83,6 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.ISourceLocator#getSourceElement(IStackFrame)
-	 */
 	@Override
 	public Object getSourceElement(IStackFrame stackFrame) {
 		Object result = null;
@@ -130,10 +109,6 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		fSourceLocator = sl;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#findSourceElement(String)
-	 */
 	@Override
 	public Object findSourceElement(String fileName) {
 		if (getCSourceLocator() != null) {
@@ -142,10 +117,6 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#getMemento()
-	 */
 	@Override
 	public String getMemento() throws CoreException {
 		if (getPersistableSourceLocator() != null)
@@ -153,20 +124,12 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeDefaults(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeDefaults(ILaunchConfiguration configuration) throws CoreException {
 		if (getPersistableSourceLocator() != null)
 			getPersistableSourceLocator().initializeDefaults(configuration);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.core.model.IPersistableSourceLocator#initializeFromMemento(java.lang.String)
-	 */
 	@Override
 	public void initializeFromMemento(String memento) throws CoreException {
 		if (getPersistableSourceLocator() != null)
@@ -179,29 +142,17 @@ public class CSourceManager implements ICSourceLocator, IPersistableSourceLocato
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#getProject()
-	 */
 	@Override
 	public IProject getProject() {
 		return (getCSourceLocator() != null) ? getCSourceLocator().getProject() : null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#setSearchForDuplicateFiles(boolean)
-	 */
 	@Override
 	public void setSearchForDuplicateFiles(boolean search) {
 		if (getCSourceLocator() != null)
 			getCSourceLocator().setSearchForDuplicateFiles(search);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.sourcelookup.ICSourceLocator#searchForDuplicateFiles()
-	 */
 	@Override
 	public boolean searchForDuplicateFiles() {
 		return getCSourceLocator() != null && getCSourceLocator().searchForDuplicateFiles();

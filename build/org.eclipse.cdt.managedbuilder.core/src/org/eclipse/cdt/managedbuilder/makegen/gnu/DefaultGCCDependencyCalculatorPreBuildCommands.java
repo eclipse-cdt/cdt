@@ -314,37 +314,21 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		return paths;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getBuildContext()
-	 */
 	@Override
 	public IBuildObject getBuildContext() {
 		return buildContext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getSource()
-	 */
 	@Override
 	public IPath getSource() {
 		return source;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTool()
-	 */
 	@Override
 	public ITool getTool() {
 		return tool;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyInfo#getTopBuildDirectory()
-	 */
 	@Override
 	public IPath getTopBuildDirectory() {
 		return topBuildDirectory;

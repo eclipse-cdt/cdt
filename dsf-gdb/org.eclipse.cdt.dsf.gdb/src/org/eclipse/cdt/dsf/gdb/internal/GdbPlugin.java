@@ -57,10 +57,6 @@ public class GdbPlugin extends Plugin {
 	public GdbPlugin() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugins#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		fgBundleContext = context;
@@ -73,10 +69,6 @@ public class GdbPlugin extends Plugin {
 		Platform.getAdapterManager().registerAdapters(fMemoryRetrievalFactory, IDMContext.class);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		shutdownActiveLaunches();

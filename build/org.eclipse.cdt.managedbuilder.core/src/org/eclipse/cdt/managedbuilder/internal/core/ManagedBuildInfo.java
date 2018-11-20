@@ -476,11 +476,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return "make"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getPrebuildStep()
-	 */
 	@Override
 	public String getPrebuildStep() {
 		// Get the default configuration and use its value
@@ -492,11 +487,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getPostbuildStep()
-	 */
 	@Override
 	public String getPostbuildStep() {
 		// Get the default configuration and use its value
@@ -508,11 +498,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getPreannouncebuildStep()
-	 */
 	@Override
 	public String getPreannouncebuildStep() {
 		// Get the default configuration and use its value
@@ -524,11 +509,6 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getPostannouncebuildStep()
-	 */
 	@Override
 	public String getPostannouncebuildStep() {
 		// Get the default configuration and use its value
@@ -540,21 +520,11 @@ public class ManagedBuildInfo implements IManagedBuildInfo, IScannerInfo {
 		return name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputExtension(java.lang.String)
-	 */
 	@Override
 	public String getOutputExtension(String resourceExtension) {
 		return getDefaultConfiguration().getOutputExtension(resourceExtension);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IManagedBuildInfo#getOutputFlag()
-	 */
 	@Override
 	public String getOutputFlag(String outputExt) {
 		return getDefaultConfiguration().getOutputFlag(outputExt);

@@ -49,10 +49,6 @@ public class ResumeAction extends AbstractBreakpointAction {
 
 	int pauseTime = 0;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.core.breakpointactions.IBreakpointAction#execute(org.eclipse.debug.core.model.IBreakpoint, org.eclipse.core.runtime.IAdaptable, org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public IStatus execute(IBreakpoint breakpoint, IAdaptable context, IProgressMonitor monitor) {
 		IStatus errorStatus = null;

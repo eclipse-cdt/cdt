@@ -62,12 +62,6 @@ public class ControlFlowGraph implements IControlFlowGraph {
 		this.deadNodes = Collections.unmodifiableList(new ArrayList<>(nodes));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
-	 * getStartNode()
-	 */
 	@Override
 	public IStartNode getStartNode() {
 		return start;
@@ -97,33 +91,16 @@ public class ControlFlowGraph implements IControlFlowGraph {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
-	 * getUnconnectedNodeIterator()
-	 */
 	@Override
 	public Iterator<IBasicBlock> getUnconnectedNodeIterator() {
 		return deadNodes.iterator();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IControlFlowGraph#
-	 * getUnconnectedNodeSize()
-	 */
 	@Override
 	public int getUnconnectedNodeSize() {
 		return deadNodes.size();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.cfg.IControlFlowGraph#getNodes ()
-	 */
 	@Override
 	public Collection<IBasicBlock> getNodes() {
 		Collection<IBasicBlock> result = new LinkedHashSet<>();

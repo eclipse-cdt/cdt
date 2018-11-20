@@ -66,11 +66,6 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
-	 */
 	@Override
 	public IAdaptable getElement() {
 		if (element.getAdapter(IProject.class) != null)
@@ -78,11 +73,6 @@ public class BuildPropertyPage extends FieldEditorPreferencePage implements IWor
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
-	 */
 	@Override
 	public void setElement(IAdaptable element) {
 		this.element = element;

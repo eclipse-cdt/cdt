@@ -27,11 +27,6 @@ public class CxxBranchNode extends BranchNode {
 		this.labelData = label;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.internal.core.cfg.DecisionArc#toString()
-	 */
 	@Override
 	public String toString() {
 		return labelData.getRawSignature() + ":"; //$NON-NLS-1$

@@ -88,11 +88,6 @@ public class PEBinaryObject extends BinaryObjectAdapter {
 		return symbols;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
-	 */
 	@Override
 	protected BinaryObjectInfo getBinaryObjectInfo() {
 		if (hasChanged() || info == null) {

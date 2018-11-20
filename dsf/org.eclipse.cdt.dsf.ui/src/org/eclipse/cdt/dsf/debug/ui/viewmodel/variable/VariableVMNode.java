@@ -284,12 +284,6 @@ public class VariableVMNode extends AbstractExpressionVMNode
 	private LabelBackground columnNoColumnsBackground;
 	private IPropertyChangeListener fPreferenceChangeListener;
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#dispose()
-	 *
-	 * We need to take over the dispose so we can get rid of the preference listener we created.
-	 */
 	@Override
 	public void dispose() {
 

@@ -91,13 +91,6 @@ public class BasicProblemPreference extends AbstractProblemPreference {
 		return x;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.codan.core.param.IProblemPreferenceValue#importValue(
-	 * java.lang.String)
-	 */
 	@Override
 	public void importValue(String str) {
 		if (str.startsWith("\"")) //$NON-NLS-1$

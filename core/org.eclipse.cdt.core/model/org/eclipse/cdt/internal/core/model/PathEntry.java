@@ -29,31 +29,16 @@ public class PathEntry implements IPathEntry {
 		this.isExported = isExported;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IPathEntry#getEntryKind()
-	 */
 	@Override
 	public IPath getPath() {
 		return path;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IPathEntry#getEntryKind()
-	 */
 	@Override
 	public int getEntryKind() {
 		return entryKind;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IPathEntry#isExported()
-	 */
 	@Override
 	public boolean isExported() {
 		return isExported;

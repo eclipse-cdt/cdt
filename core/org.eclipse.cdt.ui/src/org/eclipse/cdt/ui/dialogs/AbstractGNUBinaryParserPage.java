@@ -57,11 +57,6 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 	protected Text fCPPFiltCommandText;
 	private String parserID = null;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void performApply(IProgressMonitor monitor) throws CoreException {
 		if (monitor == null) {
@@ -131,11 +126,6 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 	 */
 	abstract protected AbstractGNUBinaryParserPage getRealBinaryParserPage();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
-	 */
 	@Override
 	public void performDefaults() {
 		String addr2line = null;
@@ -155,11 +145,6 @@ public abstract class AbstractGNUBinaryParserPage extends AbstractCOptionPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Group comp = new Group(parent, SWT.SHADOW_ETCHED_IN);

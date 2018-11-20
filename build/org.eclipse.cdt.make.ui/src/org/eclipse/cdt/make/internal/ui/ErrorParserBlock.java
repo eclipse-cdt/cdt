@@ -41,11 +41,6 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 		fPrefs = preferences;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.dialogs.IDialogPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 
@@ -60,11 +55,6 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 		super.createControl(parent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ErrorParserBlock#getErrorParserIDs(org.eclipse.core.resources.IProject)
-	 */
 	@Override
 	protected String[] getErrorParserIDs(IProject project) {
 		if (getContainer().getProject() != null && fBuildInfo == null) {
@@ -79,12 +69,6 @@ public class ErrorParserBlock extends AbstractErrorParserBlock {
 		return new String[0];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ErrorParserBlock#saveErrorParsers(org.eclipse.core.resources.IProject,
-	 *      java.lang.String[])
-	 */
 	@Override
 	public void saveErrorParsers(IProject project, String[] parserIDs) throws CoreException {
 		if (getContainer().getProject() != null) {

@@ -249,11 +249,6 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		fCurrPage = (CPathBasePage) page;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#updateContainer()
-	 */
 	@Override
 	public void updateContainer() {
 		update();

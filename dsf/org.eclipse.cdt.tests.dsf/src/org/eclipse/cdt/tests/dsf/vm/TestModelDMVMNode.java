@@ -206,10 +206,6 @@ public class TestModelDMVMNode extends AbstractDMVMNode
 		return new TestElementVMContext(this, element);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
-	 */
 	@Override
 	public int getDeltaFlags(Object e) {
 		if (e instanceof PropertyChangeEvent && ((PropertyChangeEvent) e)

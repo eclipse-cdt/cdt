@@ -648,19 +648,11 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 				});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#createVMContext(org.eclipse.cdt.dsf.datamodel.IDMContext)
-	 */
 	@Override
 	protected IDMVMContext createVMContext(IDMContext dmc) {
 		return new BitFieldVMC(dmc);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#getDeltaFlags(java.lang.Object)
-	 */
 	@Override
 	public int getDeltaFlags(Object e) {
 		if (e instanceof ISuspendedDMEvent || e instanceof IMemoryChangedEvent || e instanceof IRegisterChangedDMEvent
@@ -676,10 +668,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		return IModelDelta.NO_CHANGE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.ui.viewmodel.IVMNode#buildDelta(java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, int, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void buildDelta(Object e, VMDelta parentDelta, int nodeOffset, RequestMonitor rm) {
 		// The following events can affect any bit field's values,
@@ -698,10 +686,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
 
@@ -748,10 +732,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
-	 */
 	@Override
 	public ICellModifier getCellModifier(IPresentationContext context, Object element) {
 
@@ -848,10 +828,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode#testElementForExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	protected void testElementForExpression(Object element, IExpression expression,
 			final DataRequestMonitor<Boolean> rm) {
@@ -900,10 +876,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode#associateExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression)
-	 */
 	@Override
 	protected void associateExpression(Object element, IExpression expression) {
 		if (element instanceof BitFieldVMC) {
@@ -911,10 +883,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
-	 */
 	@Override
 	public int getDeltaFlagsForExpression(IExpression expression, Object event) {
 		if (event instanceof ISuspendedDMEvent) {
@@ -942,10 +910,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		return IModelDelta.NO_CHANGE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpression(org.eclipse.debug.core.model.IExpression, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.jface.viewers.TreePath, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void buildDeltaForExpression(final IExpression expression, final int elementIdx, final Object event,
 			final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) {
@@ -957,10 +921,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpressionElement(java.lang.Object, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
 			final RequestMonitor rm) {
@@ -987,10 +947,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
-	 */
 	private final String MEMENTO_NAME = "BITFIELD_MEMENTO_NAME"; //$NON-NLS-1$
 
 	@Override
@@ -1034,10 +990,6 @@ public class RegisterBitFieldVMNode extends AbstractExpressionVMNode
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
-	 */
 	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 		for (final IElementMementoRequest request : requests) {

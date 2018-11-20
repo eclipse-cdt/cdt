@@ -76,10 +76,6 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin {
 
 	// --- plugin startup/shutdown methods ---
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
 		fgBundleContext = context;
@@ -90,10 +86,6 @@ public class MulticoreVisualizerUIPlugin extends AbstractUIPlugin {
 		getPluginResources();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
-	 */
 	@Override
 	public void stop(BundleContext context) throws Exception {
 		// clean up resource management

@@ -41,13 +41,6 @@ public class GDBDisassembly_7_3 extends MIDisassembly implements IDisassembly3 {
 		super(session);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.cdt.dsf.service.AbstractDsfService#initialize(org.eclipse
-	 * .cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void initialize(final RequestMonitor rm) {
 		super.initialize(new ImmediateRequestMonitor(rm) {

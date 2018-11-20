@@ -52,21 +52,11 @@ public class ScannerInfo implements IExtendedScannerInfo {
 		return macroMap;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
-	 */
 	@Override
 	public synchronized String[] getIncludePaths() {
 		return fSystemIncludePaths;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.build.managed.IScannerInfo#getIncludePaths()
-	 */
 	@Override
 	public synchronized Map<String, String> getDefinedSymbols() {
 		return fMacroMap;

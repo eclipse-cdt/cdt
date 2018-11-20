@@ -336,9 +336,6 @@ public class CView extends ViewPart
 		return super.getAdapter(key);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IViewPart.
-	 */
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
@@ -595,9 +592,6 @@ public class CView extends ViewPart
 				AppearanceAwareLabelProvider.DEFAULT_IMAGEFLAGS | CElementImageProvider.SMALL_ICONS);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IWorkbenchPart.
-	 */
 	@Override
 	public void dispose() {
 		if (fContextActivation != null) {
@@ -927,11 +921,6 @@ public class CView extends ViewPart
 		return this == getSite().getPage().getActivePart();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see IViewPartInputProvider#getViewPartInput()
-	 */
 	public Object getViewPartInput() {
 		if (viewer != null) {
 			return viewer.getInput();
@@ -1066,11 +1055,6 @@ public class CView extends ViewPart
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
-	 */
 	@Override
 	public boolean show(ShowInContext context) {
 		ISelection selection = context.getSelection();

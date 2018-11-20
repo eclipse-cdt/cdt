@@ -341,11 +341,6 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		return status;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.window.Window#open()
-	 */
 	@Override
 	public int open() {
 		super.open();
@@ -369,11 +364,6 @@ public class SourceFileSelectionDialog extends SelectionStatusDialog {
 		setResult(((IStructuredSelection) fViewer.getSelection()).toList());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.window.Window#create()
-	 */
 	@Override
 	public void create() {
 		BusyIndicator.showWhile(null, new Runnable() {

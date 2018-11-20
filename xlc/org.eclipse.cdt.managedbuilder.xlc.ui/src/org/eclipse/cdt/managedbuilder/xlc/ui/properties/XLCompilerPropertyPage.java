@@ -46,13 +46,6 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see
-	 * org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors
-	 * ()
-	 */
 	protected void createPathEditor() {
 
 		Composite parent = getFieldEditorParent();
@@ -172,11 +165,6 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		// store the value in the owner text field
@@ -205,11 +193,6 @@ public class XLCompilerPropertyPage extends FieldEditorPreferencePage implements
 	 */
 	private IAdaptable element;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
-	 */
 	@Override
 	public IAdaptable getElement() {
 		return element;

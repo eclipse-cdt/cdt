@@ -25,11 +25,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
  */
 public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IEclipsePreferences store = DefaultScope.INSTANCE.getNode(LlvmUIPlugin.PLUGIN_ID);

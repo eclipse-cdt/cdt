@@ -25,21 +25,11 @@ public class CodanProblemElement implements IProblemElement {
 	private IProblemCategory parent;
 	private boolean frozen = false;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblemElement#getProfile()
-	 */
 	@Override
 	public IProblemProfile getProfile() {
 		return profile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblemElement#getCategory()
-	 */
 	@Override
 	public IProblemCategory getParentCategory() {
 		return parent;

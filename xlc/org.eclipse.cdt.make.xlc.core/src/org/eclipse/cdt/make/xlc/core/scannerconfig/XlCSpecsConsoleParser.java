@@ -80,15 +80,6 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 		this.c_lang = c_lang;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser#startup(org.eclipse.core.resources.IProject,
-	 *      org.eclipse.core.runtime.IPath,
-	 *      org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector,
-	 *      org.eclipse.cdt.core.IMarkerGenerator)
-	 * @since 1.0
-	 */
 	@Override
 	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector,
 			IMarkerGenerator markerGenerator) {
@@ -165,12 +156,6 @@ public class XlCSpecsConsoleParser implements IScannerInfoConsoleParser {
 		return rc;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.make.internal.core.scannerconfig.IScannerInfoConsoleParser#shutdown()
-	 * @since 1.0
-	 */
 	@Override
 	public void shutdown() {
 		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<>();

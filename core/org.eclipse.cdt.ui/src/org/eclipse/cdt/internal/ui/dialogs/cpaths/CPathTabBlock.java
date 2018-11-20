@@ -97,11 +97,6 @@ public class CPathTabBlock extends AbstractPathOptionBlock {
 		addPage(fContainerPage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public Control createContents(Composite parent) {
 		Control control = super.createContents(parent);

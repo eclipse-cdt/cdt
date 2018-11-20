@@ -448,11 +448,6 @@ public class CPathContainerEntryPage extends CPathBasePage {
 		return currEntries;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
-	 */
 	@Override
 	public boolean isEntryKind(int kind) {
 		return kind == IPathEntry.CDT_CONTAINER;

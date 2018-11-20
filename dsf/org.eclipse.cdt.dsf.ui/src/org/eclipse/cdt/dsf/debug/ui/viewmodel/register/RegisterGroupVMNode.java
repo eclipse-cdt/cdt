@@ -387,10 +387,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#getDeltaFlagsForExpression(org.eclipse.debug.core.model.IExpression, java.lang.Object)
-	 */
 	@Override
 	public int getDeltaFlagsForExpression(IExpression expression, Object event) {
 
@@ -405,10 +401,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 		return IModelDelta.NO_CHANGE;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpression(org.eclipse.debug.core.model.IExpression, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.jface.viewers.TreePath, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta,
 			TreePath path, RequestMonitor rm) {
@@ -427,10 +419,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.IExpressionVMNode#buildDeltaForExpressionElement(java.lang.Object, int, java.lang.Object, org.eclipse.cdt.dsf.ui.viewmodel.VMDelta, org.eclipse.cdt.dsf.concurrent.RequestMonitor)
-	 */
 	@Override
 	public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
 			final RequestMonitor rm) {
@@ -440,10 +428,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 		rm.done();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode#testElementForExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
-	 */
 	@Override
 	protected void testElementForExpression(Object element, IExpression expression,
 			final DataRequestMonitor<Boolean> rm) {
@@ -491,10 +475,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.dsf.debug.ui.viewmodel.expression.AbstractExpressionVMNode#associateExpression(java.lang.Object, org.eclipse.debug.core.model.IExpression)
-	 */
 	@Override
 	protected void associateExpression(Object element, IExpression expression) {
 		if (element instanceof RegisterGroupVMC) {
@@ -502,10 +482,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellEditor(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.String, java.lang.Object, org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public CellEditor getCellEditor(IPresentationContext context, String columnId, Object element, Composite parent) {
 		if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnId)) {
@@ -514,19 +490,11 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor#getCellModifier(org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, java.lang.Object)
-	 */
 	@Override
 	public ICellModifier getCellModifier(IPresentationContext context, Object element) {
 		return fWatchExpressionCellModifier;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#compareElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest[])
-	 */
 	private final String MEMENTO_NAME = "GROUP_MEMENTO_NAME"; //$NON-NLS-1$
 
 	@Override
@@ -570,10 +538,6 @@ public class RegisterGroupVMNode extends AbstractExpressionVMNode
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider#encodeElements(org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest[])
-	 */
 	@Override
 	public void encodeElements(IElementMementoRequest[] requests) {
 		for (final IElementMementoRequest request : requests) {

@@ -211,11 +211,6 @@ public class BuildConsolePage extends Page
 		return getControl() != null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.IPage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		fViewer = new BuildConsoleViewer(parent);
@@ -268,11 +263,6 @@ public class BuildConsolePage extends Page
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		final Object source = event.getSource();
@@ -387,11 +377,6 @@ public class BuildConsolePage extends Page
 		return fConsoleView;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.IPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		getSite().getPage().removeSelectionListener(this);
@@ -480,11 +465,6 @@ public class BuildConsolePage extends Page
 		return project;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.IPage#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		if (fViewer != null) {
@@ -493,11 +473,6 @@ public class BuildConsolePage extends Page
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.part.IPage#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		Control control = getControl();
@@ -555,11 +530,6 @@ public class BuildConsolePage extends Page
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.text.ITextListener#textChanged(org.eclipse.jface.text.TextEvent)
-	 */
 	@Override
 	public void textChanged(TextEvent event) {
 		//		 update the find replace action if the document length is > 0

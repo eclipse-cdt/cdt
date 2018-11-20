@@ -95,11 +95,6 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
 	private WidgetListener fListener = new WidgetListener();
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -154,11 +149,6 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		fVariablesButton.addSelectionListener(fListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
-	 */
 	@Override
 	public void dispose() {
 	}
@@ -267,11 +257,6 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		fWorkingDirText.setText(System.getProperty("user.dir")); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 
@@ -313,11 +298,6 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		// (String)null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		setLaunchConfiguration(configuration);
@@ -340,11 +320,6 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		String wd = null;
@@ -367,11 +342,6 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return LaunchUIMessages.getString("WorkingDirectoryBlock.Working_Directory_8"); //$NON-NLS-1$

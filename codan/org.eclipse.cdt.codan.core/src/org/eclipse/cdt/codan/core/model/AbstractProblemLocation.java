@@ -76,11 +76,6 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 		this.extra = data;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getFile()
-	 */
 	@Override
 	public IResource getFile() {
 		return file;
@@ -109,21 +104,11 @@ public abstract class AbstractProblemLocation implements IProblemLocation {
 		return line;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getStartPos()
-	 */
 	@Override
 	public int getStartingChar() {
 		return posStart;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.model.IProblemLocation#getEndingChar()
-	 */
 	@Override
 	public int getEndingChar() {
 		return posEnd;

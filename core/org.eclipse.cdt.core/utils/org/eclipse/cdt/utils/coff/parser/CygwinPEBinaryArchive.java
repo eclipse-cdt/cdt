@@ -31,12 +31,6 @@ public class CygwinPEBinaryArchive extends PEBinaryArchive {
 		super(parser, path);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.coff.parser.PEBinaryArchive#addArchiveMembers(org.eclipse.cdt.utils.AR.ARHeader[],
-	 *      java.util.ArrayList)
-	 */
 	@Override
 	protected void addArchiveMembers(ARHeader[] headers, ArrayList<IBinaryObject> children2) {
 		for (int i = 0; i < headers.length; i++) {

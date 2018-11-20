@@ -107,10 +107,6 @@ public class ShowInCViewAction extends SelectionProviderAction {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * Method declared on SelectionProviderAction.
-	 */
 	@Override
 	public void selectionChanged(IStructuredSelection selection) {
 		setEnabled(!getSelection().isEmpty());

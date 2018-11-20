@@ -108,10 +108,6 @@ public class CSelectAnnotationRulerAction extends SelectMarkerRulerAction {
 		super.run();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.texteditor.SelectMarkerRulerAction#update()
-	 */
 	@Override
 	public void update() {
 		findCAnnotation();

@@ -218,11 +218,6 @@ public class FileScopeProblemPreference extends AbstractProblemPreference {
 		this.resource = scope.getResource();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.codan.core.param.AbstractProblemPreference#clone()
-	 */
 	@Override
 	public Object clone() {
 		FileScopeProblemPreference scope = (FileScopeProblemPreference) super.clone();

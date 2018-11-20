@@ -337,19 +337,11 @@ public class ProjectSelectionPage extends WizardPage implements IWizardDataPage 
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.ui.templateengine.IWizardDataPage#setNextPage(org.eclipse.jface.wizard.IWizardPage)
-	 */
 	@Override
 	public void setNextPage(IWizardPage next) {
 		this.next = next;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.jface.wizard.WizardPage#getNextPage()
-	 */
 	@Override
 	public IWizardPage getNextPage() {
 		if (next != null) {

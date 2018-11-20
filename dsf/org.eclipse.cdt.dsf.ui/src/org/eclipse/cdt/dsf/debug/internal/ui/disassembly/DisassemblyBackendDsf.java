@@ -1050,10 +1050,6 @@ public class DisassemblyBackendDsf extends AbstractDisassemblyBackend implements
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.cdt.debug.internal.ui.disassembly.dsf.IDisassemblyBackend#evaluateAddressExpression(java.lang.String, boolean)
-	 */
 	@Override
 	public BigInteger evaluateAddressExpression(final String symbol, final boolean suppressError) {
 		// Without a suspended context, using the expressions service is pointless.

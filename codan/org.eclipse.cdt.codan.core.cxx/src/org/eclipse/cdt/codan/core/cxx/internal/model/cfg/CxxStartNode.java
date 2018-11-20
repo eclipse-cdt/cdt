@@ -26,11 +26,6 @@ public class CxxStartNode extends StartNode {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return "start"; //$NON-NLS-1$

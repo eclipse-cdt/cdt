@@ -115,11 +115,6 @@ public class SourcePreferencePage extends PreferencePage implements IWorkbenchPr
 		return comp;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 		fWorkbench = workbench;

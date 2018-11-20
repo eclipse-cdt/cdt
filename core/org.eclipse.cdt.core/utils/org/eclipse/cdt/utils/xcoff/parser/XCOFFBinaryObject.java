@@ -70,11 +70,6 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		this.header = header;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
-	 */
 	@Override
 	public ISymbol[] getSymbols() {
 		if (hasChanged() || symbols == null) {
@@ -87,11 +82,6 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 		return symbols;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
-	 */
 	@Override
 	protected BinaryObjectInfo getBinaryObjectInfo() {
 		if (hasChanged() || info == null) {

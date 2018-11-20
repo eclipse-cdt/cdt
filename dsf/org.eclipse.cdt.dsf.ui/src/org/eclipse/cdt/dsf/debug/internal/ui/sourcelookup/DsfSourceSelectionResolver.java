@@ -141,7 +141,7 @@ public class DsfSourceSelectionResolver implements Runnable {
 		String errorMessage = ""; //$NON-NLS-1$
 		IEditorInput input = fEditorPage.getEditorInput();
 		if (input == null) {
-			errorMessage = "Invalid Editor input on selection"; //$NON-NLS-1$				
+			errorMessage = "Invalid Editor input on selection"; //$NON-NLS-1$
 		} else {
 			IDocument document = fEditorPage.getDocumentProvider().getDocument(input);
 			if (document == null) {
@@ -208,7 +208,7 @@ public class DsfSourceSelectionResolver implements Runnable {
 				return null;
 			}
 
-			//fetch the result 
+			//fetch the result
 			return job.getSelectedFunctions();
 		}
 

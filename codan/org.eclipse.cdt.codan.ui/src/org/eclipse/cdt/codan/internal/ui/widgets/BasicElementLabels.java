@@ -24,7 +24,7 @@ import org.eclipse.ui.IWorkingSet;
  * A label provider for basic elements like paths. The label provider will make
  * sure that the labels are correctly
  * shown in RTL environments.
- * 
+ *
  * @since 3.4
  */
 public class BasicElementLabels {
@@ -35,7 +35,7 @@ public class BasicElementLabels {
 
 	/**
 	 * Returns the label of a path.
-	 * 
+	 *
 	 * @param path
 	 *        the path
 	 * @param isOSPath
@@ -55,7 +55,7 @@ public class BasicElementLabels {
 
 	/**
 	 * Returns the label of the path of a file.
-	 * 
+	 *
 	 * @param file
 	 *        the file
 	 * @return the label of the file path to be used in the UI.
@@ -66,7 +66,7 @@ public class BasicElementLabels {
 
 	/**
 	 * Returns the label for a file pattern like '*.java'
-	 * 
+	 *
 	 * @param name
 	 *        the pattern
 	 * @return the label of the pattern.
@@ -78,7 +78,7 @@ public class BasicElementLabels {
 	/**
 	 * Returns the label for a URL, URI or URL part. Example is
 	 * 'http://www.x.xom/s.html#1'
-	 * 
+	 *
 	 * @param name
 	 *        the URL string
 	 * @return the label of the URL.
@@ -89,7 +89,7 @@ public class BasicElementLabels {
 
 	/**
 	 * Returns a label for a resource name.
-	 * 
+	 *
 	 * @param resource
 	 *        the resource
 	 * @return the label of the resource name.
@@ -100,7 +100,7 @@ public class BasicElementLabels {
 
 	/**
 	 * Returns a label for a resource name.
-	 * 
+	 *
 	 * @param resourceName
 	 *        the resource name
 	 * @return the label of the resource name.
@@ -112,7 +112,7 @@ public class BasicElementLabels {
 	/**
 	 * Returns a label for Java code snippet used in a label. Example is 'Test
 	 * test= new Test<? extends List>() { ...}'.
-	 * 
+	 *
 	 * @param string
 	 *        the Java code snippet
 	 * @return the label for the Java code snippet
@@ -123,7 +123,7 @@ public class BasicElementLabels {
 
 	/**
 	 * Returns a label for a version name. Example is '1.4.1'
-	 * 
+	 *
 	 * @param name
 	 *        the version string
 	 * @return the version label
@@ -134,7 +134,7 @@ public class BasicElementLabels {
 
 	/**
 	 * Returns a label for a working set
-	 * 
+	 *
 	 * @param set
 	 *        the working set
 	 * @return the label of the working set

@@ -21,6 +21,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.model.BufferChangedEvent;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.IBufferChangedListener;
+import org.eclipse.cdt.core.model.IOpenable;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
@@ -45,19 +51,12 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ISynchronizable;
 import org.eclipse.swt.widgets.Display;
 
-import org.eclipse.cdt.core.model.BufferChangedEvent;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.IBuffer;
-import org.eclipse.cdt.core.model.IBufferChangedListener;
-import org.eclipse.cdt.core.model.IOpenable;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * Adapts <code>IDocument</code> to <code>IBuffer</code>. Uses the
  * same algorithm as the text widget to determine the buffer's line delimiter.
  * All text inserted into the buffer is converted to this line delimiter.
  * This class is <code>public</code> for test purposes only.
- * 
+ *
  * This class is similar to the JDT DocumentAdapter class.
  */
 public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
@@ -217,7 +216,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 
 	private Set<String> fLegalLineDelimiters;
 
-	private List<IBufferChangedListener> fBufferListeners = new ArrayList<IBufferChangedListener>(3);
+	private List<IBufferChangedListener> fBufferListeners = new ArrayList<>(3);
 	private IStatus fStatus;
 
 	final private IPath fLocation;
@@ -288,7 +287,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 
 	/**
 	 * Returns the adapted document.
-	 * 
+	 *
 	 * @return the adapted document
 	 */
 	public IDocument getDocument() {
@@ -529,7 +528,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 
 		if (fLegalLineDelimiters == null) {
 			// collect all line delimiters in the document
-			HashSet<String> existingDelimiters = new HashSet<String>();
+			HashSet<String> existingDelimiters = new HashSet<>();
 
 			for (int i = fDocument.getNumberOfLines() - 1; i >= 0; i--) {
 				try {
@@ -589,7 +588,7 @@ public class DocumentAdapter implements IBuffer, IDocumentListener, IAdaptable {
 
 	private void fireBufferChanged(BufferChangedEvent event) {
 		if (fBufferListeners != null && fBufferListeners.size() > 0) {
-			Iterator<IBufferChangedListener> e = new ArrayList<IBufferChangedListener>(fBufferListeners).iterator();
+			Iterator<IBufferChangedListener> e = new ArrayList<>(fBufferListeners).iterator();
 			while (e.hasNext())
 				e.next().bufferChanged(event);
 		}

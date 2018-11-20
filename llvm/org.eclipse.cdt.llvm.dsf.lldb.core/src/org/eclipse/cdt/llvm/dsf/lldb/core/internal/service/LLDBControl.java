@@ -45,6 +45,7 @@ public class LLDBControl extends GDBControl_7_4 {
 		super(session, config, factory);
 	}
 
+	@Override
 	protected Sequence getCompleteInitializationSequence(Map<String, Object> attributes,
 			RequestMonitorWithProgress rm) {
 		return new LLDBFinalLaunchSequence(getSession(), attributes, rm);

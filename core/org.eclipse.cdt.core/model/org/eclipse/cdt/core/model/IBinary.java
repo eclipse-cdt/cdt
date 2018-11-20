@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.model;
 /**
  * Represents a Binary file, for example an ELF executable.
  * An ELF parser will inspect the binary.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -52,7 +52,7 @@ public interface IBinary extends ICElement, IParent, IOpenable {
 	/**
 	 * Determines whether this binary is part of the binary container. The binary container collects
 	 * binaries from a project. This is typically used to presents the executables of a project under
-	 * a common node in the CView or ProjectNavigator. 
+	 * a common node in the CView or ProjectNavigator.
 	 */
 	public boolean showInBinaryContainer();
 	//public IAddressFactory getAddressFactory();

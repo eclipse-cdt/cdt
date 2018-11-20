@@ -17,16 +17,7 @@ package org.eclipse.cdt.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.jface.dialogs.StatusDialog;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.cdt.core.CCorePreferenceConstants;
-
 import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
 import org.eclipse.cdt.internal.ui.preferences.TodoTaskConfigurationBlock.TodoTask;
@@ -35,6 +26,13 @@ import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
 import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.jface.dialogs.StatusDialog;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Dialog to enter a new task tag.
@@ -56,7 +54,7 @@ public class TodoTaskInputDialog extends StatusDialog {
 	public TodoTaskInputDialog(Shell parent, TodoTask task, List<TodoTask> existingEntries) {
 		super(parent);
 
-		fExistingNames = new ArrayList<String>(existingEntries.size());
+		fExistingNames = new ArrayList<>(existingEntries.size());
 		for (int i = 0; i < existingEntries.size(); i++) {
 			TodoTask curr = existingEntries.get(i);
 			if (!curr.equals(task)) {

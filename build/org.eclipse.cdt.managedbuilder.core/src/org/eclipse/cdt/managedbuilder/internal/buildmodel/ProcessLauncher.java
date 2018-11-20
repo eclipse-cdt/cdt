@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.internal.buildmodel;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.internal.core.ProcessClosure;
@@ -22,9 +24,9 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
- * This class implements external process launching for internal builder. 
+ * This class implements external process launching for internal builder.
  *
- * NOTE: This class is subject to change and discuss, 
+ * NOTE: This class is subject to change and discuss,
  * and is currently available in experimental mode only
  */
 public class ProcessLauncher {
@@ -107,11 +109,11 @@ public class ProcessLauncher {
 	 * Initializes launcher
 	 * @param _cmd Command path
 	 * @param args Command arguments
-	 * @param _env Environment 
+	 * @param _env Environment
 	 * @param _cwd Working directory
 	 * @param _out Output stream
 	 * @param _err Error output stream
-	 * @param _monitor Progress monitor 
+	 * @param _monitor Progress monitor
 	 * @param _show If true, print command line before launching
 	 */
 	public ProcessLauncher(IPath _cmd, String[] args, String[] _env, IPath _cwd, OutputStream _out, OutputStream _err,
@@ -170,7 +172,7 @@ public class ProcessLauncher {
 	}
 
 	/**
-	 * Creates a string array representing the command that will be passed 
+	 * Creates a string array representing the command that will be passed
 	 * to the process
 	 */
 	protected String[] createCmdArray(String cmdPath, String[] cmdArgs) {

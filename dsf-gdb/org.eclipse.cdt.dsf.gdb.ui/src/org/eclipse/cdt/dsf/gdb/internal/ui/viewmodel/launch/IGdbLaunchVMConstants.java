@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
@@ -50,14 +50,14 @@ public interface IGdbLaunchVMConstants {
 	/**
 	 * If this property is set, it indicates the process or thread should be shown as exited.
 	 */
-	public static final String PROP_THREAD_EXITED = "thread_exited"; //$NON-NLS-1$  
+	public static final String PROP_THREAD_EXITED = "thread_exited"; //$NON-NLS-1$
 
 	/**
 	 * Value <code>0</code> means it's not known.  Value <code>1</code>, means it's known.
 	 */
-	public static final String PROP_EXIT_CODE_KNOWN = "exit_code_known"; //$NON-NLS-1$  
+	public static final String PROP_EXIT_CODE_KNOWN = "exit_code_known"; //$NON-NLS-1$
 	/**
 	* If set, the value of the property indicates the exit code returned.
 	*/
-	public static final String PROP_EXIT_CODE = "exit_code"; //$NON-NLS-1$  
+	public static final String PROP_EXIT_CODE = "exit_code"; //$NON-NLS-1$
 }

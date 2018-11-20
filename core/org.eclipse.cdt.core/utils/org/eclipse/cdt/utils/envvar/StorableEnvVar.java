@@ -23,7 +23,7 @@ import org.osgi.service.prefs.Preferences;
 /**
  * This class represents the Environment variable that could be loaded
  * and stored in XML
- * 
+ *
  * @since 3.0
  */
 public class StorableEnvVar extends EnvironmentVariable {
@@ -71,7 +71,7 @@ public class StorableEnvVar extends EnvironmentVariable {
 	}
 
 	/**
-	 * Load the Environment Variable directly from a Preference element 
+	 * Load the Environment Variable directly from a Preference element
 	 * @param name
 	 * @param element
 	 * @since 5.2

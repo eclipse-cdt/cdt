@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -172,7 +172,7 @@ public class ExportMemoryDialog extends SelectionDialog {
 		data.left = new FormAttachment(textLabel);
 		fFormatCombo.setLayoutData(data);
 
-		Vector<IMemoryExporter> exporters = new Vector<IMemoryExporter>();
+		Vector<IMemoryExporter> exporters = new Vector<>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint extensionPoint = registry

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,16 +19,16 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
  * API for sending commands to the debugger and for receiving command results
  * and asynchronous events.  The command control may be implemented by a service
  * or a non-service object.
- * 
+ *
  * @see ICommandControlService
- * 
+ *
  * @since 1.0
  */
 public interface ICommandControl {
 
 	/**
-	 * Adds the specified command to the queue of commands to be processed. 
-	 *   
+	 * Adds the specified command to the queue of commands to be processed.
+	 *
 	 * @param command Specific command to be processed
 	 * @param rm Request completion monitor
 	 * @return None
@@ -37,7 +37,7 @@ public interface ICommandControl {
 
 	/**
 	 * Removes the specified command from the processor queue.
-	 *   
+	 *
 	 * @param command Specific command to be removed
 	 * @return None
 	 */
@@ -45,7 +45,7 @@ public interface ICommandControl {
 
 	/**
 	 * Adds a notification handler for the Command processor.
-	 * 
+	 *
 	 * @param command listener to be added
 	 * @return None
 	 */
@@ -53,7 +53,7 @@ public interface ICommandControl {
 
 	/**
 	 * Removes a notification handler for the Command processor.
-	 * 
+	 *
 	 * @param command listener to be removed
 	 * @return None
 	 */
@@ -61,7 +61,7 @@ public interface ICommandControl {
 
 	/**
 	 * Adds a notification handler for the Event processor.
-	 * 
+	 *
 	 * @param event listener to be added
 	 * @return None
 	 */
@@ -69,7 +69,7 @@ public interface ICommandControl {
 
 	/**
 	 * Removes a notification handler for the Event processor.
-	 * 
+	 *
 	 * @param event listener to be removed
 	 * @return None
 	 */

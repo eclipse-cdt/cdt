@@ -18,17 +18,17 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
  * Represents a parser that can be used by BaseExtensibleLanguage.
- * 
+ *
  * @author Mike Kucera
  */
 public interface IParser<N extends IASTNode> {
 
 	/**
 	 * Performs the actual parse.
-	 * 
+	 *
 	 * If there were any errors during the parse these will be represented in the
 	 * AST as problem nodes.
-	 * 
+	 *
 	 * If the parser encounters a completion token then a completion node
 	 * will be available via the getCompletionNode() method.
 	 */

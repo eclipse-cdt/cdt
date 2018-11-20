@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -42,7 +42,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * This class is closely linked with a view model provider which is required for
  * the constructor. The view model provider is used to access the correct
  * executor and the node hierarchy.
- * 
+ *
  * @since 1.0
  */
 @ConfinedToDsfExecutor("#getExecutor()")
@@ -56,7 +56,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
 
 	/**
 	 * Returns the view model provider that this strategy is configured for.
-	 * 
+	 *
 	 * @return
 	 */
 	protected AbstractVMProvider getVMProvider() {
@@ -83,7 +83,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
 			updateNodeChildren(firstNode, updates);
 		} else {
 			// Sort the updates by the node.
-			Map<IVMNode, List<IHasChildrenUpdate>> nodeUpdatesMap = new HashMap<IVMNode, List<IHasChildrenUpdate>>();
+			Map<IVMNode, List<IHasChildrenUpdate>> nodeUpdatesMap = new HashMap<>();
 			for (IHasChildrenUpdate update : updates) {
 				// Get the VM Context for last element in path.
 				IVMNode node = getNodeForElement(update.getElement());
@@ -371,7 +371,7 @@ public class DefaultVMContentProviderStrategy implements IElementContentProvider
 	 * Convenience method that finds the VM node corresponding to given element.
 	 * It returns the root node if the element is not a VM Context or if it was
 	 * created by another view.
-	 * 
+	 *
 	 * @param element Element to find the VM Node for.
 	 * @return View Model Node that this element was created by.
 	 */

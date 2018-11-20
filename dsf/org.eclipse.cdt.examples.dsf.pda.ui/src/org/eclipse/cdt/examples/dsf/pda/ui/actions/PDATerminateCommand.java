@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -33,8 +33,8 @@ import org.eclipse.debug.core.commands.ITerminateHandler;
 
 /**
  * The terminate command is specialized for the PDA debugger.  Currently there
- * is no standard interface for terminating a debug session in DSF, because the 
- * details of initiating and shutting down a debug session vary greatly in 
+ * is no standard interface for terminating a debug session in DSF, because the
+ * details of initiating and shutting down a debug session vary greatly in
  * different debuggers.
  */
 public class PDATerminateCommand implements ITerminateHandler {
@@ -54,6 +54,7 @@ public class PDATerminateCommand implements ITerminateHandler {
 	}
 
 	// Run control may not be available after a connection is terminated and shut down.
+	@Override
 	public void canExecute(final IEnabledStateRequest request) {
 		// Terminate can only operate on a single element.
 		if (request.getElements().length != 1 || !(request.getElements()[0] instanceof IDMVMContext)) {
@@ -62,7 +63,7 @@ public class PDATerminateCommand implements ITerminateHandler {
 			return;
 		}
 
-		// Find the PDA program context in the selected element.  If one is not found, 
+		// Find the PDA program context in the selected element.  If one is not found,
 		// the action should be disabled.
 		IDMVMContext vmc = (IDMVMContext) request.getElements()[0];
 		final PDAVirtualMachineDMContext pdaProgramCtx = DMContexts.getAncestorOfType(vmc.getDMContext(),
@@ -75,6 +76,7 @@ public class PDATerminateCommand implements ITerminateHandler {
 
 		try {
 			fSession.getExecutor().execute(new DsfRunnable() {
+				@Override
 				public void run() {
 					// Get the processes service and the exec context.
 					PDACommandControl commandControl = fTracker.getService(PDACommandControl.class);
@@ -90,21 +92,23 @@ public class PDATerminateCommand implements ITerminateHandler {
 				}
 			});
 		} catch (RejectedExecutionException e) {
-			// The DSF session for this context is no longer active.  It's possible to check 
-			// for this condition before calling fSession.getExecutor().execute(), but 
-			// since this method is executing in a different thread than the session control, 
-			// there would still be a chance for a race condition leading to this exception. 
+			// The DSF session for this context is no longer active.  It's possible to check
+			// for this condition before calling fSession.getExecutor().execute(), but
+			// since this method is executing in a different thread than the session control,
+			// there would still be a chance for a race condition leading to this exception.
 			request.setEnabled(false);
 			request.done();
 		}
 	}
 
+	@Override
 	public boolean execute(final IDebugCommandRequest request) {
 		// Skip the checks and assume that this method is called only if the action
 		// was enabled.
 
 		try {
 			fSession.getExecutor().submit(new DsfRunnable() {
+				@Override
 				public void run() {
 					// If the command control service is available, attempt to terminate the program.
 					PDACommandControl commandControl = fTracker.getService(PDACommandControl.class);

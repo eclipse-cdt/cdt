@@ -24,8 +24,8 @@ public class SignalsViewModelProxy extends EventHandlerModelProxy {
 
 	private Object fTarget;
 
-	/** 
-	 * Constructor for SignalesViewModelProxy. 
+	/**
+	 * Constructor for SignalesViewModelProxy.
 	 */
 	public SignalsViewModelProxy(Object target) {
 		super();

@@ -14,6 +14,7 @@
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
+
 import org.eclipse.cdt.debug.internal.ui.ICDebugHelpContextIds;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
@@ -45,7 +46,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * The dialog for adding new source containers. Presents the user with a list of
  * source container types and allows them to select one.
- * 
+ *
  * @since 3.0
  */
 public class AddSourceContainerDialog extends TitleAreaDialog {
@@ -128,7 +129,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 * @return the list of source container types that have browsers
 	 */
 	private ISourceContainerType[] filterTypes(ISourceContainerType[] types) {
-		ArrayList<ISourceContainerType> validTypes = new ArrayList<ISourceContainerType>();
+		ArrayList<ISourceContainerType> validTypes = new ArrayList<>();
 		for (int i = 0; i < types.length; i++) {
 			ISourceContainerType type = types[i];
 			if (fDirector.supportsSourceContainerType(type)) {

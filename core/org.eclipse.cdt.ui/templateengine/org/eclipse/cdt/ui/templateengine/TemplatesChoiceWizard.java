@@ -20,6 +20,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.templateengine.TemplateInfo;
+import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -30,10 +33,6 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
-
-import org.eclipse.cdt.core.templateengine.TemplateInfo;
-import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A wizard intending to show a choice of templates (@see org.eclipse.cdt.core.templateenginee.Template)
@@ -89,7 +88,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo
 				.getExtraPagesProvider();
 		if (extraPagesProvider != null) {
-			List<IWizardDataPage> pageList = new ArrayList<IWizardDataPage>(Arrays.asList(pages));
+			List<IWizardDataPage> pageList = new ArrayList<>(Arrays.asList(pages));
 			IWizardDataPage[] extraPages = extraPagesProvider.createAdditionalPages(this, workbench, selection);
 			pageList.addAll(Arrays.asList(extraPages));
 			pages = pageList.toArray(new IWizardDataPage[pageList.size()]);
@@ -103,7 +102,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 		IPagesAfterTemplateSelectionProvider extraPagesProvider = (IPagesAfterTemplateSelectionProvider) templateInfo
 				.getExtraPagesProvider();
 		if (extraPagesProvider != null) {
-			List<IWizardDataPage> pageList = new ArrayList<IWizardDataPage>();
+			List<IWizardDataPage> pageList = new ArrayList<>();
 			IWizardDataPage[] extraPages = extraPagesProvider.getCreatedPages(this);
 			pageList.addAll(Arrays.asList(extraPages));
 			return pageList.toArray(new IWizardDataPage[pageList.size()]);
@@ -150,7 +149,7 @@ public abstract class TemplatesChoiceWizard extends Wizard implements ITemplates
 	 * @return Map,
 	 */
 	public Map<String, String> getAllDataInNonTemplatePages() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		IWizardDataPage[] pages = getPagesBeforeTemplatePages();
 		for (IWizardDataPage page : pages) {

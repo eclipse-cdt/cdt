@@ -98,7 +98,7 @@ public class EnvVarDescriptor implements IEnvironmentVariable {
 							break;
 						}
 					}
-	
+
 					DefaultMacroSubstitutor sub = new DefaultMacroSubstitutor(new DefaultMacroContextInfo(contextType,contextData),""," ");//,delimiters,""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					try{
 						value = sub.resolveToString(new BuildMacro(name,IBuildMacro.VALUE_TEXT,value),macroInfo,supplierNum);
@@ -108,7 +108,7 @@ public class EnvVarDescriptor implements IEnvironmentVariable {
 			}
 			return value;
 		}
-	
+
 		protected IMacroContextInfo getMacroContextInfo(IContextInfo info){
 			Object context = info.getContext();
 			if(context instanceof IConfiguration)

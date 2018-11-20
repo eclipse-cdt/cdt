@@ -27,7 +27,7 @@ import org.eclipse.debug.ui.DebugUITools;
 public interface IGDBDebuggerConsole extends IDebuggerConsole {
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.ui.debuggerconsole.IDebuggerConsole#consoleSelected()
 	 */
 	@Override

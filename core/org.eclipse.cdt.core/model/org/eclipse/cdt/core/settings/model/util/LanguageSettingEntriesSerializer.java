@@ -77,7 +77,7 @@ public class LanguageSettingEntriesSerializer {
 	public static List<ICSettingEntry> loadEntriesList(ICStorageElement el, int kindFilter) {
 		ICStorageElement children[] = el.getChildren();
 		ICStorageElement child;
-		List<ICSettingEntry> list = new ArrayList<ICSettingEntry>();
+		List<ICSettingEntry> list = new ArrayList<>();
 		ICSettingEntry entry;
 		for (int i = 0; i < children.length; i++) {
 			child = children[i];

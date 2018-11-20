@@ -55,7 +55,7 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
 	private HashMap<Object, PositionTrackerChain> fPositionTrackerMap;
 
 	private PositionTrackerManager() {
-		fPositionTrackerMap = new HashMap<Object, PositionTrackerChain>();
+		fPositionTrackerMap = new HashMap<>();
 	}
 
 	public synchronized void install() {
@@ -176,7 +176,7 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
 			fMemoryCounter += chain.getMemorySize();
 		}
 		if (fMemoryCounter > MAX_MEMORY_AFTER_CLEANUP) {
-			SortedMap<Long, List<PositionTrackerChain>> map = new TreeMap<Long, List<PositionTrackerChain>>();
+			SortedMap<Long, List<PositionTrackerChain>> map = new TreeMap<>();
 			for (Iterator<PositionTrackerChain> iter = fPositionTrackerMap.values().iterator(); iter.hasNext();) {
 				PositionTrackerChain chain = iter.next();
 				addChain(map, chain);
@@ -202,7 +202,7 @@ public class PositionTrackerManager implements IPositionTrackerManager, IFileBuf
 			Long lor = Long.valueOf(or);
 			List<PositionTrackerChain> list = map.get(lor);
 			if (list == null) {
-				list = new LinkedList<PositionTrackerChain>();
+				list = new LinkedList<>();
 				map.put(lor, list);
 			}
 			list.add(chain);

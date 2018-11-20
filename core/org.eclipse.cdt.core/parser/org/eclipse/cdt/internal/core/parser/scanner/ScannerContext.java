@@ -70,7 +70,7 @@ final class ScannerContext {
 	private int fLoadedVersionCount;
 
 	/**
-	 * @param ctx 
+	 * @param ctx
 	 * @param parent context to be used after this context is done.
 	 */
 	public ScannerContext(ILocationCtx ctx, ScannerContext parent, Lexer lexer) {
@@ -120,13 +120,13 @@ final class ScannerContext {
 	}
 
 	/**
-	 * Needs to be called whenever we change over to another branch of conditional 
+	 * Needs to be called whenever we change over to another branch of conditional
 	 * compilation. Returns the conditional associated with the branch or <code>null</code>,
 	 * if the change is not legal at this point.
 	 */
 	public final Conditional newBranch(BranchKind branchKind, boolean withinExpansion) {
 		if (fConditionals == null) {
-			fConditionals = new ArrayList<Conditional>();
+			fConditionals = new ArrayList<>();
 		}
 
 		Conditional result;
@@ -249,8 +249,8 @@ final class ScannerContext {
 		return newState;
 	}
 
-	/** 
-	 * Returns the current token from this context. When called before calling nextPPToken() 
+	/**
+	 * Returns the current token from this context. When called before calling nextPPToken()
 	 * a token of type {@link Lexer#tBEFORE_INPUT} will be returned.
 	 * @since 5.0
 	 */
@@ -264,8 +264,8 @@ final class ScannerContext {
 		return new Token(IToken.tEND_OF_INPUT, null, 0, 0);
 	}
 
-	/** 
-	 * Returns the next token from this context. 
+	/**
+	 * Returns the next token from this context.
 	 */
 	public Token nextPPToken() throws OffsetLimitReachedException {
 		if (fTokens != null) {
@@ -325,7 +325,7 @@ final class ScannerContext {
 
 	public void trackSignificantMacros() {
 		fInternalModifications = new CharArraySet(5);
-		fSignificantMacros = new CharArrayObjectMap<char[]>(5);
+		fSignificantMacros = new CharArrayObjectMap<>(5);
 	}
 
 	public void setPragmaOnce(boolean val) {

@@ -10,7 +10,7 @@
  *
  * Contributors:
  * IBM - Initial API and implementation
- * Red Hat - Copy from org.eclipse.cdt.wizards to here plus rename 
+ * Red Hat - Copy from org.eclipse.cdt.wizards to here plus rename
  *******************************************************************************/
 package org.eclipse.cdt.internal.autotools.ui.wizards;
 

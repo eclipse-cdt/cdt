@@ -75,7 +75,7 @@ public class TextUtil {
 	}
 
 	/**
-	 * Returns {@code true} if the line prior to the line corresponding to the given {@code offset} 
+	 * Returns {@code true} if the line prior to the line corresponding to the given {@code offset}
 	 * does not contain non-whitespace characters.
 	 */
 	public static boolean isPreviousLineBlank(String text, int offset) {

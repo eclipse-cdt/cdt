@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 
 /**
  * ConditionalProcess encloses an &lt;if condition="..."&gt;&lt;/if&gt; block of the template.
- * The currently supported conditions are equals and not equals operations performed on two 
+ * The currently supported conditions are equals and not equals operations performed on two
  * Strings. The respective operators are == and !=. Any spaces will be treated as part of the
  * operands. The two operands will be evaluated for simple String equals and not equals after
  * performing a single pass  replace of any replace markers with their values in the template's
@@ -72,7 +72,7 @@ public class ConditionalProcessGroup {
 	}
 
 	/**
-	 * Constructs a ConditionalProcess element from the supplied conditionElement (&lt;if&gt;) while building Process 
+	 * Constructs a ConditionalProcess element from the supplied conditionElement (&lt;if&gt;) while building Process
 	 * objects out of each of the element's &lt;process&gt; children.
 	 */
 	public ConditionalProcessGroup(TemplateCore template, Element conditionElement, int id) {
@@ -104,22 +104,22 @@ public class ConditionalProcessGroup {
 	}
 
 	/**
-	 * Adds values passed as parameter to the macros object 
+	 * Adds values passed as parameter to the macros object
 	 * @param value
 	 */
 	private void collectMacros(String value) {
 		if (value != null) {
 			if (macros == null) {
-				macros = new HashSet<String>();
+				macros = new HashSet<>();
 			}
 			macros.addAll(ProcessHelper.getReplaceKeys(value));
 		}
 	}
 
 	/**
-	 * Constructs a ConditionalProcess element from the supplied process elements while building Process 
+	 * Constructs a ConditionalProcess element from the supplied process elements while building Process
 	 * objects out of each of the supplied process elements (&lt;process&gt;). The condition in this case is evaluated to true.
-	 * 
+	 *
 	 * This Constructor is expected to be used to evaluate all those process elements that are children of the template root element.
 	 */
 	public ConditionalProcessGroup(TemplateCore template, Element[] processElements) {
@@ -134,7 +134,7 @@ public class ConditionalProcessGroup {
 	 */
 	private void createProcessObjects(TemplateCore templateCore, List<Element> processElements) {
 		this.template = templateCore;
-		this.processes = new ArrayList<Process>(processElements.size());
+		this.processes = new ArrayList<>(processElements.size());
 		for (int j = 0, l = processElements.size(); j < l; j++) {
 			Element processElem = processElements.get(j);
 			if (processElem.getNodeName().equals(TemplateDescriptor.PROCESS)) {
@@ -153,7 +153,7 @@ public class ConditionalProcessGroup {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return boolean, as true if the Processes are ready to process
 	 */
 	private boolean areProcessesReady() {
@@ -166,7 +166,7 @@ public class ConditionalProcessGroup {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return boolean, true if Macros For Condition Evaluation Expandable.
 	 */
 	private boolean areMacrosForConditionEvaluationExpandable() {
@@ -182,7 +182,7 @@ public class ConditionalProcessGroup {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return boolean, true if Condition Value is True.
 	 */
 	public boolean isConditionValueTrue() {
@@ -206,8 +206,8 @@ public class ConditionalProcessGroup {
 
 	/**
 	 * Process and Returns the Status of the prosses as a List.
-	 * @param monitor 
-	 * @return List contains the IStatus. 
+	 * @param monitor
+	 * @return List contains the IStatus.
 	 * @throws ProcessFailureException
 	 */
 	public List<IStatus> process(IProgressMonitor monitor) throws ProcessFailureException {
@@ -215,12 +215,12 @@ public class ConditionalProcessGroup {
 			throw new ProcessFailureException(getUnexpandableMacroMessage());
 		}
 		if (!isConditionValueTrue()) {
-			List<IStatus> statuses = new ArrayList<IStatus>(1);
+			List<IStatus> statuses = new ArrayList<>(1);
 			statuses.add(new Status(IStatus.ERROR, CCorePlugin.PLUGIN_ID, IStatus.INFO,
 					Messages.getString("ConditionalProcessGroup.notExecuting") + id, null)); //$NON-NLS-1$
 			return statuses;
 		}
-		List<IStatus> statuses = new ArrayList<IStatus>(processes.size());
+		List<IStatus> statuses = new ArrayList<>(processes.size());
 		for (Process process : processes) {
 			try {
 				statuses.add(process.process(monitor));
@@ -261,14 +261,14 @@ public class ConditionalProcessGroup {
 	public Set<String> getAllMacros() {
 		Set<String> set = null;
 		if (macros != null) {
-			set = new HashSet<String>();
+			set = new HashSet<>();
 			set.addAll(macros);
 		}
 		for (Process process : processes) {
 			Set<String> subSet = process.getMacros();
 			if (subSet != null) {
 				if (set == null) {
-					set = new HashSet<String>();
+					set = new HashSet<>();
 				}
 				set.addAll(subSet);
 			}

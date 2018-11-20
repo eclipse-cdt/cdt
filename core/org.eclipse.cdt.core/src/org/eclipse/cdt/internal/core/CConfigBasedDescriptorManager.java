@@ -86,13 +86,13 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	private static volatile Map<String, COwnerConfiguration> fOwnerConfigMap;
 	private volatile static ICProjectDescriptionListener fDescriptionListener;
 
-	private Collection<ICDescriptorListener> fListeners = new CopyOnWriteArraySet<ICDescriptorListener>();
+	private Collection<ICDescriptorListener> fListeners = new CopyOnWriteArraySet<>();
 
 	/** Map: IProjet -> CConfigBasedDescriptor weak reference <br />
 	 *  Multiple threads operating concurrently will get the same shared
 	 *  ICDescriptor, however we don't keep a reference to this for longer
 	 *  than is necessary.*/
-	final ConcurrentHashMap<IProject, Reference<CConfigBasedDescriptor>> fProjectDescriptorMap = new ConcurrentHashMap<IProject, Reference<CConfigBasedDescriptor>>();
+	final ConcurrentHashMap<IProject, Reference<CConfigBasedDescriptor>> fProjectDescriptorMap = new ConcurrentHashMap<>();
 
 	private CConfigBasedDescriptorManager() {
 	}
@@ -363,21 +363,21 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 				dr = loadDescriptor(des);
 
 			// Use the ConcurrentHashMap to ensure that only one descriptor is live at a time (for a given project...)
-			ref = fProjectDescriptorMap.putIfAbsent(project, new SoftReference<CConfigBasedDescriptor>(dr));
+			ref = fProjectDescriptorMap.putIfAbsent(project, new SoftReference<>(dr));
 			if (ref != null) {
 				// Someone was here before us...
 				CConfigBasedDescriptor dr1 = ref.get();
 				if (dr1 != null)
 					return dr1;
 				synchronized (this) {
-					ref = fProjectDescriptorMap.putIfAbsent(project, new SoftReference<CConfigBasedDescriptor>(dr));
+					ref = fProjectDescriptorMap.putIfAbsent(project, new SoftReference<>(dr));
 					if (ref != null) {
 						// Someone was here before us...
 						dr1 = ref.get();
 						if (dr1 != null)
 							return dr1;
 					}
-					fProjectDescriptorMap.put(project, new SoftReference<CConfigBasedDescriptor>(dr));
+					fProjectDescriptorMap.put(project, new SoftReference<>(dr));
 				}
 			}
 		} finally {
@@ -449,7 +449,7 @@ final public class CConfigBasedDescriptorManager implements ICDescriptorManager 
 	private static void initializeOwnerConfiguration() {
 		IExtensionPoint extpoint = Platform.getExtensionRegistry().getExtensionPoint(CCorePlugin.PLUGIN_ID, "CProject"); //$NON-NLS-1$
 		IExtension extension[] = extpoint.getExtensions();
-		fOwnerConfigMap = new HashMap<String, COwnerConfiguration>(extension.length);
+		fOwnerConfigMap = new HashMap<>(extension.length);
 		for (int i = 0; i < extension.length; i++) {
 			IConfigurationElement element[] = extension[i].getConfigurationElements();
 			for (int j = 0; j < element.length; j++) {

@@ -33,7 +33,7 @@ import org.osgi.framework.Bundle;
 
 /**
  * Acts as an Helper class for Template Engine
- * 
+ *
  * @since 4.0
  */
 public class TemplateEngineHelper {
@@ -64,10 +64,10 @@ public class TemplateEngineHelper {
 	 * Gets the backup shareddefaults XML file. Presence of the file indicates
 	 * that the template engine or the application underwent some crash or
 	 * destruction.
-	 * 
+	 *
 	 * @param sharedLocation
 	 * @return sharedXMLFile
-	 * 
+	 *
 	 * @since 4.0
 	 */
 
@@ -78,10 +78,10 @@ public class TemplateEngineHelper {
 
 	/**
 	 * Finds the location of the shareddefaults backup and original xml file.
-	 * 
+	 *
 	 * @param fileLocation
 	 * @return file
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	private static File findLocation(String fileLocation) {
@@ -95,10 +95,10 @@ public class TemplateEngineHelper {
 	/**
 	 * Stores the shareddefaults xml file in
 	 * "${workspace}/.metadata/.plugins/${plugin.name}/shareddefaults.xml" path.
-	 * 
+	 *
 	 * @param sharedLocation the relative path within the plug-in
 	 * @return a File object corresponding to the location within the plug-in
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static File storeSharedDefaultLocation(String sharedLocation) {
@@ -115,9 +115,9 @@ public class TemplateEngineHelper {
 
 	/**
 	 * This method returns the workspace path present in the workspace
-	 * 
+	 *
 	 * @return String Example : file:/C:/eclipse/workspace/
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static IPath getWorkspacePath() {
@@ -132,7 +132,7 @@ public class TemplateEngineHelper {
 	/**
 	 * @param markerString
 	 * @return the first content of a region matching $(.*) e.g. given a String of the form "foo $(ID) bar", return ID.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static String getFirstMarkerID(String markerString) {
@@ -147,10 +147,10 @@ public class TemplateEngineHelper {
 	/**
 	 * Check whether there is a directory existing in present workspace, with
 	 * the given name.
-	 * 
+	 *
 	 * @param directoryName
 	 * @return true, if directory exists.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static boolean checkDirectoryInWorkspace(String directoryName) {
@@ -175,7 +175,7 @@ public class TemplateEngineHelper {
 	 * @param resourcePath
 	 * @return URL, of the Template Resource
 	 * @throws IOException
-	 * 
+	 *
 	 * @since 4.0
 	 */
 
@@ -184,13 +184,13 @@ public class TemplateEngineHelper {
 	}
 
 	/**
-	 * 
-	 * Returns the Template Resource Relative Path as URL 
+	 *
+	 * Returns the Template Resource Relative Path as URL
 	 * @param template
 	 * @param resourcePath
 	 * @return URL, of the Template Resource
 	 * @throws IOException
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static URL getTemplateResourceURLRelativeToTemplate(TemplateCore template, String resourcePath)

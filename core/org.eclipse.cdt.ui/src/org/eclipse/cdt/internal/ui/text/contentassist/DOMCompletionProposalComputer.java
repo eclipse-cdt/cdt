@@ -29,15 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.TextUtilities;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -97,9 +88,6 @@ import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 import org.eclipse.cdt.core.parser.util.IContentAssistMatcher;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.IASTInactiveCompletionName;
@@ -119,8 +107,17 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.AccessContext;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPSemantics;
 import org.eclipse.cdt.internal.core.parser.scanner.TokenWithImage;
 import org.eclipse.cdt.internal.core.parser.util.ContentAssistMatcherFactory;
-
 import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.TextUtilities;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * Searches the DOM (both the AST and the index) for completion proposals.
@@ -787,18 +784,18 @@ public class DOMCompletionProposalComputer extends ParsingBasedProposalComputer 
 	 */
 	private List<IBinding> getDefinedElements(CContentAssistInvocationContext context) {
 		// Get all variables accessible at the start of the statement.
-		// ex1:	int a = foo( 
-		// 					^ --> We don't want 'a' as a suggestion. 
-		// ex2:	char* foo(int a, int b) { return NULL; } 
-		// 		void bar(char* name) {} 
+		// ex1:	int a = foo(
+		// 					^ --> We don't want 'a' as a suggestion.
+		// ex2:	char* foo(int a, int b) { return NULL; }
+		// 		void bar(char* name) {}
 		// 		...
-		// 		bar( foo( 
+		// 		bar( foo(
 		// 				 ^ --> If this offset is used, the only defined name will be "bar(char*)".
 		IASTCompletionNode node = context.getCompletionNode();
 		if (node == null)
 			return Collections.emptyList();
 
-		// Find the enclosing statement at the point of completion.  
+		// Find the enclosing statement at the point of completion.
 		IASTStatement completionStatement = null;
 		IASTName[] completionNames = node.getNames();
 		for (IASTName name : completionNames) {

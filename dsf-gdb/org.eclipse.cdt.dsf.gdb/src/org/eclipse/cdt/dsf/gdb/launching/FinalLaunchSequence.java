@@ -7,11 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
- *     Ericsson - initial API and implementation          
- *     Nokia - create and use backend service. 
- *     IBM Corporation 
+ *     Ericsson - initial API and implementation
+ *     Nokia - create and use backend service.
+ *     IBM Corporation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
  *     Sergey Prigogin (Google)
  *     Marc Khouzam (Ericsson) - No longer call method to check non-stop for GDB < 7.0 (Bug 365471)
@@ -142,10 +142,10 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		return null;
 	}
 
-	/** 
+	/**
 	 * Initialize the members of the FinalLaunchSequence class.
 	 * This step is mandatory for the rest of the sequence to complete.
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@Execute
 	public void stepInitializeFinalLaunchSequence(RequestMonitor requestMonitor) {
@@ -179,9 +179,9 @@ public class FinalLaunchSequence extends ReflectionSequence {
 		requestMonitor.done();
 	}
 
-	/** 
+	/**
 	 * Rollback method for {@link #stepInitializeFinalLaunchSequence()}
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@RollBack("stepInitializeFinalLaunchSequence")
 	public void rollBackInitializeFinalLaunchSequence(RequestMonitor requestMonitor) {
@@ -193,8 +193,8 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	}
 
 	/**
-	 * Print the version of GDB. 
-	 * @since 4.6 
+	 * Print the version of GDB.
+	 * @since 4.6
 	 */
 	@Execute
 	public void stepGDBVersion(final RequestMonitor requestMonitor) {
@@ -209,8 +209,8 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	}
 
 	/**
-	 * Specify GDB's working directory. 
-	 * @since 4.0 
+	 * Specify GDB's working directory.
+	 * @since 4.0
 	 */
 	@Execute
 	public void stepSetEnvironmentDirectory(final RequestMonitor requestMonitor) {
@@ -234,7 +234,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	}
 
 	/**
-	 * Allow breakpoints/tracepoints to be set as pending when using the gdb console 
+	 * Allow breakpoints/tracepoints to be set as pending when using the gdb console
 	 * or a CLI command to create them.
 	 * @since 4.0
 	 */
@@ -338,7 +338,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 
 	/**
 	 * Source the gdbinit file specified in the launch.
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@Execute
 	public void stepSourceGDBInitFile(final RequestMonitor requestMonitor) {
@@ -378,7 +378,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 
 	/**
 	 * Enable non-stop mode if requested.
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	// Keep this method in this class for backwards-compatibility, although
 	// it is called only by sub-classes.
@@ -425,7 +425,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 
 	/**
 	 * Tell GDB to automatically load or not the shared library symbols
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@Execute
 	public void stepSetAutoLoadSharedLibrarySymbols(RequestMonitor requestMonitor) {
@@ -439,7 +439,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 
 	/**
 	 * Set the shared library paths.
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@Execute
 	public void stepSetSharedLibraryPaths(final RequestMonitor requestMonitor) {
@@ -461,9 +461,9 @@ public class FinalLaunchSequence extends ReflectionSequence {
 								//   	                			// in the GDB documentation.  This is to avoid the sysroot
 								//   	                			// variable finding libraries that were not meant to be found.
 								//   	        	                fCommandControl.queueCommand(
-								//   	        	   	                	new MIGDBSetSysroot(fCommandControl.getContext()), 
+								//   	        	   	                	new MIGDBSetSysroot(fCommandControl.getContext()),
 								//   	        	   	                	new DataRequestMonitor<MIInfo>(getExecutor(), requestMonitor));
-							};
+							}
 						});
 			} else {
 				requestMonitor.done();
@@ -477,7 +477,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 
 	/**
 	 * Setup the source paths.
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@Execute
 	public void stepSetSourceLookupPath(RequestMonitor requestMonitor) {
@@ -512,7 +512,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	/**
 	 * Before starting a remote connection, set the gdb remotetimeout to the user
 	 * specified value.
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	@Execute
@@ -544,7 +544,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 
 	private static final String INVALID = "invalid"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * If we are dealing with a remote-attach debugging session, connect to the target.
 	 * @since 4.0
 	 */
@@ -616,7 +616,7 @@ public class FinalLaunchSequence extends ReflectionSequence {
 	 * If we are dealing with an local attach session, perform the attach.
 	 * For a remote attach session, we don't attach during the launch; instead
 	 * we wait for the user to manually do the attach.
-	 * @since 4.0 
+	 * @since 4.0
 	 */
 	@Execute
 	public void stepAttachToProcess(final RequestMonitor requestMonitor) {

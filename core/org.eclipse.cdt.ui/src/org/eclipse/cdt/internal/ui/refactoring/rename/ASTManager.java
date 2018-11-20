@@ -1,15 +1,15 @@
-/******************************************************************************* 
+/*******************************************************************************
  * Copyright (c) 2005, 2015 Wind River Systems, Inc. and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- *     Markus Schorn - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Markus Schorn - initial API and implementation
  *     IBM Corporation
  *     Sergey Prigogin (Google)
  ******************************************************************************/
@@ -24,18 +24,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.services.IDisposable;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -103,15 +91,24 @@ import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTInternal;
 import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.index.IIndexScope;
 import org.eclipse.cdt.internal.corext.util.CModelUtil;
-
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.RefactoringStatusEntry;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.services.IDisposable;
 
 /**
  * Used for refactoring to cache the IASTTranslationUnits.
@@ -180,7 +177,7 @@ public class ASTManager implements IDisposable {
 
 	/**
 	 * Returns TRUE, FALSE or UNKNOWN.
-	 * @throws DOMException 
+	 * @throws DOMException
 	 */
 	public static int isSameBinding(IIndex index, IBinding b1, IBinding b2) throws DOMException {
 		if (b1 == null || b2 == null) {
@@ -859,7 +856,7 @@ public class ASTManager implements IDisposable {
 	 * @param astStyle the style to pass to {@link ITranslationUnit#getAST(IIndex, int)} method.
 	 *     If a previously cached AST is returned, the style is not guaranteed to match
 	 *     the requested one.
-	 * @param cacheIt if {@code true}, the AST will be cached for later reuse 
+	 * @param cacheIt if {@code true}, the AST will be cached for later reuse
 	 * @return the requested AST or {@code null}
 	 * @throws CoreException
 	 */
@@ -1055,7 +1052,7 @@ public class ASTManager implements IDisposable {
 	}
 
 	//    private void markPreprocessorMatchesAsReference(
-	//            IASTTranslationUnit tu, final CRefactoringMatchStore store, 
+	//            IASTTranslationUnit tu, final CRefactoringMatchStore store,
 	//            final Set pathsVisited, final RefactoringStatus status) {
 	//        IASTPreprocessorStatement[] pdefs= tu.getAllPreprocessorStatements();
 	//        for (int i = 0; i < pdefs.length; i++) {

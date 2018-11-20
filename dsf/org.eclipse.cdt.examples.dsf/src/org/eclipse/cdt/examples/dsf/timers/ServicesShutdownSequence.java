@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,14 +24,14 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * Sequence that stops the services in the timers session.  
+ * Sequence that stops the services in the timers session.
  */
 public class ServicesShutdownSequence extends Sequence {
 
 	// Session that the services are running in.
 	final private DsfSession fSession;
 
-	// DSF Services is created as the first step of the sequence.  It 
+	// DSF Services is created as the first step of the sequence.  It
 	// cannot be created by the constructor because it can only be called
 	// in the session thread.
 	DsfServicesTracker fTracker;
@@ -81,8 +81,8 @@ public class ServicesShutdownSequence extends Sequence {
 		return fSteps;
 	}
 
-	// A convenience method that shuts down given service.  Only service class 
-	// is used to identify the service. 
+	// A convenience method that shuts down given service.  Only service class
+	// is used to identify the service.
 	private <V extends IDsfService> void shutdownService(Class<V> clazz, RequestMonitor requestMonitor) {
 		IDsfService service = fTracker.getService(clazz);
 		if (service != null) {

@@ -32,9 +32,9 @@ public class IndexUpdatePolicy {
 	private final ICProject fCProject;
 	private int fKind;
 
-	private HashSet<ITranslationUnit> fForce = new HashSet<ITranslationUnit>();
-	private HashSet<ITranslationUnit> fTimestamp = new HashSet<ITranslationUnit>();
-	private HashSet<ITranslationUnit> fRemoved = new HashSet<ITranslationUnit>();
+	private HashSet<ITranslationUnit> fForce = new HashSet<>();
+	private HashSet<ITranslationUnit> fTimestamp = new HashSet<>();
+	private HashSet<ITranslationUnit> fRemoved = new HashSet<>();
 	private IPDOMIndexer fIndexer;
 	private boolean fReindexRequested;
 

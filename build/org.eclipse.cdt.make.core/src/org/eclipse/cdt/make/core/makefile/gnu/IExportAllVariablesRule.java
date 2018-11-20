@@ -19,7 +19,7 @@ import org.eclipse.cdt.make.core.makefile.ISpecialRule;
  * .EXPORT_ALL_VARIABLES
  * Simply by being mentioned as a target, this tells `make' to export
  * all variables to child processes by default.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

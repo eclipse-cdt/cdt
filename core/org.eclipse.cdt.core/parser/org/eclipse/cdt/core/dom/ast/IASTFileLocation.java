@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Doug Schaefer (IBM) - Initial API and implementation
  *******************************************************************************/
@@ -15,14 +15,14 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Represents a node location that is directly in the source file.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IASTFileLocation extends IASTNodeLocation {
 	/**
 	 * The name of the file. Should not be null.
-	 * 
+	 *
 	 * @return the name of the file
 	 */
 	public String getFileName();
@@ -42,7 +42,7 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	/**
 	 * Returns the starting line number. Locations obtained via the index do not have line numbers
 	 * and return {@code 0}.
-	 * 
+	 *
 	 * @return the 1-based line number, or {@code 0} if not applicable
 	 */
 	public int getStartingLineNumber();
@@ -50,7 +50,7 @@ public interface IASTFileLocation extends IASTNodeLocation {
 	/**
 	 * Returns the ending line number. Locations obtained via the index do not have line numbers
 	 * and return {@code 0}.
-	 * 
+	 *
 	 * @return the 1-based line number, or {@code 0} if not applicable
 	 */
 	public int getEndingLineNumber();

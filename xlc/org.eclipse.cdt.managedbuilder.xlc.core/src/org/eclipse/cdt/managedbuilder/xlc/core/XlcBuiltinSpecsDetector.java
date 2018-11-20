@@ -36,7 +36,7 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector
 	private static final int OPTION_GROUP = 0;
 
 	/*	Sample output:
-	
+
 		> xlC -E -V -P -w ~/tmp/spec.C
 		export XL_CONFIG=/etc/vac.cfg:xlC
 		/usr/vac/exe/xlCcpp /home/me/tmp/spec.C - -qc++=/usr/vacpp/include -D_AIX -D_AIX32 -D_AIX41 -D_AIX43 -D_AIX50 -D_AIX51 -D_AIX52 -D_IBMR2 -D_POWER -E -P -w -qlanglvl=ansi -qansialias
@@ -72,7 +72,7 @@ public class XlcBuiltinSpecsDetector extends ToolchainBuiltinSpecsDetector
 
 	@Override
 	protected List<String> parseOptions(String line) {
-		List<String> options = new ArrayList<String>();
+		List<String> options = new ArrayList<>();
 		Matcher optionMatcher = OPTIONS_PATTERN.matcher(line);
 		while (optionMatcher.find()) {
 			String option = optionMatcher.group(OPTION_GROUP);

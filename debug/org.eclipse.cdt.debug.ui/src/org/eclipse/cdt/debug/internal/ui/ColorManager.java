@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Display;
 
 /**
  * Color manager for C/C++ Debug UI.
- * 
+ *
  * @since Jul 23, 2002
  */
 public class ColorManager {
@@ -39,7 +39,7 @@ public class ColorManager {
 		return gfColorManager;
 	}
 
-	protected Map<RGB, Color> fColorTable = new HashMap<RGB, Color>(10);
+	protected Map<RGB, Color> fColorTable = new HashMap<>(10);
 
 	public Color getColor(RGB rgb) {
 		Color color = fColorTable.get(rgb);

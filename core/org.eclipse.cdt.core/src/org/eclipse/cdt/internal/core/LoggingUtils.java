@@ -21,17 +21,17 @@ public class LoggingUtils {
 	 * Return a string that uniquely identifies a Java object reference, in the
 	 * form "classname@id", where 'classname' is the simple or package qualified
 	 * name of the object's class, and 'id' is the hash code.
-	 * 
+	 *
 	 * Why not just use obj.toString()? That method is often overriden, and so
 	 * cannot be relied on for a representation that uniquely identifies the
 	 * object in the VM space.
-	 * 
+	 *
 	 * @param obj
 	 *            the object reference to stringify
 	 * @param simpleClassName
 	 *            if true, use the class's simple name, otherwise the package
 	 *            qualified one
-	 * 
+	 *
 	 * @return the stringified representation of the object reference
 	 */
 	public static String toString(Object obj, boolean simpleClassName) {

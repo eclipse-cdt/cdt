@@ -89,7 +89,7 @@ public class GdbPinProvider implements IPinProvider {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param session
 	 */
 	public GdbPinProvider(DsfSession session) {
@@ -121,7 +121,7 @@ public class GdbPinProvider implements IPinProvider {
 
 	/**
 	 * Returns the pinned element handles.
-	 * 
+	 *
 	 * @return the element handles.
 	 */
 	public static Set<IPinElementHandle> getPinnedHandles() {
@@ -158,7 +158,7 @@ public class GdbPinProvider implements IPinProvider {
 
 			ImmediateInDsfExecutor immediateExecutor = new ImmediateInDsfExecutor(fSession.getExecutor());
 			immediateExecutor.execute(query);
-			data = query.get(2, TimeUnit.SECONDS); // timeout in 2 seconds, in case the call to execute got stuck 
+			data = query.get(2, TimeUnit.SECONDS); // timeout in 2 seconds, in case the call to execute got stuck
 		} catch (Exception e) {
 			GdbUIPlugin.log(e);
 		} finally {
@@ -295,7 +295,7 @@ public class GdbPinProvider implements IPinProvider {
 
 	/**
 	 * Dispatch the change event for the given DM context.
-	 * 
+	 *
 	 * @param dmc the DM context
 	 */
 	private void dispatchChangedEvent(IDMContext dmc) {
@@ -412,7 +412,7 @@ public class GdbPinProvider implements IPinProvider {
 						continue;
 					}
 
-					// If we got a shutdown event 
+					// If we got a shutdown event
 					if (eventDmc instanceof ICommandControlDMContext) {
 						fireModleChangeEvent(listener, null);
 						continue;

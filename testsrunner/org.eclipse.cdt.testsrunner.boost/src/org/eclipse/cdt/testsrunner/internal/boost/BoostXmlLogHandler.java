@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
-import org.eclipse.cdt.testsrunner.model.ITestMessage;
 import org.eclipse.cdt.testsrunner.model.ITestItem.Status;
+import org.eclipse.cdt.testsrunner.model.ITestMessage;
+import org.eclipse.cdt.testsrunner.model.ITestModelUpdater;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -59,7 +59,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	/** Maps the string message level representation to the Tests Runner internal enum code. */
 	private static final Map<String, ITestMessage.Level> STRING_TO_MESSAGE_LEVEL;
 	static {
-		Map<String, ITestMessage.Level> aMap = new HashMap<String, ITestMessage.Level>();
+		Map<String, ITestMessage.Level> aMap = new HashMap<>();
 		aMap.put(XML_NODE_INFO, ITestMessage.Level.Info);
 		aMap.put(XML_NODE_MESSAGE, ITestMessage.Level.Message);
 		aMap.put(XML_NODE_WARNING, ITestMessage.Level.Warning);
@@ -79,7 +79,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	private ITestModelUpdater modelUpdater;
 
 	/** Stores the text between XML tags. */
-	private Stack<StringBuilder> elementDataStack = new Stack<StringBuilder>();
+	private Stack<StringBuilder> elementDataStack = new Stack<>();
 
 	/** File name for current test message location. */
 	private String fileName;
@@ -147,7 +147,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 	/**
 	 * Common routing: notifies the Tests Runner core about new test message
 	 * and resets the internal state.
-	 * 
+	 *
 	 * @param level test message level
 	 */
 	private void addCurrentMessage(ITestMessage.Level level) {
@@ -205,7 +205,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 
 	/**
 	 * Throws the testing exception for the specified XML tag.
-	 * 
+	 *
 	 * @param tagName XML tag name
 	 * @throws SAXException the exception that will be thrown
 	 */
@@ -215,7 +215,7 @@ public class BoostXmlLogHandler extends DefaultHandler {
 
 	/**
 	 * Throws the testing exception with the specified message.
-	 * 
+	 *
 	 * @param message the reason
 	 * @throws SAXException the exception that will be thrown
 	 */

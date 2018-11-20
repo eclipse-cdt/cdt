@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.ui.wizards;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,10 +40,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.IWorkbenchWizard;
 import org.eclipse.ui.actions.NewProjectAction;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 public abstract class AbstractOpenWizardAction extends Action implements IWorkbenchWindowActionDelegate {
 

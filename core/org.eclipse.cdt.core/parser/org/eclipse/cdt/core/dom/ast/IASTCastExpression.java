@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This interface represents a cast expression of the form (TypeId)operand.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -46,28 +46,28 @@ public interface IASTCastExpression extends IASTExpression {
 
 	/**
 	 * Get the type of cast (as an operator).
-	 * 
+	 *
 	 * @return operator
 	 */
 	public int getOperator();
 
 	/**
 	 * Set the operator (type of cast).
-	 * 
+	 *
 	 * @param value
 	 */
 	public void setOperator(int value);
 
 	/**
 	 * Get expression being cast.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code> the expression being cast
 	 */
 	public IASTExpression getOperand();
 
 	/**
 	 * Set the expression being cast.
-	 * 
+	 *
 	 * @param expression
 	 *            <code>IASTExpression</code> the expression to be cast
 	 */
@@ -75,7 +75,7 @@ public interface IASTCastExpression extends IASTExpression {
 
 	/**
 	 * Set the typeId.
-	 * 
+	 *
 	 * @param typeId
 	 *            <code>IASTTypeId</code> to be set.
 	 */
@@ -83,7 +83,7 @@ public interface IASTCastExpression extends IASTExpression {
 
 	/**
 	 * Get the typeId.
-	 * 
+	 *
 	 * @return <code>IASTTypeId</code> representing type being casted to.
 	 */
 	public IASTTypeId getTypeId();

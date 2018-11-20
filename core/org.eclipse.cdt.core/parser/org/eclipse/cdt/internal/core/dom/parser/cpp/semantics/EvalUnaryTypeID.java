@@ -267,14 +267,14 @@ public class EvalUnaryTypeID extends CPPDependentEvaluation {
 					}
 				}
 				if (havePackExpansion) {
-					// TODO(bug 530103): 
+					// TODO(bug 530103):
 					//   This will only handle correctly the case where there is a single argument
 					//   which is a pack expansion, and no concrete arguments.
 					//   To correctly handle cases with multiple pack expansions, or a mixture
 					//   of concrete arguments and pack expansions, we need to do the following:
 					//     - For each pack expansion, find the parameter pack P which it's
 					//       expanding (if it's expanding multiple parameter packs, any one
-					//       should be sufficient), and construct an EvalUnaryTypeId representing 
+					//       should be sufficient), and construct an EvalUnaryTypeId representing
 					//       sizeof...(P).
 					//     - Construct an EvalBinary tree representing the sum of |concreteArgCount|
 					//       and the EvalUnaryTypeIds from the previous step.

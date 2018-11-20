@@ -114,7 +114,7 @@ public class BuildInfoFactory {
 		@Override
 		public Map<String, String> getExpandedEnvironment() {
 			Map<String, String> env = getEnvironment();
-			HashMap<String, String> envMap = new HashMap<String, String>(env.entrySet().size());
+			HashMap<String, String> envMap = new HashMap<>(env.entrySet().size());
 			boolean win32 = Platform.getOS().equals(Constants.OS_WIN32);
 			for (Map.Entry<String, String> entry : env.entrySet()) {
 				String key = entry.getKey();

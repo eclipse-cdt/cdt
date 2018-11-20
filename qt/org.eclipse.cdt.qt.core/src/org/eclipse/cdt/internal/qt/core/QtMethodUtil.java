@@ -114,7 +114,7 @@ public class QtMethodUtil {
 		signature.append('(');
 
 		boolean first = true;
-		List<String> signatures = new ArrayList<String>();
+		List<String> signatures = new ArrayList<>();
 		qtEncSignatures = qtEncSignatures.substring(i + 1);
 		Pattern p = Pattern.compile("^([a-zA-Z0-9+/=]*)(@?).*$");
 		while (!qtEncSignatures.isEmpty()) {

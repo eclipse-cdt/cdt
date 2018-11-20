@@ -41,12 +41,12 @@ import org.eclipse.ui.ide.IDE;
 public class QtRegressionTests extends BaseQtTestCase {
 
 	private static Map<String, Set<String>> buildExpectedMap(String mocOutput) {
-		Map<String, Set<String>> expected = new HashMap<String, Set<String>>();
+		Map<String, Set<String>> expected = new HashMap<>();
 		for (String moc_signature : mocOutput.split("\0")) {
 			String name = moc_signature.split("\\(")[0];
 			Set<String> set = expected.get(name);
 			if (set == null) {
-				set = new HashSet<String>();
+				set = new HashSet<>();
 				expected.put(name, set);
 			}
 			set.add(moc_signature);
@@ -334,7 +334,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 
 		// make sure that the three slot functions are found, but none of the inherited or
 		// non-slot functions
-		Set<String> expected = new HashSet<String>(Arrays.asList("slot1", "slot2", "slot3"));
+		Set<String> expected = new HashSet<>(Arrays.asList("slot1", "slot2", "slot3"));
 		for (IQMethod method : localSlots)
 			assertTrue("unexpected slot " + method.getName(), expected.remove(method.getName()));
 		assertEquals("missing slots " + expected.toString(), 0, expected.size());
@@ -369,7 +369,7 @@ public class QtRegressionTests extends BaseQtTestCase {
 		assertNotNull(page);
 		IEditorPart editor = IDE.openEditor(page, file, CUIPlugin.EDITOR_ID);
 		assertNotNull(editor);
-		CEditor ceditor = (CEditor) editor.getAdapter(CEditor.class);
+		CEditor ceditor = editor.getAdapter(CEditor.class);
 		assertNotNull(ceditor);
 
 		// NOTE: This offset relies on the above comment being exactly as expected.  If it is edited,

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *  IBM Rational Software - Initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import java.util.List;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 
-/** 
+/**
  * A specialized content provider to show a list of editor parts.
  */
 public class ListContentProvider implements IStructuredContentProvider {

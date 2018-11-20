@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Patrick Chuong (Texas Instruments) - Bug fix (326670)
@@ -26,7 +26,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * DisassemblyImageRegistry
  */
 public class DisassemblyImageRegistry extends AbstractImageRegistry {
-	private static List<Object[]> fStore = new ArrayList<Object[]>();
+	private static List<Object[]> fStore = new ArrayList<>();
 
 	private static String add(String plugin, String[] dirs, String name) {
 		String key = plugin + '/' + dirs[0] + '/' + name;

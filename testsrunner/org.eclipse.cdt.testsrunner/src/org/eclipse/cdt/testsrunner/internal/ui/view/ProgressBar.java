@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -89,7 +89,7 @@ public class ProgressBar extends Canvas {
 
 	/**
 	 * Sets the testing session to show information about.
-	 * 
+	 *
 	 * @param testingSession testing session (null is not acceptable)
 	 */
 	public void setTestingSession(ITestingSession testingSession) {
@@ -107,7 +107,7 @@ public class ProgressBar extends Canvas {
 
 	/**
 	 * Sets the color of the progress bar depending on the testing session.
-	 * 
+	 *
 	 * @param gc gc
 	 */
 	private void setStatusColor(GC gc) {
@@ -121,7 +121,7 @@ public class ProgressBar extends Canvas {
 
 	/**
 	 * Calculate the width of the progress rectangle in a widget.
-	 * 
+	 *
 	 * @note If total tests count is known it is used to determine width of the
 	 * progress rectangle. If it isn't the width of progress rectangle is set to
 	 * the half of a widget.
@@ -153,7 +153,7 @@ public class ProgressBar extends Canvas {
 
 	/**
 	 * Handles paint event and redraws the widget if necessary.
-	 * 
+	 *
 	 * @param event paint event
 	 */
 	private void paint(PaintEvent event) {

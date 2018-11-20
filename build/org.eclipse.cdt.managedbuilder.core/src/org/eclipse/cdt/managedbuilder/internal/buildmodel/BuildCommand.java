@@ -33,7 +33,7 @@ public class BuildCommand implements IBuildCommand {
 		if (args != null)
 			fArgs = args.clone();
 		if (env != null)
-			fEnv = new HashMap<String, String>(env);
+			fEnv = new HashMap<>(env);
 
 		fCWD = cwd;
 	}
@@ -62,7 +62,7 @@ public class BuildCommand implements IBuildCommand {
 	@Override
 	public Map<String, String> getEnvironment() {
 		if (fEnv != null)
-			return new HashMap<String, String>(fEnv);
+			return new HashMap<>(fEnv);
 		return null;
 	}
 

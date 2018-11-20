@@ -66,7 +66,7 @@ public class AutotoolsOptionValueHandler extends ManagedOptionValueHandler imple
 						// ignore
 					}
 					if (autoName == null || autoName.equals(AutotoolsPropertyConstants.TRUE)) {
-						autoNameTemplate = "${workspace_loc:/" + project.getName() + //$NON-NLS-1$ 
+						autoNameTemplate = "${workspace_loc:/" + project.getName() + //$NON-NLS-1$
 								"}/build-" + fixName(configuration.getName()); //$NON-NLS-1$
 						IBuilder cfgBuilder = configuration.getEditableBuilder();
 						cfgBuilder.setBuildPath(autoNameTemplate);

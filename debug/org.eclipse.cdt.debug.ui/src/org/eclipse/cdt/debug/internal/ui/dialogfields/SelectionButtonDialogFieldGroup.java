@@ -199,7 +199,7 @@ public class SelectionButtonDialogFieldGroup extends DialogField {
 		}
 	}
 
-	// ------ model access	
+	// ------ model access
 
 	/**
 	 * Returns the selection state of a button contained in the group.

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - adapted to use in DSF
@@ -21,11 +21,11 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 /**
  * This delta class mostly just duplicates the ModelDelta implementation, but
- * it allows clients to modify the flags after the original object is 
- * constructed. 
+ * it allows clients to modify the flags after the original object is
+ * constructed.
  *
  * @see IModelDelta#getNodes()
- * 
+ *
  * @since 1.0
  */
 public class VMDelta extends ModelDelta {
@@ -41,7 +41,7 @@ public class VMDelta extends ModelDelta {
 
 	/**
 	 * Constructs a new delta for the given element.
-	 * 
+	 *
 	 * @param vmcElement model element
 	 * @param flags change flags
 	 */
@@ -54,7 +54,7 @@ public class VMDelta extends ModelDelta {
 	/**
 	 * Constructs a new delta for the given element to be replaced
 	 * with the specified replacement element.
-	 * 
+	 *
 	 * @param vmcElement model element
 	 * @param replacement replacement element
 	 * @param flags change flags
@@ -69,7 +69,7 @@ public class VMDelta extends ModelDelta {
 	/**
 	 * Constructs a new delta for the given element to be inserted at
 	 * the specified index.
-	 * 
+	 *
 	 * @param vmcElement model element
 	 * @param index insertion position
 	 * @param flags change flags
@@ -84,7 +84,7 @@ public class VMDelta extends ModelDelta {
 	/**
 	 * Constructs a new delta for the given element at the specified index
 	 * relative to its parent with the given number of children.
-	 * 
+	 *
 	 * @param element model element
 	 * @param index insertion position
 	 * @param flags change flags
@@ -98,7 +98,7 @@ public class VMDelta extends ModelDelta {
 		fChildCount = childCount;
 	}
 
-	/** 
+	/**
 	 * Returns the non-VMC element if one is set, otherwise returns the VMC
 	 * element of this delta node.
 	 * @see org.eclipse.debug.internal.ui.viewers.IModelDelta#getElement()
@@ -118,7 +118,7 @@ public class VMDelta extends ModelDelta {
 
 	/**
 	 * Sets this delta's flags.
-	 * 
+	 *
 	 * @param flags
 	 */
 	@Override
@@ -134,7 +134,7 @@ public class VMDelta extends ModelDelta {
 	/**
 	 * Adds a child node to this delta with the given element and change flags,
 	 * and returns the child delta.
-	 * 
+	 *
 	 * @param element child element to add
 	 * @param flags change flags for child
 	 * @return newly created child delta
@@ -149,9 +149,9 @@ public class VMDelta extends ModelDelta {
 
 	/**
 	 * Adds a child node to this delta to replace the given element with the
-	 * specified replacement element and change flags, and returns the 
+	 * specified replacement element and change flags, and returns the
 	 * newly created child delta.
-	 * 
+	 *
 	 * @param element child element to add to this delta
 	 * @param replacement replacement element for the child element
 	 * @param flags change flags
@@ -168,7 +168,7 @@ public class VMDelta extends ModelDelta {
 	/**
 	 * Adds a child delta to this delta to insert the specified element at
 	 * the given index, and returns the newly created child delta.
-	 * 
+	 *
 	 * @param element child element in insert
 	 * @param index index of insertion
 	 * @param flags change flags
@@ -185,7 +185,7 @@ public class VMDelta extends ModelDelta {
 	/**
 	 * Adds a child delta to this delta at the specified index with the
 	 * given number of children, and returns the newly created child delta.
-	 * 
+	 *
 	 * @param element child element in insert
 	 * @param index index of the element relative to parent
 	 * @param flags change flags
@@ -202,10 +202,10 @@ public class VMDelta extends ModelDelta {
 
 	/**
 	 * Returns the child delta for the given element, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param element child element
 	 * @return corresponding delta node, or <code>null</code>
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	@Override
@@ -223,7 +223,7 @@ public class VMDelta extends ModelDelta {
 
 	/**
 	 * Sets the parent delta of this delta
-	 * 
+	 *
 	 * @param node parent delta
 	 */
 	void setParent(VMDelta node) {

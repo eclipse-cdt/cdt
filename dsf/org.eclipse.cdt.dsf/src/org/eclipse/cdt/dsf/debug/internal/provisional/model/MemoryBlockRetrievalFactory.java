@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Each memory context needs a different MemoryRetrieval (Bug 250323)
  *******************************************************************************/
@@ -20,12 +20,12 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 
 /**
  * A common MemoryBlockRetrievalFactory across debug sessions
- * which resolves (adapts) an element context to its corresponding 
+ * which resolves (adapts) an element context to its corresponding
  * IMemoryBlockRetrieval via the session's IMemoryBlockRetrievalManager
- * 
+ *
  * (non-Javadoc)
  * @see org.eclipse.cdt.dsf.debug.internal.provisional.model.IMemoryBlockRetrievalManager
- * 
+ *
  */
 public class MemoryBlockRetrievalFactory implements IAdapterFactory {
 

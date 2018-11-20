@@ -35,14 +35,14 @@ public interface IPathEntryVariableManager {
 	 * <li>A new variable will be created, if there is no variable defined with
 	 * the given name, and the given value is not <code>null</code>.
 	 * </li>
-	 * 
+	 *
 	 * <li>The referred variable's value will be changed, if it already exists
 	 * and the given value is not <code>null</code>.</li>
-	 * 
+	 *
 	 * <li>The referred variable will be removed, if a variable with the given
 	 * name is currently defined and the given value is <code>null</code>.
 	 * </li>
-	 *  
+	 *
 	 * <li>The call will be ignored, if a variable with the given name is not
 	 * currently defined and the given value is <code>null</code>, or if it is
 	 * defined but the given value is equal to its current value.
@@ -50,8 +50,8 @@ public interface IPathEntryVariableManager {
 	 * </ul>
 	 * <p>If a variable is effectively changed, created or removed by a call to
 	 * this method, notification will be sent to all registered listeners.</p>
-	 * 
-	 * @param name the name of the variable 
+	 *
+	 * @param name the name of the variable
 	 * @param value the value for the variable (may be <code>null</code>)
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -64,8 +64,8 @@ public interface IPathEntryVariableManager {
 	/**
 	 * Returns the value of the variable with the given name. If there is
 	 * no variable defined with the given name, returns <code>null</code>.
-	 * 
-	 * @param name the name of the variable to return the value for  
+	 *
+	 * @param name the name of the variable to return the value for
 	 * @return the value for the variable, or <code>null</code> if there is no
 	 *    variable defined with the given name
 	 */
@@ -73,7 +73,7 @@ public interface IPathEntryVariableManager {
 
 	/**
 	 * Returns an array containing all defined variable names.
-	 *  
+	 *
 	 * @return an array containing all defined variable names
 	 */
 	public String[] getVariableNames();
@@ -83,7 +83,7 @@ public interface IPathEntryVariableManager {
 	 * variables. The listener will be notified whenever a variable has been
 	 * added, removed or had its value changed. Has no effect if an identical
 	 * variable change listener is already registered.
-	 * 
+	 *
 	 * @param listener the listener
 	 * @see IPathEntryVariableChangeListener
 	 */
@@ -92,8 +92,8 @@ public interface IPathEntryVariableManager {
 	/**
 	 * Removes the given variable change listener from the listeners list.
 	 * Has no effect if an identical listener is not registered.
-	 * 
-	 * @param listener the listener 
+	 *
+	 * @param listener the listener
 	 * @see IPathEntryVariableChangeListener
 	 */
 	public void removeChangeListener(IPathEntryVariableChangeListener listener);
@@ -106,7 +106,7 @@ public interface IPathEntryVariableManager {
 	 * If the given String is <code>null</code> then <code>null</code> will be
 	 * returned.  In all other cases the result will be non-<code>null</code>.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * For example, consider the following collection of path variables:
 	 * </p>
@@ -122,7 +122,7 @@ public interface IPathEntryVariableManager {
 	 * <p>${BACKUP}  => /tmp/backup</p>
 	 * <p>${BACKUP}/bar.txt  => /tmp/backup/bar.txt</p>
 	 * <p>SOMEPATH/foo => SOMEPATH/foo</p></p>
-	 * 
+	 *
 	 * @param path the path to be resolved
 	 * @return the resolved path or <code>null</code>
 	 */
@@ -132,7 +132,7 @@ public interface IPathEntryVariableManager {
 	 * Returns <code>true</code> if the given variable is defined and
 	 * <code>false</code> otherwise. Returns <code>false</code> if the given
 	 * name is not a valid path variable name.
-	 * 
+	 *
 	 * @param name the variable's name
 	 * @return <code>true</code> if the variable exists, <code>false</code>
 	 *    otherwise

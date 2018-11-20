@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson - Make the class thread-safe as it can be accessed by multiple
@@ -30,7 +30,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * 
+ *
  */
 public class CBreakpointGdbThreadsFilterExtension implements IDsfBreakpointExtension {
 
@@ -104,7 +104,7 @@ public class CBreakpointGdbThreadsFilterExtension implements IDsfBreakpointExten
 	public void setThreadFilters(IExecutionDMContext[] threads) throws CoreException {
 		if (threads != null && threads.length > 0) {
 			IContainerDMContext target = DMContexts.getAncestorOfType(threads[0], IContainerDMContext.class);
-			fFilteredThreadsByTarget.put(target, new HashSet<IExecutionDMContext>(Arrays.asList(threads)));
+			fFilteredThreadsByTarget.put(target, new HashSet<>(Arrays.asList(threads)));
 		}
 	}
 

@@ -109,7 +109,7 @@ import org.osgi.framework.BundleContext;
  * single-threaded. To resolve this problem, there is some code
  * {@link #queueEvent(BreakpointEvent)} that ensures each event is fully
  * processed before the next event starts processing.
- * 
+ *
  * @since 4.2
  */
 public class MIBreakpointsSynchronizer extends AbstractDsfService
@@ -136,7 +136,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * Collection of breakpoints created from the GDB console or outside of Eclipse.
-	 * 
+	 *
 	 * Map of breakpoint contexts to Map of breakpoint number (String) to MIBreakpoint
 	 */
 	private Map<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>> fCreatedTargetBreakpoints;
@@ -153,7 +153,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * Class to store an event that needs to be performed by the synchronizer
-	 * 
+	 *
 	 * @see MIBreakpointsSynchronizer class documentation for design comments
 	 */
 	private static class BreakpointEvent {
@@ -171,7 +171,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * List of events that are queued, waiting to be processed.
-	 * 
+	 *
 	 * @see MIBreakpointsSynchronizer class documentation for design comments
 	 */
 	private Deque<BreakpointEvent> fBreakpointEvents = new LinkedList<>();
@@ -179,17 +179,17 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 	/**
 	 * True if the delayed events processing task is idle. If idle, a new event
 	 * should trigger restarting the processing.
-	 * 
+	 *
 	 * @see MIBreakpointsSynchronizer class documentation for design comments
 	 */
 	private boolean fEventsIdle = true;
 
 	public MIBreakpointsSynchronizer(DsfSession session) {
 		super(session);
-		fTrackedTargets = new HashSet<IBreakpointsTargetDMContext>();
-		fCreatedTargetBreakpoints = new HashMap<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>>();
-		fDeletedTargetBreakpoints = new HashMap<IBreakpointsTargetDMContext, Set<String>>();
-		fPendingModifications = new HashMap<IBreakpointsTargetDMContext, Map<String, MIBreakpoint>>();
+		fTrackedTargets = new HashSet<>();
+		fCreatedTargetBreakpoints = new HashMap<>();
+		fDeletedTargetBreakpoints = new HashMap<>();
+		fPendingModifications = new HashMap<>();
 	}
 
 	@Override
@@ -243,7 +243,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * Obtain the collection of MI breakpoints created
-	 * 
+	 *
 	 * @return collection of target breakpoints
 	 * @since 5.3
 	 */
@@ -279,7 +279,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * Queue (and potentially start processing) breakpoint events from GDB.
-	 * 
+	 *
 	 * @param event
 	 *            from GDB that needs to be processed once the synchronizer is idle
 	 *            and has completed the previous event.
@@ -324,7 +324,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 	 * The effect of flushing the cache of the synchronizer is to recollect all
 	 * breakpoint info from GDB and update the IBreakpoints and MIBreakpointManager
 	 * services too.
-	 * 
+	 *
 	 * Note that an optimization in the number of calls to synchronize can be done, see
 	 * synchronize's removeBpsForAllDmcs parameter.
 	 */
@@ -350,7 +350,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 	 * events from the backend. When this entry in the queue is processed, it
 	 * converts itself to a series of new events that represent the difference
 	 * between the state in the breakpoint manager and GDB.
-	 * 
+	 *
 	 * @param bpContext
 	 *            context to issue MI Break List on
 	 * @param removeBpsForAllDmcs
@@ -447,11 +447,11 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		}
 		contextBreakpoints.put(miBpt.getNumber(), fBreakpointsService.createMIBreakpointDMData(miBpt));
 
-		// Store the created target breakpoint to prevent setting it again on the target 
+		// Store the created target breakpoint to prevent setting it again on the target
 		// when addBreakpoint() is called.
 		Map<String, MIBreakpoint> targetMap = fCreatedTargetBreakpoints.get(bpTargetDMC);
 		if (targetMap == null) {
-			targetMap = new HashMap<String, MIBreakpoint>();
+			targetMap = new HashMap<>();
 			fCreatedTargetBreakpoints.put(bpTargetDMC, targetMap);
 		}
 		targetMap.put(miBpt.getNumber(), miBpt);
@@ -482,11 +482,11 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 						delayDone(100, rm);
 						return;
 					} else {
-						// The corresponding platform breakpoint already exists. 
+						// The corresponding platform breakpoint already exists.
 						// If the breakpoint tracking has already started we need
-						// to notify MIBreakpointsManager which will increment its 
-						// install count. 
-						// Otherwise the breakpoint will be processed as an initial 
+						// to notify MIBreakpointsManager which will increment its
+						// install count.
+						// Otherwise the breakpoint will be processed as an initial
 						// breakpoint when the breakpoint tracking starts.
 						if (isBreakpointTargetTracked(bpTargetDMC)) {
 							// If the target breakpoint is thread specific, update thread filters
@@ -521,7 +521,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	private void doTargetBreakpointCreatedSync(final MIBreakpoint miBpt, final IBreakpointsTargetDMContext bpTargetDMC,
 			ICBreakpoint plBpt) {
-		// Make sure the platform breakpoint's parameters are synchronized 
+		// Make sure the platform breakpoint's parameters are synchronized
 		// with the target breakpoint.
 		Map<String, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
 		if (map != null) {
@@ -532,7 +532,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		} else {
 			targetBreakpointModified(bpTargetDMC, plBpt, miBpt);
 		}
-	};
+	}
 
 	/**
 	 * Some operations that are passed to platform require a number or delays before
@@ -541,7 +541,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 	 * the platform operations, but that is not available. Use this method to delay
 	 * calling .done() until at least delayExecutorCycles cycles of the executor
 	 * have run.
-	 * 
+	 *
 	 * @param delayExecutorCycles
 	 * @param rm
 	 */
@@ -594,7 +594,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 					if (plBpt instanceof ICBreakpoint) {
 						Set<String> set = fDeletedTargetBreakpoints.get(bpTargetDMC);
 						if (set == null) {
-							set = new HashSet<String>();
+							set = new HashSet<>();
 							fDeletedTargetBreakpoints.put(bpTargetDMC, set);
 						}
 						set.add(id);
@@ -619,7 +619,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 								}
 
 								IExecutionDMContext[] execDMCs = bpExtension.getThreadFilters(contDMC);
-								List<IExecutionDMContext> list = new ArrayList<IExecutionDMContext>(execDMCs.length);
+								List<IExecutionDMContext> list = new ArrayList<>(execDMCs.length);
 								for (IExecutionDMContext c : execDMCs) {
 									if (c instanceof IMIExecutionDMContext
 											&& !((IMIExecutionDMContext) c).getThreadId().equals(threadId)) {
@@ -724,7 +724,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 					// modification data, it will be picked up later.
 					Map<String, MIBreakpoint> map = fPendingModifications.get(bpTargetDMC);
 					if (map == null) {
-						map = new HashMap<String, MIBreakpoint>();
+						map = new HashMap<>();
 						fPendingModifications.put(bpTargetDMC, map);
 					}
 					map.put(miBpt.getNumber(), miBpt);
@@ -777,8 +777,8 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 						}
 						sb.append(action.getName());
 					}
-					// Target breakpoints and platform breakpoints use the same format 
-					// to store trace commands. This format is different than the format 
+					// Target breakpoints and platform breakpoints use the same format
+					// to store trace commands. This format is different than the format
 					// used by GDB. We need to switch to the platform format to avoid unnecessary
 					// modifications of target breakpoints.
 					miBpt.setCommands(sb.toString());
@@ -860,10 +860,10 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * Return true if the target breakpoint is the same as the platform breakpoint.
-	 * 
+	 *
 	 * Whether breakpoints are considered the same depends on their type and their key attributes, with each type
 	 * defining its own key attributes.
-	 * 
+	 *
 	 * @param platformBreakpoint
 	 * @param targetBreakpoint
 	 * @param fileName
@@ -906,10 +906,10 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 	 * Create the platform breakpoint, but don't register it with breakpoint manager. This method is called when the
 	 * synchronizer needs to create a new platform breakpoint for a new breakpoint created by the user in the CLI
 	 * interface (in response to =breakpoint-created event).
-	 * 
+	 *
 	 * If further fine tuning on the created breakpoint is needed, consider overriding
 	 * {@link #targetBreakpointCreated(MIBreakpoint)} or even replacing the entire breakpoint synchronizer.
-	 * 
+	 *
 	 * @param fileName
 	 *            the name of the file that breakpoint was inserted into, as determined by source lookup
 	 * @param miBpt
@@ -1064,7 +1064,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 	 * then create the breakpoint with that file, otherwise the function breakpoint
 	 * should be inserted in the same way as if it was done with the UI "Add
 	 * Function Breakpoint (C/C++)".
-	 * 
+	 *
 	 * @param miBpt
 	 *            an MI Breakpoint that is a function breakpoint
 	 * @return true if the user specified file and function, false if just a
@@ -1431,13 +1431,13 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * Returns the list of tracepoint actions generated from the given command string.
-	 * If the corresponding action for a command doesn't exist in TracepointActionManager 
+	 * If the corresponding action for a command doesn't exist in TracepointActionManager
 	 * the new action is created and added.
-	 *   
+	 *
 	 * @param commands list of gdb tracepoint commands separated by TracepointActionManager.TRACEPOINT_ACTION_DELIMITER
 	 */
 	private ITracepointAction[] getActionsFromCommands(String[] commands) {
-		List<ITracepointAction> list = new ArrayList<ITracepointAction>();
+		List<ITracepointAction> list = new ArrayList<>();
 		TracepointActionManager tam = TracepointActionManager.getInstance();
 		WhileSteppingAction whileStepping = null;
 		List<ITracepointAction> subActions = null;
@@ -1465,7 +1465,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 				} else if (command.startsWith(TC_WHILE_STEPPING)) {
 					whileStepping = createWhileSteppingAction(command.substring(TC_WHILE_STEPPING.length()));
 					if (whileStepping != null) {
-						subActions = new ArrayList<ITracepointAction>();
+						subActions = new ArrayList<>();
 					}
 				} else if (command.equals(TC_END)) {
 					if (whileStepping == null || subActions == null) {
@@ -1641,7 +1641,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * Obtain the file name of the target breakpoint.
-	 * 
+	 *
 	 * @param miBpt target breakpoint
 	 * @return file name
 	 * @since 5.3
@@ -1652,8 +1652,8 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		if (fileName != null && !fileName.isEmpty()) {
 			return fileName;
 		}
-		// When a breakpoint is set from the console on an invalid file both 
-		// 'file' and 'fullname' attributes are not available, we need to parse 
+		// When a breakpoint is set from the console on an invalid file both
+		// 'file' and 'fullname' attributes are not available, we need to parse
 		// the 'original-location' attribute to retrieve the file name.
 		String origLocation = miBpt.getOriginalLocation();
 		if (origLocation.isEmpty()) {
@@ -1671,7 +1671,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * Obtain the line number of the target breakpoint.
-	 * 
+	 *
 	 * @param miBpt target breakpoint
 	 * @return line number
 	 * @since 5.3
@@ -1681,8 +1681,8 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 		if (lineNumber != -1) {
 			return lineNumber;
 		}
-		// When a breakpoint is set from the console on an invalid file 
-		// the 'line' attributes is not available, we need to parse 
+		// When a breakpoint is set from the console on an invalid file
+		// the 'line' attributes is not available, we need to parse
 		// the 'original-location' attribute to retrieve the line number.
 		String origLocation = miBpt.getOriginalLocation();
 		if (origLocation.isEmpty()) {
@@ -1707,7 +1707,7 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 
 	/**
 	 * Obtain the function name of the target breakpoint.
-	 * 
+	 *
 	 * @param miBpt target breakpoint
 	 * @return function name
 	 * @since 5.3
@@ -1715,9 +1715,9 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 	protected String getFunctionName(MIBreakpoint miBpt) {
 		if (miBpt.getFunction() != null && !miBpt.getFunction().isEmpty())
 			return miBpt.getFunction();
-		// When a function breakpoint is set from the console, the symbol associated with 
-		// the function may not be known to GDB. In this case the 'function' attribute is 
-		// not available, we need to parse the 'original-location' attribute to retrieve 
+		// When a function breakpoint is set from the console, the symbol associated with
+		// the function may not be known to GDB. In this case the 'function' attribute is
+		// not available, we need to parse the 'original-location' attribute to retrieve
 		// the function name.
 		return getFunctionFromOriginalLocation(miBpt.getOriginalLocation());
 	}
@@ -1785,11 +1785,11 @@ public class MIBreakpointsSynchronizer extends AbstractDsfService
 	}
 
 	protected boolean isCatchpoint(MIBreakpoint miBpt) {
-		// Since we are using the CLI 'catch' command to set catchpoints GDB will emit 
+		// Since we are using the CLI 'catch' command to set catchpoints GDB will emit
 		// the 'breakpoint-created' notification even if the catchpoint is set from UI.
-		// In case of 'catch' and 'throw' events the value of the 'type' attribute in 
+		// In case of 'catch' and 'throw' events the value of the 'type' attribute in
 		// the breakpoint notification's data is 'breakpoint' instead of 'catchpoint'.
-		// In this cases to identify the correct type we need to check the content of 
+		// In this cases to identify the correct type we need to check the content of
 		// the 'what' attribute.
 		return (miBpt.isCatchpoint() || (!miBpt.isWatchpoint() && (CE_EXCEPTION_CATCH.equals(miBpt.getExpression())
 				|| CE_EXCEPTION_THROW.equals(miBpt.getExpression()))));

@@ -167,7 +167,7 @@ public class CommandLauncherManager {
 
 	/**
 	 * Get a command launcher.
-	 * 
+	 *
 	 * @param project - IProject to determine launcher for.
 	 * @return an ICommandLauncher for running commands
 	 */
@@ -195,7 +195,7 @@ public class CommandLauncherManager {
 
 	/**
 	 * Get a command launcher.
-	 * 
+	 *
 	 * @param config - ICBuildConfiguration to determine launcher for.
 	 * @return an ICommandLauncher for running commands
 	 * @since 6.5
@@ -226,7 +226,7 @@ public class CommandLauncherManager {
 
 	/**
 	 * Get a command launcher.
-	 * 
+	 *
 	 * @param cfgd - ICConfigurationDescription to get command launcher for.
 	 * @return an ICommandLauncher for running commands
 	 */

@@ -16,16 +16,16 @@ package org.eclipse.cdt.core.index;
 /**
  * Each IIndexFragment stores file location representations in an implementation specific manner.
  * External to IIndexFragment files are identified by an {@link IIndexFileLocation}
- * 
+ *
  * Internal to IIndexFragment a mechanism for converting between the string location format used
  * and the URI world is needed. This interface represents that mechanism.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IIndexLocationConverter {
 	/**
-	 * Convert a raw string in an internal IIndexFragment implementation specific format to 
+	 * Convert a raw string in an internal IIndexFragment implementation specific format to
 	 * an IIndexFileLocation or null if the internal format could not be translated.
 	 */
 	public abstract IIndexFileLocation fromInternalFormat(String raw);

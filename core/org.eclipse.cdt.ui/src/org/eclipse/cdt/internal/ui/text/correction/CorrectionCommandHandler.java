@@ -18,6 +18,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.ui.actions.ActionUtil;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistProposal;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
+import org.eclipse.cdt.ui.text.IInvocationContext;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -38,23 +52,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
-
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-import org.eclipse.cdt.ui.text.IInvocationContext;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
-import org.eclipse.cdt.internal.ui.actions.ActionUtil;
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.correction.proposals.LinkedNamesAssistProposal;
 
 /**
  * Handler to be used to run a quick fix or assist by keyboard shortcut
@@ -81,7 +78,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 
 	/**
 	 * Try to execute the correction command.
-	 * 
+	 *
 	 * @return <code>true</code> iff the correction could be started
 	 * @since 5.3
 	 */
@@ -105,7 +102,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	private ICompletionProposal findCorrection(String id, boolean isAssist, ITextSelection selection,
 			ITranslationUnit tu, IAnnotationModel model) {
 		CorrectionContext context = new CorrectionContext(tu, selection.getOffset(), selection.getLength());
-		Collection<ICCompletionProposal> proposals = new ArrayList<ICCompletionProposal>(10);
+		Collection<ICCompletionProposal> proposals = new ArrayList<>(10);
 		if (isAssist) {
 			if (id.equals(LinkedNamesAssistProposal.ASSIST_ID)) {
 				return getLocalRenameProposal(context); // shortcut for local rename
@@ -132,7 +129,7 @@ public class CorrectionCommandHandler extends AbstractHandler {
 	}
 
 	private Annotation[] getAnnotations(int offset, boolean goToClosest) throws BadLocationException {
-		ArrayList<Annotation> resultingAnnotations = new ArrayList<Annotation>();
+		ArrayList<Annotation> resultingAnnotations = new ArrayList<>();
 		CCorrectionAssistant.collectQuickFixableAnnotations(fEditor, offset, goToClosest, resultingAnnotations);
 		return resultingAnnotations.toArray(new Annotation[resultingAnnotations.size()]);
 	}

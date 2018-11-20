@@ -43,6 +43,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.eclipse.cdt.internal.ui.CUIException;
+import org.eclipse.cdt.internal.ui.CUIStatus;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -54,13 +59,6 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CUIException;
-import org.eclipse.cdt.internal.ui.CUIStatus;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
-
 public class ProfileStore {
 	/** The default encoding to use */
 	public static final String ENCODING = "UTF-8"; //$NON-NLS-1$
@@ -68,7 +66,7 @@ public class ProfileStore {
 	protected static final String VERSION_KEY_SUFFIX = ".version"; //$NON-NLS-1$
 
 	/**
-	 * A SAX event handler to parse the xml format for profiles. 
+	 * A SAX event handler to parse the xml format for profiles.
 	 */
 	private final static class ProfileDefaultHandler extends DefaultHandler {
 		private List<Profile> fProfiles;
@@ -95,11 +93,11 @@ public class ProfileStore {
 				if (fKind == null) //Can only be an CodeFormatterProfile created pre 20061106
 					fKind = ProfileVersioner.CODE_FORMATTER_PROFILE_KIND;
 
-				fSettings = new HashMap<String, String>(200);
+				fSettings = new HashMap<>(200);
 
 			} else if (qName.equals(XML_NODE_ROOT)) {
 
-				fProfiles = new ArrayList<Profile>();
+				fProfiles = new ArrayList<>();
 				try {
 					fVersion = Integer.parseInt(attributes.getValue(XML_ATTRIBUTE_VERSION));
 				} catch (NumberFormatException ex) {
@@ -315,7 +313,7 @@ public class ProfileStore {
 
 	/*
 	 * Create a new profile element in the specified document. The profile is not added
-	 * to the document by this method. 
+	 * to the document by this method.
 	 */
 	private static Element createProfileElement(Profile profile, Document document,
 			IProfileVersioner profileVersioner) {

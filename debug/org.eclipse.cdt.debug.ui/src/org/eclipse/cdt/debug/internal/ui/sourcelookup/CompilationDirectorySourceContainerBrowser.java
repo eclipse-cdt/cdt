@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
+import org.eclipse.cdt.debug.internal.core.sourcelookup.CompilationDirectorySourceContainer;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
 import org.eclipse.debug.ui.sourcelookup.AbstractSourceContainerBrowser;
-import org.eclipse.cdt.debug.internal.core.sourcelookup.CompilationDirectorySourceContainer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 

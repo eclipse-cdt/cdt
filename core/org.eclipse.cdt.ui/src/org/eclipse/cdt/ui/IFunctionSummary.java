@@ -40,7 +40,7 @@ public interface IFunctionSummary {
 		/**
 		 * Get the return type of the function.
 		 * ie "int main(int argc, char **argv)" --> "int"
-		 * @return A string containing the return type of the 
+		 * @return A string containing the return type of the
 		 * function.
 		 */
 		public String getReturnType();
@@ -48,7 +48,7 @@ public interface IFunctionSummary {
 		/**
 		 * Get the arguments of the function.
 		 * ie "int main(int argc, char **argv)" --> "int argc, char **argv"
-		 * @return A string containing the arguments of the 
+		 * @return A string containing the arguments of the
 		 * function, or null if the function has no arguments.
 		 */
 		public String getArguments();
@@ -65,7 +65,7 @@ public interface IFunctionSummary {
 	/**
 	 * Gets the name of the function.  This is the simple
 	 * name without any additional return or argument information.
-	 * The function "int main(int argc, char **argv)" would 
+	 * The function "int main(int argc, char **argv)" would
 	 * return "main"
 	 * @return The name of the function without any additional
 	 * information
@@ -73,7 +73,7 @@ public interface IFunctionSummary {
 	public String getName();
 
 	/**
-	 * Get the full namespace qualifier for this function 
+	 * Get the full namespace qualifier for this function
 	 * (generally C++ only)
 	 * @return The string of the fully qualified namespace for
 	 * this function, or null if the namespace is not known.
@@ -84,15 +84,15 @@ public interface IFunctionSummary {
 	 * Gets the description of the function.  This string can be
 	 * either text or HTML coded and is displayed as part of the
 	 * hover help and as the context proposal information.
-	 * @return A description for this function, or null if no 
+	 * @return A description for this function, or null if no
 	 * description is available.
 	 */
 	public String getDescription();
 
 	/**
-	 * Gets the prototype description for this function. 
-	 * @return The IFunctionPrototypeSummary describing the 
-	 * prototype for this function 
+	 * Gets the prototype description for this function.
+	 * @return The IFunctionPrototypeSummary describing the
+	 * prototype for this function
 	 */
 	public IFunctionPrototypeSummary getPrototype();
 

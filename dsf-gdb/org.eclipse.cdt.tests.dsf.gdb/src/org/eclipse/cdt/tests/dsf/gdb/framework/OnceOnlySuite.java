@@ -27,7 +27,7 @@ import org.junit.runners.model.RunnerBuilder;
  * variation). However, in some cases, the redundant appearances are
  * unintentional and unavoidable consequences of how the suites are defined and
  * used. This runner caters to the latter scenario.
- * 
+ *
  * <p>
  * Thanks to Bill Venners and David Saff for suggesting this solution on the
  * junit mailing list. See <a
@@ -36,7 +36,7 @@ import org.junit.runners.model.RunnerBuilder;
  */
 @SuppressWarnings("restriction")
 public class OnceOnlySuite extends Suite {
-	private static Set<Class<?>> alreadySeen = new HashSet<Class<?>>();
+	private static Set<Class<?>> alreadySeen = new HashSet<>();
 
 	public OnceOnlySuite(Class<?> testClass, final RunnerBuilder builder) throws InitializationError {
 		super(testClass, new RunnerBuilder() {

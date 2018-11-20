@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -30,10 +30,10 @@ import org.eclipse.debug.internal.ui.viewers.provisional.ILabelRequestMonitor;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * Layout node for the standard platform debug model IProcess object. This 
- * node requires that an ILaunch object be found as an ancestor of this node.  
- * It does not implement the label provider functionality, so the default 
- * adapters should be used to retrieve the label.  
+ * Layout node for the standard platform debug model IProcess object. This
+ * node requires that an ILaunch object be found as an ancestor of this node.
+ * It does not implement the label provider functionality, so the default
+ * adapters should be used to retrieve the label.
  */
 @SuppressWarnings("restriction")
 public class StandardProcessVMNode extends AbstractVMNode {
@@ -44,7 +44,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
 
 	@Override
 	public String toString() {
-		return "StandardProcessVMNode"; //$NON-NLS-1$ 
+		return "StandardProcessVMNode"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -52,16 +52,16 @@ public class StandardProcessVMNode extends AbstractVMNode {
 		for (IChildrenUpdate update : updates) {
 			ILaunch launch = findLaunch(update.getElementPath());
 			if (launch == null) {
-				// There is no launch in the parent of this node.  This means that the 
-				// layout is misconfigured.  
+				// There is no launch in the parent of this node.  This means that the
+				// layout is misconfigured.
 				assert false;
 				update.done();
 				continue;
 			}
 
 			/*
-			 * Assume that the process objects are stored within the launch, and 
-			 * retrieve them on dispatch thread.  
+			 * Assume that the process objects are stored within the launch, and
+			 * retrieve them on dispatch thread.
 			 */
 			IProcess[] processes = launch.getProcesses();
 			for (int i = 0; i < processes.length; i++) {
@@ -120,7 +120,7 @@ public class StandardProcessVMNode extends AbstractVMNode {
 	}
 
 	/**
-	 * Recursively searches the VMC for Launch VMC, and returns its ILaunch.  
+	 * Recursively searches the VMC for Launch VMC, and returns its ILaunch.
 	 * Returns null if an ILaunch is not found.
 	 */
 	private ILaunch findLaunch(TreePath path) {

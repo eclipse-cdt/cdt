@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,9 +20,9 @@ import org.eclipse.cdt.dsf.datamodel.IDMData;
 import org.eclipse.cdt.dsf.service.IDsfService;
 
 /**
- * Stack service provides access to stack information for a 
+ * Stack service provides access to stack information for a
  * given execution context.
- * 
+ *
  * @since 1.0
  */
 public interface IStack extends IDsfService {
@@ -30,14 +30,14 @@ public interface IStack extends IDsfService {
 	/**
 	 * Context for a specific stack frame.  Besides allowing access to stack
 	 * frame data, this context is used by other services that require a stack
-	 * frame for evaluation.  
+	 * frame for evaluation.
 	 */
 	public interface IFrameDMContext extends IDMContext {
 		int getLevel();
 	}
 
 	/**
-	 * Stack frame information. 
+	 * Stack frame information.
 	 */
 	public interface IFrameDMData extends IDMData {
 		IAddress getAddress();
@@ -57,14 +57,14 @@ public interface IStack extends IDsfService {
 	}
 
 	/**
-	 * Variable context.  This context only provides access to limited 
-	 * expression information.  For displaying complete information, 
+	 * Variable context.  This context only provides access to limited
+	 * expression information.  For displaying complete information,
 	 * Expressions service should be used.
 	 */
 	public interface IVariableDMContext extends IDMContext {
 	}
 
-	/** 
+	/**
 	 * Stack frame variable information.
 	 */
 	public interface IVariableDMData extends IDMData {
@@ -101,17 +101,17 @@ public interface IStack extends IDsfService {
 
 	/**
 	 * Retrieves list of stack frames for the given execution context.  Request
-	 * will fail if the stack frame data is not available. 
-	 * <p>The range of stack frames can be limited by the <code>startIndex</code> and <code>endIndex</code> arguments. 
+	 * will fail if the stack frame data is not available.
+	 * <p>The range of stack frames can be limited by the <code>startIndex</code> and <code>endIndex</code> arguments.
 	 * It is no error to specify an <code>endIndex</code> exceeding the number of available stack frames.
 	 * A negative value for <code>endIndex</code> means to retrieve all stack frames. <code>startIndex</code> must be a non-negative value.
 	 * </p>
-	 * 
+	 *
 	 * @param execContext  the execution context to retrieve stack frames for
 	 * @param startIndex  the index of the first frame to retrieve
 	 * @param endIndex  the index of the last frame to retrieve (inclusive) or {@link #ALL_FRAMES}
 	 * @param rm  the request monitor
-	 * 
+	 *
 	 * @see #getFrames(IDMContext, DataRequestMonitor)
 	 * @since 2.0
 	 */
@@ -119,11 +119,11 @@ public interface IStack extends IDsfService {
 			DataRequestMonitor<IFrameDMContext[]> rm);
 
 	/**
-	 * Retrieves the top stack frame for the given execution context.  
-	 * Retrieving just the top frame DMC and corresponding data can be much 
+	 * Retrieves the top stack frame for the given execution context.
+	 * Retrieving just the top frame DMC and corresponding data can be much
 	 * more efficient than just retrieving the whole stack, before the data
-	 * is often included in the stopped event.  Also for some UI functionality, 
-	 * such as stepping, only top stack frame is often needed. 
+	 * is often included in the stopped event.  Also for some UI functionality,
+	 * such as stepping, only top stack frame is often needed.
 	 * @param execContext
 	 * @param rm
 	 */
@@ -142,7 +142,7 @@ public interface IStack extends IDsfService {
 	/**
 	 * Retrieves the number of stack frames available for the given context.  The depth
 	 * returned could, but is not required to, be limited to the maxDepth parameter.
-	 * 
+	 *
 	 * @param dmc Context to retrieve data for.
 	 * @param maxDepth The maximum depth of stack that is requested.  If 0, not limit should
 	 * be used to calculate the stack depth, and the actual stack depth should be returned.

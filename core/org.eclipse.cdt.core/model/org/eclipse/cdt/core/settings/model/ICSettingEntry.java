@@ -86,7 +86,7 @@ public interface ICSettingEntry {
 	 * Flag {@code UNDEFINED} indicates that the entry is "Exported" to referencing projects.
 	 * It will be passed to the projects configurations referencing the configuration the entry
 	 * belongs to.
-	 * 
+	 *
 	 * @since 5.6
 	 */
 	int EXPORTED = 1 << 7;

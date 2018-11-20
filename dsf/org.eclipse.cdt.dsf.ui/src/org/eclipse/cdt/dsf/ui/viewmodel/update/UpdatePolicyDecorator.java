@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -15,7 +15,7 @@ package org.eclipse.cdt.dsf.ui.viewmodel.update;
 
 /**
  * An update policy decorator which can override behaviour of an underlying update policy.
- * 
+ *
  * @since 1.1
  */
 public abstract class UpdatePolicyDecorator implements IVMUpdatePolicy {

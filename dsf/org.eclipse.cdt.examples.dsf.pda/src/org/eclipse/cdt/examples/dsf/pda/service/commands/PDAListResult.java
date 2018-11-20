@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ public class PDAListResult extends PDACommandResult {
 	PDAListResult(String response) {
 		super(response);
 		StringTokenizer st = new StringTokenizer(response, "|");
-		List<String> valuesList = new ArrayList<String>();
+		List<String> valuesList = new ArrayList<>();
 
 		while (st.hasMoreTokens()) {
 			String token = st.nextToken();

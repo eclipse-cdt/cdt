@@ -14,7 +14,7 @@
 package org.eclipse.cdt.managedbuilder.macros;
 
 /**
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -25,14 +25,14 @@ public interface IFileContextBuildMacroValues {
 
 	/**
 	 *
-	 * @return the array if strings representing the names of file context macros supported 
+	 * @return the array if strings representing the names of file context macros supported
 	 * by the builder
 	 */
 	String[] getSupportedMacros();
 
 	/**
 	 *
-	 * @return the file context macro value for the given macro name 
+	 * @return the file context macro value for the given macro name
 	 */
 	String getMacroValue(String macroName);
 

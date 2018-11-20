@@ -19,7 +19,7 @@ import java.util.Set;
 
 /**
  * Template info extended to include new stuff for new new project wizard UI.
- * 
+ *
  * @author Doug Schaefer
  * @since 5.4
  */

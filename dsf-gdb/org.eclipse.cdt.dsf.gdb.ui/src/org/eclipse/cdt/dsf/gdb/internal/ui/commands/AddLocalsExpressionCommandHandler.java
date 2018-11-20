@@ -21,7 +21,7 @@ import org.eclipse.debug.core.IExpressionManager;
 
 /**
  * Handling of adding group of locals into expression view
- *  
+ *
  * @since 2.4
  */
 public class AddLocalsExpressionCommandHandler extends AbstractHandler {

@@ -7,9 +7,9 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
- *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.parser;
 
@@ -47,7 +47,7 @@ public class ParserMessages {
 
 	/**
 	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key	the string used to get the bundle value, must not be null
 	 */
 	public static String getFormattedString(String key, Object[] args) {
@@ -57,7 +57,7 @@ public class ParserMessages {
 
 	/**
 	 * Gets a string from the resource bundle and formats it with the argument
-	 * 
+	 *
 	 * @param key	the string used to get the bundle value, must not be null
 	 */
 	public static String getFormattedString(String key, Object arg) {

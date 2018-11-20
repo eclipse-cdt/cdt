@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Binary file in AIX XCOFF32 format
- * 
+ *
  * @author vhirsl
  */
 public class XCOFFBinaryObject extends BinaryObjectAdapter {
@@ -72,7 +72,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.IBinaryParser.IBinaryObject#getSymbols()
 	 */
 	@Override
@@ -89,7 +89,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.BinaryObjectAdapter#getBinaryObjectInfo()
 	 */
 	@Override
@@ -177,7 +177,7 @@ public class XCOFFBinaryObject extends BinaryObjectAdapter {
 	}
 
 	protected void loadSymbols(XCoff32 xcoff) throws IOException {
-		ArrayList<XCoffSymbol> list = new ArrayList<XCoffSymbol>();
+		ArrayList<XCoffSymbol> list = new ArrayList<>();
 
 		XCoff32.Symbol[] peSyms = xcoff.getSymbols();
 		byte[] table = xcoff.getStringTable();

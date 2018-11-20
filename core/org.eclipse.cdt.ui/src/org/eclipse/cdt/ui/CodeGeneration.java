@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     Rational Software - initial implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -15,16 +15,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.templates.Template;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.corext.codemanipulation.StubUtility;
-
 /**
  * Class that offers access to the templates contained in the 'Code Templates' preference page.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @since 2.1
@@ -254,11 +252,11 @@ public class CodeGeneration {
 	 * Returns the content of the body for a method using the method body template.
 	 * <code>null</code> is returned if the template is empty.
 	 * <p>The returned string is unformatted and not indented.
-	 * 
+	 *
 	 * @param tu The translation unit to which the method belongs. The translation unit does not need to exist.
 	 * @param typeName Name of the type to which the method belongs.
 	 * @param methodName Name of the method.
-	 * @param bodyStatement The code to be entered at the place of the variable ${body_statement}. 
+	 * @param bodyStatement The code to be entered at the place of the variable ${body_statement}.
 	 * @param lineDelimiter The line delimiter to be used.
 	 * @return Returns the constructed body content or <code>null</code> if
 	 * the comment code template is empty. The returned string is unformatted and and has no indent (formatting required).
@@ -273,11 +271,11 @@ public class CodeGeneration {
 	 * Returns the content of the body for a constructor using the constructor body template.
 	 * <code>null</code> is returned if the template is empty.
 	 * <p>The returned string is unformatted and not indented.
-	 * 
+	 *
 	 * @param tu The translation unit to which the method belongs. The translation unit
 	 * 		does not need to exist.
 	 * @param typeName Name of the type to which the constructor belongs.
-	 * @param bodyStatement The code to be entered at the place of the variable ${body_statement}. 
+	 * @param bodyStatement The code to be entered at the place of the variable ${body_statement}.
 	 * @param lineDelimiter The line delimiter to be used.
 	 * @return Returns the constructed body content or <code>null</code> if the comment code
 	 * 		template is empty. The returned string is unformatted and and has no indent
@@ -293,11 +291,11 @@ public class CodeGeneration {
 	 * Returns the content of the body for a destructor using the destructor body template.
 	 * <code>null</code> is returned if the template is empty.
 	 * <p>The returned string is unformatted and not indented.
-	 * 
+	 *
 	 * @param tu The translation unit to which the method belongs. The translation unit
 	 * 		does not need to exist.
 	 * @param typeName Name of the type to which the constructor belongs.
-	 * @param bodyStatement The code to be entered at the place of the variable ${body_statement}. 
+	 * @param bodyStatement The code to be entered at the place of the variable ${body_statement}.
 	 * @param lineDelimiter The line delimiter to be used.
 	 * @return Returns the constructed body content or <code>null</code> if the comment code
 	 * 		template is empty. The returned string is unformatted and and has no indent
@@ -313,12 +311,12 @@ public class CodeGeneration {
 	 * Returns the content of the class definition body using the class body template.
 	 * <code>null</code> is returned if the template is empty.
 	 * <p>The returned string is unformatted and not indented.
-	 * 
+	 *
 	 * @param tu The translation unit to which the method belongs. The translation unit
 	 * 		does not need to exist.
 	 * @param className The name of the class.
 	 * @param classMemberDeclarations The code to be entered at the place of the variable
-	 * 		${declarations}. 
+	 * 		${declarations}.
 	 * @param lineDelimiter The line delimiter to be used.
 	 * @return Returns the constructed class body content or <code>null</code> if
 	 * 		the class body code template is empty. The returned string is unformatted and
@@ -335,7 +333,7 @@ public class CodeGeneration {
 	 * Returns the content of the beginning of a namespace declaration using the corresponding
 	 * template. <code>null</code> is returned if the template is empty.
 	 * <p>The returned string is unformatted and not indented.
-	 * 
+	 *
 	 * @param tu The translation unit to which the method belongs. The translation unit
 	 * 		does not need to exist.
 	 * @param namespaceName The name of the namespace.
@@ -355,7 +353,7 @@ public class CodeGeneration {
 	 * Returns the content of the end of a namespace declaration using the corresponding
 	 * template. <code>null</code> is returned if the template is empty.
 	 * <p>The returned string is unformatted and not indented.
-	 * 
+	 *
 	 * @param tu The translation unit to which the method belongs. The translation unit
 	 * 		does not need to exist.
 	 * @param namespaceName The name of the namespace.
@@ -392,7 +390,7 @@ public class CodeGeneration {
 	 * @param tu The translation unit where the type is contained. The translation unit
 	 * 		does not need to exist.
 	 * @param typeQualifiedName The name of the type to which the comment is added. For inner types
-	 * 		the name must be qualified and include the outer types names (dot separated). 
+	 * 		the name must be qualified and include the outer types names (dot separated).
 	 * @param lineDelimiter The line delimiter to be used.
 	 * @return Returns the new content or <code>null</code> if the code template is undefined
 	 * 		or empty. The returned content is unformatted and is not indented.
@@ -407,7 +405,7 @@ public class CodeGeneration {
 	 * Returns the comment for a method using the method comment code template.
 	 * <code>null</code> is returned if the template is empty.
 	 * <p>The returned string is unformatted and not indented.
-	 * 
+	 *
 	 * @param tu The translation unit to which the method belongs. The translation unit
 	 * 		does not need to exist.
 	 * @param declaringTypeName Name of the type to which the method belongs.
@@ -430,7 +428,7 @@ public class CodeGeneration {
 	 * Returns the comment for a constructor using the constructor comment code template.
 	 * <code>null</code> is returned if the template is empty.
 	 * <p>The returned string is unformatted and not indented.
-	 * 
+	 *
 	 * @param tu The translation unit to which the method belongs. The translation unit
 	 * 		does not need to exist.
 	 * @param declaringTypeName Name of the type to which the method belongs.
@@ -450,7 +448,7 @@ public class CodeGeneration {
 	 * Returns the comment for a destructor using the destructor comment code template.
 	 * <code>null</code> is returned if the template is empty.
 	 * <p>The returned string is unformatted and not indented.
-	 * 
+	 *
 	 * @param tu The translation unit to which the method belongs. The translation unit
 	 * 		does not need to exist.
 	 * @param declaringTypeName Name of the type to which the method belongs.

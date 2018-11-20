@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Marc Khouzam (Ericsson) - Fix NPE for partial launches (Bug 368597)
@@ -223,7 +223,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 			// the overrideable process factory to allow others to override.
 			// First set attribute to specify we want to create the gdb process.
 			// Bug 210366
-			Map<String, String> attributes = new HashMap<String, String>();
+			Map<String, String> attributes = new HashMap<>();
 			attributes.put(IGdbDebugConstants.PROCESS_TYPE_CREATION_ATTR,
 					IGdbDebugConstants.GDB_PROCESS_CREATION_VALUE);
 			DebugPlugin.newProcess(this, gdbProc, label, attributes);
@@ -289,7 +289,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.Launch#terminate()
 	 */
 	@Override
@@ -347,7 +347,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	 * monitor will never be invoked. Instead callers should use the
 	 * {@link ImmediateExecutor}.
 	 * </p>
-	 * 
+	 *
 	 * @param rm
 	 *            The request monitor invoked when the shutdown is complete.
 	 */
@@ -461,7 +461,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Get the default GDB path if not specified in the launch or launch config.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	protected String getDefaultGDBPath() {
@@ -472,7 +472,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Returns the path to gdb.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public IPath getGDBPath() {
@@ -497,7 +497,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Set the path to gdb
-	 * 
+	 *
 	 * @param path
 	 *            the path to gdb
 	 * @since 5.0
@@ -509,9 +509,9 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	/**
 	 * This method actually launches 'gdb --version' to determine the version of
 	 * the GDB that is being used. The result is then cached for any future requests.
-	 * 
+	 *
 	 * A timeout is scheduled which will kill the process if it takes too long.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public String getGDBVersion() throws CoreException {
@@ -592,7 +592,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Read from the specified stream and return what was read.
-	 * 
+	 *
 	 * @param stream
 	 *            The input stream to be used to read the data. This method will
 	 *            close the stream.
@@ -627,13 +627,13 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	/**
 	 * Gets the CDT environment from the CDT project's configuration referenced
 	 * by the launch
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public String[] getLaunchEnvironment() throws CoreException {
 		IProject project = getProject();
 
-		HashMap<String, String> envMap = new HashMap<String, String>();
+		HashMap<String, String> envMap = new HashMap<>();
 		ICProjectDescription projDesc = CoreModel.getDefault().getProjectDescription(project, false);
 		if (projDesc != null) {
 			String buildConfigID = getLaunchConfiguration()
@@ -675,7 +675,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		}
 
 		// Turn it into an envp format
-		List<String> strings = new ArrayList<String>(envMap.size());
+		List<String> strings = new ArrayList<>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
 			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
@@ -711,7 +711,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Get the location of the gdbinit file.
-	 * 
+	 *
 	 * @return gdbinit file location
 	 * @throws CoreException
 	 * @since 5.0
@@ -726,7 +726,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Get the working directory.
-	 * 
+	 *
 	 * @return the working directory
 	 * @throws CoreException
 	 * @since 5.0
@@ -791,7 +791,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Get the program arguments
-	 * 
+	 *
 	 * @return program arguments
 	 * @throws CoreException
 	 * @since 5.0
@@ -810,7 +810,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Return the program path
-	 * 
+	 *
 	 * @return the program path
 	 * @since 5.0
 	 */
@@ -843,7 +843,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 		if (!programPath.toFile().exists()) {
 			throwException(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
 					new FileNotFoundException(
-							LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", //$NON-NLS-1$ 
+							LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", //$NON-NLS-1$
 									programPath.toOSString())),
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
@@ -854,7 +854,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	/**
 	 * Throws a core exception with an error status object built from the given
 	 * message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message
 	 *            the status message
 	 * @param exception
@@ -873,7 +873,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Sets the program path
-	 * 
+	 *
 	 * @param programPath
 	 *            the program path
 	 * @throws CoreException
@@ -885,7 +885,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Return shared library paths
-	 * 
+	 *
 	 * @return shared library paths
 	 * @throws CoreException
 	 * @since 5.0
@@ -897,7 +897,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * return the environment
-	 * 
+	 *
 	 * @return the environment
 	 * @throws CoreException
 	 * @since 5.0
@@ -951,7 +951,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Get whether to clear the environment before applying the variables
-	 * 
+	 *
 	 * @return clear
 	 * @throws CoreException
 	 * @since 5.0
@@ -962,7 +962,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Get whether to update thread list on suspend
-	 * 
+	 *
 	 * @return whether
 	 * @throws CoreException
 	 * @since 5.0
@@ -975,7 +975,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Set the launch target
-	 * 
+	 *
 	 * @param launchTarget
 	 *            the launch target
 	 * @since 5.0
@@ -986,7 +986,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 
 	/**
 	 * Return the launch target
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	@Override
@@ -997,7 +997,7 @@ public class GdbLaunch extends DsfLaunch implements ITerminate, IDisconnect, ITr
 	/**
 	 * Set the initial environment variables. These can then be overriden
 	 * by launch configuration attributes.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public void setInitialEnvironment(Properties initialEnv) {

@@ -16,13 +16,6 @@ package org.eclipse.cdt.ui.text.doctools.doxygen;
 
 import java.util.LinkedHashSet;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IAutoEditStrategy;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITypedRegion;
-import org.eclipse.jface.text.TextUtilities;
-
 import org.eclipse.cdt.core.dom.ast.ExpansionOverlapsBoundaryException;
 import org.eclipse.cdt.core.dom.ast.IASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -43,10 +36,16 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.parser.IToken;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IAutoEditStrategy;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.TextUtilities;
 
 /**
  * {@link IAutoEditStrategy} for adding Doxygen tags for comments.
- * 
+ *
  * @since 5.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -107,7 +106,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 	/**
 	 * Get the default line delimiter for the currently customized document
 	 * which should be used for new lines.
-	 * 
+	 *
 	 * @return the default line delimiter
 	 */
 	private String getLineDelimiter() {
@@ -282,7 +281,7 @@ public class DoxygenMultilineAutoEditStrategy extends DefaultMultilineCommentAut
 			}
 
 			boolean noCollisions = true;
-			LinkedHashSet<Entry> entries = new LinkedHashSet<Entry>();
+			LinkedHashSet<Entry> entries = new LinkedHashSet<>();
 			for (IASTEnumerator enumerator : enms) {
 				IASTNodeLocation loc = enumerator.getName().getFileLocation();
 				if (loc != null) {

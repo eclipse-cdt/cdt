@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * An {@link IntegerFieldEditor} with field decoration.
- * 
+ *
  * @since 1.1
  */
 public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
@@ -37,7 +37,7 @@ public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
 
 	/**
 	 * Creates an integer field editor.
-	 * 
+	 *
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param parent the parent of the field editor's control
@@ -48,7 +48,7 @@ public class DecoratingIntegerFieldEditor extends IntegerFieldEditor {
 
 	/**
 	 * Creates an integer field editor.
-	 * 
+	 *
 	 * @param name the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
 	 * @param parent the parent of the field editor's control

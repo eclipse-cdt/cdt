@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,9 +30,9 @@ import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
  * parenthesis to improve readability. Example: ! x>0 && x<10 (this would be
  * (!x)>0 && x<10 in C) We only look for &&, || and ! operators (and binary | &
  * ^ ~)
- * 
+ *
  * @author Alena
- * 
+ *
  */
 public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.SuggestedParenthesisProblem"; //$NON-NLS-1$
@@ -129,7 +129,7 @@ public class SuggestedParenthesisChecker extends AbstractIndexAstChecker {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.AbstractCheckerWithProblemPreferences
 	 * #initPreferences(org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)

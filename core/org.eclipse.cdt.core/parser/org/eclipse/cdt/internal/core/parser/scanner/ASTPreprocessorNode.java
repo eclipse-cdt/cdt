@@ -510,7 +510,7 @@ class ASTMacroDefinition extends ASTPreprocessorNode implements IASTPreprocessor
 
 	/**
 	 * Constructor for built-in macros
-	 * @param expansionOffset 
+	 * @param expansionOffset
 	 */
 	public ASTMacroDefinition(IASTTranslationUnit parent, IMacroBinding macro, IName originalDefinition,
 			int expansionOffset) {
@@ -708,7 +708,7 @@ class ASTInclusionNode implements IASTInclusionNode {
 	@Override
 	public IASTInclusionNode[] getNestedInclusions() {
 		if (fInclusions == null) {
-			ArrayList<IASTInclusionNode> result = new ArrayList<IASTInclusionNode>();
+			ArrayList<IASTInclusionNode> result = new ArrayList<>();
 			fLocationCtx.getInclusions(result);
 			fInclusions = result.toArray(new IASTInclusionNode[result.size()]);
 		}

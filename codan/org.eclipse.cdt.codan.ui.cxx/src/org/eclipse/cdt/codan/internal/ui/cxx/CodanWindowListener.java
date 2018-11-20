@@ -14,7 +14,7 @@ import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * Used to install CodanPartListener on any additional windows that may be 
+ * Used to install CodanPartListener on any additional windows that may be
  * opened in the workbench.
  */
 public class CodanWindowListener implements IWindowListener {

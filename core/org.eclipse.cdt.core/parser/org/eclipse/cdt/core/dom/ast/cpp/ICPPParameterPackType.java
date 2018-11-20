@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 /**
  * A parameter pack is not actually a type, however we model it as such in order
  * to be able to represent function-types that contain parameter packs.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.2

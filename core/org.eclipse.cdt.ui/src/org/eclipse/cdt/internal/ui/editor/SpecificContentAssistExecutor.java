@@ -17,17 +17,16 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
+import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalCategory;
-import org.eclipse.cdt.internal.ui.text.contentassist.CompletionProposalComputerRegistry;
-
 /**
  * A content assist executor can invoke content assist for a specific proposal category on an editor.
- *  
+ *
  * @since 4.0
  */
 public final class SpecificContentAssistExecutor {
@@ -36,7 +35,7 @@ public final class SpecificContentAssistExecutor {
 
 	/**
 	 * Creates a new executor.
-	 * 
+	 *
 	 * @param registry the computer registry to use for the enablement of proposal categories
 	 */
 	public SpecificContentAssistExecutor(CompletionProposalComputerRegistry registry) {
@@ -47,7 +46,7 @@ public final class SpecificContentAssistExecutor {
 	/**
 	 * Invokes content assist on <code>editor</code>, showing only proposals computed by the
 	 * <code>CompletionProposalCategory</code> with the given <code>categoryId</code>.
-	 * 
+	 *
 	 * @param editor the editor to invoke code assist on
 	 * @param categoryId the id of the proposal category to show proposals for
 	 */

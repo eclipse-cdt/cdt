@@ -16,6 +16,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -41,14 +47,6 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
 /**
  * Implementation of the search view page for index based searches.
@@ -177,19 +175,19 @@ public class CSearchViewPage extends AbstractTextSearchViewPage {
 
 	/**
 	 * Supply a sorter for the list and tree content providers to supply some order to the
-	 * large numbers of matches that may result.  
+	 * large numbers of matches that may result.
 	 * <p>
 	 * This sorter categorizes the different kinds of ICElement matches (as well as IStatus
 	 * messages and External Files groups) to place them in groups.  The items within a
 	 * category are sorted in the default way {@link ViewerComparator#compare(Viewer, Object, Object)} works,
 	 * by comparing text labels.
 	 * <p>
-	 * A potential concern here is that, in sorting the elements by name, the user may 
+	 * A potential concern here is that, in sorting the elements by name, the user may
 	 * find himself randomly jumping around a file when navigating search results in order.
 	 * As this only happens when a search matches different identifiers or identifiers of
 	 * different types, and since the user can use a textual search within a file to navigate
 	 * the same results (ignoring extraneous hits in comments or disabled code), I argue it's not
-	 * a big deal.  Furthermore, usually it would be a wildcard search that would result in 
+	 * a big deal.  Furthermore, usually it would be a wildcard search that would result in
 	 * this situation -- indicating the user doesn't know the identifier and wants to find it using
 	 * search.  In such a case, a sorted list of results in much more friendly to navigate.
 	 */

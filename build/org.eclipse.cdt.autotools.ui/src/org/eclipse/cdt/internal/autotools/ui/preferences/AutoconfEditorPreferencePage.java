@@ -77,7 +77,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 
 	/**
 	 * Item in the highlighting color list.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static class HighlightingColorListItem {
@@ -94,7 +94,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 
 		/**
 		 * Initialize the item with the given values.
-		 * 
+		 *
 		 * @param displayName the display name
 		 * @param colorKey the color preference key
 		 * @param boldKey the bold preference key
@@ -148,7 +148,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 
 	/**
 	 * Color list label provider.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static class ColorListLabelProvider extends LabelProvider implements IColorProvider {
@@ -171,7 +171,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 
 	/**
 	 * Color list content provider.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static class ColorListContentProvider implements IStructuredContentProvider {
@@ -192,7 +192,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public AutoconfEditorPreferencePage() {
 		super();
@@ -202,13 +202,20 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 	protected OverlayPreferenceStore createOverlayStore() {
 		fSyntaxColorListModel = new String[][] {
 				{ AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_comment"), //$NON-NLS-1$
-						ColorManager.AUTOCONF_COMMENT_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_acmacro"), //$NON-NLS-1$
-						ColorManager.AUTOCONF_ACMACRO_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_ammacro"), //$NON-NLS-1$
-						ColorManager.AUTOCONF_AMMACRO_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_code_seq"), //$NON-NLS-1$
-						ColorManager.AUTOCONF_CODESEQ_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_keyword"), //$NON-NLS-1$
-						ColorManager.AUTOCONF_KEYWORD_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_var_ref"), //$NON-NLS-1$
-						ColorManager.AUTOCONF_VAR_REF_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_var_set"), //$NON-NLS-1$
-						ColorManager.AUTOCONF_VAR_SET_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_default"), //$NON-NLS-1$
+						ColorManager.AUTOCONF_COMMENT_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_acmacro"), //$NON-NLS-1$
+						ColorManager.AUTOCONF_ACMACRO_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_ammacro"), //$NON-NLS-1$
+						ColorManager.AUTOCONF_AMMACRO_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_code_seq"), //$NON-NLS-1$
+						ColorManager.AUTOCONF_CODESEQ_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_keyword"), //$NON-NLS-1$
+						ColorManager.AUTOCONF_KEYWORD_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_var_ref"), //$NON-NLS-1$
+						ColorManager.AUTOCONF_VAR_REF_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_var_set"), //$NON-NLS-1$
+						ColorManager.AUTOCONF_VAR_SET_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutoconfEditorPreferencePage.autoconf_editor_default"), //$NON-NLS-1$
 						ColorManager.AUTOCONF_DEFAULT_COLOR, null }, };
 		List<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<>();
 
@@ -531,7 +538,7 @@ public class AutoconfEditorPreferencePage extends AbstractEditorPreferencePage {
 
 	/**
 	 * Returns the current highlighting color list item.
-	 * 
+	 *
 	 * @return the current highlighting color list item
 	 * @since 3.0
 	 */

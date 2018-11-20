@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * Formatted values interface describes the kinds of formatted information
  * which may be returned and the methods for obtaining and manipulating
  * those values.
- * 
+ *
  * @since 1.0
  */
 public interface IFormattedValues extends IDsfService {
@@ -47,19 +47,19 @@ public interface IFormattedValues extends IDsfService {
 	public final static String STRING_FORMAT = "STRING.Format"; //$NON-NLS-1$
 
 	/**
-	 * Retrieves the  formats that the given data is available in.  
-	 * This method is asynchronous because the service may need to retrieve     
-	 * information from the backend in order to determine what formats are 
+	 * Retrieves the  formats that the given data is available in.
+	 * This method is asynchronous because the service may need to retrieve
+	 * information from the backend in order to determine what formats are
 	 * available for the given data context.
-	 * 
+	 *
 	 * @param dmc Context for which to retrieve available formats.
-	 * @param rm Completion monitor returns an array of support formatIds.  
+	 * @param rm Completion monitor returns an array of support formatIds.
 	 */
 	public void getAvailableFormats(IFormattedDataDMContext dmc, DataRequestMonitor<String[]> rm);
 
 	/**
-	 * Creates a FormattedValueDMContext representing the given formatId.  
-	 * 
+	 * Creates a FormattedValueDMContext representing the given formatId.
+	 *
 	 * @param dmc Parent context for the context that is being created
 	 * @param formatId Defines format to be used for the returned context.
 	 */
@@ -74,7 +74,7 @@ public interface IFormattedValues extends IDsfService {
 
 	/**
 	 * DMC that represents a value with specific format.  The format ID can be
-	 * persisted and used for comparison. 
+	 * persisted and used for comparison.
 	 */
 	public static class FormattedValueDMContext extends AbstractDMContext {
 		private final String fFormatID;
@@ -93,9 +93,9 @@ public interface IFormattedValues extends IDsfService {
 		}
 
 		/**
-		 * Returns the parent context which represents the value on which this 
-		 * formatted value is based on.   
-		 * 
+		 * Returns the parent context which represents the value on which this
+		 * formatted value is based on.
+		 *
 		 * @since 2.2
 		 */
 		public IDMContext getParentValueDMContext() {

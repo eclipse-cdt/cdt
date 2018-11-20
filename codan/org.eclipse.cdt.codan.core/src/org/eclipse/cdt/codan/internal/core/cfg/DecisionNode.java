@@ -13,19 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.core.cfg;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.cdt.codan.core.model.cfg.IBasicBlock;
 import org.eclipse.cdt.codan.core.model.cfg.IBranchNode;
 import org.eclipse.cdt.codan.core.model.cfg.IConnectorNode;
 import org.eclipse.cdt.codan.core.model.cfg.IDecisionNode;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @see IDecisionNode
  */
 public class DecisionNode extends AbstractSingleIncomingNode implements IDecisionNode {
-	private List<IBasicBlock> next = new ArrayList<IBasicBlock>(2);
+	private List<IBasicBlock> next = new ArrayList<>(2);
 	private IConnectorNode conn;
 
 	protected DecisionNode() {

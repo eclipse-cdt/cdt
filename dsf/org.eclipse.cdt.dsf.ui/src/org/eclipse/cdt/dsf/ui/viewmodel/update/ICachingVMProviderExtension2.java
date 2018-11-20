@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Extension allowing access to the caching VM provider cache entries.
- * 
+ *
  * @since 2.2
  */
 public interface ICachingVMProviderExtension2 extends ICachingVMProvider {

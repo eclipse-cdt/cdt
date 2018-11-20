@@ -13,16 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
- * A semantic highlighting which has its own preferences for specifying 
+ * A semantic highlighting which has its own preferences for specifying
  * its color and style.
- * 
+ *
  * Semantic highlightings not deriving from this class are associated
  * with a syntactic highlighting, and use the color and style of that
  * syntactic highlighting.

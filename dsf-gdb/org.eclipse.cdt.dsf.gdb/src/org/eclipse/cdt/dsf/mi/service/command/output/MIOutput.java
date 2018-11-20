@@ -11,7 +11,7 @@
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
- *     Ericsson				- Modified for additional features in DSF Reference Implementation 
+ *     Ericsson				- Modified for additional features in DSF Reference Implementation
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.mi.service.command.output;
@@ -31,7 +31,7 @@ public class MIOutput {
 
 	/**
 	 * @param oob
-	 * @deprecated Use {@link #MIOutput(MIOOBRecord, MIStreamRecord[])} 
+	 * @deprecated Use {@link #MIOutput(MIOOBRecord, MIStreamRecord[])}
 	 */
 	@Deprecated
 	public MIOutput(MIOOBRecord oob) {
@@ -40,7 +40,7 @@ public class MIOutput {
 
 	/**
 	 * Constructor used when handling a single out-of-band record
-	 * 
+	 *
 	 * @param the
 	 *            out-of-bound record
 	 * @param streamRecords
@@ -60,7 +60,7 @@ public class MIOutput {
 
 	/**
 	 * Constructor used when handling a command result.
-	 * 
+	 *
 	 * @param rr
 	 *            the result record
 	 * @param oobs
@@ -69,7 +69,7 @@ public class MIOutput {
 	 *            a while since the last command (for practical reasons, there
 	 *            is a cap on the number of OOB records that are remembered).
 	 *            This will have the most recent records.
-	 * 
+	 *
 	 */
 	public MIOutput(MIResultRecord rr, MIOOBRecord[] oobs) {
 		this.rr = rr;
@@ -86,7 +86,7 @@ public class MIOutput {
 
 	/**
 	 * See param in {@link #MIOutput(MIOOBRecord, MIStreamRecord[])}
-	 * 
+	 *
 	 * @return Only instances created for an OOB record will have stream
 	 *         records; may be an empty collection in that case, but not null.
 	 *         Instances created for a command result will return null from this

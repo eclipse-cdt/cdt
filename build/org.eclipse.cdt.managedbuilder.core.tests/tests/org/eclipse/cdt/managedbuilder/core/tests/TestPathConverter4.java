@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.Path;
  * It is referenced from the tool pathconvertertest.config.tcyy.toyy.toolchain.tool
  * in the test projecttype.<br>
  * The tool pathconvertertest.config.tcyy.toyy.toolchain.tool inherits a path option
- * from the pathconvertertest.convertingtool tool. The include path option has the 
- * intentionally strange value file:///usr/local/include. 
+ * from the pathconvertertest.convertingtool tool. The include path option has the
+ * intentionally strange value file:///usr/local/include.
  * The "file://" part gets stripped away to satisfy the test.
  */
 public class TestPathConverter4 extends TestPathConverter1 {

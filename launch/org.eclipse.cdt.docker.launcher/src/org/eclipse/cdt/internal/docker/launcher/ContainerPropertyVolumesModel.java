@@ -72,7 +72,7 @@ public class ContainerPropertyVolumesModel extends BaseDatabindingModel {
 
 	/**
 	 * Refreshes the list of Volumes to display in the for the given
-	 * 
+	 *
 	 * @param selectedImage
 	 */
 	public void setSelectedImage(final IDockerImage selectedImage) {

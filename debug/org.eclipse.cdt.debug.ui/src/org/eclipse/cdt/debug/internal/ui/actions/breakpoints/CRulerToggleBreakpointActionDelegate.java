@@ -24,10 +24,10 @@ import org.eclipse.ui.texteditor.AbstractRulerActionDelegate;
 import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
- * This is a copy of the RulerToggleBreakpointActionDelegate in platform.  
+ * This is a copy of the RulerToggleBreakpointActionDelegate in platform.
  * It updates the toggle action to include an accelertor text in its label.
  * See bug 374153.
- * 
+ *
  * @see org.eclipse.debug.ui.actions.RulerToggleBreakpointActionDelegate
  */
 public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDelegate implements IActionDelegate2 {
@@ -38,6 +38,7 @@ public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDel
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor, org.eclipse.jface.text.source.IVerticalRulerInfo)
 	 */
+	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		fDelegate = new ToggleBreakpointAction(editor, null, rulerInfo);
 		fDelegate.setText(ActionMessages.getString("CRulerToggleBreakpointActionDelegate_label")); //$NON-NLS-1$
@@ -48,6 +49,7 @@ public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDel
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
 	 */
+	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		if (fEditor != null) {
 			if (fDelegate != null) {
@@ -62,12 +64,14 @@ public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDel
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
 	 */
+	@Override
 	public void init(IAction action) {
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#dispose()
 	 */
+	@Override
 	public void dispose() {
 		if (fDelegate != null) {
 			fDelegate.dispose();
@@ -79,6 +83,7 @@ public class CRulerToggleBreakpointActionDelegate extends AbstractRulerActionDel
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
 	 */
+	@Override
 	public void runWithEvent(IAction action, Event event) {
 		if (fDelegate != null) {
 			fDelegate.runWithEvent(event);

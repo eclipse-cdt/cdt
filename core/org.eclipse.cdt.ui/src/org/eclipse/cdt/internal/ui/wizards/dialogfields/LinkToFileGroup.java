@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * This class is part of the NewClassWizard.
- * It handles the Link to file part. 
+ * It handles the Link to file part.
  */
 public class LinkToFileGroup extends StringButtonDialogField {
 	protected Listener listener;
@@ -202,7 +202,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 
 	/**
 	 * Returns a new status object with the given severity and message.
-	 * 
+	 *
 	 * @return a new status object with the given severity and message.
 	 */
 	private IStatus createStatus(int severity, String message) {
@@ -210,7 +210,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	}
 
 	/**
-	 * Returns the link target location entered by the user. 
+	 * Returns the link target location entered by the user.
 	 *
 	 * @return the link target location entered by the user. null if the user
 	 * 	chose not to create a link.
@@ -272,7 +272,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	}
 
 	/**
-	 * Tries to resolve the value entered in the link target field as 
+	 * Tries to resolve the value entered in the link target field as
 	 * a variable, if the value is a relative path.
 	 * Displays the resolved value if the entered value is a variable.
 	 */
@@ -291,7 +291,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 
 	/**
 	 * Sets the value of the link target field
-	 * 
+	 *
 	 * @param target the value of the link target field
 	 */
 	public void setLinkTarget(String target) {
@@ -306,9 +306,9 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	/**
 	 * Validates the type of the given file against the link type specified
 	 * in the constructor.
-	 * 
+	 *
 	 * @param linkTargetFile file to validate
-	 * @return IStatus indicating the validation result. IStatus.OK if the 
+	 * @return IStatus indicating the validation result. IStatus.OK if the
 	 * 	given file is valid.
 	 */
 	private IStatus validateFileType(File linkTargetFile) {
@@ -323,7 +323,7 @@ public class LinkToFileGroup extends StringButtonDialogField {
 	/**
 	 * Validates this page's controls.
 	 *
-	 * @return IStatus indicating the validation result. IStatus.OK if the 
+	 * @return IStatus indicating the validation result. IStatus.OK if the
 	 * 	specified link target is valid given the linkHandle.
 	 */
 	public IStatus validateLinkLocation(IResource linkHandle) {

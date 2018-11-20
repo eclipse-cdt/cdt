@@ -70,7 +70,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 	}
 
 	private void initializeParserPageMap() {
-		fParserPageMap = new HashMap<String, BinaryParserPageConfiguration>(5);
+		fParserPageMap = new HashMap<>(5);
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
 				"BinaryParserPage"); //$NON-NLS-1$
@@ -157,7 +157,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performApply(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -165,7 +165,7 @@ public abstract class AbstractBinaryParserPage extends AbstractCOptionPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionPage#performDefaults()
 	 */
 	@Override

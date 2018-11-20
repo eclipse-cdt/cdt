@@ -61,7 +61,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public IRule[] getRules() {
 		IDirective[] stmts = getDirectives(true);
-		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
+		List<IDirective> array = new ArrayList<>(stmts.length);
 		for (IDirective stmt : stmts) {
 			if (stmt instanceof IRule) {
 				array.add(stmt);
@@ -73,7 +73,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public IRule[] getRules(String target) {
 		IRule[] rules = getRules();
-		List<IRule> array = new ArrayList<IRule>(rules.length);
+		List<IRule> array = new ArrayList<>(rules.length);
 		for (IRule rule : rules) {
 			if (rule.getTarget().equals(target)) {
 				array.add(rule);
@@ -85,7 +85,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public IInferenceRule[] getInferenceRules() {
 		IRule[] rules = getRules();
-		List<IRule> array = new ArrayList<IRule>(rules.length);
+		List<IRule> array = new ArrayList<>(rules.length);
 		for (IRule rule : rules) {
 			if (rule instanceof IInferenceRule) {
 				array.add(rule);
@@ -97,7 +97,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public IInferenceRule[] getInferenceRules(String target) {
 		IInferenceRule[] irules = getInferenceRules();
-		List<IInferenceRule> array = new ArrayList<IInferenceRule>(irules.length);
+		List<IInferenceRule> array = new ArrayList<>(irules.length);
 		for (IInferenceRule irule : irules) {
 			if (irule.getTarget().equals(target)) {
 				array.add(irule);
@@ -109,7 +109,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public ITargetRule[] getTargetRules() {
 		IRule[] trules = getRules();
-		List<IRule> array = new ArrayList<IRule>(trules.length);
+		List<IRule> array = new ArrayList<>(trules.length);
 		for (IRule trule : trules) {
 			if (trule instanceof ITargetRule) {
 				array.add(trule);
@@ -121,7 +121,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public ITargetRule[] getTargetRules(String target) {
 		ITargetRule[] trules = getTargetRules();
-		List<ITargetRule> array = new ArrayList<ITargetRule>(trules.length);
+		List<ITargetRule> array = new ArrayList<>(trules.length);
 		for (ITargetRule trule : trules) {
 			if (trule.getTarget().equals(target)) {
 				array.add(trule);
@@ -133,7 +133,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public IMacroDefinition[] getMacroDefinitions() {
 		IDirective[] stmts = getDirectives(true);
-		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
+		List<IDirective> array = new ArrayList<>(stmts.length);
 		for (IDirective stmt : stmts) {
 			if (stmt instanceof IMacroDefinition) {
 				array.add(stmt);
@@ -145,7 +145,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public IMacroDefinition[] getMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getMacroDefinitions();
-		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(variables.length);
+		List<IMacroDefinition> array = new ArrayList<>(variables.length);
 		for (IMacroDefinition variable : variables) {
 			if (variable.getName().equals(name)) {
 				array.add(variable);
@@ -157,7 +157,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public IMacroDefinition[] getBuiltinMacroDefinitions() {
 		IDirective[] stmts = getBuiltins();
-		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
+		List<IDirective> array = new ArrayList<>(stmts.length);
 		for (IDirective stmt : stmts) {
 			if (stmt instanceof IMacroDefinition) {
 				array.add(stmt);
@@ -169,7 +169,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 	@Override
 	public IMacroDefinition[] getBuiltinMacroDefinitions(String name) {
 		IMacroDefinition[] variables = getBuiltinMacroDefinitions();
-		List<IMacroDefinition> array = new ArrayList<IMacroDefinition>(variables.length);
+		List<IMacroDefinition> array = new ArrayList<>(variables.length);
 		for (IMacroDefinition variable : variables) {
 			if (variable.getName().equals(name)) {
 				array.add(variable);
@@ -180,7 +180,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 
 	public IInferenceRule[] getBuiltinInferenceRules() {
 		IDirective[] stmts = getBuiltins();
-		List<IDirective> array = new ArrayList<IDirective>(stmts.length);
+		List<IDirective> array = new ArrayList<>(stmts.length);
 		for (IDirective stmt : stmts) {
 			if (stmt instanceof IInferenceRule) {
 				array.add(stmt);
@@ -191,7 +191,7 @@ public abstract class AbstractMakefile extends Parent implements IMakefile {
 
 	public IInferenceRule[] getBuiltinInferenceRules(String target) {
 		IInferenceRule[] irules = getBuiltinInferenceRules();
-		List<IInferenceRule> array = new ArrayList<IInferenceRule>(irules.length);
+		List<IInferenceRule> array = new ArrayList<>(irules.length);
 		for (IInferenceRule irule : irules) {
 			if (irule.getTarget().equals(target)) {
 				array.add(irule);

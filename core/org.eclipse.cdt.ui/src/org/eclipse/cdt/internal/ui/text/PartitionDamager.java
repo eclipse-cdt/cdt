@@ -25,7 +25,7 @@ import org.eclipse.jface.text.presentation.IPresentationDamager;
 /**
  * A simple presentation damager always damaging the whole partition.
  * This is necessary if the partition contains multiline highlight regions.
- * 
+ *
  * @since 4.0
  */
 public class PartitionDamager implements IPresentationDamager {

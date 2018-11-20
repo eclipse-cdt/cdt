@@ -25,7 +25,7 @@ public interface IManagedCommandLineInfo {
 	public String getCommandLine();
 
 	/**
-	 * give command line pattern 
+	 * give command line pattern
 	 */
 	public String getCommandLinePattern();
 

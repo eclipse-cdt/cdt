@@ -18,7 +18,7 @@ import org.eclipse.core.resources.IContainer;
 
 /**
  * A C folder resource.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -30,7 +30,7 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	 * <p>
 	 * Non-C resources includes files, folders, projects not accounted for.
 	 * </p>
-	 * 
+	 *
 	 * @return an array of non-C resources directly contained in this project
 	 * @exception CModelException if this element does not exist or if an
 	 *            exception occurs while accessing its corresponding resource
@@ -50,7 +50,7 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	 * Returns the translation unit with the specified name in this container
 	 * (for example, {@code "foobar.c"}). The name has to be a valid translation unit name.
 	 * This is a handle-only operation. The celement may or may not exist.
-	 * 
+	 *
 	 * @param name the given name
 	 * @return the translation unit with the specified name in this container
 	 */
@@ -85,7 +85,7 @@ public interface ICContainer extends ICElement, IParent, IOpenable {
 	/**
 	 * Returns the container with the given name. An empty string indicates the default package.
 	 * This is a handle-only operation.  The celement may or may not exist.
-	 * 
+	 *
 	 * @param name the name of a nested container
 	 * @return the container with the given name
 	 */

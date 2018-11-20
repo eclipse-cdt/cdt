@@ -16,7 +16,7 @@ package org.eclipse.cdt.utils.cdtvariables;
 import org.eclipse.cdt.core.cdtvariables.ICdtVariable;
 
 /**
- * 
+ *
  * @since 3.0
  */
 public interface ICdtVariableSupplier {

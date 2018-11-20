@@ -16,6 +16,19 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICModelStatus;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.CoreUtility;
+import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -26,21 +39,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICModelStatus;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.dialogs.ICOptionContainer;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.ui.dialogs.TabFolderOptionBlock;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.CoreUtility;
 
 /**
  * Abstract block for C/C++ Project Paths page for 3.X projects.
@@ -82,7 +80,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		List<CPElement> elements = getCPaths();
 
 		IPathEntry[] entries = getCProject().getRawPathEntries();
-		List<IPathEntry> cpath = new ArrayList<IPathEntry>(elements.size() + entries.length);
+		List<IPathEntry> cpath = new ArrayList<>(elements.size() + entries.length);
 
 		int[] applyTypes = getAppliedFilteredTypes();
 		// create and set the paths
@@ -118,7 +116,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 	 * Initializes the paths for the given project. Multiple calls to init are
 	 * allowed, but all existing settings will be cleared and replace by the
 	 * given or default paths.
-	 * 
+	 *
 	 * @param element
 	 *        The C/C++ project to configure. Does not have to exist.
 	 * @param cpathEntries
@@ -140,19 +138,19 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 		if (cpathEntries != null) {
 			newCPath = getFilteredElements(cpathEntries, getFilteredTypes());
 		} else {
-			newCPath = new ArrayList<CPElement>();
+			newCPath = new ArrayList<>();
 		}
 		initialize(element, newCPath);
 	}
 
 	abstract protected int[] getFilteredTypes(); // path type which block would like access to
 
-	abstract protected int[] getAppliedFilteredTypes(); // path type which block modifies 
+	abstract protected int[] getAppliedFilteredTypes(); // path type which block modifies
 
 	abstract protected void initialize(ICElement element, List<CPElement> cPaths);
 
 	protected ArrayList<CPElement> getFilteredElements(IPathEntry[] cPathEntries, int[] types) {
-		ArrayList<CPElement> newCPath = new ArrayList<CPElement>();
+		ArrayList<CPElement> newCPath = new ArrayList<>();
 		for (IPathEntry curr : cPathEntries) {
 			if (contains(types, curr.getEntryKind())) {
 				newCPath.add(CPElement.createFromExisting(curr, getCElement()));
@@ -253,7 +251,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.ui.dialogs.ICOptionContainer#updateContainer()
 	 */
 	@Override
@@ -307,7 +305,7 @@ abstract public class AbstractPathOptionBlock extends TabFolderOptionBlock imple
 
 		IPathEntry[] entries = getCProject().getRawPathEntries();
 
-		List<IPathEntry> cpath = new ArrayList<IPathEntry>(cPathEntries.size() + entries.length);
+		List<IPathEntry> cpath = new ArrayList<>(cPathEntries.size() + entries.length);
 
 		int[] applyTypes = getAppliedFilteredTypes();
 		// create and set the paths

@@ -68,7 +68,7 @@ public abstract class Parent extends CElement {
 	public List<ICElement> getChildrenOfType(int type) throws CModelException {
 		ICElement[] children = getChildren();
 		int size = children.length;
-		ArrayList<ICElement> list = new ArrayList<ICElement>(size);
+		ArrayList<ICElement> list = new ArrayList<>(size);
 		for (int i = 0; i < size; ++i) {
 			CElement elt = (CElement) children[i];
 			if (elt.getElementType() == type) {

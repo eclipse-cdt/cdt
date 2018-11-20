@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 
 /**
  * The 'if' statement including the optional else clause.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -29,7 +29,7 @@ public interface ICPPASTIfStatement extends IASTIfStatement {
 	/**
 	 * {@code INIT_STATEMENT} represents the relationship between an
 	 * {@code ICPPASTIfStatement} and its nested {@code IASTStatement}.
-	 * 
+	 *
 	 * @since 6.5
 	 */
 	public static final ASTNodeProperty INIT_STATEMENT = new ASTNodeProperty(
@@ -51,23 +51,23 @@ public interface ICPPASTIfStatement extends IASTIfStatement {
 
 	/**
 	 * Sets the isConstxpr member variable.
-	 * 
+	 *
 	 * @since 6.5
 	 */
 	public void setIsConstexpr(boolean isConstexpr);
 
 	/**
 	 * Checks whether this if statement is a constexpr if statement.
-	 * 
+	 *
 	 * @return true iff this if statement is a constexpr if.
-	 * 
+	 *
 	 * @since 6.5
 	 */
 	public boolean isConstexpr();
 
 	/**
 	 * Returns the init-statement for an if.
-	 * 
+	 *
 	 * @return the init-statement, or <code>null</code> if the 'if' statement doesn't
 	 *    have one.
 	 *
@@ -77,7 +77,7 @@ public interface ICPPASTIfStatement extends IASTIfStatement {
 
 	/**
 	 * Sets the optional init-statement of an if.
-	 * 
+	 *
 	 * @param statement this statement should either be a <code>IASTSimpleDeclaration</code> or a
 	 *    <code>IASTExpressionStatement</code>.
 	 *
@@ -87,7 +87,7 @@ public interface ICPPASTIfStatement extends IASTIfStatement {
 
 	/**
 	 * Returns the implicit <code>IScope</code> represented by this if statement
-	 * 
+	 *
 	 * @return <code>IScope</code>
 	 */
 	public IScope getScope();

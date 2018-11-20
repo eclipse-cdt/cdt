@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *     Ed Swartz (Nokia)
@@ -165,7 +165,7 @@ public class GPPScannerExtensionConfiguration extends GNUScannerExtensionConfigu
 				addKeyword(GCCKeywords.cp__is_constructible, IGCCToken.tTT_is_constructible);
 			}
 		} else if (compiler == CompilerType.Clang) {
-			// As documented at 
+			// As documented at
 			// http://clang.llvm.org/docs/LanguageExtensions.html#checks-for-type-trait-primitives.
 			// For now we don't make it dependent on the version.
 			addKeyword(GCCKeywords.cp__has_nothrow_assign, IGCCToken.tTT_has_nothrow_assign);

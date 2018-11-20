@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 
 /**
  * C extension to IASTDeclSpecifier. (restrict keyword)
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

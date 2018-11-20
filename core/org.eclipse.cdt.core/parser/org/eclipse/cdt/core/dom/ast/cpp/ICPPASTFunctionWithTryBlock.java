@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 
 /**
  * Models a function defined with a try block, which is a function definition:
- * <pre> void func() try { 
+ * <pre> void func() try {
  * } catch (...) {
  * }
  * @since 5.1

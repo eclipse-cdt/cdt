@@ -20,14 +20,14 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *      -exec-step [count]
  *
  *   Asynchronous command.  Resumes execution of the inferior program,
  * stopping when the beginning of the next source line is reached, if the
  * next source line is not a function call.  If it is, stop at the first
  * instruction of the called function.
- * 
+ *
  */
 public class MIExecStep extends MICommand<MIInfo> {
 	public MIExecStep(IExecutionDMContext dmc) {

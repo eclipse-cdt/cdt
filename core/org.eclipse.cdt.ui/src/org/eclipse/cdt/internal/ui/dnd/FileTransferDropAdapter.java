@@ -89,8 +89,8 @@ public class FileTransferDropAdapter extends CDTViewerDropAdapter implements Tra
 		if (target == null)
 			return;
 
-		// Run the import operation asynchronously. 
-		// Otherwise the drag source (e.g., Windows Explorer) will be blocked 
+		// Run the import operation asynchronously.
+		// Otherwise the drag source (e.g., Windows Explorer) will be blocked
 		// while the operation executes. Fixes bug 35796.
 		Display.getCurrent().asyncExec(new Runnable() {
 			@Override

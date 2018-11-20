@@ -251,7 +251,7 @@ public class OptionCategory extends BuildObject implements IOptionCategory {
 
 	public void addChildCategory(OptionCategory category) {
 		if (children == null)
-			children = new ArrayList<OptionCategory>();
+			children = new ArrayList<>();
 		children.add(category);
 	}
 

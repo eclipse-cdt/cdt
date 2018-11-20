@@ -14,10 +14,9 @@
 
 package org.eclipse.cdt.internal.ui.indexview;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.cdt.core.dom.IPDOMNode;
 import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.swt.graphics.Image;
 
 class IndexNode {
 	Object fParent;

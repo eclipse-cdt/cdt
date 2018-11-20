@@ -26,14 +26,14 @@ public interface ICFunctionScope extends ICScope {
 	/**
 	 * Get the scope representing the function body . returns null if there is
 	 * no function definition
-	 * 
+	 *
 	 * @throws DOMException
 	 */
 	public IScope getBodyScope() throws DOMException;
 
 	/**
 	 * return the ILabel binding in this scope that matches the given name
-	 * 
+	 *
 	 * @param name
 	 * @throws DOMException
 	 */

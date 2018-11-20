@@ -22,11 +22,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.AssertionFailedError;
-
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.junit.Assert;
+
+import junit.framework.AssertionFailedError;
 
 public class ASTComparer extends Assert {
 
@@ -53,7 +53,7 @@ public class ASTComparer extends Assert {
 			"getImplicitNames", "getImplicitDestructorNames", "isLValue",
 
 			// These methods can return a special constant value, such as
-			// ICPPASTFunctionDecalarator.NOEXCEPT_DEFAULT, which does not 
+			// ICPPASTFunctionDecalarator.NOEXCEPT_DEFAULT, which does not
 			// get cloned when the node is copied.
 			"getNoexceptExpression"));
 

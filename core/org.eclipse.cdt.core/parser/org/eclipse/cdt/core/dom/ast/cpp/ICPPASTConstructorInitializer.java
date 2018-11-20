@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IASTInitializerList;
 
 /**
  * Represents a potentially empty list of initializers in parenthesis: ( initializer-list? )
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -36,7 +36,7 @@ public interface ICPPASTConstructorInitializer extends IASTInitializer {
 	/**
 	 * Returns the arguments of this initializer, never <code>null</code>.
 	 * An argument can be of type {@link IASTInitializerList}.
-	 * 
+	 *
 	 * @since 5.2
 	 */
 	public IASTInitializerClause[] getArguments();

@@ -29,6 +29,7 @@ public interface IGDBJtagConstants {
 	public static final String ATTR_IP_ADDRESS = Activator.PLUGIN_ID + ".ipAddress"; //$NON-NLS-1$
 	public static final String ATTR_PORT_NUMBER = Activator.PLUGIN_ID + ".portNumber"; //$NON-NLS-1$
 	/** @deprecated Use {@link #ATTR_JTAG_DEVICE ID} instead */
+	@Deprecated
 	public static final String ATTR_JTAG_DEVICE = Activator.PLUGIN_ID + ".jtagDevice"; //$NON-NLS-1$
 	/** @since 9.2 */
 	public static final String ATTR_JTAG_DEVICE_ID = Activator.PLUGIN_ID + ".jtagDeviceId"; //$NON-NLS-1$
@@ -107,6 +108,7 @@ public interface IGDBJtagConstants {
 	 * @since 7.0
 	 * @deprecated Use either {@link #DEFAULT_JTAG_DEVICE_ID} or {@link #DEFAULT_JTAG_DEVICE_NAME}
 	 */
+	@Deprecated
 	public static final String DEFAULT_JTAG_DEVICE = ""; //$NON-NLS-1$
 
 }

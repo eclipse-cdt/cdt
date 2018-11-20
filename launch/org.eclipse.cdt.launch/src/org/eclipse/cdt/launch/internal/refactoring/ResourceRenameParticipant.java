@@ -39,9 +39,9 @@ import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 /**
  * A rename participant for resource refactorings, that updates affected CDT
  * launch configurations.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public class ResourceRenameParticipant extends RenameParticipant implements IExecutableExtension {
@@ -106,7 +106,7 @@ public class ResourceRenameParticipant extends RenameParticipant implements IExe
 		ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
 		for (ILaunchConfigurationType next : mgr.getLaunchConfigurationTypes()) {
 			// is it a CDT launch type or a third party one that is CDT-ish?
-			if (next.getPluginIdentifier().startsWith("org.eclipse.cdt.") || //$NON-NLS-1$ 
+			if (next.getPluginIdentifier().startsWith("org.eclipse.cdt.") || //$NON-NLS-1$
 					thirdPartyConfgTypeIds.contains(next.getIdentifier())) {
 				result.add(next);
 			}

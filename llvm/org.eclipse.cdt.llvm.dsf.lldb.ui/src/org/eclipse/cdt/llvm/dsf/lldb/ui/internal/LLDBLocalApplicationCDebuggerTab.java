@@ -32,6 +32,7 @@ public class LLDBLocalApplicationCDebuggerTab extends LocalApplicationCDebuggerT
 
 	private final static String LOCAL_DEBUGGER_ID = "lldb-mi";//$NON-NLS-1$
 
+	@Override
 	protected void initDebuggerTypes(String selection) {
 		if (fAttachMode) {
 			setInitializeDefault(selection.isEmpty());
@@ -81,6 +82,7 @@ public class LLDBLocalApplicationCDebuggerTab extends LocalApplicationCDebuggerT
 		config.setAttribute(DEFAULTS_SET, true);
 	}
 
+	@Override
 	protected void loadDynamicDebugArea() {
 		Composite dynamicTabHolder = getDynamicTabHolder();
 		// Dispose of any current child widgets in the tab holder area

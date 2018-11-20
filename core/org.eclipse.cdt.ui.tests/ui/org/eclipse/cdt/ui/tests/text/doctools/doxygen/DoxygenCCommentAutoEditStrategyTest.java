@@ -17,30 +17,27 @@ package org.eclipse.cdt.ui.tests.text.doctools.doxygen;
 
 import java.util.HashMap;
 
-import junit.framework.Test;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.text.AbstractAutoEditTest;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenMultilineAutoEditStrategy;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-
-import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
+import junit.framework.Test;
 
 /**
  * Testing the auto indent strategies.
@@ -105,7 +102,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// /**   X
 	//  void foo() {}
 
-	// /**   
+	// /**
 	//  * X
 	//  */
 	//  void foo() {}
@@ -128,7 +125,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// /**   X
 	//  int foo_bar() {}
 
-	// /**   
+	// /**
 	//  * X
 	//  * @return
 	//  */
@@ -375,7 +372,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//	public:
 	//      /**X
 	//      STATIC void D::foo(int x) {
-	//      
+	//
 	//      }
 	//	};
 
@@ -388,7 +385,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	//       * @param x
 	//       */
 	//      STATIC void D::foo(int x) {
-	//      
+	//
 	//      }
 	//	};
 	public void testAutoDocCommentContent17() throws CoreException {
@@ -508,7 +505,7 @@ public class DoxygenCCommentAutoEditStrategyTest extends AbstractAutoEditTest {
 	// /**   X
 	//  int foo_bar();
 
-	// /**   
+	// /**
 	//  * X
 	//  * @return
 	//  */

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.build;
 
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.build.ToolChainWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -28,11 +31,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.build.ToolChainWizard;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
 
 public class NewToolChainWizardSelectionPage extends WizardPage {
 

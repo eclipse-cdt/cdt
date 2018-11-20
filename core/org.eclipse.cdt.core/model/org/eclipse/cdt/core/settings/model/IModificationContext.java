@@ -33,7 +33,7 @@ public interface IModificationContext {
 	/**
 	 * the CConfigurationDataProvider can call this method to indicate the
 	 * CConfigurationData settings state.
-	 * 
+	 *
 	 * @param flags
 	 */
 	void setConfigurationSettingsFlags(int flags);
@@ -41,7 +41,7 @@ public interface IModificationContext {
 	/**
 	 * returns true if the cache data gets re-applied, i.e. there were no changes to the
 	 * current configuration data performed from the core side
-	 * 
+	 *
 	 * @return boolean
 	 */
 	boolean isBaseDataCached();

@@ -29,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 
 public class FindReplaceHandler extends AbstractHandler implements IHandler {
 
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		IWorkbenchPart part = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 		if (part instanceof IMemoryRenderingSite) {

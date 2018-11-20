@@ -27,8 +27,8 @@ import org.eclipse.cdt.dsf.gdb.launching.GdbLaunch;
 import org.eclipse.cdt.llvm.dsf.lldb.core.ILLDBDebugPreferenceConstants;
 import org.eclipse.cdt.llvm.dsf.lldb.core.ILLDBLaunchConfigurationConstants;
 import org.eclipse.cdt.llvm.dsf.lldb.core.internal.ILLDBConstants;
-import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBTrait;
 import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBCorePlugin;
+import org.eclipse.cdt.llvm.dsf.lldb.core.internal.LLDBTrait;
 import org.eclipse.cdt.utils.CommandLineUtil;
 import org.eclipse.cdt.utils.spawner.ProcessFactory;
 import org.eclipse.core.runtime.CoreException;
@@ -78,6 +78,7 @@ public class LLDBLaunch extends GdbLaunch {
 	 * TODO: GdbLaunch.getGDBPath() and setGDBPath() should reference each other
 	 * in the javadoc to make sure extenders override both.
 	 */
+	@Override
 	public IPath getGDBPath() {
 		String lldbPath = getAttribute(ILLDBLaunchConfigurationConstants.ATTR_DEBUG_NAME);
 		if (lldbPath != null) {
@@ -87,6 +88,7 @@ public class LLDBLaunch extends GdbLaunch {
 		return getLLDBPath(getLaunchConfiguration());
 	}
 
+	@Override
 	public void setGDBPath(String path) {
 		setAttribute(ILLDBLaunchConfigurationConstants.ATTR_DEBUG_NAME, path);
 	}
@@ -114,6 +116,7 @@ public class LLDBLaunch extends GdbLaunch {
 		return retVal;
 	}
 
+	@Override
 	protected String getDefaultGDBPath() {
 		return getDefaultLLDBPath();
 	}

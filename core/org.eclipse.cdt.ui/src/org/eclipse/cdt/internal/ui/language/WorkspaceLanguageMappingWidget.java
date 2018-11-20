@@ -17,10 +17,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.Map.Entry;
 
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+import org.eclipse.cdt.internal.ui.util.Messages;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -39,17 +42,12 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 
-import org.eclipse.cdt.core.model.LanguageManager;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
-import org.eclipse.cdt.internal.ui.util.Messages;
-
 public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 	private Map<String, String> fContentTypeMappings;
 
 	public WorkspaceLanguageMappingWidget() {
 		super();
-		fContentTypeMappings = new TreeMap<String, String>();
+		fContentTypeMappings = new TreeMap<>();
 	}
 
 	@Override
@@ -176,7 +174,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 		}
 
 		if (fChild != null) {
-			Set<String> overrides = new HashSet<String>(fContentTypeMappings.keySet());
+			Set<String> overrides = new HashSet<>(fContentTypeMappings.keySet());
 			overrides.addAll(fOverriddenContentTypes);
 			fChild.setOverriddenContentTypes(overrides);
 			fChild.refreshMappings();
@@ -184,7 +182,7 @@ public class WorkspaceLanguageMappingWidget extends LanguageMappingWidget {
 	}
 
 	public void setMappings(Map<String, String> mappings) {
-		fContentTypeMappings = new TreeMap<String, String>(mappings);
+		fContentTypeMappings = new TreeMap<>(mappings);
 	}
 
 	public Map<String, String> getContentTypeMappings() {

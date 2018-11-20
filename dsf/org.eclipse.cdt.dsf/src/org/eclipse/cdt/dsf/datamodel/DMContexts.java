@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for additional features in DSF Reference implementation
@@ -26,7 +26,7 @@ import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 
 /**
  * Holder for utility static methods for manipulating IDMContext objects.
- * 
+ *
  * @since 1.0
  */
 public class DMContexts {
@@ -37,13 +37,13 @@ public class DMContexts {
 	public static final IDMContext[] EMPTY_CONTEXTS_ARRAY = new IDMContext[0];
 
 	/**
-	 * Finds a data model context of given type among ancestors of the 
+	 * Finds a data model context of given type among ancestors of the
 	 * specified context.  The returned ancestor is the one closest to the
 	 * specified context, in terms of depth.
-	 * 
+	 *
 	 * Note that for efficiency, this method does not re-use getAllAncestorsOfType()
 	 * to avoid the unnecessary creation of an array.
-	 * 
+	 *
 	 * @param ctx DMC to search.
 	 * @param ancestorType Class type of the desired DMC ancestor.
 	 * @return Returns the ancestor if found, null otherwise.
@@ -59,11 +59,11 @@ public class DMContexts {
 		}
 
 		// Use a LinkedHashSet to avoid duplicates and preserver insertion-order
-		Set<IDMContext> nodes = new LinkedHashSet<IDMContext>();
+		Set<IDMContext> nodes = new LinkedHashSet<>();
 		nodes.addAll(Arrays.asList(ctx.getParents()));
 		while (nodes.isEmpty() == false) {
 			Set<IDMContext> parents = nodes;
-			nodes = new LinkedHashSet<IDMContext>();
+			nodes = new LinkedHashSet<>();
 			for (IDMContext parent : parents) {
 				if (ancestorType.isAssignableFrom(parent.getClass())) {
 					return (V) parent;
@@ -77,11 +77,11 @@ public class DMContexts {
 	}
 
 	/**
-	 * Finds the top most ancestor of the specified type.  
-	 * It assumes only one immediate parent of the give type exists. 
+	 * Finds the top most ancestor of the specified type.
+	 * It assumes only one immediate parent of the give type exists.
 	 * The search is done until there is no more immediate parents of the given type.
-	 * The method returns the last one found.    
-	 * 
+	 * The method returns the last one found.
+	 *
 	 * @param <V>
 	 * @param ctx DMC to search.
 	 * @param ancestorType Class type of the desired DMC ancestor.
@@ -113,8 +113,8 @@ public class DMContexts {
 	}
 
 	/**
-	 * Finds the immediate parent of the specified type if exists.  
-	 * 
+	 * Finds the immediate parent of the specified type if exists.
+	 *
 	 * @param ctx DMC to search.
 	 * @param ancestorType Class type of the desired DMC ancestor.
 	 * @return Returns the ancestor if found, null otherwise.
@@ -134,7 +134,7 @@ public class DMContexts {
 	}
 
 	/**
-	 * Finds all data model contexts of given type among ancestors of the 
+	 * Finds all data model contexts of given type among ancestors of the
 	 * specified context.  Ancestors are returned in order of closest to farthest,
 	 * in terms of depth.
 	 * @param ctx DMC to search.
@@ -149,12 +149,12 @@ public class DMContexts {
 			return null;
 
 		// Use a LinkedHashSet to avoid duplicates and preserver insertion-order
-		Set<V> requestedAncestors = new LinkedHashSet<V>();
-		Set<IDMContext> nodes = new LinkedHashSet<IDMContext>();
+		Set<V> requestedAncestors = new LinkedHashSet<>();
+		Set<IDMContext> nodes = new LinkedHashSet<>();
 		nodes.add(ctx);
 		while (nodes.isEmpty() == false) {
 			Set<IDMContext> parents = nodes;
-			nodes = new LinkedHashSet<IDMContext>();
+			nodes = new LinkedHashSet<>();
 			for (IDMContext parent : parents) {
 				if (ancestorType.isAssignableFrom(parent.getClass())) {
 					requestedAncestors.add((V) parent);
@@ -173,7 +173,7 @@ public class DMContexts {
 	}
 
 	/**
-	 * Checks all ancestors for a given context to see if the given 
+	 * Checks all ancestors for a given context to see if the given
 	 * potentialAncestor is in fact an ancestor.
 	 * @param dmc DM Contexts who's ancestors to check.
 	 * @param potentialAncestor Ancestor context to look for.
@@ -209,7 +209,7 @@ public class DMContexts {
 		 * This method is implemented recursively, which is not necessarily
 		 * the most efficient way to do this.
 		 */
-		List<IDMContext> list = new ArrayList<IDMContext>();
+		List<IDMContext> list = new ArrayList<>();
 		list.add(dmc);
 
 		for (IDMContext parentDmc : dmc.getParents()) {

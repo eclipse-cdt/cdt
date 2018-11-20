@@ -1,26 +1,25 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- * Institute for Software (IFS)- initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * Institute for Software (IFS)- initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.implementmethod;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 
 /**
  * @author Emanuel Graf IFS
@@ -34,7 +33,7 @@ public class ImplementMethodData implements ITreeContentProvider {
 	private List<MethodToImplementConfig> methodDeclarations;
 
 	public void setMethodDeclarations(List<IASTSimpleDeclaration> methodDeclarations) {
-		this.methodDeclarations = new ArrayList<MethodToImplementConfig>();
+		this.methodDeclarations = new ArrayList<>();
 
 		for (IASTSimpleDeclaration declaration : methodDeclarations) {
 			this.methodDeclarations.add(new MethodToImplementConfig(declaration, new ParameterHandler(declaration)));
@@ -80,7 +79,7 @@ public class ImplementMethodData implements ITreeContentProvider {
 	}
 
 	public List<MethodToImplementConfig> getMethodsToImplement() {
-		List<MethodToImplementConfig> ret = new ArrayList<MethodToImplementConfig>();
+		List<MethodToImplementConfig> ret = new ArrayList<>();
 		for (MethodToImplementConfig config : methodDeclarations) {
 			if (config.isChecked()) {
 				ret.add(config);

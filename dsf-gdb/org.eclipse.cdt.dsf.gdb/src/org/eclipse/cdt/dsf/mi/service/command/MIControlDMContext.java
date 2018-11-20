@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.cdt.dsf.service.IDsfService;
 import org.osgi.framework.Constants;
 
 /**
- * 
+ *
  */
 public class MIControlDMContext extends AbstractDMContext implements ICommandControlDMContext {
 	final static String PROP_INSTANCE_ID = GdbPlugin.PLUGIN_ID + ".miControlInstanceId"; //$NON-NLS-1$

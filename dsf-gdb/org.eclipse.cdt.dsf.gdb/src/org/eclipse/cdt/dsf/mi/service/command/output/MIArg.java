@@ -45,7 +45,7 @@ public class MIArg {
 	 * [{name="xxx"},{name="xxx"}]
 	 */
 	public static MIArg[] getMIArgs(MIList miList) {
-		List<MIArg> aList = new ArrayList<MIArg>();
+		List<MIArg> aList = new ArrayList<>();
 		MIValue[] values = miList.getMIValues();
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] instanceof MITuple) {
@@ -73,7 +73,7 @@ public class MIArg {
 	 * {{name="xxx"},{name="xxx"}}
 	 */
 	public static MIArg[] getMIArgs(MITuple miTuple) {
-		List<MIArg> aList = new ArrayList<MIArg>();
+		List<MIArg> aList = new ArrayList<>();
 		MIValue[] values = miTuple.getMIValues();
 		for (int i = 0; i < values.length; i++) {
 			if (values[i] instanceof MITuple) {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,23 +23,23 @@ import org.eclipse.core.runtime.MultiStatus;
  * A request monitor that is used for multiple activities. We are told the
  * number of activities that constitutes completion. When our {@link #done()} is
  * called that many times, the request is considered complete.
- * 
+ *
  * The usage is as follows: <code><pre>
- *     final CountingRequestMonitor countingRm = new CountingRequestMonitor(fExecutor, null) { 
+ *     final CountingRequestMonitor countingRm = new CountingRequestMonitor(fExecutor, null) {
  *         public void handleCompleted() {
  *             System.out.println("All complete, errors=" + !getStatus().isOK());
  *         }
  *     };
- *     
+ *
  *     int count = 0;
  *     for (int i : elements) {
  *         service.call(i, countingRm);
  *         count++;
  *     }
- *     
+ *
  *     countingRm.setDoneCount(count);
  * </pre></code>
- * 
+ *
  * @since 1.0
  */
 public class CountingRequestMonitor extends RequestMonitor {
@@ -74,11 +74,11 @@ public class CountingRequestMonitor extends RequestMonitor {
 	}
 
 	/**
-	 * Sets the number of times that this request monitor needs to be called 
+	 * Sets the number of times that this request monitor needs to be called
 	 * before this monitor is truly considered done.  This method must be called
 	 * exactly once in the life cycle of each counting request monitor.
 	 * @param count Number of times that done() has to be called to mark the request
-	 * monitor as complete.  If count is '0', then the counting request monitor is 
+	 * monitor as complete.  If count is '0', then the counting request monitor is
 	 * marked as done immediately.
 	 */
 	public synchronized void setDoneCount(int count) {
@@ -121,5 +121,5 @@ public class CountingRequestMonitor extends RequestMonitor {
 		if ((getStatus() instanceof MultiStatus)) {
 			((MultiStatus) getStatus()).add(status);
 		}
-	};
+	}
 }

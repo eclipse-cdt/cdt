@@ -76,7 +76,7 @@ public class AutoconfSubstRule implements IPredicateRule {
 					// A valid id has some alphabetic character in it.
 					isId = true;
 				} else if (c >= '0' && c <= '9' || c == '_') {
-					; // continue
+					// continue
 				} else if (c == '@' && isId)
 					return getSuccessToken();
 				else

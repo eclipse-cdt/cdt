@@ -18,21 +18,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.Position;
-import org.eclipse.jface.text.Region;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTMacroExpansionLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -48,17 +33,29 @@ import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.Position;
+import org.eclipse.jface.text.Region;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * An input object to the {@link CMacroExpansionExplorationControl}.
- * 
+ *
  * @since 5.0
  */
 public class CMacroExpansionInput {
@@ -84,7 +81,7 @@ public class CMacroExpansionInput {
 		private final Position fTextRegion;
 		private final boolean fAllowSelection;
 		private IASTNode fEnclosingNode;
-		private List<IASTNode> fExpansionNodes = new ArrayList<IASTNode>();
+		private List<IASTNode> fExpansionNodes = new ArrayList<>();
 		private MacroExpansionExplorer fExplorer;
 		private IRegion fExpansionRegion;
 
@@ -180,7 +177,7 @@ public class CMacroExpansionInput {
 			if (node == other) {
 				return other;
 			}
-			List<IASTNode> ancestors = new ArrayList<IASTNode>();
+			List<IASTNode> ancestors = new ArrayList<>();
 			while (node != null) {
 				node = node.getParent();
 				ancestors.add(node);
@@ -243,7 +240,7 @@ public class CMacroExpansionInput {
 
 	/**
 	 * Creates an input object for the macro expansion exploration control {@link CMacroExpansionExplorationControl}.
-	 * 
+	 *
 	 * @param editor  the active editor
 	 * @param textRegion  the text region where to consider macro expansions
 	 * @param force  force computation of the input, if <code>true</code> this may trigger a parse
@@ -302,7 +299,7 @@ public class CMacroExpansionInput {
 	/**
 	 * Expand the given text region to span complete lines of the document and
 	 * add a number of lines before and after the region.
-	 * 
+	 *
 	 * @param region  the text region
 	 * @param document  the underlying text document
 	 * @param contextLines  the number of lines to add

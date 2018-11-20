@@ -26,7 +26,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
 /**
- * 
+ *
  * Abstract class to simply ast rewrite quick fixers
  * @since 2.0
  */
@@ -62,7 +62,7 @@ public abstract class AbstractAstRewriteQuickFix extends AbstractCodanCMarkerRes
 	}
 
 	/**
-	 * 
+	 *
 	 * @param ast
 	 * @param astName
 	 * @param r

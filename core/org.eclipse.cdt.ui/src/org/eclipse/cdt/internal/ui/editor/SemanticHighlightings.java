@@ -14,20 +14,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
+import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.graphics.RGB;
 
 import org.eclipse.cdt.core.dom.ast.DOMException;
 import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
+import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionCallExpression;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTImplicitName;
@@ -52,7 +48,6 @@ import org.eclipse.cdt.core.dom.ast.IScope;
 import org.eclipse.cdt.core.dom.ast.IType;
 import org.eclipse.cdt.core.dom.ast.ITypedef;
 import org.eclipse.cdt.core.dom.ast.IVariable;
-import org.eclipse.cdt.core.dom.ast.IASTExpression.ValueCategory;
 import org.eclipse.cdt.core.dom.ast.c.ICExternalBinding;
 import org.eclipse.cdt.core.dom.ast.c.ICFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTClassVirtSpecifier;
@@ -71,6 +66,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPBlockScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPConstructor;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPDeferredFunction;
+import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunction;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionScope;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPFunctionType;
@@ -79,27 +75,29 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPNamespace;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPReferenceType;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateNonTypeParameter;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
-import org.eclipse.cdt.core.dom.ast.cpp.ICPPEnumeration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.SemanticQueries;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexFile;
 import org.eclipse.cdt.core.index.IIndexName;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.ISemanticToken;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ICPPUnknownBinding;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.OverloadableOperator;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPFunctionSet;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.FunctionSetType;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.HeuristicResolver;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
-
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.REF;
-import static org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil.TDEF;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.ISemanticToken;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.swt.graphics.RGB;
 
 /**
  * Semantic highlightings.
@@ -631,7 +629,7 @@ public class SemanticHighlightings {
 				return true;
 			}
 			// The template-name in a template-id is never a declaration, it's a reference
-			// to the template. However, if the template-id itself is a declaration, we want 
+			// to the template. However, if the template-id itself is a declaration, we want
 			// to color the template-name part of it as a declaration.
 			if (name.getParent() instanceof ICPPASTTemplateId
 					&& name.getPropertyInParent() == ICPPASTTemplateId.TEMPLATE_NAME) {
@@ -1060,8 +1058,8 @@ public class SemanticHighlightings {
 				return false;
 			}
 			if (node instanceof IASTImplicitName && node.getParent() instanceof ICPPASTUsingDeclaration) {
-				// For names in an inheriting constructor declaration, we want to use the method 
-				// highlighting (since it's a constructor), not the class highlighting. 
+				// For names in an inheriting constructor declaration, we want to use the method
+				// highlighting (since it's a constructor), not the class highlighting.
 				return false;
 			}
 			if (node instanceof IASTName) {
@@ -1712,9 +1710,9 @@ public class SemanticHighlightings {
 
 	/**
 	 * Semantic highlighting for variables passed by non-const reference.
-	 * 
+	 *
 	 * The purpose of having a highlighting for this is that there's an important
-	 * semantic difference between passing a variable by non-const reference 
+	 * semantic difference between passing a variable by non-const reference
 	 * (where the called function can modify the original variable) and passing
 	 * a variable by const reference or value (where it cannot), but syntactically
 	 * these two forms of passing look the same at the call site.
@@ -1766,7 +1764,7 @@ public class SemanticHighlightings {
 			}
 
 			// If the argument expression is not an lvalue, we don't care if the function
-			// modifies it. 
+			// modifies it.
 			IASTExpression expression = (IASTExpression) node;
 			if (expression.getValueCategory() != ValueCategory.LVALUE) {
 				return false;
@@ -1774,10 +1772,10 @@ public class SemanticHighlightings {
 
 			// Resolve the type of the function being called.
 			// Note that, in the case of a call to a template function or a set of overloaded functions,
-			// the function name expression will be an id-expression, and 
-			// CPPASTIdExpression.getEvaluation() will perform template instantiation and overload 
+			// the function name expression will be an id-expression, and
+			// CPPASTIdExpression.getEvaluation() will perform template instantiation and overload
 			// resolution, and we'll get the instantiated function type.
-			// Note that we don't use CPPASTIdExpression.getExpressionType() because it typically turns 
+			// Note that we don't use CPPASTIdExpression.getExpressionType() because it typically turns
 			// a potentially-useful FunctionSetType into the useless CPPDeferredFunction.FUNCTION_TYPE.
 			IASTFunctionCallExpression functionCall = ((IASTFunctionCallExpression) node.getParent());
 			ICPPASTExpression functionName = (ICPPASTExpression) functionCall.getFunctionNameExpression();
@@ -1838,7 +1836,7 @@ public class SemanticHighlightings {
 
 	/**
 	 * Semantic highlighting for context-sensitive keywords.
-	 * 
+	 *
 	 * This does not get its own color and style; rather, it uses
 	 * the color and style of the 'Keyword' syntactic highlighting.
 	 */
@@ -2088,7 +2086,7 @@ public class SemanticHighlightings {
 
 	private static SemanticHighlighting[] loadSemanticHighlightings() {
 
-		Map<Key, SemanticHighlighting> highlightings = new TreeMap<SemanticHighlightings.Key, SemanticHighlighting>();
+		Map<Key, SemanticHighlighting> highlightings = new TreeMap<>();
 
 		// load the built-in highlightings
 		loadBuiltInSemanticHighlightings(highlightings);
@@ -2207,7 +2205,7 @@ public class SemanticHighlightings {
 
 	/**
 	 * Returns whether the given highlighting is the highlighting for external SDK functions.
-	 * For the previewer widget in the preferences, this is swapped out with a different implementation. 
+	 * For the previewer widget in the preferences, this is swapped out with a different implementation.
 	 */
 	public static boolean isExternalSDKHighlighting(SemanticHighlighting highlighting) {
 		return highlighting instanceof ExternalSDKHighlighting;

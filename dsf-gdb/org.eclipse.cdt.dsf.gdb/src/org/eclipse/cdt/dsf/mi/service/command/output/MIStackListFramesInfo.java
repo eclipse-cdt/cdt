@@ -27,7 +27,7 @@ public class MIStackListFramesInfo extends MIInfo {
 	public MIStackListFramesInfo(MIOutput out) {
 		super(out);
 		frames = null;
-		List<MIFrame> aList = new ArrayList<MIFrame>(1);
+		List<MIFrame> aList = new ArrayList<>(1);
 		if (isDone()) {
 			MIResultRecord rr = out.getMIResultRecord();
 			if (rr != null) {

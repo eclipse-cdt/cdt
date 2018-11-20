@@ -205,7 +205,7 @@ public class PathUtil {
 	 * <p>
 	 * Similar to IPath.equals(Object obj), but takes case sensitivity of the file system
 	 * into account.
-	 * 
+	 *
 	 * @return {@code true} if path1 is the same as path2, and {@code false} otherwise
 	 *
 	 * @since 5.1

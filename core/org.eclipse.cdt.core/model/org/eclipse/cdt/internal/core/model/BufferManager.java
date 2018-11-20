@@ -68,7 +68,7 @@ public class BufferManager implements IBufferFactory {
 		 */
 		@Override
 		protected OverflowingLRUCache<K, IBuffer> newInstance(int size, int overflow) {
-			return new BufferCache<K>(size, overflow);
+			return new BufferCache<>(size, overflow);
 		}
 	}
 

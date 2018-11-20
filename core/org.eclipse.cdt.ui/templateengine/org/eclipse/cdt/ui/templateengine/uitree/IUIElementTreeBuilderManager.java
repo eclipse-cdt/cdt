@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
 /**
  * This interface provides methods, which will be implemented by Tree builder
  * class.
- * 
+ *
  * @since 4.0
  */
 
@@ -27,7 +27,7 @@ public interface IUIElementTreeBuilderManager {
 	 * Creates the UIElement Tree
 	 * @param ui
 	 * @param parent
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public void createUIElementTree(UIElement ui, Element parent);

@@ -613,16 +613,16 @@ public class ASTTypeUtil {
 
 	/**
 	 * Append a string to the builder "by reference".
-	 * 
+	 *
 	 * Instead of copying the bytes of the string into the builder, it copies
 	 * the string's "address", as returned by System.identityHashCode().
-	 * 
+	 *
 	 * To preserve correct semantics, the string that's passed in must
 	 * be interned, to ensure that we get the same "address" if and only if
-	 * we would have gotten the same contents. (However, we do not call 
+	 * we would have gotten the same contents. (However, we do not call
 	 * intern() ourselves, as some of our callers already know they have
 	 * an interned strings, and calling it again would be wasteful.)
-	 * 
+	 *
 	 * The motivation is to avoid strings built by ASTTypeUtil from becoming
 	 * excessively long by having the contents of a long string appended
 	 * repeatedly to them.
@@ -1056,7 +1056,7 @@ public class ASTTypeUtil {
 
 	/**
 	 * Try to get a workspace-relative path for a filename.
-	 * If that fails, just return the input path. 
+	 * If that fails, just return the input path.
 	 */
 	private static String getWorkspaceRelativePath(String filename, IASTNode context) {
 		if (context == null) {

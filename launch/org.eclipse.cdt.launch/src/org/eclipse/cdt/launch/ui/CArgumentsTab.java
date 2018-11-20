@@ -177,7 +177,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 
 	/**
 	 * Returns the string in the text widget, or <code>null</code> if empty.
-	 * 
+	 *
 	 * @return text or <code>null</code>
 	 */
 	protected String getAttributeValueFrom(Text text) {

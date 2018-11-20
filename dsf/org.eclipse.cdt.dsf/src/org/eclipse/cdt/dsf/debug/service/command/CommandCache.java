@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson			  - Modified for caching commands corresponding to multiple execution contexts 
+ *     Ericsson			  - Modified for caching commands corresponding to multiple execution contexts
  *******************************************************************************/
 
 package org.eclipse.cdt.dsf.debug.service.command;
@@ -42,13 +42,13 @@ import org.eclipse.core.runtime.Status;
  * sent to their intended target through the supplied {@link ICommandControl},
  * and their results are cached so as to quickly service future identical
  * commands.
- * 
+ *
  * The cache has to be reset by the client that owns and uses the cache. A reset
  * should be done when an event occurs that alters the state of a context such
  * that commands on that context may no longer yield the same outcome as they
  * did before the event. A reset can be done on the entire cache or on a per
  * context basis.
- * 
+ *
  * @since 1.0
  */
 
@@ -84,7 +84,7 @@ public class CommandCache implements ICommandListener {
 		public CommandInfo(CommandStyle cmdstyle, ICommand<ICommandResult> cmd, DataRequestMonitor<ICommandResult> rm) {
 			fCmdStyle = cmdstyle;
 			fCommand = cmd;
-			fCurrentRequestMonitors = new LinkedList<DataRequestMonitor<ICommandResult>>();
+			fCurrentRequestMonitors = new LinkedList<>();
 			fCurrentRequestMonitors.add(rm);
 			fCoalescedCmd = null;
 		}
@@ -156,45 +156,45 @@ public class CommandCache implements ICommandListener {
 	/*
 	 *  This class contains 5 significant lists.
 	 *
-	 *  Cached Results : 
-	 *  
+	 *  Cached Results :
+	 *
 	 *      Contains a mapping of commands and their completed results. Until the cached
 	 *      results are cleared by the owner of the cache.
-	 *                   
+	 *
 	 *  Pending Commands Not Queued :
-	 *  
+	 *
 	 *      The Control object has not yet indicated that it has recognized the command
 	 *      yet. The user is not allowed to interrogate these objects until the Control
 	 *      object indicates they have been queued ( commandQueued notification ).
 	 *
-	 *  Pending Commands Unsent : 
-	 *  
-	 *      This is the list of commands  which have been  issued to the Control object but 
-	 *      have not been actually issued to the backend. These commands represent coalesce 
+	 *  Pending Commands Unsent :
+	 *
+	 *      This is the list of commands  which have been  issued to the Control object but
+	 *      have not been actually issued to the backend. These commands represent coalesce
 	 *      options.  They may be compared against the Queued list  being maintained by the
 	 *      Control object until told otherwise - commandSent notification ).
-	 *                            
+	 *
 	 *  Pending Commands Sent :
-	 *  
-	 *      This is a list  of commands which have been issued to the Control object and 
-	 *      have also been sent to the backend. It is not possible use these objects for 
+	 *
+	 *      This is a list  of commands which have been issued to the Control object and
+	 *      have also been sent to the backend. It is not possible use these objects for
 	 *      coalescents.
 	 *
 	 *  Coalesced Pending Q :
-	 *  
-	 *      These represent original commands  for which a new coalesced command has been 
+	 *
+	 *      These represent original commands  for which a new coalesced command has been
 	 *      created. When the coalesced commands completes the results will be decomposed
 	 *      when back into individual results from this command.
 	 */
-	private Set<IDMContext> fAvailableContexts = new HashSet<IDMContext>();
+	private Set<IDMContext> fAvailableContexts = new HashSet<>();
 
-	private Map<IDMContext, HashMap<CommandInfo, CommandResultInfo>> fCachedContexts = new HashMap<IDMContext, HashMap<CommandInfo, CommandResultInfo>>();
+	private Map<IDMContext, HashMap<CommandInfo, CommandResultInfo>> fCachedContexts = new HashMap<>();
 
-	private ArrayList<CommandInfo> fPendingQCommandsSent = new ArrayList<CommandInfo>();
+	private ArrayList<CommandInfo> fPendingQCommandsSent = new ArrayList<>();
 
-	private ArrayList<CommandInfo> fPendingQCommandsNotYetSent = new ArrayList<CommandInfo>();
+	private ArrayList<CommandInfo> fPendingQCommandsNotYetSent = new ArrayList<>();
 
-	private ArrayList<CommandInfo> fPendingQWaitingForCoalescedCompletion = new ArrayList<CommandInfo>();
+	private ArrayList<CommandInfo> fPendingQWaitingForCoalescedCompletion = new ArrayList<>();
 
 	private static boolean DEBUG = false;
 	private static final String CACHE_TRACE_IDENTIFIER = " [CHE]"; //$NON-NLS-1$
@@ -261,7 +261,7 @@ public class CommandCache implements ICommandListener {
 	 */
 	private CommandInfo getCoalescedCommand(CommandInfo cmd) {
 
-		for (CommandInfo currentUnsentEntry : new ArrayList<CommandInfo>(fPendingQCommandsNotYetSent)) {
+		for (CommandInfo currentUnsentEntry : new ArrayList<>(fPendingQCommandsNotYetSent)) {
 			/*
 			 *  Get the current unsent entry to determine if we can coalesced with it.
 			 */
@@ -287,7 +287,7 @@ public class CommandCache implements ICommandListener {
 					 *  them to point to the new super command.
 					 */
 
-					for (CommandInfo waitingEntry : new ArrayList<CommandInfo>(
+					for (CommandInfo waitingEntry : new ArrayList<>(
 							fPendingQWaitingForCoalescedCompletion)) {
 
 						if (waitingEntry.getCoalescedCmd() == currentUnsentEntry) {
@@ -371,7 +371,7 @@ public class CommandCache implements ICommandListener {
 		}
 
 		/*
-		 *  If we are already waiting for this command to complete, 
+		 *  If we are already waiting for this command to complete,
 		 *  add this request monitor to list of waiting monitors.
 		 */
 		for (CommandInfo sentCommand : fPendingQCommandsSent) {
@@ -419,10 +419,10 @@ public class CommandCache implements ICommandListener {
 				new DataRequestMonitor<ICommandResult>(ImmediateExecutor.getInstance(), null) {
 					@Override
 					public synchronized void done() {
-						// protect against the cache being called in non-session thread, but at 
-						// the same time avoid adding extra dispatch cycles to command processing. 
+						// protect against the cache being called in non-session thread, but at
+						// the same time avoid adding extra dispatch cycles to command processing.
 						if (fSession.getExecutor().isInExecutorThread()) {
-							;
+
 							super.done();
 						} else {
 							fSession.getExecutor().execute(new DsfRunnable() {
@@ -469,7 +469,7 @@ public class CommandCache implements ICommandListener {
 							 *  we create a new result from the coalesced command for it.
 							 */
 
-							for (CommandInfo waitingEntry : new ArrayList<CommandInfo>(
+							for (CommandInfo waitingEntry : new ArrayList<>(
 									fPendingQWaitingForCoalescedCompletion)) {
 
 								if (waitingEntry.getCoalescedCmd() == finalCachedCmd) {
@@ -487,7 +487,7 @@ public class CommandCache implements ICommandListener {
 									if (fCachedContexts.get(context) != null) {
 										fCachedContexts.get(context).put(waitingEntry, subResultInfo);
 									} else {
-										HashMap<CommandInfo, CommandResultInfo> map = new HashMap<CommandInfo, CommandResultInfo>();
+										HashMap<CommandInfo, CommandResultInfo> map = new HashMap<>();
 										map.put(waitingEntry, subResultInfo);
 										fCachedContexts.put(context, map);
 									}
@@ -495,7 +495,7 @@ public class CommandCache implements ICommandListener {
 									if (!isSuccess()) {
 
 										/*
-										 *  We had some form of error with the original command. So notify the 
+										 *  We had some form of error with the original command. So notify the
 										 *  original requesters of the issues.
 										 */
 										for (DataRequestMonitor<?> pendingRM : waitingEntry.getRequestMonitorList()) {
@@ -521,7 +521,7 @@ public class CommandCache implements ICommandListener {
 								}
 							}
 						} else {
-							// Save the command result in cache, but only if the command's context 
+							// Save the command result in cache, but only if the command's context
 							// is still available.  Otherwise an error may get cached incorrectly.
 							if (isTargetAvailable(context)) {
 								CommandResultInfo resultInfo = new CommandResultInfo(result, status);
@@ -529,7 +529,7 @@ public class CommandCache implements ICommandListener {
 								if (fCachedContexts.get(context) != null) {
 									fCachedContexts.get(context).put(finalCachedCmd, resultInfo);
 								} else {
-									HashMap<CommandInfo, CommandResultInfo> map = new HashMap<CommandInfo, CommandResultInfo>();
+									HashMap<CommandInfo, CommandResultInfo> map = new HashMap<>();
 									map.put(finalCachedCmd, resultInfo);
 									fCachedContexts.put(context, map);
 								}
@@ -538,7 +538,7 @@ public class CommandCache implements ICommandListener {
 							// failure to the original requesters.
 							if (!isSuccess()) {
 								/*
-								 *  We had some form of error with the original command. So notify the 
+								 *  We had some form of error with the original command. So notify the
 								 *  original requesters of the issues.
 								 */
 								for (DataRequestMonitor<?> pendingRM : finalCachedCmd.getRequestMonitorList()) {
@@ -581,7 +581,7 @@ public class CommandCache implements ICommandListener {
 		}
 	}
 
-	/** 
+	/**
 	 * TODO
 	 * @see #setContextAvailable(IDMContext, boolean)
 	 */
@@ -604,7 +604,7 @@ public class CommandCache implements ICommandListener {
 	@Override
 	public void commandRemoved(ICommandToken token) {
 		/*
-		 *  Do nothing. 
+		 *  Do nothing.
 		 */
 	}
 
@@ -614,7 +614,7 @@ public class CommandCache implements ICommandListener {
 	@Override
 	public void commandQueued(ICommandToken token) {
 		/*
-		 *  Do nothing. 
+		 *  Do nothing.
 		 */
 	}
 
@@ -633,7 +633,7 @@ public class CommandCache implements ICommandListener {
 	 * Move the command into our internal sent list. This means we can no longer look at
 	 * this command for possible coalescence since it has been given to the debug engine
 	 * and is currently being processed.
-	 * 
+	 *
 	 * @see org.eclipse.cdt.dsf.debug.service.command.ICommandListener#commandSent(org.eclipse.cdt.dsf.debug.service.command.ICommandToken)
 	 */
 	@Override
@@ -649,7 +649,7 @@ public class CommandCache implements ICommandListener {
 		// instead of only using 'cachedCmd'.  This is because although cachedCmd can be considered
 		// equal to unqueuedCommand, it is not identical and we need the full content of unqueuedCommand.
 		// For instance, cachedCmd does not have the list of requestMonitors that unqueuedCommand has.
-		for (CommandInfo unqueuedCommand : new ArrayList<CommandInfo>(fPendingQCommandsNotYetSent)) {
+		for (CommandInfo unqueuedCommand : new ArrayList<>(fPendingQCommandsNotYetSent)) {
 			if (unqueuedCommand.equals(cachedCmd)) {
 				fPendingQCommandsNotYetSent.remove(unqueuedCommand);
 				fPendingQCommandsSent.add(unqueuedCommand);
@@ -659,7 +659,7 @@ public class CommandCache implements ICommandListener {
 	}
 
 	/**
-	 * Clears the cache entries for given context.  Clears the whole cache if 
+	 * Clears the cache entries for given context.  Clears the whole cache if
 	 * context parameter is null.
 	 */
 	public void reset(IDMContext dmc) {

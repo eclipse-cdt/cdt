@@ -117,7 +117,7 @@ public class WhileSteppingActionPage extends PlatformObject implements IBreakpoi
 
 	/**
 	 * Clean up attached actions that were just deleted from the GlobalActionList
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	protected void HandleDeleteButton() {

@@ -16,10 +16,9 @@ package org.eclipse.cdt.internal.ui.preferences.formatter;
 
 import java.util.Map;
 
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 
 /**
  * Tab page for the comment formatter settings.

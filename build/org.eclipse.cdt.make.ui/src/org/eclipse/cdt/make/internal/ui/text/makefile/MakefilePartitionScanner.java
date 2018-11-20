@@ -43,7 +43,7 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 
 		IToken tComment = new Token(MAKEFILE_COMMENT_PARTITION);
 
-		List<EndOfLineRule> rules = new ArrayList<EndOfLineRule>();
+		List<EndOfLineRule> rules = new ArrayList<>();
 
 		// Add rule for single line comments.
 

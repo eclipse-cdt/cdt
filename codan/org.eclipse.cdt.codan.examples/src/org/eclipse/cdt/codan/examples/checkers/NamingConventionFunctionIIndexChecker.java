@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2011 Alena Laskavaia 
+ * Copyright (c) 2009, 2011 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,9 +27,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
 
 /**
  * Example demonstrate how to write checked using "C Model"
- * 
+ *
  * @author Alena
- * 
+ *
  */
 public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker implements ICheckerWithPreferences {
 	private static final String DEFAULT_PATTERN = "^[a-z]"; // name starts with english lowercase letter //$NON-NLS-1$
@@ -38,15 +38,17 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICIndexChecker#processUnit(org.eclipse
 	 * .cdt.core.model.ITranslationUnit)
 	 */
+	@Override
 	public void processUnit(ITranslationUnit unit) {
 		final IProblem pt = getProblemById(ER_ID, getFile());
 		try {
 			unit.accept(new ICElementVisitor() {
+				@Override
 				public boolean visit(ICElement element) {
 					if (element.getElementType() == ICElement.C_FUNCTION) {
 						String parameter = (String) getPreference(pt, PARAM_KEY);
@@ -68,11 +70,12 @@ public class NamingConventionFunctionIIndexChecker extends AbstractCIndexChecker
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.codan.core.model.ICheckerWithPreferences#initParameters
 	 * (org.eclipse.cdt.codan.core.model.IProblemWorkingCopy)
 	 */
+	@Override
 	public void initPreferences(IProblemWorkingCopy problem) {
 		super.initPreferences(problem);
 		IProblemPreference info = new BasicProblemPreference(PARAM_KEY, "Name Pattern");

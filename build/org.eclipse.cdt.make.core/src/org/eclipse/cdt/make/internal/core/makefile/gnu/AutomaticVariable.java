@@ -19,7 +19,7 @@ import org.eclipse.cdt.make.internal.core.makefile.Directive;
 /**
  * Represents an automatic variable. Automatic variables are implicit and
  * computed for each rule that is applied.
- * 
+ *
  * @author Sebastian Bauer <mail@sebastianbauer.info>
  * @see "http://www.gnu.org/software/make/manual/make.html#Automatic-Variables"
  */

@@ -7,13 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.vm;
-
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
 import org.eclipse.cdt.dsf.concurrent.DsfExecutor;
@@ -32,8 +30,10 @@ import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
 import org.eclipse.ui.PlatformUI;
 
+import junit.framework.TestCase;
+
 /**
- * Tests to measure the performance of the viewer updates.  
+ * Tests to measure the performance of the viewer updates.
  */
 abstract public class PerformanceTests extends TestCase implements IViewerUpdatesListenerConstants {
 	Display fDisplay;
@@ -98,7 +98,7 @@ abstract public class PerformanceTests extends TestCase implements IViewerUpdate
 
 	/**
 	 * Depth (size) of the test model to be used in the tests.  This number allows
-	 * the jface based tests to use a small enough model to fit on the screen, and 
+	 * the jface based tests to use a small enough model to fit on the screen, and
 	 * for the virtual viewer to exercise the content provider to a greater extent.
 	 */
 	abstract protected int getTestModelDepth();

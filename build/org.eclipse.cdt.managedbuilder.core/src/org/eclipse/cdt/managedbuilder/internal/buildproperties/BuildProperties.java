@@ -24,7 +24,7 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IBuildProperty;
 import org.eclipse.core.runtime.CoreException;
 
 public class BuildProperties implements IBuildProperties {
-	private HashMap<String, IBuildProperty> fPropertiesMap = new HashMap<String, IBuildProperty>();
+	private HashMap<String, IBuildProperty> fPropertiesMap = new HashMap<>();
 	private ArrayList<String> fInexistentProperties;
 
 	public BuildProperties() {
@@ -40,7 +40,7 @@ public class BuildProperties implements IBuildProperties {
 				addProperty(prop);
 			} catch (CoreException e) {
 				if (fInexistentProperties == null)
-					fInexistentProperties = new ArrayList<String>();
+					fInexistentProperties = new ArrayList<>();
 
 				fInexistentProperties.add(property);
 			}
@@ -86,7 +86,7 @@ public class BuildProperties implements IBuildProperties {
 		} catch (CoreException e) {
 			if (force) {
 				if (fInexistentProperties == null)
-					fInexistentProperties = new ArrayList<String>(1);
+					fInexistentProperties = new ArrayList<>(1);
 
 				fInexistentProperties.add(BuildProperty.toString(propertyId, propertyValue));
 				fInexistentProperties.trimToSize();

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,16 +19,16 @@ import org.eclipse.jface.viewers.ISelection;
 /**
  * A retargetable action target which allows a debugger to refresh all of its
  * active views with fresh data from the debug target.
- * 
+ *
  * @since 1.1
  */
 public interface IRefreshAllTarget {
 
 	/**
-	 * Refreshes the debugger data of the given debug context.  
+	 * Refreshes the debugger data of the given debug context.
 	 * @param debugContext The active window debug context.
-	 * 
-	 * @throws CoreException 
+	 *
+	 * @throws CoreException
 	 */
 	public void refresh(ISelection debugContext) throws CoreException;
 }

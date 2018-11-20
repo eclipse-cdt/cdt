@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     Mustafa Yuecel - initial implementation - adapted from org.eclipse.jdt.core
  *******************************************************************************/

@@ -31,7 +31,7 @@ public interface ICPPTemplateTypeParameter extends ICPPTemplateParameter, IType 
 	 * binding the template parameter belongs to. Therefore {@link #isSameType(IType)} compares
 	 * the kind and the parameter position of the template parameter, only. The name and the owner
 	 * is ignored.
-	 * 
+	 *
 	 * @since 5.1
 	 */
 	@Override

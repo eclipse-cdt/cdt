@@ -22,7 +22,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Command to run code analysis on selected resources
- * 
+ *
  * @see org.eclipse.core.commands.IHandler
  * @see org.eclipse.core.commands.AbstractHandler
  */

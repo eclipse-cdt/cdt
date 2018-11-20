@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -267,7 +267,7 @@ public class SyncVariableDataAccess {
 
 		/*
 		 * This class is about synchronous access to the variable, so wait until
-		 * the query has completed on the DSF session thread. 
+		 * the query has completed on the DSF session thread.
 		 */
 		try {
 			/*

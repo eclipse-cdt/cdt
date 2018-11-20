@@ -42,7 +42,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * A VM node for displaying a single expression in the expression hover.
- * 
+ *
  * @since 2.1
  */
 public class SingleExpressionVMNode extends AbstractVMNode implements IElementLabelProvider {
@@ -163,7 +163,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
 
 	@Override
 	public String toString() {
-		return "SingleExpressionVMNode"; //$NON-NLS-1$ 
+		return "SingleExpressionVMNode"; //$NON-NLS-1$
 	}
 
 	private ExpressionVMProvider getExpressionVMProvider() {
@@ -215,9 +215,9 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
 
 	public void doUpdateChildren(final IChildrenUpdate update, final IExpression expression) {
 		// getElementForExpression() accepts a IElementsUpdate as an argument.
-		// Construct an instance of VMElementsUpdate which will call a 
+		// Construct an instance of VMElementsUpdate which will call a
 		// the request monitor when it is finished.  The request monitor
-		// will in turn set the element in the update argument in this method. 
+		// will in turn set the element in the update argument in this method.
 		((ExpressionVMProvider) getVMProvider()).update(new VMExpressionUpdate(update, expression,
 				new ViewerDataRequestMonitor<Object>(getVMProvider().getExecutor(), update) {
 					@Override
@@ -237,7 +237,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
 	@Override
 	public void update(ILabelUpdate[] updates) {
 		// The label update handler only handles labels for the invalid expression VMCs.
-		// The expression layout nodes are responsible for supplying label providers 
+		// The expression layout nodes are responsible for supplying label providers
 		// for their VMCs.
 		for (ILabelUpdate update : updates) {
 			update.done();
@@ -253,8 +253,8 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
 			retVal |= IModelDelta.ADDED | IModelDelta.REMOVED | IModelDelta.INSERTED | IModelDelta.CONTENT;
 		}
 
-		// The expression in the hover is not known here, so assume that all 
-		// expression nodes need to provide delta flags for event.  Iterate 
+		// The expression in the hover is not known here, so assume that all
+		// expression nodes need to provide delta flags for event.  Iterate
 		// through them here and collect the flags.
 		for (IExpressionVMNode node : getExpressionVMProvider().getExpressionNodes()) {
 			retVal |= getDeltaFlagsForNode(node, event);
@@ -310,7 +310,7 @@ public class SingleExpressionVMNode extends AbstractVMNode implements IElementLa
 	}
 
 	private TreePath getTreePathFromDelta(IModelDelta delta) {
-		List<Object> elementList = new LinkedList<Object>();
+		List<Object> elementList = new LinkedList<>();
 		IModelDelta listDelta = delta;
 		elementList.add(0, listDelta.getElement());
 		while (listDelta.getParentDelta() != null) {

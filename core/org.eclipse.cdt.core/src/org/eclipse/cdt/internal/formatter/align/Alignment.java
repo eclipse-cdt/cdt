@@ -21,7 +21,7 @@ import org.eclipse.cdt.internal.formatter.Scribe;
 
 /**
  * Alignment management
- * 
+ *
  * @since 4.0
  */
 public class Alignment {
@@ -52,7 +52,7 @@ public class Alignment {
 
 	/**
 	 * Tail formatter is an encapsulation mechanism for formatting of the trailing text that should
-	 * be kept together with the last element of a list. 
+	 * be kept together with the last element of a list.
 	 */
 	public Runnable tailFormatter;
 

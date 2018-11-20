@@ -133,7 +133,7 @@ public class CCompositesFactory extends AbstractCompositeFactory {
 		return v;
 	}
 
-	/* 
+	/*
 	 * @see org.eclipse.cdt.internal.core.index.composite.cpp.ICompositesFactory#getCompositeBinding(org.eclipse.cdt.core.index.IIndex, org.eclipse.cdt.core.dom.ast.IBinding)
 	 */
 	@Override

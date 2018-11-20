@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools.doxygen;
 
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.IAutoEditStrategy;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 import org.eclipse.cdt.ui.text.doctools.generic.AbstractGenericTagDocCommentViewerConfiguration;
 import org.eclipse.cdt.ui.text.doctools.generic.GenericDocTag;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IAutoEditStrategy;
+import org.eclipse.jface.text.IDocument;
 
 /**
  * {@link IDocCommentViewerConfiguration} implementation for doxygen multi-line documentation comments.

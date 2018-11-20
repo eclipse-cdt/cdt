@@ -18,14 +18,14 @@ import java.util.List;
 
 /**
  * -trace-list-variables
- * 
+ *
  * ^done,trace-variables={nr_rows="1",nr_cols="3",
  *                        hdr=[{width="15",alignment="-1",col_name="name",colhdr="Name"},
  *                             {width="11",alignment="-1",col_name="initial",colhdr="Initial"},
  *                             {width="11",alignment="-1",col_name="current",colhdr="Current"}],
  *                        body=[variable={name="$trace_timestamp",initial="0"}
  *                              variable={name="$foo",initial="10",current="15"}]}
- *                          
+ *
  * @since 3.0
  */
 public class MITraceListVariablesInfo extends MIInfo {
@@ -60,7 +60,7 @@ public class MITraceListVariablesInfo extends MIInfo {
 	}
 
 	private void parse() {
-		List<MITraceVariableInfo> aList = new ArrayList<MITraceVariableInfo>(1);
+		List<MITraceVariableInfo> aList = new ArrayList<>(1);
 		if (isDone()) {
 			MIOutput out = getMIOutput();
 			MIResultRecord rr = out.getMIResultRecord();
@@ -117,7 +117,7 @@ public class MITraceListVariablesInfo extends MIInfo {
 					info.fName = str;
 				} else if (var.equals("initial")) { //$NON-NLS-1$
 					info.fInitialValue = str;
-				} else if (var.equals("current")) { //$NON-NLS-1$    			
+				} else if (var.equals("current")) { //$NON-NLS-1$
 					info.fCurrentValue = str;
 				}
 			}

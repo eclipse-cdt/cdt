@@ -89,7 +89,7 @@ public class MachOHelper64 {
 
 	/**
 	 * Create a new <code>MachOHelper64</code> based on the given filename.
-	 * 
+	 *
 	 * @param filename The file to use for creating a new MachO64 object.
 	 * @throws IOException Error processing the MachO file.
 	 * @see MachO64#MachO64( String )
@@ -100,7 +100,7 @@ public class MachOHelper64 {
 
 	/**
 	 * Create a new <code>MachOHelper64</code> based on the given filename.
-	 * 
+	 *
 	 * @param filename The file to use for creating a new MachO64 object.
 	 * @throws IOException Error processing the MachO file.
 	 * @see MachO64#MachO64( String )
@@ -119,7 +119,7 @@ public class MachOHelper64 {
 	}
 
 	public MachO64.Symbol[] getExternalFunctions() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -137,7 +137,7 @@ public class MachOHelper64 {
 	}
 
 	public MachO64.Symbol[] getExternalObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -155,7 +155,7 @@ public class MachOHelper64 {
 	}
 
 	public MachO64.Symbol[] getUndefined() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -172,7 +172,7 @@ public class MachOHelper64 {
 	 * TODO: I'm not sure if this are correct. Need to check
 	 */
 	public MachO64.Symbol[] getLocalFunctions() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 		for (Symbol sym : dynsyms) {
@@ -192,7 +192,7 @@ public class MachOHelper64 {
 	 * TODO: I'm not sure if this are correct. Need to check
 	 */
 	public MachO64.Symbol[] getLocalObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -210,7 +210,7 @@ public class MachOHelper64 {
 	}
 
 	public MachO64.Symbol[] getCommonObjects() throws IOException {
-		Vector<Symbol> v = new Vector<Symbol>();
+		Vector<Symbol> v = new Vector<>();
 
 		loadBinary();
 
@@ -226,7 +226,7 @@ public class MachOHelper64 {
 	}
 
 	public String[] getNeeded() throws IOException {
-		Vector<String> v = new Vector<String>();
+		Vector<String> v = new Vector<>();
 
 		loadBinary();
 

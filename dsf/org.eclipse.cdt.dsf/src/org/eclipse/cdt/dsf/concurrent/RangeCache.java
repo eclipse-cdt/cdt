@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -33,15 +33,15 @@ import org.eclipse.core.runtime.Status;
  * 4 will relieve a subsequent request for 4 bytes at offset 2 from having to
  * asynchronously retrieve the data from the source. The results from the first
  * two range requests are used to service the third.
- * 
+ *
  * <p>
  * Clients of this cache should call {@link #getRange(long, int)} to get a cache
  * for that given range of elements. Sub-classes must implement
  * {@link #retrieve(long, int, DataRequestMonitor)} to retrieve data from the
  * asynchronous data source.
- * 
- * 
- * 
+ *
+ *
+ *
  * @since 2.2
  */
 abstract public class RangeCache<V> {
@@ -93,8 +93,8 @@ abstract public class RangeCache<V> {
 	}
 
 	/**
-	 * This transaction class implements the main logic of the range cache. 
-	 * It examines the current requests held by the cache and and creates 
+	 * This transaction class implements the main logic of the range cache.
+	 * It examines the current requests held by the cache and and creates
 	 * requests ones as needed.  Once the requests are all valid it returns
 	 * the completed data to the client.
 	 */
@@ -131,19 +131,19 @@ abstract public class RangeCache<V> {
 	private final ImmediateInDsfExecutor fExecutor;
 
 	/**
-	 * Requests currently held by this cache.  The requests should be for 
-	 * non-overlapping ranges of elements.  
+	 * Requests currently held by this cache.  The requests should be for
+	 * non-overlapping ranges of elements.
 	 */
 
-	private SortedSet<Request> fRequests = new TreeSet<Request>();
+	private SortedSet<Request> fRequests = new TreeSet<>();
 
 	public RangeCache(ImmediateInDsfExecutor executor) {
 		fExecutor = executor;
 	}
 
 	/**
-	 * Retrieves data from the data source. 
-	 * 
+	 * Retrieves data from the data source.
+	 *
 	 * @param offset Offset in data range where the requested list of data should start.
 	 * @param count Number of elements requests.
 	 * @param rm Callback for the data.
@@ -152,10 +152,10 @@ abstract public class RangeCache<V> {
 
 	/**
 	 * Returns a cache for the range of requested data.
-	 * 
+	 *
 	 * @param offset Offset in data range where the requested list of data should start.
 	 * @param count Number of elements requests.
-	 * @return Cache object for the requested data.  
+	 * @return Cache object for the requested data.
 	 */
 	public ICache<List<V>> getRange(final long offset, final int count) {
 		assert fExecutor.getDsfExecutor().isInExecutorThread();
@@ -198,16 +198,16 @@ abstract public class RangeCache<V> {
 	}
 
 	/**
-	 * Sets the given list and status to the cache.  Subsequent range requests 
-	 * that fall in its the range will return the given data.  Requests outside 
+	 * Sets the given list and status to the cache.  Subsequent range requests
+	 * that fall in its the range will return the given data.  Requests outside
 	 * of its range will trigger a call to {@link #retrieve(long, int, DataRequestMonitor)}.<br>
-	 * The given data parameter can be <code>null</code> if the given status 
-	 * parameter contains an error.  In this case all requests in the given 
-	 * range will return the error. 
-	 * 
+	 * The given data parameter can be <code>null</code> if the given status
+	 * parameter contains an error.  In this case all requests in the given
+	 * range will return the error.
+	 *
 	 * @param offset Offset of the given data to set to cache.
 	 * @param count Count of the given data to set to cache.
-	 * @param data List of elements to set to cache.  Can be <code>null</code>. 
+	 * @param data List of elements to set to cache.  Can be <code>null</code>.
 	 * @param status Status object to set to cache.
 	 */
 	protected void set(long offset, int count, List<V> data, IStatus status) {
@@ -223,8 +223,8 @@ abstract public class RangeCache<V> {
 	}
 
 	/**
-	 * Forces the cache into an invalid state.  If there are any pending 
-	 * requests, their will continue and their results will be cached. 
+	 * Forces the cache into an invalid state.  If there are any pending
+	 * requests, their will continue and their results will be cached.
 	 */
 	protected void reset() {
 		for (Iterator<Request> itr = fRequests.iterator(); itr.hasNext();) {
@@ -237,7 +237,7 @@ abstract public class RangeCache<V> {
 	}
 
 	private List<Request> getRequests(long fOffset, int fCount) {
-		List<Request> requests = new ArrayList<Request>(1);
+		List<Request> requests = new ArrayList<>(1);
 
 		// Create a new request for the data to retrieve.
 		Request current = new Request(fOffset, fCount);
@@ -253,8 +253,8 @@ abstract public class RangeCache<V> {
 		return requests;
 	}
 
-	// Adjust the beginning of the requested range of data.  If there 
-	// is already an overlapping range in front of the requested range, 
+	// Adjust the beginning of the requested range of data.  If there
+	// is already an overlapping range in front of the requested range,
 	// then use it.
 	private Request adjustRequestHead(Request request, List<Request> transactionRequests, long offset, int count) {
 		SortedSet<Request> headRequests = fRequests.headSet(request);
@@ -282,7 +282,7 @@ abstract public class RangeCache<V> {
 	 */
 	private Request adjustRequestTail(Request current, List<Request> transactionRequests, long offset, int count) {
 		// Create a duplicate of the tailSet, in order to avoid a concurrent modification exception.
-		List<Request> tailSet = new ArrayList<Request>(fRequests.tailSet(current));
+		List<Request> tailSet = new ArrayList<>(fRequests.tailSet(current));
 
 		// Iterate through the matching requests and add them to the requests list.
 		for (Request tailRequest : tailSet) {
@@ -318,7 +318,7 @@ abstract public class RangeCache<V> {
 	}
 
 	private List<V> makeElementsListFromRequests(List<Request> requests, long offset, int count) {
-		List<V> retVal = new ArrayList<V>(count);
+		List<V> retVal = new ArrayList<>(count);
 		long index = offset;
 		long end = offset + count;
 		int requestIdx = 0;

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IAR Systems - initial API and implementation
  *******************************************************************************/
@@ -58,9 +58,9 @@ import org.eclipse.ui.dialogs.PropertyPage;
 /**
  * Property page for CMake projects. The only thing we have here at the moment is a button
  * to launch the CMake GUI configurator (cmake-qt-gui).
- * 
+ *
  * We assume that the build directory is in project/build/configname, which is where
- * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's 
+ * the CMake project wizard puts it. We also assume that "cmake-gui" is in the user's
  * PATH.
  */
 public class CMakePropertyPage extends PropertyPage {
@@ -153,7 +153,7 @@ public class CMakePropertyPage extends PropertyPage {
 		args.add("-LAH"); //$NON-NLS-1$
 		for (ICMakePropertyPageControl control : componentList) {
 			if (control.isValueChanged()) {
-				args.add(control.getConfiguredString()); //$NON-NLS-1$ //$NON-NLS-2$
+				args.add(control.getConfiguredString());
 			}
 		}
 		if (args.size() == 2) {
@@ -216,7 +216,7 @@ public class CMakePropertyPage extends PropertyPage {
 
 	public enum ParseState {
 		INIT, SEENCOMMENT
-	};
+	}
 
 	/**
 	 * Parse output of cmake -LAH call to determine options to show to user
@@ -273,7 +273,7 @@ public class CMakePropertyPage extends PropertyPage {
 									controls.add(control);
 								} else if ("YES".equals(initialValue) || "NO".equals(initialValue)) {
 									ICMakePropertyPageControl control = new CMakePropertyCombo(composite, name,
-											new String[] { "YES", "NO" }, //$NON-NLS-1$ //$NON-NLS-2$ 
+											new String[] { "YES", "NO" }, //$NON-NLS-1$ //$NON-NLS-2$
 											initialValue, lastComment);
 									controls.add(control);
 								} else {

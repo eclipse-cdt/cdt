@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial contribution
  *******************************************************************************/
@@ -40,11 +40,11 @@ import org.eclipse.linuxtools.docker.core.IDockerConnectionManagerListener;
 import org.eclipse.linuxtools.docker.core.IDockerImage;
 
 /**
- * 
+ *
  * @author jjohnstn
  *
  * @since 1.2
- * 
+ *
  */
 public class ContainerGCCToolChainProvider implements IToolChainProvider, IDockerConnectionManagerListener {
 

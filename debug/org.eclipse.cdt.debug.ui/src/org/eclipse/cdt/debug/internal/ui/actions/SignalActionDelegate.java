@@ -36,7 +36,7 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(IAction, IWorkbenchPart)
 	 */
 	@Override
@@ -45,7 +45,7 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#run(IAction)
 	 */
 	@Override
@@ -77,7 +77,7 @@ public class SignalActionDelegate extends ActionDelegate implements IObjectActio
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(IAction, ISelection)
 	 */
 	@Override

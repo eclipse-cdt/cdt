@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
  * Information needed for computing image-locations. An image location exists for a name and
  * describes where the name came from. This can be: source code, macro-expansion, parameter to
  * macro-expansion or synthetic.
- * 
+ *
  * @since 5.0
  */
 public abstract class ImageLocationInfo {

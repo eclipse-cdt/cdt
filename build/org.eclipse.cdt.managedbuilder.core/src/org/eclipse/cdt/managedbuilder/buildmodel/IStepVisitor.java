@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.CoreException;
  *
  * This interface is used for the build description visitor mechanism
  * to represent the visitor
- * 
+ *
  * @see BuildDescriptionManager#accept(IStepVisitor, IBuildDescription, boolean)
  *
  * @noextend This class is not intended to be subclassed by clients.
@@ -42,7 +42,7 @@ public interface IStepVisitor {
 	 * this call-back method is called by the build description
 	 * visitor mechanism for each step in the build description
 	 * The method should return one of the IStepVisitor.VISIT_xxx constants
-	 * 
+	 *
 	 * @see IStepVisitor#VISIT_CONTINUE
 	 * @see IStepVisitor#VISIT_STOP
 	 * @see BuildDescriptionManager#accept(IStepVisitor, IBuildDescription, boolean)

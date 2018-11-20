@@ -68,7 +68,7 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	private IGDBControl fCommandControl;
 	private IGDBFocusSynchronizer fGdbSync;
 	private DsfSession fSession;
-	private List<IDMEvent<? extends IDMContext>> fEventsReceived = new ArrayList<IDMEvent<? extends IDMContext>>();
+	private List<IDMEvent<? extends IDMContext>> fEventsReceived = new ArrayList<>();
 
 	// Breakpoint tags in MultiThread.cc
 	public static final String[] LINE_TAGS = new String[] { "LINE_MAIN_BEFORE_THREAD_START", // Just before StartThread
@@ -152,19 +152,19 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	//////////////////////////////////////////////////////////////////////////////////////
 
 	/**
-	* This test verifies that changing the active thread, in GDB, in CLI, 
+	* This test verifies that changing the active thread, in GDB, in CLI,
 	* triggers a GDB notification that a new thread has been selected.
 	*/
 	@Test
 	public void testChangingCurrentThreadCLINotification() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
 				fMultiRunControl.getSession(), MIStoppedEvent.class);
 
 		// add a breakpoint in main
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
 		// add a breakpoint in thread code
 		SyncUtil.addBreakpoint("36", false);
-		// Run program 
+		// Run program
 		SyncUtil.resumeAll();
 
 		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
@@ -175,8 +175,8 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 
 		// *** at this point all 5 threads should be stopped
 
-		// Try some thread switching - SwitchThreadAndCaptureThreadSwitchedEvent will 
-		// capture the "=thread-selected" event and return the newly selected thread 
+		// Try some thread switching - SwitchThreadAndCaptureThreadSwitchedEvent will
+		// capture the "=thread-selected" event and return the newly selected thread
 		// for us to compare to what we ordered
 		for (int i = 0; i < 2; i++) {
 			assertEquals("2", switchThreadAndCaptureThreadSwitchedEvent("2"));
@@ -188,12 +188,12 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	}
 
 	/**
-	 * This test verifies that changing the active frame, in GDB, in CLI, 
+	 * This test verifies that changing the active frame, in GDB, in CLI,
 	 * triggers a GDB notification that a new frame has been selected.
 	 */
 	@Test
 	public void testChangingCurrentFrameCLINotification() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
 				fMultiRunControl.getSession(), MIStoppedEvent.class);
 
 		// add a breakpoint in main
@@ -214,8 +214,8 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		// switch to a thread that has some stack frames
 		assertEquals("2", switchThreadAndCaptureThreadSwitchedEvent("2"));
 
-		// Try some stack frame switching - SwitchFrameAndCaptureThreadSwitchedEvent will 
-		// capture the "=thread-selected" event and return the newly selected stack frame, 
+		// Try some stack frame switching - SwitchFrameAndCaptureThreadSwitchedEvent will
+		// capture the "=thread-selected" event and return the newly selected stack frame,
 		// for us to compare to what we ordered
 		for (int i = 0; i < 5; i++) {
 			assertEquals("1", switchFrameAndCaptureStackFrameSwitchedEvent("1"));
@@ -229,14 +229,14 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testGdbSyncServiceCanSwitchGDBThread() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
 				fMultiRunControl.getSession(), MIStoppedEvent.class);
 
 		// add a breakpoint in main
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
 		// add a breakpoint in thread code
 		SyncUtil.addBreakpoint("36", false);
-		// Run program 
+		// Run program
 		SyncUtil.resumeAll();
 
 		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
@@ -270,14 +270,14 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	 */
 	@Test
 	public void testGdbSyncServiceCanSwitchGDBStackFrame() throws Throwable {
-		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<MIStoppedEvent>(
+		ServiceEventWaitor<MIStoppedEvent> eventWaitor = new ServiceEventWaitor<>(
 				fMultiRunControl.getSession(), MIStoppedEvent.class);
 
 		// add a breakpoint in main
 		SyncUtil.addBreakpoint(SOURCE_NAME + ":" + getLineForTag("LINE_MAIN_ALL_THREADS_STARTED"), false);
 		// add a breakpoint in thread code
 		SyncUtil.addBreakpoint("36", false);
-		// Run program 
+		// Run program
 		SyncUtil.resumeAll();
 
 		eventWaitor.waitForEvent(TestsPlugin.massageTimeout(2000)); // Wait for first thread to stop
@@ -319,18 +319,18 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 	// End of tests
 	//////////////////////////////////////////////////////////////////////////////////////
 
-	// SyncUtil.getExecutionContext() takes the index of the 
-	// array of all threads, so it will return a thread off by one. 
+	// SyncUtil.getExecutionContext() takes the index of the
+	// array of all threads, so it will return a thread off by one.
 	// We compensate for this in this method
 	private IMIExecutionDMContext getContextForThreadId(int tid)
 			throws InterruptedException, ExecutionException, TimeoutException {
 		return SyncUtil.getExecutionContext(tid - 1);
 	}
 
-	/** 
-	 * This is a wrapper around selectGdbThread(), that waits and captures the 
-	 * expected "=thread-selected" event, and returns the thread id from it. 
-	 * @throws Throwable 
+	/**
+	 * This is a wrapper around selectGdbThread(), that waits and captures the
+	 * expected "=thread-selected" event, and returns the thread id from it.
+	 * @throws Throwable
 	 */
 	private String switchThreadAndCaptureThreadSwitchedEvent(String tid) throws Throwable {
 		Thread.sleep(100);
@@ -348,9 +348,9 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		return "unknown";
 	}
 
-	/** 
-	 * Waits and captures the expected "=thread-selected" event, and returns the frame id from it. 
-	 * @throws Throwable 
+	/**
+	 * Waits and captures the expected "=thread-selected" event, and returns the frame id from it.
+	 * @throws Throwable
 	 */
 	private String switchFrameAndCaptureStackFrameSwitchedEvent(String frameLevel) throws Throwable {
 		IFrameDMContext newFrame = null;
@@ -370,12 +370,12 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 		return newFrame != null ? Integer.toString(newFrame.getLevel()) : null;
 	}
 
-	/** 
-	 * Changes the current thread, using the CLI command "thread <tid>" 
-	 * @param tid: the thread id of the thread to switch-to. If empty, 
-	 * the command will simply report the current thread. 
+	/**
+	 * Changes the current thread, using the CLI command "thread <tid>"
+	 * @param tid: the thread id of the thread to switch-to. If empty,
+	 * the command will simply report the current thread.
 	 * @return the tid of the (possibly newly) currently selected gdb thread
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private String sendCLIThread(String tid) throws Exception {
 		IContainerDMContext containerDmc = SyncUtil.getContainerContext();
@@ -404,9 +404,9 @@ public class ThreadStackFrameSyncTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Changes the current stack frame, using the CLI command "frame <level>". Then parses
-	 * the output to extract the current frame. 
+	 * the output to extract the current frame.
 	 * @param level the frame level wanted. If empty, the command will report the current level
-	 * @return newly set level. 
+	 * @return newly set level.
 	 * @throws Exception
 	 */
 	private String sendCLIFrame(String level) throws Exception {

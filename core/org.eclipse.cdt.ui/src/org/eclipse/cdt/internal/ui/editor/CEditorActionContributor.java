@@ -19,6 +19,16 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.FindWordAction;
+import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
+import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectHistoryAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
+import org.eclipse.cdt.ui.actions.CdtActionConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -32,18 +42,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 import org.eclipse.ui.texteditor.RetargetTextEditorAction;
-
-import org.eclipse.cdt.ui.actions.CdtActionConstants;
-
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.actions.FindWordAction;
-import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
-import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectHistoryAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
 
 public class CEditorActionContributor extends TextEditorActionContributor {
 	private RetargetTextEditorAction fContentAssist;
@@ -175,7 +173,7 @@ public class CEditorActionContributor extends TextEditorActionContributor {
 	public void init(IActionBars bars) {
 		super.init(bars);
 
-		// register actions that have a dynamic editor. 
+		// register actions that have a dynamic editor.
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_NEXT_ANNOTATION, fNextAnnotation);
 		bars.setGlobalActionHandler(ITextEditorActionDefinitionIds.GOTO_PREVIOUS_ANNOTATION, fPreviousAnnotation);
 		bars.setGlobalActionHandler(ITextEditorActionConstants.NEXT, fNextAnnotation);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
  * Adapt to GDB 7.4 where breakpoints are for all inferiors at once.
- * 
+ *
  * @since 4.4
  */
 public class GDBProcesses_7_4 extends GDBProcesses_7_3 {

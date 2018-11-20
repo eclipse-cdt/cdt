@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareUI;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
@@ -43,11 +46,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
 
 /**
  * Abstract class for "quick" compare views in light-weight controls.
@@ -187,7 +185,7 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 
 	/**
 	 * Returns the compare viewer.
-	 * 
+	 *
 	 * @return the compare viewer.
 	 */
 	protected final CompareViewerControl getCompareViewer() {
@@ -196,7 +194,7 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 
 	/**
 	 * Returns the compare configuration.
-	 * 
+	 *
 	 * @return the compare configuration.
 	 */
 	protected final CompareConfiguration getCompareConfiguration() {
@@ -208,7 +206,7 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 	 * <p>
 	 * The default is to return <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return <code>true</code> if the control has a header
 	 */
 	protected boolean hasHeader() {
@@ -309,7 +307,7 @@ public abstract class AbstractCompareViewerInformationControl extends org.eclips
 
 	/**
 	 * Adds the internal trimmings to the given trim of the shell.
-	 * 
+	 *
 	 * @param trim the shell's trim, will be updated
 	 * @since 5.0
 	 */

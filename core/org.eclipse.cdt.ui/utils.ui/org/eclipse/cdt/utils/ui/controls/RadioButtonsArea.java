@@ -60,7 +60,7 @@ public class RadioButtonsArea extends Composite {
 
 	private SelectionListener listener;
 
-	private List<SelectionListener> externalListeners = new ArrayList<SelectionListener>();
+	private List<SelectionListener> externalListeners = new ArrayList<>();
 
 	private Composite area = null;
 	/**

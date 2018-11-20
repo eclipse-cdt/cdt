@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Class that gives access to the folding messages resource bundle.
@@ -31,7 +32,7 @@ public class FoldingMessages {
 	}
 
 	/**
-	 * Returns the resource string associated with the given key in the resource bundle. If there isn't 
+	 * Returns the resource string associated with the given key in the resource bundle. If there isn't
 	 * any value under the given key, the key is returned.
 	 *
 	 * @param key the resource key
@@ -47,7 +48,7 @@ public class FoldingMessages {
 
 	/**
 	 * Returns the resource bundle managed by the receiver.
-	 * 
+	 *
 	 * @return the resource bundle
 	 * @since 3.0
 	 */
@@ -56,8 +57,8 @@ public class FoldingMessages {
 	}
 
 	/**
-	 * Returns the formatted resource string associated with the given key in the resource bundle. 
-	 * <code>MessageFormat</code> is used to format the message. If there isn't  any value 
+	 * Returns the formatted resource string associated with the given key in the resource bundle.
+	 * <code>MessageFormat</code> is used to format the message. If there isn't  any value
 	 * under the given key, the key is returned.
 	 *
 	 * @param key the resource key
@@ -69,8 +70,8 @@ public class FoldingMessages {
 	}
 
 	/**
-	 * Returns the formatted resource string associated with the given key in the resource bundle. 
-	 * <code>MessageFormat</code> is used to format the message. If there isn't  any value 
+	 * Returns the formatted resource string associated with the given key in the resource bundle.
+	 * <code>MessageFormat</code> is used to format the message. If there isn't  any value
 	 * under the given key, the key is returned.
 	 *
 	 * @param key the resource key

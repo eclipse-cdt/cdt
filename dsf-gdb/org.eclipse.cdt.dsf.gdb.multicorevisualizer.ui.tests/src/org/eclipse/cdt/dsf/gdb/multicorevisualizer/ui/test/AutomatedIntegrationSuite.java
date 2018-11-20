@@ -7,13 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Dumais (Ericsson) - Initial Implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test;
 
-import org.eclipse.cdt.dsf.gdb.multicorevisualizer.ui.test.PersistentSettingsManagerTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;

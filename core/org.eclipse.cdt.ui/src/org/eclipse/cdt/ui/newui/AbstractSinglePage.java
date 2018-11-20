@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.swt.widgets.Composite;
 
 /**
- * Bug #183341 : Single property page which does not  
+ * Bug #183341 : Single property page which does not
  * require separate cPropertyTab to display data.
  *
  */
@@ -33,7 +32,7 @@ public abstract class AbstractSinglePage extends AbstractPage {
 
 	/**
 	 * Implement this method to perform apply:
-	 * copy all data affected by this page 
+	 * copy all data affected by this page
 	 * from src resource description to dst
 	 * @param src
 	 * @param dst
@@ -42,13 +41,13 @@ public abstract class AbstractSinglePage extends AbstractPage {
 
 	/**
 	 * Rewrite this method to handle configuration change
-	 * Do not forget to call super.cfgChanged(_cfgd); 
+	 * Do not forget to call super.cfgChanged(_cfgd);
 	 */
 	@Override
 	protected void cfgChanged(ICConfigurationDescription _cfgd) {
 		super.cfgChanged(_cfgd);
 		//	if (displayedConfig) {
-		// update widgets according to getResDesc() values   
+		// update widgets according to getResDesc() values
 		//	}
 	}
 
@@ -64,7 +63,7 @@ public abstract class AbstractSinglePage extends AbstractPage {
 	}
 
 	/**
-	 * Rewrite this method to restore default 
+	 * Rewrite this method to restore default
 	 * values in current ResourceDescription
 	 */
 	@Override
@@ -86,7 +85,7 @@ public abstract class AbstractSinglePage extends AbstractPage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	@Override
 	public void setVisible(boolean visible) {
@@ -106,7 +105,7 @@ public abstract class AbstractSinglePage extends AbstractPage {
 
 	/**
 	 * Call to "foreach" does not really matter, since we have not tabs
-	 * But we intercept this call to perform other operations (apply). 
+	 * But we intercept this call to perform other operations (apply).
 	 */
 	@Override
 	protected void forEach(int m, Object data) {

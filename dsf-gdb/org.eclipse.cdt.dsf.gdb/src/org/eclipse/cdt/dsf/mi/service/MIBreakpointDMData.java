@@ -44,7 +44,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 
 	/**
 	 * Breakpoint types
-	 * 
+	 *
 	 * @deprecated This enum is not extensible, so has been deprecated to allow extenders to have their own breakpoint
 	 *             types. Within CDT there was no access to this enum outside of this class. The replacement is to use {@link MIBreakpointDMData#getBreakpointType()}
 	 */
@@ -55,7 +55,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		TRACEPOINT,
 		/** @since 4.4 */
 		DYNAMICPRINTF
-	};
+	}
 
 	///////////////////////////////////////////////////////////////////////////
 	// Constructors
@@ -63,7 +63,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 
 	/**
 	 * Copy constructor
-	 *  
+	 *
 	 * @param other
 	 * @deprecated Call {@link #copy()} on other instead to allow subclasses to be copied properly.
 	 */
@@ -71,22 +71,22 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	public MIBreakpointDMData(MIBreakpointDMData other) {
 
 		fBreakpoint = new MIBreakpoint(other.fBreakpoint);
-		fProperties = new HashMap<String, Object>(other.fProperties);
+		fProperties = new HashMap<>(other.fProperties);
 	}
 
 	/**
 	 * Perform a copy.
-	 * 
+	 *
 	 * @return the copy
 	 * @since 5.3
 	 */
 	public MIBreakpointDMData copy() {
-		return new MIBreakpointDMData(new MIBreakpoint(fBreakpoint), new HashMap<String, Object>(fProperties));
+		return new MIBreakpointDMData(new MIBreakpoint(fBreakpoint), new HashMap<>(fProperties));
 	}
 
 	/**
 	 * Create a MIBreakpointDMData from a breakpoint and a potentially populated properties map.
-	 * 
+	 *
 	 * @param dsfMIBreakpoint
 	 *            MI Breakpoint to represent
 	 * @param properties
@@ -98,7 +98,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 		if (properties != null) {
 			fProperties = properties;
 		} else {
-			fProperties = new HashMap<String, Object>();
+			fProperties = new HashMap<>();
 
 			if (dsfMIBreakpoint.isTracepoint()) {
 				// Generic breakpoint attributes
@@ -160,13 +160,13 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 				// Because gdb doesn't support catchpoints in mi, we end up using
 				// CLI to set the catchpoint. The sort of MIBreakpoint we create
 				// at that time is minimal as the only information we get back from
-				// gdb is the breakpoint number and type of the catchpoint we just 
+				// gdb is the breakpoint number and type of the catchpoint we just
 				// set. See MIBreakpoint(String)
 				//
 				// The only type of MIBreakpoint that will be of this CATCHPOINT type
-				// is the instance we create from the response of the CLI command we 
-				// use to set the catchpoint. If we later query gdb for the breakpoint 
-				// list, we'll unfortunately end up creating an MIBreakpoint of type 
+				// is the instance we create from the response of the CLI command we
+				// use to set the catchpoint. If we later query gdb for the breakpoint
+				// list, we'll unfortunately end up creating an MIBreakpoint of type
 				// BREAKPOINT. Maybe one day gdb will treats catchpoints like first
 				// class citizens and this messy situation will go away.
 
@@ -208,7 +208,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 	/**
 	 * Constructs a DsfMIBreakpoint from a back-end object. Create the object by calling
 	 * {@link MIBreakpoints#createMIBreakpointDMData(MIBreakpoint)} to ensure correct version is called.
-	 * 
+	 *
 	 * @param dsfMIBreakpoint
 	 *            back-end breakpoint
 	 * @deprecated Call {@link MIBreakpoints#createMIBreakpointDMData(MIBreakpoint)} instead
@@ -220,7 +220,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 
 	/**
 	 * Obtain the properties map. Method only intended to be called by sub-classes.
-	 * 
+	 *
 	 * @return properties map
 	 * @since 5.3
 	 */
@@ -230,7 +230,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 
 	/**
 	 * Obtain the MI Breakpoint. Method only intended to be called by sub-classes.
-	 * 
+	 *
 	 * @return breakpoint
 	 * @since 5.3
 	 */
@@ -240,8 +240,8 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 
 	/**
 	 * Formats the LOCATION synthetic property from the existing fields
-	 *  
-	 * @return The location string 
+	 *
+	 * @return The location string
 	 */
 	private String formatLocation() {
 
@@ -266,7 +266,7 @@ public class MIBreakpointDMData implements IBreakpointDMData {
 
 	/**
 	 * Checks for equality
-	 * 
+	 *
 	 * @param other
 	 * @return
 	 */

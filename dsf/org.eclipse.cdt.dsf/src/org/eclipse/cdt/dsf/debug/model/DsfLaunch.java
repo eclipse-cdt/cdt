@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,9 +21,9 @@ import org.eclipse.debug.core.model.ISourceLocator;
 
 /**
  * A Launch class to use for debuggers using the DSF.  This base class
- * ensures that changed and terminated listeners are called using a 
- * job, and thus not on a DSF services' session thread. 
- * 
+ * ensures that changed and terminated listeners are called using a
+ * job, and thus not on a DSF services' session thread.
+ *
  * @since 2.1
  */
 public class DsfLaunch extends Launch {

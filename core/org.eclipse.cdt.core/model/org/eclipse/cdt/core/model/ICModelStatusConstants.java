@@ -18,7 +18,7 @@ package org.eclipse.cdt.core.model;
  *
  * @see ICModelStatus
  * @see org.eclipse.core.runtime.IStatus#getCode
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -45,7 +45,7 @@ public interface ICModelStatusConstants {
 	/**
 	 * Status constant indicating one or more of the elements
 	 * supplied are not of a valid type for the operation to
-	 * process. 
+	 * process.
 	 * The element(s) can be retrieved using <code>getElements</code> on the status object.
 	 */
 	public static final int INVALID_ELEMENT_TYPES = 967;
@@ -58,7 +58,7 @@ public interface ICModelStatusConstants {
 
 	/**
 	 * Status constant indicating that one or more elements
-	 * supplied do not exist. 
+	 * supplied do not exist.
 	 * The element(s) can be retrieved using <code>getElements</code> on the status object.
 	 */
 	public static final int ELEMENT_DOES_NOT_EXIST = 969;
@@ -71,13 +71,13 @@ public interface ICModelStatusConstants {
 
 	/**
 	 * Status constant indicating that a path outside of the
-	 * project was supplied to the operation. The path can be retrieved using 
+	 * project was supplied to the operation. The path can be retrieved using
 	 * <code>getPath</code> on the status object.
 	 */
 	public static final int PATH_OUTSIDE_PROJECT = 971;
 
 	/**
-	 * Status constant indicating that a relative path 
+	 * Status constant indicating that a relative path
 	 * was supplied to the operation when an absolute path is
 	 * required. The path can be retrieved using <code>getPath</code> on the
 	 * status object.
@@ -112,14 +112,14 @@ public interface ICModelStatusConstants {
 	public static final int NAME_COLLISION = 977;
 
 	/**
-	 * Status constant indicating that a destination provided for a copy/move/rename operation 
-	 * is invalid. 
+	 * Status constant indicating that a destination provided for a copy/move/rename operation
+	 * is invalid.
 	 * The destination element can be retrieved using <code>getElements</code> on the status object.
 	 */
 	public static final int INVALID_DESTINATION = 978;
 
 	/**
-	 * Status constant indicating that a path provided to an operation 
+	 * Status constant indicating that a path provided to an operation
 	 * is invalid. The path can be retrieved using <code>getPath</code> on the
 	 * status object.
 	 */
@@ -158,13 +158,13 @@ public interface ICModelStatusConstants {
 
 	/**
 	 * Status constant indicating that an <code>java.io.IOException</code>
-	 * occurred. 
+	 * occurred.
 	 */
 	public static final int IO_EXCEPTION = 985;
 
 	/**
 	 * Status constant indicating that a <code>DOMException</code>
-	 * occurred. 
+	 * occurred.
 	 */
 	public static final int PARSER_EXCEPTION = 986;
 

@@ -14,13 +14,41 @@
 
 package org.eclipse.cdt.core.dom.lrparser.action.c99;
 
-import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.*;
-import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.*;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.endOffset;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.length;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.matchTokens;
+import static org.eclipse.cdt.core.dom.lrparser.action.ParserUtil.offset;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_Completion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_EndOfCompletion;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_LeftParen;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_SemiColon;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Bool;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK__Complex;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_auto;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_char;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_const;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_double;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_extern;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_float;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_for;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_identifier;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_inline;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_int;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_long;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_register;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_restrict;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_short;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_signed;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_static;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_struct;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_typedef;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_union;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_unsigned;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_void;
+import static org.eclipse.cdt.internal.core.dom.lrparser.c99.C99Parsersym.TK_volatile;
 
 import java.util.Collections;
 import java.util.List;
-
-import lpg.lpgjavaruntime.IToken;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTCompoundStatement;
@@ -79,9 +107,11 @@ import org.eclipse.cdt.internal.core.dom.parser.IASTAmbiguousStatement;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousExpression;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTAmbiguousStatement;
 
+import lpg.lpgjavaruntime.IToken;
+
 /**
  * Semantic actions called by the C99 parser to build an AST.
- * 
+ *
  * @author Mike Kucera
  */
 @SuppressWarnings("restriction")
@@ -145,7 +175,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 	}
 
 	/**
-	 * postfix_expression ::= '(' type_id ')' initializer_list    
+	 * postfix_expression ::= '(' type_id ')' initializer_list
 	 */
 	public void consumeExpressionTypeIdInitializer() {
 		IASTInitializerList list = (IASTInitializerList) astStack.pop();
@@ -157,7 +187,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * Applies a specifier to a decl spec node.
-	 * 
+	 *
 	 * In plain C99 specifiers are always just single tokens, but in language
 	 * extensions specifiers may be more complex. Thats why this method takes
 	 * Object as the type of the specifier, so that it may be overridden in subclasses
@@ -261,7 +291,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 	}
 
 	/**
-	 *  array_modifier 
+	 *  array_modifier
 	 *      ::= '[' <openscope> type_qualifier_list ']'
 	 *        | '[' <openscope> type_qualifier_list assignment_expression ']'
 	 *        | '[' 'static' assignment_expression ']'
@@ -269,7 +299,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 	 *        | '[' <openscope> type_qualifier_list 'static' assignment_expression ']'
 	 *        | '[' '*' ']'
 	 *        | '[' <openscope> type_qualifier_list '*' ']'
-	 *        
+	 *
 	 * The main reason to separate array_modifier into its own rule is to
 	 * make calculating the offset and length much easier.
 	 */
@@ -317,7 +347,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * pointer ::= '*'
-	 *           | pointer '*' 
+	 *           | pointer '*'
 	 */
 	public void consumePointer() {
 		IASTPointer pointer = nodeFactory.newPointer();
@@ -355,7 +385,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 	}
 
 	/**
-	 * direct_abstract_declarator  
+	 * direct_abstract_declarator
 	 *     ::= '(' ')'
 	 *       | direct_abstract_declarator '(' ')'
 	 *       | '(' <openscope> parameter_type_list ')'
@@ -492,7 +522,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * external_declaration ::= ';'
-	 * 
+	 *
 	 * TODO: doesn't the declaration need a name?
 	 */
 	public void consumeDeclarationEmpty() {
@@ -509,9 +539,9 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * a declaration inside of a struct
-	 * 
+	 *
 	 * struct_declaration ::= specifier_qualifier_list <openscope> struct_declarator_list ';'
-	 * 
+	 *
 	 * specifier_qualifier_list is a subset of declaration_specifiers,
 	 * struct_declarators are declarators that are allowed inside a struct,
 	 * a struct declarator is a regular declarator plus bit fields
@@ -526,7 +556,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 	 *       | 'union'  '{' <openscope> struct_declaration_list_opt '}'
 	 *       | 'struct' struct_or_union_identifier '{' <openscope> struct_declaration_list_opt '}'
 	 *       | 'union'  struct_or_union_identifier '{' <openscope> struct_declaration_list_opt '}'
-	 * 
+	 *
 	 * @param key either k_struct or k_union from IASTCompositeTypeSpecifier
 	 */
 	public void consumeTypeSpecifierComposite(boolean hasName) {
@@ -554,8 +584,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 	 * struct_or_union_specifier
 	 *     ::= 'struct' struct_or_union_identifier
 	 *       | 'union'  struct_or_union_identifier
-	 *       
-	 * enum_specifier ::= 'enum' enum_identifier     
+	 *
+	 * enum_specifier ::= 'enum' enum_identifier
 	 */
 	public void consumeTypeSpecifierElaborated(int kind) {
 		IASTName name = createName(stream.getRuleTokens().get(1));
@@ -678,8 +708,8 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 	 * function_definition
 	 *    ::= declaration_specifiers <openscope> declarator compound_statement
 	 *      | function_declarator compound_statement
-	 *      
-	 * The seemingly pointless <openscope> is just there to 
+	 *
+	 * The seemingly pointless <openscope> is just there to
 	 * prevent a shift/reduce conflict in the grammar.
 	 */
 	public void consumeFunctionDefinition(boolean hasDeclSpecifiers) {
@@ -701,7 +731,7 @@ public class C99BuildASTParserAction extends BuildASTParserAction {
 
 	/**
 	 * function_definition
-	 *     ::= declaration_specifiers <openscope-ast> knr_function_declarator 
+	 *     ::= declaration_specifiers <openscope-ast> knr_function_declarator
 	 *     <openscope-ast> declaration_list compound_statement
 	 */
 	public void consumeFunctionDefinitionKnR() {

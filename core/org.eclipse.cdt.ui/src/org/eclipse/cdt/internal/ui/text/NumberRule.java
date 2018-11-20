@@ -30,7 +30,7 @@ public class NumberRule implements IRule {
 
 	/**
 	 * Creates new number rule.
-	 * @param token Style token. 
+	 * @param token Style token.
 	 */
 	public NumberRule(IToken token) {
 		super();

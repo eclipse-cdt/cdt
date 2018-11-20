@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     William R. Swanson (Tilera Corporation) - initial API and implementation
- *     Marc Dumais (Ericsson) - Bug 396076 
+ *     Marc Dumais (Ericsson) - Bug 396076
  *     Marc Dumais (Ericsson) - Bug 396184
  *     Marc Dumais (Ericsson) - Bug 396200
  *     Marc Dumais (Ericsson) - Bug 396293
@@ -166,16 +166,16 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 		setFont(m_textFont);
 
 		// initialize cached state storage
-		m_cpus = new ArrayList<MulticoreVisualizerCPU>();
-		m_cpuMap = new Hashtable<VisualizerCPU, MulticoreVisualizerCPU>();
+		m_cpus = new ArrayList<>();
+		m_cpuMap = new Hashtable<>();
 
-		m_cores = new ArrayList<MulticoreVisualizerCore>();
-		m_coreMap = new Hashtable<VisualizerCore, MulticoreVisualizerCore>();
+		m_cores = new ArrayList<>();
+		m_coreMap = new Hashtable<>();
 
-		m_threads = new ArrayList<MulticoreVisualizerThread>();
-		m_threadMap = new Hashtable<VisualizerThread, MulticoreVisualizerThread>();
+		m_threads = new ArrayList<>();
+		m_threadMap = new Hashtable<>();
 
-		m_selectedPIDs = new HashSet<Integer>();
+		m_selectedPIDs = new HashSet<>();
 
 		// mouse-drag monitor
 		m_mouseMonitor = new MouseMonitor(this) {
@@ -375,10 +375,10 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 		m_canvasFilterManager.updateCurrentFilter();
 	}
 
-	/** 
+	/**
 	 * Fits n square items into a rectangle of the specified size.
 	 *  Returns largest edge of one of the square items that allows
-	 *  them all to pack neatly in rows/columns in the specified area. 
+	 *  them all to pack neatly in rows/columns in the specified area.
 	 */
 	public int fitSquareItems(int nitems, int width, int height) {
 		int max_edge = 0;
@@ -436,7 +436,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 
 			if (m_model != null) {
 				for (VisualizerCPU cpu : m_model.getCPUs()) {
-					// current filter permits displaying this CPU? 
+					// current filter permits displaying this CPU?
 					if (m_canvasFilterManager.displayObject(cpu)) {
 						MulticoreVisualizerCPU mcpu = new MulticoreVisualizerCPU(cpu.getID());
 						m_cpus.add(mcpu);
@@ -468,7 +468,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 					MulticoreVisualizerCPU visualizerCpu = m_cpuMap.get(modelCpu);
 					// when filtering is active, not all objects might be in the map
 					if (visualizerCpu != null) {
-						// update CPUs load meter 
+						// update CPUs load meter
 						MulticoreVisualizerLoadMeter meter = visualizerCpu.getLoadMeter();
 						meter.setEnabled(getCPULoadEnabled());
 						meter.setLoad(modelCpu.getLoad());
@@ -513,7 +513,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 			}
 
 			// make room when load meters are present, else use a more compact layout
-			int core_margin = getCPULoadEnabled() ? 20 : 12; // margin around cores in a CPU 
+			int core_margin = getCPULoadEnabled() ? 20 : 12; // margin around cores in a CPU
 			int core_separation = 4; // spacing between cores
 
 			int loadMeterWidth = core_margin * 3 / 5;
@@ -541,7 +541,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 			int ncores = 0;
 			// find the greatest number of cores on a given CPU and use
 			// that number for size calculations for all CPUs - this way
-			// we avoid displaying cores of varying sizes, in different 
+			// we avoid displaying cores of varying sizes, in different
 			// CPUs.
 			for (MulticoreVisualizerCPU cpu : m_cpus) {
 				int n = cpu.getCores().size();
@@ -621,7 +621,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 			// like processes and threads
 
 			for (VisualizerThread thread : m_model.getThreads()) {
-				// current filter permits displaying this thread? 
+				// current filter permits displaying this thread?
 				if (m_canvasFilterManager.displayObject(thread)) {
 					VisualizerCore core = thread.getCore();
 					MulticoreVisualizerCore mcore = m_coreMap.get(core);
@@ -767,16 +767,16 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 
 	/**
 	 * Selects item(s), if any, in specified region
-	 * 
+	 *
 	 * If addToSelection is true, appends item(s) to current selection
 	 * without changing selection state of other items.
-	 *  
+	 *
 	 * If toggleSelection is true, toggles selection of item(s)
 	 * without changing selection state of other items.
-	 * 
+	 *
 	 * If both are true, deselects item(s)
 	 * without changing selection state of other items.
-	 *  
+	 *
 	 * Otherwise, selects item(s) and deselects other items.
 	 */
 	public void selectRegion(Rectangle region, boolean addToSelection, boolean toggleSelection) {
@@ -814,24 +814,24 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 
 	/**
 	 * Selects item(s), if any, at specified point.
-	 * 
+	 *
 	 * If addToSelection is true, appends item(s) to current selection
 	 * without changing selection state of other items.
-	 *  
+	 *
 	 * If toggleSelection is true, toggles selection of item(s)
 	 * without changing selection state of other items.
-	 * 
+	 *
 	 * If both are true, deselects item(s)
 	 * without changing selection state of other items.
-	 *  
+	 *
 	 * Otherwise, selects item(s) and deselects other items.
 	 */
 	public void selectPoint(int x, int y, boolean addToSelection, boolean toggleSelection) {
-		List<MulticoreVisualizerGraphicObject> selectedObjects = new ArrayList<MulticoreVisualizerGraphicObject>();
+		List<MulticoreVisualizerGraphicObject> selectedObjects = new ArrayList<>();
 		List<MulticoreVisualizerGraphicObject> selectableObjects = getSelectableObjects();
 
-		// the list of selectable objects is ordered to have contained objects 
-		// before container objects, so the first match we find is the specific 
+		// the list of selectable objects is ordered to have contained objects
+		// before container objects, so the first match we find is the specific
 		// one we want.
 		for (MulticoreVisualizerGraphicObject gobj : selectableObjects) {
 			if (gobj.contains(x, y)) {
@@ -938,7 +938,7 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 	/** Saves current canvas selection as list of model objects. */
 	protected void updateSelection(boolean raiseEvent) {
 		// get model objects (if any) corresponding to canvas selection
-		HashSet<Object> selectedObjects = new HashSet<Object>();
+		HashSet<Object> selectedObjects = new HashSet<>();
 
 		// threads
 		if (m_threads != null) {
@@ -995,13 +995,13 @@ public class MulticoreVisualizerCanvas extends GraphicCanvas implements ISelecti
 		}
 	}
 
-	/** 
+	/**
 	 * Gets the current list of selectable objects.  The list is ordered by object type,
 	 * so that more specific objects will appear first, followed by enclosing objects.
-	 * For instance, threads are before cores and cores before CPUs. 
+	 * For instance, threads are before cores and cores before CPUs.
 	 */
 	protected List<MulticoreVisualizerGraphicObject> getSelectableObjects() {
-		List<MulticoreVisualizerGraphicObject> selectableObjects = new ArrayList<MulticoreVisualizerGraphicObject>();
+		List<MulticoreVisualizerGraphicObject> selectableObjects = new ArrayList<>();
 		selectableObjects.addAll(m_threads);
 		selectableObjects.addAll(m_cores);
 		selectableObjects.addAll(m_cpus);

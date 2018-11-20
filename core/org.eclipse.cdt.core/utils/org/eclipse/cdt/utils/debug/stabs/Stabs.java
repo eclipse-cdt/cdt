@@ -21,8 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.Coff.SectionHeader;
+import org.eclipse.cdt.utils.coff.PE;
 import org.eclipse.cdt.utils.coff.PE.Attribute;
 import org.eclipse.cdt.utils.debug.DebugArrayType;
 import org.eclipse.cdt.utils.debug.DebugBaseType;
@@ -61,7 +61,7 @@ public class Stabs {
 	int bracket;
 	String currentFile;
 
-	Map<TypeNumber, DebugType> mapTypes = new HashMap<TypeNumber, DebugType>();
+	Map<TypeNumber, DebugType> mapTypes = new HashMap<>();
 	DebugType voidType = new DebugBaseType("void", 0, false); //$NON-NLS-1$
 
 	public Stabs(String file) throws IOException {
@@ -966,13 +966,13 @@ public class Stabs {
 
 	/**
 	 * _Bool:t(0,20)=eFalse:0,True:1,; fruit:T(1,4)=eapple:0,orange:1,;
-	 * 
+	 *
 	 * @param name
 	 * @param attributes
 	 * @return
 	 */
 	DebugType parseStabEnumType(String name, Reader reader) throws IOException {
-		List<DebugEnumField> list = new ArrayList<DebugEnumField>();
+		List<DebugEnumField> list = new ArrayList<>();
 		String fieldName = null;
 		StringBuilder sb = new StringBuilder();
 		int c;
@@ -1005,7 +1005,7 @@ public class Stabs {
 
 	/**
 	 * For C lang -- node:T(1,5)=s12i:(0,1),0,32;j:(0,1),32,32;next:(1,6)=*(1,5),64,32;;
-	 * 
+	 *
 	 * @param name
 	 * @param typeNumber
 	 * @param union

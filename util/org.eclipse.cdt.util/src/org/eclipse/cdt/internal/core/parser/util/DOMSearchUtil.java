@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -38,8 +38,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
 
 /**
- * Utility class to have commonly used algorithms in one place for searching with the DOM. 
- * 
+ * Utility class to have commonly used algorithms in one place for searching with the DOM.
+ *
  * @author dsteffle
  */
 public class DOMSearchUtil {
@@ -121,10 +121,10 @@ public class DOMSearchUtil {
 
 	/**
 	 * This is used to get the names from the TU that the IASTName searchName belongs to.
-	 * 
+	 *
 	 * @param searchName the IASTName whose references/declarations are to be retrieved
-	 * @param limitTo used to specify whether to get declarations, references, or both, one of: 
-	 * ( CSearchPattern.DECLARATION | CSearchPattern.REFERENCES | CSearchPattern.ALL_OCCURRENCES ) 
+	 * @param limitTo used to specify whether to get declarations, references, or both, one of:
+	 * ( CSearchPattern.DECLARATION | CSearchPattern.REFERENCES | CSearchPattern.ALL_OCCURRENCES )
 	 * @return IASTName[] declarations, references, or both depending on limitTo that correspond to the IASTName searchName searched for
 	 */
 	public static IName[] getNamesFromDOM(IASTName searchName, int limitTo) {
@@ -138,7 +138,7 @@ public class DOMSearchUtil {
 		IBinding binding = searchName.resolveBinding();
 		if (binding instanceof IIndexBinding) {
 			fail("Not implemented");
-			//			try { 
+			//			try {
 			//				ArrayList pdomNames = new ArrayList();
 			//				IPDOMResolver pdom= ((PDOMBinding) binding).getPDOM();
 			//				// First decls
@@ -154,7 +154,7 @@ public class DOMSearchUtil {
 		} else {
 			names = getNames(tu, binding, limitTo);
 
-			if (names == null || names.length == 0) { // try alternate strategies		
+			if (names == null || names.length == 0) { // try alternate strategies
 				try {
 					// fix for 86829, 95224
 					if ((binding instanceof ICPPConstructor

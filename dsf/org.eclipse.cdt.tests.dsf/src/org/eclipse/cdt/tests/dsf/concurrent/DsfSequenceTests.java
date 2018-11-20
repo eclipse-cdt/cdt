@@ -7,13 +7,15 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -156,7 +158,7 @@ public class DsfSequenceTests {
 
 	@Test(expected = ExecutionException.class)
 	public void rollbackTest() throws InterruptedException, ExecutionException {
-		// Create a counter for tracking number of steps performed and steps 
+		// Create a counter for tracking number of steps performed and steps
 		// rolled back.
 		class IntegerHolder {
 			int fInteger;
@@ -219,7 +221,7 @@ public class DsfSequenceTests {
 
 	@Test(expected = ExecutionException.class)
 	public void rejectedTest() throws InterruptedException, ExecutionException {
-		// Create a counter for tracking number of steps performed and steps 
+		// Create a counter for tracking number of steps performed and steps
 		// rolled back.
 		class IntegerHolder {
 			int fInteger;
@@ -477,7 +479,7 @@ public class DsfSequenceTests {
 
 	@Test(expected = CancellationException.class)
 	public void cancelFromStepTest() throws InterruptedException, ExecutionException {
-		// Create a counter for tracking number of steps performed and steps 
+		// Create a counter for tracking number of steps performed and steps
 		// rolled back.
 		class IntegerHolder {
 			int fInteger;
@@ -563,15 +565,15 @@ public class DsfSequenceTests {
 			}
 		};
 
-		// Cancel the progress monitor before invoking the sequence.  Note 
-		// that the state of the sequence doesn't change yet, because the 
+		// Cancel the progress monitor before invoking the sequence.  Note
+		// that the state of the sequence doesn't change yet, because the
 		// sequence does not check the progress monitor until it is executed.
 		pm.setCanceled(true);
 
 		// Start the sequence
 		fExecutor.execute(sequence);
 
-		// Block and wait for sequence to bomplete.  Exception is thrown, 
+		// Block and wait for sequence to bomplete.  Exception is thrown,
 		// which is expected.
 		try {
 			sequence.get();

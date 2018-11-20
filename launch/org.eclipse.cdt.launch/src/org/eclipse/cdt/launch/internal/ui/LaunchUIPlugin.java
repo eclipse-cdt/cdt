@@ -42,7 +42,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/**
 	 * Constructor for LaunchUIPlugin.
-	 * 
+	 *
 	 * @param descriptor
 	 */
 	public LaunchUIPlugin() {
@@ -52,7 +52,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/**
 	 * Sets the Java Debug UI plug-in instance
-	 * 
+	 *
 	 * @param plugin
 	 *            the plugin instance
 	 */
@@ -62,7 +62,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/**
 	 * Returns the Java Debug UI plug-in instance
-	 * 
+	 *
 	 * @return the Java Debug UI plug-in instance
 	 */
 	public static LaunchUIPlugin getDefault() {
@@ -101,7 +101,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -111,7 +111,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/**
 	 * Logs an internal error with the specified message.
-	 * 
+	 *
 	 * @param message
 	 *            the error message to log
 	 */
@@ -121,7 +121,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
@@ -131,7 +131,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/**
 	 * Returns the active workbench window
-	 * 
+	 *
 	 * @return the active workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
@@ -148,7 +148,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/**
 	 * Returns the active workbench shell or <code>null</code> if none
-	 * 
+	 *
 	 * @return the active workbench shell or <code>null</code> if none
 	 */
 	public static Shell getActiveWorkbenchShell() {
@@ -178,7 +178,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
@@ -190,7 +190,7 @@ public class LaunchUIPlugin extends AbstractUIPlugin implements ILaunchesListene
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override

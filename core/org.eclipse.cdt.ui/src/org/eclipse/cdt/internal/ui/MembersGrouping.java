@@ -47,7 +47,7 @@ public class MembersGrouping extends CElementGrouping {
 
 	@Override
 	public Object[] getChildren(Object object) {
-		List<ICElement> nsMembers = new ArrayList<ICElement>();
+		List<ICElement> nsMembers = new ArrayList<>();
 		if (fParent instanceof IParent) {
 			try {
 				nsMembers.addAll(getNamespaceChildren(((IParent) fParent).getChildren()));
@@ -71,7 +71,7 @@ public class MembersGrouping extends CElementGrouping {
 	 * @return
 	 */
 	private Collection<? extends ICElement> getNamespaceChildren(ICElement[] icElements) {
-		List<ICElement> members = new ArrayList<ICElement>(icElements.length);
+		List<ICElement> members = new ArrayList<>(icElements.length);
 		for (ICElement icElement : icElements) {
 			if (icElement instanceof IMember) {
 				String name = icElement.getElementName();

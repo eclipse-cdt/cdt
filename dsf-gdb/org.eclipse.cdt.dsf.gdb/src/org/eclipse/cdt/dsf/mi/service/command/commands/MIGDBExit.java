@@ -19,11 +19,11 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *     -gdb-exit
  *
  *  Exit GDB immediately.
- * 
+ *
  */
 public class MIGDBExit extends MICommand<MIInfo> {
 	public MIGDBExit(IDMContext ctx) {

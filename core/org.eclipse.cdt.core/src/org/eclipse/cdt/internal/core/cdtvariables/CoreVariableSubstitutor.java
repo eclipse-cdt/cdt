@@ -20,8 +20,8 @@ import org.eclipse.cdt.utils.cdtvariables.IVariableContextInfo;
 import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 
 /**
- * This substituter resolves all macro references 
- * 
+ * This substituter resolves all macro references
+ *
  * @see org.eclipse.cdt.utils.cdtvariables.IVariableSubstitutor
  * @since 3.0
  */

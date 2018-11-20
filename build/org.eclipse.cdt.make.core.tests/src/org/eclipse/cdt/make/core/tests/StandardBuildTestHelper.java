@@ -13,11 +13,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.make.core.tests;
 
-import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
-
-import junit.framework.Assert;
 
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.resources.IProject;
@@ -33,6 +29,8 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Assert;
 
 public class StandardBuildTestHelper {
 	/* (non-Javadoc)

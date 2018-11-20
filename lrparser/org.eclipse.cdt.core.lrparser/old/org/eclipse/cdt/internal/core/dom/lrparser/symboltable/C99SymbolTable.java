@@ -16,12 +16,12 @@ package org.eclipse.cdt.internal.core.dom.lrparser.symboltable;
 import org.eclipse.cdt.internal.core.dom.lrparser.c99.bindings.IC99Binding;
 
 /**
- * A facade for a FunctionalMap to make it behave like 
+ * A facade for a FunctionalMap to make it behave like
  * a symbol table for C99.
- * 
+ *
  * In particular we need to be able to lookup identifiers based both
  * on the String representation of the identifier and its "namespace".
- * 
+ *
  * @author Mike Kucera
  */
 public class C99SymbolTable {
@@ -65,7 +65,7 @@ public class C99SymbolTable {
 	private final FunctionalMap<Key, IC99Binding> map;
 
 	/**
-	 * Constructors are private, start with EMPTY_TABLE 
+	 * Constructors are private, start with EMPTY_TABLE
 	 * and build it up using insert().
 	 */
 	private C99SymbolTable() {

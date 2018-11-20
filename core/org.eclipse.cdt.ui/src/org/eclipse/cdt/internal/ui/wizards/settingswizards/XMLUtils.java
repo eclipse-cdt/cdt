@@ -28,7 +28,7 @@ public class XMLUtils {
 
 	public static List<Element> extractChildElements(Element node, String childElementName)
 			throws SettingsImportExportException {
-		List<Element> extracted = new ArrayList<Element>();
+		List<Element> extracted = new ArrayList<>();
 
 		NodeList children = node.getChildNodes();
 		for (int i = 0; i < children.getLength(); i++) {

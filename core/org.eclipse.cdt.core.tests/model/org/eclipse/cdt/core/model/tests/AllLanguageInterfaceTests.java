@@ -30,12 +30,12 @@ import junit.framework.TestSuite;
 public class AllLanguageInterfaceTests {
 
 	/**
-	 * 
+	 *
 	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllLanguageInterfaceTests.class.getName());
 
-		// Just add more test cases here as you create them for 
+		// Just add more test cases here as you create them for
 		// each class being tested
 
 		suite.addTest(IIncludeTests.suite());

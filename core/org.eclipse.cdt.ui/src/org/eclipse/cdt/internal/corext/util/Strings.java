@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.util;
 
+import org.eclipse.cdt.core.formatter.IndentManipulation;
+import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.text.BadLocationException;
@@ -23,9 +25,6 @@ import org.eclipse.jface.text.ILineTracker;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.osgi.util.TextProcessor;
-
-import org.eclipse.cdt.core.formatter.IndentManipulation;
-import org.eclipse.cdt.core.model.ICProject;
 
 /**
  * Helper class to provide String manipulation functions not available in standard JDK.
@@ -88,7 +87,7 @@ public class Strings {
 	}
 
 	/**
-	 * Converts the given string into an array of lines. The lines 
+	 * Converts the given string into an array of lines. The lines
 	 * don't contain any line delimiter characters.
 	 *
 	 * @return the string converted into an array of strings. Returns <code>
@@ -115,10 +114,10 @@ public class Strings {
 	 * Returns <code>true</code> if the given string only consists of
 	 * white spaces according to C. If the string is empty, <code>true
 	 * </code> is returned.
-	 * 
+	 *
 	 * @return <code>true</code> if the string only consists of white
 	 * 	spaces; otherwise <code>false</code> is returned
-	 * 
+	 *
 	 * @see java.lang.Character#isWhitespace(char)
 	 */
 	public static boolean containsOnlyWhitespaces(String s) {
@@ -132,7 +131,7 @@ public class Strings {
 
 	/**
 	 * Removes leading tabs and spaces from the given string. If the string
-	 * doesn't contain any leading tabs or spaces then the string itself is 
+	 * doesn't contain any leading tabs or spaces then the string itself is
 	 * returned.
 	 */
 	public static String trimLeadingTabsAndSpaces(String line) {
@@ -175,7 +174,7 @@ public class Strings {
 	/**
 	 * Returns the indent of the given string in indentation units. Odd spaces
 	 * are not counted.
-	 * 
+	 *
 	 * @param line the text line
 	 * @param project the project from which to get the formatter
 	 *        preferences, or <code>null</code> for global preferences
@@ -189,7 +188,7 @@ public class Strings {
 	/**
 	 * Returns the indent of the given string in indentation units. Odd spaces
 	 * are not counted.
-	 * 
+	 *
 	 * @param line the text line
 	 * @param tabWidth the width of the '\t' character in space equivalents
 	 * @param indentWidth the width of one indentation unit in space equivalents
@@ -203,7 +202,7 @@ public class Strings {
 	 * Computes the visual length of the indentation of a
 	 * <code>CharSequence</code>, counting a tab character as the size until
 	 * the next tab stop and every other whitespace character as one.
-	 * 
+	 *
 	 * @param line the string to measure the indent of
 	 * @param tabSize the visual size of a tab in space equivalents
 	 * @return the visual length of the indentation of <code>line</code>
@@ -214,10 +213,10 @@ public class Strings {
 	}
 
 	/**
-	 * Removes the given number of indents from the line. Asserts that the given line 
+	 * Removes the given number of indents from the line. Asserts that the given line
 	 * has the requested number of indents. If <code>indentsToRemove <= 0</code>
 	 * the line is returned.
-	 * 
+	 *
 	 * @param project the project from which to get the formatter
 	 *        preferences, or <code>null</code> for global preferences
 	 * @since 5.0
@@ -228,10 +227,10 @@ public class Strings {
 	}
 
 	/**
-	 * Removes the given number of indents from the line. Asserts that the given line 
+	 * Removes the given number of indents from the line. Asserts that the given line
 	 * has the requested number of indents. If <code>indentsToRemove <= 0</code>
 	 * the line is returned.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static String trimIndent(String line, int indentsToRemove, int tabWidth, int indentWidth) {
@@ -241,7 +240,7 @@ public class Strings {
 	/**
 	 * Removes the common number of indents from all lines. If a line
 	 * only consists out of white space it is ignored.
-	
+
 	 * @param project the project from which to get the formatter
 	 *        preferences, or <code>null</code> for global preferences
 	 * @since 5.0
@@ -253,7 +252,7 @@ public class Strings {
 	/**
 	 * Removes the common number of indents from all lines. If a line
 	 * only consists out of white space it is ignored.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public static void trimIndentation(String[] lines, int tabWidth, int indentWidth) {
@@ -264,7 +263,7 @@ public class Strings {
 	 * Removes the common number of indents from all lines. If a line
 	 * only consists out of white space it is ignored. If <code>
 	 * considerFirstLine</code> is false the first line will be ignored.
-	 * 
+	 *
 	 * @param project the project from which to get the formatter
 	 *        preferences, or <code>null</code> for global preferences
 	 * @since 5.0
@@ -316,7 +315,7 @@ public class Strings {
 	/**
 	 * Returns that part of the indentation of <code>line</code> that makes up
 	 * a multiple of indentation units.
-	 * 
+	 *
 	 * @param line the line to scan
 	 * @param project the project from which to get the formatter
 	 *        preferences, or <code>null</code> for global preferences
@@ -331,7 +330,7 @@ public class Strings {
 	/**
 	 * Returns that part of the indentation of <code>line</code> that makes up
 	 * a multiple of indentation units.
-	 * 
+	 *
 	 * @param line the line to scan
 	 * @param tabWidth the size of one tab in space equivalents
 	 * @param indentWidth the size of the indent in space equivalents
@@ -363,7 +362,7 @@ public class Strings {
 	 * Change the indent of, possible muti-line, code range. The current indent is removed, a new indent added.
 	 * The first line of the code will not be changed. (It is considered to have no indent as it might start in
 	 * the middle of a line)
-	 * 
+	 *
 	 * @param project the project from which to get the formatter
 	 *        preferences, or <code>null</code> for global preferences
 	 * @since 5.0
@@ -493,7 +492,7 @@ public class Strings {
 
 	/**
 	 * Adds special marks so that that the given styled string is readable in a BiDi environment.
-	 * 
+	 *
 	 * @param styledString the styled string
 	 * @return the processed styled string
 	 */
@@ -515,7 +514,7 @@ public class Strings {
 
 	/**
 	 * Adds special marks so that that the given styled string is readable in a BiDi environment.
-	 * 
+	 *
 	 * @param styledString the styled string
 	 * @param delimiters the additional delimiters
 	 * @return the processed styled string
@@ -533,7 +532,7 @@ public class Strings {
 
 	/**
 	 * Adds special marks so that that the given string is readable in a BiDi environment.
-	 * 
+	 *
 	 * @param string the string
 	 * @return the processed styled string
 	 * @since 5.3
@@ -547,7 +546,7 @@ public class Strings {
 
 	/**
 	 * Adds special marks so that that the given string is readable in a BiDi environment.
-	 * 
+	 *
 	 * @param string the string
 	 * @param delimiters the delimiters
 	 * @return the processed styled string
@@ -563,7 +562,7 @@ public class Strings {
 	/**
 	 * Adds special marks so that that the given C element label is readable in a BiDi
 	 * environment.
-	 * 
+	 *
 	 * @param string the string
 	 * @return the processed styled string
 	 * @since 5.3
@@ -578,7 +577,7 @@ public class Strings {
 	/**
 	 * Adds special marks so that that the given styled C element label is readable in a BiDi
 	 * environment.
-	 * 
+	 *
 	 * @param styledString the styled string
 	 * @return the processed styled string
 	 * @since 5.3
@@ -596,7 +595,7 @@ public class Strings {
 
 	/**
 	 * Inserts the marks into the given styled string.
-	 * 
+	 *
 	 * @param styledString the styled string
 	 * @param originalString the original string
 	 * @param processedString the processed string

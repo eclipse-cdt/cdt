@@ -29,7 +29,7 @@ import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
- * This class contains methods to get first process block element, next process block 
+ * This class contains methods to get first process block element, next process block
  * element and checks for next process block element.
  */
 public class TemplateDescriptor {
@@ -63,18 +63,18 @@ public class TemplateDescriptor {
 			throw new TemplateInitializationException(msg, se);
 		}
 		this.rootElement = document.getDocumentElement();
-		this.persistVector = new ArrayList<String>();
+		this.persistVector = new ArrayList<>();
 		this.pluginId = pluginId;
 	}
 
 	/**
 	 * This method is to get the default key value pair (HashMap) form template
 	 * descriptor root element.
-	 * 
+	 *
 	 * @return default values with keys
 	 */
 	public Map<String, String> getTemplateDefaults(Element element) {
-		Map<String, String> templateDefaults = new HashMap<String, String>();
+		Map<String, String> templateDefaults = new HashMap<>();
 		Element propertyGroupElement;
 		List<Element> children = TemplateEngine.getChildrenOfElement(element);
 		for (int i = 0, l = children.size(); i < l; i++) {
@@ -114,12 +114,12 @@ public class TemplateDescriptor {
 	/**
 	 * This method is to get the list of property-group elements from template
 	 * descriptor root element.
-	 * 
+	 *
 	 * @return list of property-group elements
 	 */
 	public List<Element> getPropertyGroupList() {
 		List<Element> resultList = null;
-		List<Element> list = new ArrayList<Element>();
+		List<Element> list = new ArrayList<>();
 		resultList = list;
 		if (rootElement != null) {
 			List<Element> tempList = TemplateEngine.getChildrenOfElement(rootElement);
@@ -138,7 +138,7 @@ public class TemplateDescriptor {
 	 * This method is to get the complex property-group from template descriptor
 	 * root element. complex means a property-group contains other
 	 * property-group(s)
-	 * 
+	 *
 	 * @param element
 	 *            root element of type JDOM Element
 	 * @return property-group root element of type JDOM Element
@@ -168,7 +168,7 @@ public class TemplateDescriptor {
 	/**
 	 * This private method is used in getTemplateDefaults() to get defaults from
 	 * property elements
-	 * 
+	 *
 	 * @param defaults
 	 *            HashMap to store deraults
 	 * @param propertyGroupElement
@@ -200,7 +200,7 @@ public class TemplateDescriptor {
 
 	/**
 	 * return the list of IDs whose Persist attribute is true.
-	 * 
+	 *
 	 * @return Vector.
 	 */
 	public List<String> getPersistTrueIDs() {

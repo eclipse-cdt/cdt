@@ -49,7 +49,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 
 	/**
 	 * Create selection policy instance for the given data model context.
-	 * 
+	 *
 	 * @param dmContext
 	 */
 	public DefaultDsfSelectionPolicy(IDMContext dmContext) {
@@ -176,18 +176,18 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 
 	/**
 	 * Last test for whether a stack frame overrides another stack frame.
-	 * If two stack frames are from the same execution container (process) and 
-	 * the entire process has stopped (as in all-stop run control), and the 
+	 * If two stack frames are from the same execution container (process) and
+	 * the entire process has stopped (as in all-stop run control), and the
 	 * current frame's thread was stopped due to the container stopping, then
 	 * the new frame selection should override the current one.  This is because
-	 * the new thread is most likely a the thread that triggered the container 
-	 * to stop.   
+	 * the new thread is most likely a the thread that triggered the container
+	 * to stop.
 	 * @param curr Currently selected stack frame.
 	 * @param cand Candidate stack frame to be selected.
-	 * @return <code>true</code> if the new frame should override current selection. 
+	 * @return <code>true</code> if the new frame should override current selection.
 	 */
 	private boolean frameOverrides(final IFrameDMContext curr, final IFrameDMContext cand) {
-		// We're assuming that frames are from different execution contexts. 
+		// We're assuming that frames are from different execution contexts.
 
 		// Check if they are from the same container context:
 		final IContainerDMContext currContContext = DMContexts.getAncestorOfType(curr, IContainerDMContext.class);
@@ -207,7 +207,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 				IRunControl runControl = servicesTracker.getService(IRunControl.class);
 				if (runControl != null && runControl.isSuspended(currContContext)) {
 					IExecutionDMContext execDmc = DMContexts.getAncestorOfType(curr, IExecutionDMContext.class);
-					// If container is suspended, check whether the current thread was stopped due 
+					// If container is suspended, check whether the current thread was stopped due
 					// to container suspended event.
 					runControl.getExecutionData(execDmc,
 							new DataRequestMonitor<IExecutionDMData>(ImmediateExecutor.getInstance(), rm) {
@@ -216,7 +216,7 @@ public class DefaultDsfSelectionPolicy implements IModelSelectionPolicy {
 									rm.setData(getData()
 											.getStateChangeReason() == IRunControl.StateChangeReason.CONTAINER);
 									rm.done();
-								};
+								}
 							});
 				} else {
 					// If container is not suspended it's running, then do not override the selection.

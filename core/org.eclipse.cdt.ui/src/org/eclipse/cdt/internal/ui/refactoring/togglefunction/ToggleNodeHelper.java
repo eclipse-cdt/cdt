@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Martin Schwab & Thomas Kallenberg - initial API and implementation
  *     Marc-Andre Laperle (Ericsson)
  *     Thomas Corbat (IFS)
@@ -63,14 +63,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateInstance;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPTemplateParameter;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite.CommentPosition;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
 import org.eclipse.cdt.internal.core.dom.rewrite.DeclarationGeneratorImpl;
-
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
+import org.eclipse.cdt.ui.CUIPlugin;
 
 public class ToggleNodeHelper extends NodeHelper {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -86,7 +84,7 @@ public class ToggleNodeHelper extends NodeHelper {
 	}
 
 	private static List<ICPPASTConstructorChainInitializer> getInitializerList(IASTFunctionDefinition definition) {
-		ArrayList<ICPPASTConstructorChainInitializer> initalizers = new ArrayList<ICPPASTConstructorChainInitializer>();
+		ArrayList<ICPPASTConstructorChainInitializer> initalizers = new ArrayList<>();
 
 		for (IASTNode node : definition.getChildren()) {
 			if (node instanceof ICPPASTConstructorChainInitializer) {
@@ -288,7 +286,7 @@ public class ToggleNodeHelper extends NodeHelper {
 	}
 
 	private static ArrayList<ICPPASTTemplateDeclaration> getAllTemplateDeclarations(IASTNode node) {
-		ArrayList<ICPPASTTemplateDeclaration> templdecs = new ArrayList<ICPPASTTemplateDeclaration>();
+		ArrayList<ICPPASTTemplateDeclaration> templdecs = new ArrayList<>();
 		while (node.getParent() != null) {
 			node = node.getParent();
 			if (node instanceof ICPPASTTemplateDeclaration) {
@@ -365,7 +363,7 @@ public class ToggleNodeHelper extends NodeHelper {
 	private static Stack<IASTNode> getQualifiedNames(IASTFunctionDeclarator declarator, IASTNode limiter,
 			IASTNode node) {
 		IASTName lastName = declarator.getName();
-		Stack<IASTNode> nodes = new Stack<IASTNode>();
+		Stack<IASTNode> nodes = new Stack<>();
 		while (node.getParent() != null && node.getParent() != limiter) {
 			node = node.getParent();
 			if (node instanceof IASTCompositeTypeSpecifier) {
@@ -414,11 +412,11 @@ public class ToggleNodeHelper extends NodeHelper {
 
 	/**
 	 * Will extract the innermost ICPPASTFunctionDefinition out of a template declaration.
-	 * 
+	 *
 	 * template<typename T>				// <-- input this node
 	 * template<typename U>
-	 * void function(T t, U u) { ... }  // <-- will find this node here 
-	 * 
+	 * void function(T t, U u) { ... }  // <-- will find this node here
+	 *
 	 * @param declaration the template declaration that should be searched for the function definition.
 	 * @return null if a declaration is found instead of a definition.
 	 */

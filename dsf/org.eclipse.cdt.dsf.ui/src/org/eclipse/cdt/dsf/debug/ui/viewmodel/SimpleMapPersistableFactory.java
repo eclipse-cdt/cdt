@@ -23,9 +23,9 @@ import org.eclipse.ui.IMemento;
 
 /**
  * Persistable factory the simple map persistable.
- * 
+ *
  * @since 2.5
- * 
+ *
  * @see SimpleMapPersistable
  */
 public class SimpleMapPersistableFactory implements IElementFactory {

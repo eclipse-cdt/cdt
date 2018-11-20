@@ -50,7 +50,7 @@ class PDOMCPPClassInstance extends PDOMCPPClassSpecialization implements ICPPTem
 		super(linkage, parent, classType, orig);
 		final ICPPTemplateInstance asInstance = (ICPPTemplateInstance) classType;
 		// Defer storing of template arguments to the post-process
-		// to avoid infinite recursion when the evaluation of a non-type 
+		// to avoid infinite recursion when the evaluation of a non-type
 		// template argument tries to store its template definition.
 		// Until the post-process runs, temporarily store the input (possibly
 		// non-PDOM) arguments.

@@ -25,6 +25,11 @@ import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -35,15 +40,9 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * Custom behavior for the Import wizard.
- * 
+ *
  * @author Mike Kucera
  * @since 5.1
  *
@@ -77,7 +76,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 	}
 
 	/*
-	 * Collects the importers that can be applied to the file and displays 
+	 * Collects the importers that can be applied to the file and displays
 	 * them to the user.
 	 */
 	@Override
@@ -92,7 +91,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 			page.setMessage(Messages.ProjectSettingsWizardPage_Import_parseError, IMessageProvider.ERROR);
 		}
 
-		List<ISettingsProcessor> importersToDisplay = new ArrayList<ISettingsProcessor>();
+		List<ISettingsProcessor> importersToDisplay = new ArrayList<>();
 		for (ImporterSectionPair pair : pairs) {
 			importersToDisplay.add(pair.importer);
 		}
@@ -169,7 +168,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 		String filePath = page.getDestinationFilePath();
 
 		// get all the importers
-		Map<String, ISettingsProcessor> importers = new HashMap<String, ISettingsProcessor>();
+		Map<String, ISettingsProcessor> importers = new HashMap<>();
 		for (ISettingsProcessor processor : page.getSettingsProcessors()) {
 			importers.put(processor.getSectionName(), processor);
 		}
@@ -183,7 +182,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 		Element root = document.getDocumentElement();
 		List<Element> sections = XMLUtils.extractChildElements(root, ProjectSettingsExportStrategy.SECTION_ELEMENT);
 
-		List<ImporterSectionPair> pairs = new ArrayList<ImporterSectionPair>();
+		List<ImporterSectionPair> pairs = new ArrayList<>();
 
 		// associate an importer with each section
 		for (Element section : sections) {
@@ -224,7 +223,7 @@ public class ProjectSettingsImportStrategy implements IProjectSettingsWizardPage
 	/*
 	 * Uses JAXP to parse the file. Returns null if the file could
 	 * not be parsed as XML.
-	 * 
+	 *
 	 * Not validating because I want to make it easy to add new settings processors.
 	 * Eventually there could be an extension point for adding settings processors
 	 * so I'm coding everything with the assumption that each settings processor

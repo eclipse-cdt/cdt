@@ -23,6 +23,14 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
+import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
+import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
+import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICCompletionProposal;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -43,17 +51,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICCompletionProposal;
-
-import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContext;
-import org.eclipse.cdt.internal.corext.template.c.TranslationUnitContextType;
-
-import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
-import org.eclipse.cdt.internal.ui.text.contentassist.RelevanceConstants;
-
 public class TemplateEngine {
 
 	private static final String $_LINE_SELECTION = "${" + GlobalTemplateVariables.LineSelection.NAME + '}'; //$NON-NLS-1$
@@ -62,9 +59,9 @@ public class TemplateEngine {
 	/** The context type. */
 	private final TemplateContextType fContextType;
 	/** The result proposals. */
-	private final ArrayList<ICompletionProposal> fProposals = new ArrayList<ICompletionProposal>();
+	private final ArrayList<ICompletionProposal> fProposals = new ArrayList<>();
 	/** Positions created on the key documents to remove in reset. */
-	private final Map<IDocument, Position> fPositions = new HashMap<IDocument, Position>();
+	private final Map<IDocument, Position> fPositions = new HashMap<>();
 	/** Pattern to match the start of a line content */
 	private final Pattern fStartOfLineContentPattern = Pattern.compile("[^ \t]"); //$NON-NLS-1$
 
@@ -200,7 +197,7 @@ public class TemplateEngine {
 	 * Returns <code>true</code> if one line is completely selected or if multiple lines are selected. Being
 	 * completely selected means that all characters are selected except the new line characters and
 	 * leading/trailing spaces.
-	 * 
+	 *
 	 * @return <code>true</code> if one or multiple lines are selected
 	 */
 	private boolean areLinesSelected(ITextViewer viewer) {
@@ -233,7 +230,7 @@ public class TemplateEngine {
 
 	/**
 	 * Returns <code>true</code> if there's only one word on the line
-	 * 
+	 *
 	 * @return <code>true</code> if only one word is on the line
 	 */
 	private boolean isOnlyWordOnLine(ITextViewer viewer) {

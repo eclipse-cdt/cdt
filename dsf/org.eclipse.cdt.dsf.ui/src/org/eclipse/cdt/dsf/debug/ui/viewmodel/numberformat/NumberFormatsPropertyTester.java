@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format (Bug 202556)
@@ -27,24 +27,24 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Property tester for number format information available through the given 
- * object.  The object being tested should be either an {@link IVMContext}, 
+ * Property tester for number format information available through the given
+ * object.  The object being tested should be either an {@link IVMContext},
  * through which an instance of {@link IVMProvider} could be obtained.
  * Or it could be an {@link IWorkbenchPart}, which is tested to see if it
- * is a debug view through which a caching VM provider can be obtained.  
+ * is a debug view through which a caching VM provider can be obtained.
  * The view's presentation context is used to test the given property.
  * <p>
  * Three properties are supported:
  * <ul>
- * <li> "areNumberFormatsSupported" - Checks whether number formats are 
+ * <li> "areNumberFormatsSupported" - Checks whether number formats are
  * available at all given the receiver.</li>
- * <li> "isNumberFormatAvailable" - Checks whether the number format ID in the 
+ * <li> "isNumberFormatAvailable" - Checks whether the number format ID in the
  * expected value is available for the given receiver.</li>
- * <li> "isNumberFormatActive" - Checks whether the number format ID in the expected 
+ * <li> "isNumberFormatActive" - Checks whether the number format ID in the expected
  * value is the currently active number format for the given receiver.</li>
  * </ul>
  * </p>
- *  
+ *
  * @since 1.0
  */
 public class NumberFormatsPropertyTester extends PropertyTester {
@@ -54,7 +54,7 @@ public class NumberFormatsPropertyTester extends PropertyTester {
 	private static final String AVAILABLE = "isNumberFormatAvailable"; //$NON-NLS-1$
 	private static final String ACTIVE = "isNumberFormatActive"; //$NON-NLS-1$
 
-	private static final List<String> AVAILABLE_FORMATS = new ArrayList<String>();
+	private static final List<String> AVAILABLE_FORMATS = new ArrayList<>();
 	static {
 		AVAILABLE_FORMATS.add(IFormattedValues.NATURAL_FORMAT);
 		AVAILABLE_FORMATS.add(IFormattedValues.HEX_FORMAT);
@@ -62,7 +62,7 @@ public class NumberFormatsPropertyTester extends PropertyTester {
 		AVAILABLE_FORMATS.add(IFormattedValues.OCTAL_FORMAT);
 		AVAILABLE_FORMATS.add(IFormattedValues.BINARY_FORMAT);
 		AVAILABLE_FORMATS.add(IFormattedValues.STRING_FORMAT);
-	};
+	}
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {

@@ -17,9 +17,9 @@ import org.eclipse.core.resources.IProject;
 
 /**
  * A build console event.
- * 
+ *
  * @see IBuildConsoleListener
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IBuildConsoleEvent {

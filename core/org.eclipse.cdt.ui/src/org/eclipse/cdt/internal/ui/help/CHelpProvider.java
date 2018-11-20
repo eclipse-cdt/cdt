@@ -26,6 +26,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.cdt.ui.ICHelpBook;
+import org.eclipse.cdt.ui.ICHelpProvider;
+import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
+import org.eclipse.cdt.ui.IFunctionSummary;
+import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -38,12 +43,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-
-import org.eclipse.cdt.ui.ICHelpBook;
-import org.eclipse.cdt.ui.ICHelpProvider;
-import org.eclipse.cdt.ui.ICHelpResourceDescriptor;
-import org.eclipse.cdt.ui.IFunctionSummary;
-import org.eclipse.cdt.ui.text.ICHelpInvocationContext;
 
 public class CHelpProvider implements ICHelpProvider {
 
@@ -79,7 +78,7 @@ public class CHelpProvider implements ICHelpProvider {
 	public ICHelpResourceDescriptor[] getHelpResources(ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String name) {
 
-		ArrayList<ICHelpResourceDescriptor> lst = new ArrayList<ICHelpResourceDescriptor>();
+		ArrayList<ICHelpResourceDescriptor> lst = new ArrayList<>();
 		for (ICHelpBook h : helpBooks) {
 			if (h instanceof CHelpBook) {
 				ICHelpResourceDescriptor hrd = ((CHelpBook) h).getHelpResources(context, name);
@@ -95,7 +94,7 @@ public class CHelpProvider implements ICHelpProvider {
 	@Override
 	public IFunctionSummary[] getMatchingFunctions(ICHelpInvocationContext context, ICHelpBook[] helpBooks,
 			String prefix) {
-		ArrayList<IFunctionSummary> lst = new ArrayList<IFunctionSummary>();
+		ArrayList<IFunctionSummary> lst = new ArrayList<>();
 		for (int i = 0; i < helpBooks.length; i++) {
 			if (helpBooks[i] instanceof CHelpBook) {
 				List<IFunctionSummary> fs = ((CHelpBook) helpBooks[i]).getMatchingFunctions(context, prefix);
@@ -133,7 +132,7 @@ public class CHelpProvider implements ICHelpProvider {
 			if (extensionPoint != null) {
 				IExtension[] extensions = extensionPoint.getExtensions();
 				if (extensions != null) {
-					ArrayList<ICHelpBook> chbl = new ArrayList<ICHelpBook>();
+					ArrayList<ICHelpBook> chbl = new ArrayList<>();
 					for (IExtension ex : extensions) {
 						String pluginId = ex.getNamespaceIdentifier();
 						for (IConfigurationElement el : ex.getConfigurationElements()) {
@@ -168,7 +167,7 @@ public class CHelpProvider implements ICHelpProvider {
 		if (fname == null || fname.trim().length() == 0)
 			return;
 
-		// format is not supported for now 
+		// format is not supported for now
 		// String format = el.getAttribute(ATTRIB_FORMAT);
 
 		Document doc = null;

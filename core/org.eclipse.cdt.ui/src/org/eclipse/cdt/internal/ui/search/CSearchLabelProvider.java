@@ -17,6 +17,17 @@ package org.eclipse.cdt.internal.ui.search;
 
 import java.net.URI;
 
+import org.eclipse.cdt.core.index.IIndexFileLocation;
+import org.eclipse.cdt.core.index.IndexLocationFactory;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
@@ -27,20 +38,6 @@ import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.index.IIndexFileLocation;
-import org.eclipse.cdt.core.index.IndexLocationFactory;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.browser.typeinfo.TypeInfoLabelProvider;
-
-import org.eclipse.cdt.internal.core.dom.parser.ASTProblem;
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-
-import org.eclipse.cdt.internal.ui.search.LineSearchElement.Match;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.ColoringLabelProvider;
 
 /**
  * The content in the tree and list views may be either:

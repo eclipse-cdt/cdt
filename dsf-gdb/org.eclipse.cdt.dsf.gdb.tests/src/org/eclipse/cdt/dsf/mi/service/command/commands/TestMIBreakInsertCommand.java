@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Marc Khouzam (Ericsson) - Fix NPE (bug 369583)
@@ -27,9 +27,9 @@ import org.junit.Test;
 
 /**
  * Verifies that the break insert MI command have the correct path substitution.
- * 
+ *
  * @author qtobsod
- * 
+ *
  */
 public class TestMIBreakInsertCommand {
 

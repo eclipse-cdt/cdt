@@ -20,9 +20,9 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarInfoPathExpressionInfo;
 
 /**
- * 
+ *
  *     -var-info-path-expression NAME
- *     
+ *
  *     as of GDB 6.7
  *
  *  Print full expression that this variable object represents:

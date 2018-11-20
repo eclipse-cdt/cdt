@@ -17,8 +17,6 @@ package org.eclipse.cdt.core.parser.tests.ast2;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -36,6 +34,8 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.content.IContentType;
+
+import junit.framework.Assert;
 
 /**
  * Utility class to have commonly used algorithms in one place for searching with the DOM.

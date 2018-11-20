@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -16,11 +16,11 @@ package org.eclipse.cdt.core.dom.lrparser.action;
 import java.util.Arrays;
 import java.util.List;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+
+import lpg.lpgjavaruntime.IToken;
 
 @SuppressWarnings("restriction")
 public final class ParserUtil {
@@ -70,7 +70,7 @@ public final class ParserUtil {
 
 	/**
 	 * Allows simple pattern match testing of lists of tokens.
-	 * 
+	 *
 	 * @throws NullPointerException if source or pattern is null
 	 */
 	public static boolean matchTokens(List<IToken> source, ITokenMap tokenMap, Integer... pattern) {

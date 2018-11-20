@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,8 +23,8 @@ import java.util.concurrent.Future;
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
 
 /**
- * DsfExecutor for use with unit tests.  It records the exceptions that were 
- * thrown in the executor thread so that they can be re-thrown by the test. 
+ * DsfExecutor for use with unit tests.  It records the exceptions that were
+ * thrown in the executor thread so that they can be re-thrown by the test.
  *
  */
 public class TestDsfExecutor extends DefaultDsfExecutor {

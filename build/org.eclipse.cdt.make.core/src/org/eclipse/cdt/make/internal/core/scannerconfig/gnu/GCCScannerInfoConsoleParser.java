@@ -74,9 +74,9 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 		}
 
 		// Recognized gcc or g++ compiler invocation
-		List<String> includes = new CopyOnWriteArrayList<String>();
-		List<String> symbols = new CopyOnWriteArrayList<String>();
-		List<String> targetSpecificOptions = new CopyOnWriteArrayList<String>();
+		List<String> includes = new CopyOnWriteArrayList<>();
+		List<String> symbols = new CopyOnWriteArrayList<>();
+		List<String> targetSpecificOptions = new CopyOnWriteArrayList<>();
 
 		String fileName = null;
 		for (int j = compilerInvocationIdx + 1; j < tokens.length; j++) {
@@ -165,7 +165,7 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 
 		IProject project = getProject();
 		IFile file = null;
-		List<String> translatedIncludes = new LinkedList<String>();
+		List<String> translatedIncludes = new LinkedList<>();
 		translatedIncludes.addAll(includes);
 		if (includes.size() > 0) {
 			if (fUtil != null) {
@@ -188,11 +188,11 @@ public class GCCScannerInfoConsoleParser extends AbstractGCCBOPConsoleParser {
 			}
 		}
 
-		CopyOnWriteArrayList<String> translatedIncludesToPut = new CopyOnWriteArrayList<String>(translatedIncludes);
+		CopyOnWriteArrayList<String> translatedIncludesToPut = new CopyOnWriteArrayList<>(translatedIncludes);
 
 		// Contribute discovered includes and symbols to the ScannerInfoCollector
 		if (translatedIncludesToPut.size() > 0 || symbols.size() > 0) {
-			Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+			Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<>();
 			scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludesToPut);
 			scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
 			scannerInfo.put(ScannerInfoTypes.TARGET_SPECIFIC_OPTION, targetSpecificOptions);

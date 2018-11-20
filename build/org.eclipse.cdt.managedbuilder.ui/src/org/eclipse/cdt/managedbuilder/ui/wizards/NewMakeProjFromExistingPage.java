@@ -61,7 +61,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 	Button langcpp;
 	IWorkspaceRoot root;
 	List tcList;
-	Map<String, IToolChain> tcMap = new HashMap<String, IToolChain>();
+	Map<String, IToolChain> tcMap = new HashMap<>();
 
 	/**
 	 * True if the user entered a non-empty string in the project name field. In that state, we avoid
@@ -124,11 +124,11 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 
 	/**
 	 * Validates the contents of the page, setting the page error message and Finish button state accordingly
-	 * 
+	 *
 	 * @since 8.1
 	 */
 	protected void validatePage() {
-		// Don't generate an error if project name or location is empty, but do disable Finish button.  
+		// Don't generate an error if project name or location is empty, but do disable Finish button.
 		String msg = null;
 		boolean complete = true; // ultimately treated as false if msg != null
 
@@ -263,7 +263,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 		// Base the List control size on the number of total toolchains, up to 15 entries, but allocate for no
 		// less than five (small list boxes look strange). A vertical scrollbar will appear as needed
 		updateTcMap(false);
-		gd.heightHint = tcList.getItemHeight() * (1 + Math.max(Math.min(tcMap.size(), 15), 5)); // +1 for <none> 
+		gd.heightHint = tcList.getItemHeight() * (1 + Math.max(Math.min(tcMap.size(), 15), 5)); // +1 for <none>
 		tcList.setLayoutData(gd);
 		tcList.add(Messages.NewMakeProjFromExistingPage_11);
 
@@ -286,13 +286,13 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 
 	/**
 	 * Load our map and with the suitable toolchains and then populate the List control
-	 * 
+	 *
 	 * @param supportedOnly
 	 *            if true, consider only supported toolchains
 	 */
 	private void updateTcWidget(boolean supportedOnly) {
 		updateTcMap(supportedOnly);
-		ArrayList<String> names = new ArrayList<String>(tcMap.keySet());
+		ArrayList<String> names = new ArrayList<>(tcMap.keySet());
 		Collections.sort(names);
 
 		tcList.removeAll();
@@ -305,7 +305,7 @@ public class NewMakeProjFromExistingPage extends WizardPage {
 
 	/**
 	 * Load our map with the suitable toolchains.
-	 * 
+	 *
 	 * @param supportedOnly
 	 *            if true, add only toolchains that are available and which support the host platform
 	 */

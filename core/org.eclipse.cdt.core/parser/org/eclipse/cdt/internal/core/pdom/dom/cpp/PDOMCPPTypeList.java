@@ -27,7 +27,7 @@ class PDOMCPPTypeList {
 	private static final int NODE_SIZE = Database.TYPE_SIZE;
 
 	/**
-	 * Stores the given types in the database. 
+	 * Stores the given types in the database.
 	 * @return the record by which the types can be referenced.
 	 */
 	public static long putTypes(PDOMNode parent, IType[] types) throws CoreException {

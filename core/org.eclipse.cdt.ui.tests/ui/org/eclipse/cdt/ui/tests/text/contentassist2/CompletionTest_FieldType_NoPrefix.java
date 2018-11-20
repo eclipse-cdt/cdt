@@ -19,7 +19,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Field_Type, with NO prefix
  *
  */

@@ -37,7 +37,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Default implementation of {@link IGDBSourceLookup}
- * 
+ *
  * @since 5.0
  */
 public class GDBSourceLookup extends CSourceLookup implements IGDBSourceLookup {

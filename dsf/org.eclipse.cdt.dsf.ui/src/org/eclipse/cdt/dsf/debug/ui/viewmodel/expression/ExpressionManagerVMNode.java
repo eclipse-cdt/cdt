@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -57,15 +57,15 @@ import org.eclipse.swt.widgets.Composite;
  *   <ol> then to call the configured expression nodes to parse the expression string.</ol>
  * </li>
  * <p>
- * This node is not intended to have any standard child nodes, therefore 
- * the implementation of {@link #setChildNodes(IVMNode[])} throws an exception.  
+ * This node is not intended to have any standard child nodes, therefore
+ * the implementation of {@link #setChildNodes(IVMNode[])} throws an exception.
  * Instead users should call {@link #setExpressionNodes(IExpressionVMNode[])}
  * to configure the nodes that this node will delegate to when processing expressions.
- * </p> 
+ * </p>
  */
 public class ExpressionManagerVMNode extends AbstractVMNode implements IElementLabelProvider, IElementEditor {
 	/**
-	 * VMC for a new expression object to be added.  When user clicks on this node to 
+	 * VMC for a new expression object to be added.  When user clicks on this node to
 	 * edit it, he will create a new expression.
 	 */
 	public class NewExpressionVMC extends AbstractVMContext {
@@ -97,7 +97,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 
 	/**
 	 * @since 2.1
-	 * 
+	 *
 	 * @return The cell modifier to be used when editing. If you need to provide
 	 *         a custom cell editor you would override this method.
 	 */
@@ -111,7 +111,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 
 	@Override
 	public String toString() {
-		return "ExpressionManagerVMNode"; //$NON-NLS-1$ 
+		return "ExpressionManagerVMNode"; //$NON-NLS-1$
 	}
 
 	private ExpressionVMProvider getExpressionVMProvider() {
@@ -120,9 +120,9 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 
 	@Override
 	public void update(IHasChildrenUpdate[] updates) {
-		// Test availability of children based on whether there are any expressions 
-		// in the manager.  We assume that the getExpressions() will just read 
-		// local state data, so we don't bother using a job to perform this 
+		// Test availability of children based on whether there are any expressions
+		// in the manager.  We assume that the getExpressions() will just read
+		// local state data, so we don't bother using a job to perform this
 		// operation.
 		for (int i = 0; i < updates.length; i++) {
 			boolean hasChildren = fManager.getExpressions().length != 0;
@@ -165,8 +165,8 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 	public void doUpdateChildren(final IChildrenUpdate update) {
 		final IExpression[] expressions = fManager.getExpressions();
 
-		// For each (expression) element in update, find the layout node that can 
-		// parse it.  And for each expression that has a corresponding layout node, 
+		// For each (expression) element in update, find the layout node that can
+		// parse it.  And for each expression that has a corresponding layout node,
 		// call IExpressionLayoutNode#getElementForExpression to generate a VMC.
 		// Since the last is an async call, we need to create a multi-RM to wait
 		// for all the calls to complete.
@@ -193,9 +193,9 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 				final int childIndex = i;
 				final IExpression expression = expressions[i];
 				// getElementForExpression() accepts a IElementsUpdate as an argument.
-				// Construct an instance of VMElementsUpdate which will call a 
+				// Construct an instance of VMElementsUpdate which will call a
 				// the request monitor when it is finished.  The request monitor
-				// will in turn set the element in the update argument in this method. 
+				// will in turn set the element in the update argument in this method.
 				((ExpressionVMProvider) getVMProvider()).update(new VMExpressionUpdate(update, expression,
 						new DataRequestMonitor<Object>(getVMProvider().getExecutor(), multiRm) {
 							@Override
@@ -227,7 +227,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 	@Override
 	public void update(ILabelUpdate[] updates) {
 		// The label update handler only handles labels for the invalid expression VMCs.
-		// The expression layout nodes are responsible for supplying label providers 
+		// The expression layout nodes are responsible for supplying label providers
 		// for their VMCs.
 		for (ILabelUpdate update : updates) {
 			if (update.getElement() instanceof NewExpressionVMC) {
@@ -245,7 +245,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 		String[] columnIds = update.getColumnIds() != null ? update.getColumnIds() : new String[0];
 
 		for (int i = 0; i < columnIds.length; i++) {
-			// Bug 373468: show "Add New Expression" label in name column if 
+			// Bug 373468: show "Add New Expression" label in name column if
 			// expression column is not shown.
 			if (IDebugVMConstants.COLUMN_ID__EXPRESSION.equals(columnIds[i])
 					|| (IDebugVMConstants.COLUMN_ID__NAME.equals(columnIds[i])
@@ -299,7 +299,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 		} else {
 
 			// For each expression, find its corresponding node and ask that
-			// layout node for its delta flags for given event.  If there are delta flags to be 
+			// layout node for its delta flags for given event.  If there are delta flags to be
 			// generated, call the asynchronous method to do so.
 			CountingRequestMonitor multiRm = new CountingRequestMonitor(getExecutor(), requestMonitor);
 
@@ -334,7 +334,7 @@ public class ExpressionManagerVMNode extends AbstractVMNode implements IElementL
 	}
 
 	private TreePath getTreePathFromDelta(IModelDelta delta) {
-		List<Object> elementList = new LinkedList<Object>();
+		List<Object> elementList = new LinkedList<>();
 		IModelDelta listDelta = delta;
 		elementList.add(0, listDelta.getElement());
 		while (listDelta.getParentDelta() != null) {

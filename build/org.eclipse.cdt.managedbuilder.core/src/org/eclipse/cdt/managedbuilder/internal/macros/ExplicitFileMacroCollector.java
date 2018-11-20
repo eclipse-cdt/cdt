@@ -24,13 +24,13 @@ import org.eclipse.cdt.utils.cdtvariables.SupplierBasedCdtVariableSubstitutor;
 /**
  * This class is used by the MacroResolver to collect and present
  * the explicit file macros referenced in the given expression
- * 
+ *
  * @since 3.0
  */
 public class ExplicitFileMacroCollector extends SupplierBasedCdtVariableSubstitutor {
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private List<ICdtVariable> fMacrosList = new ArrayList<ICdtVariable>();
+	private List<ICdtVariable> fMacrosList = new ArrayList<>();
 
 	/*	public ExplicitFileMacroCollector(int contextType, Object contextData){
 			super(contextType, contextData, EMPTY_STRING, EMPTY_STRING);

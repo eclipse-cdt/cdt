@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,10 +28,10 @@ import org.xml.sax.SAXException;
 
 /**
  * The Tests Runner provider plug-in to run tests with Boost.Test framework.
- * 
+ *
  * Configures the test module to output in XML format, parses the output and
  * provides the data for the Tests Runner Core.
- * 
+ *
  * @note There is a note about Tests Runner provider plug-in accuracy. Communication
  * between Boost test module and Boost Tests Runner provider plug-in is done through
  * standard output (which is buffered by default). Boost.Test (at least current

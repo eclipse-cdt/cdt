@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson	- Initial Implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
@@ -43,11 +43,11 @@ public class BackgroundRunner extends BlockJUnit4ClassRunner {
 	}
 
 	/*
-	 * This method overrides the one from TestClassRunner.  
-	 * What we do here is start a background job which will call 
+	 * This method overrides the one from TestClassRunner.
+	 * What we do here is start a background job which will call
 	 * TestClassRunner.run; this enables us to release
 	 * the main UI thread.
-	 * 
+	 *
 	 * This has been adapted from the JUnits tests of TargetManagement
 	 * (RSECoreTestCase and RSEWaitAndDispatchUtil)
 	 */

@@ -81,7 +81,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	 */
 	public abstract InternalFileContent getContentForInclusion(String filePath, IMacroDictionary macroDictionary);
 
-	/** 
+	/**
 	 * Called only when used as a delegate of the index file content provider.
 	 */
 	public abstract InternalFileContent getContentForInclusion(IIndexFileLocation ifl, String astPath);
@@ -93,7 +93,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 	 *
 	 * @param filePath the absolute location of the file.
 	 * @param macroDictionary macros defined at the inclusion point.
-	 * @throws DependsOnOutdatedFileException 
+	 * @throws DependsOnOutdatedFileException
 	 */
 	public InternalFileContent getContentForContextToHeaderGap(String filePath, IMacroDictionary macroDictionary)
 			throws DependsOnOutdatedFileException {
@@ -105,7 +105,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 		fLoadedVersions.clear();
 	}
 
-	/** 
+	/**
 	 * Reports detection of pragma once semantics.
 	 */
 	public void reportPragmaOnceSemantics(String file, IFileNomination nomination) {
@@ -155,7 +155,7 @@ public abstract class InternalFileContentProvider extends IncludeFileContentProv
 		}
 	}
 
-	/** 
+	/**
 	 * Returns the path of the context of {@code null}, if there is no context.
 	 */
 	public String getContextPath() {

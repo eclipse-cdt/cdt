@@ -80,7 +80,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	public void setWorkingCopy(IEditorInput input, IMakefile workingCopy) {
 		if (fDocumentProvider.getDocument(input) != null) {
 			if (fMap == null) {
-				fMap = new HashMap<IEditorInput, IMakefile>();
+				fMap = new HashMap<>();
 			}
 			fMap.put(input, workingCopy);
 		}

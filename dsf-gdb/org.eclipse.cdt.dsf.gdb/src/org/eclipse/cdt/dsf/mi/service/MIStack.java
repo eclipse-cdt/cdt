@@ -195,7 +195,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 		private boolean limited = true;
 		// The actual depth we received
 		private int stackDepth = -1;
-		private final List<FrameData> frames = new ArrayList<FrameData>();
+		private final List<FrameData> frames = new ArrayList<>();
 
 		/**
 		 * Return currently cached stack depth if cache value if valid, otherwise return -1.
@@ -287,12 +287,12 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 	   This cache allows us to know that if we already asked for a stack depth
 	   we can potentially re-use the answer.
 	   <br>
-	   The same concept is applicable for the -stack-list-frames command with different limits. 
+	   The same concept is applicable for the -stack-list-frames command with different limits.
 	   Also, the stack depth can be deduced from the frames list, so we don't need to ask gdb for it again.
 	   <p>
 	   The second reason is that gdb is unreliable when it comes to returning frames. The MI protocol only allows to reply
-	   with data or with error. When gdb is unwinding sometimes it gets both, and while the console CLI protocol has no 
-	   problem with that, for MI, gdb replies randomly, sometimes with data, sometimes with error. If we cache the valid data 
+	   with data or with error. When gdb is unwinding sometimes it gets both, and while the console CLI protocol has no
+	   problem with that, for MI, gdb replies randomly, sometimes with data, sometimes with error. If we cache the valid data
 	   it will eliminate the issue with invalid data on subsequent invocations. We don't cache errors.
 	 */
 	@SuppressWarnings("serial")
@@ -304,7 +304,6 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 			} else {
 				clear();
 			}
-			;
 		}
 
 		public FramesCacheInfo getThreadFramesCache(String threadId) {
@@ -349,7 +348,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 	 * A return value is stored when the user performs a step-return,
 	 * and it cleared as soon as that thread executes again.
 	 */
-	private Map<IMIExecutionDMContext, VariableData> fThreadToReturnVariable = new HashMap<IMIExecutionDMContext, VariableData>();
+	private Map<IMIExecutionDMContext, VariableData> fThreadToReturnVariable = new HashMap<>();
 
 	public MIStack(DsfSession session) {
 		super(session);
@@ -949,7 +948,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 		// We don't currently support variables with the same name in the same frame,
 		// so we only keep the first one.
 		// Bug 327621 and 328573
-		Map<String, MIVariableDMC> variableNames = new LinkedHashMap<String, MIVariableDMC>();
+		Map<String, MIVariableDMC> variableNames = new LinkedHashMap<>();
 
 		for (int i = 0; i < miArgs.length; i++) {
 			String name = miArgs[i].getName();
@@ -984,7 +983,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 	@Override
 	public void getLocals(final IFrameDMContext frameDmc, final DataRequestMonitor<IVariableDMContext[]> rm) {
 
-		final List<IVariableDMContext> localsList = new ArrayList<IVariableDMContext>();
+		final List<IVariableDMContext> localsList = new ArrayList<>();
 
 		final CountingRequestMonitor countingRm = new CountingRequestMonitor(getExecutor(), rm) {
 			@Override
@@ -1120,7 +1119,7 @@ public class MIStack extends AbstractDsfService implements IStack, ICachingServi
 										// for more. There is chance that gdb will actually return correct frames later
 										// and one frame is not enough in many case to debug anything
 										rm.done(fFramesCache.getThreadFramesCache(threadId).getValidStackDepth());
-									};
+									}
 								});
 					}
 				}

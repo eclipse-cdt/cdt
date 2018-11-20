@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * Anna Dushistova (Mentor Graphics) - initial API and implementation
  * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.launching
@@ -110,6 +110,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 							if (session != null) {
 								try {
 									session.getExecutor().execute(new DsfRunnable() {
+										@Override
 										public void run() {
 											DsfServicesTracker tracker = new DsfServicesTracker(
 													Activator.getBundleContext(), session.getId());
@@ -166,6 +167,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 							// partially started already.
 							try {
 								l.getSession().getExecutor().execute(new DsfRunnable() {
+									@Override
 									public void run() {
 										l.shutdownSession(new ImmediateRequestMonitor());
 									}
@@ -200,7 +202,7 @@ public class RemoteGdbLaunchDelegate extends GdbLaunchDelegate {
 					remoteShellProcess.destroy();
 				}
 
-				//report failure further	
+				//report failure further
 				throw ex;
 			} finally {
 				monitor.done();

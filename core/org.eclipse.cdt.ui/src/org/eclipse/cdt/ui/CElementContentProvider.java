@@ -16,18 +16,6 @@ package org.eclipse.cdt.ui;
 
 import java.util.HashSet;
 
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextViewer;
-import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.information.IInformationProvider;
-import org.eclipse.jface.text.information.IInformationProviderExtension;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -44,13 +32,22 @@ import org.eclipse.cdt.core.model.IElementChangedListener;
 import org.eclipse.cdt.core.model.IParent;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-
 import org.eclipse.cdt.internal.core.model.ArchiveContainer;
 import org.eclipse.cdt.internal.core.model.BinaryContainer;
-
 import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.Region;
+import org.eclipse.jface.text.information.IInformationProvider;
+import org.eclipse.jface.text.information.IInformationProviderExtension;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * A content provider for C elements.
@@ -79,7 +76,7 @@ public class CElementContentProvider extends BaseCElementContentProvider
 	protected Object fInput;
 
 	/** Remember what refreshes we already have pending so we don't post them again. */
-	protected HashSet<IRefreshable> pendingRefreshes = new HashSet<IRefreshable>();
+	protected HashSet<IRefreshable> pendingRefreshes = new HashSet<>();
 
 	/**
 	 * Creates a new content provider for C elements.
@@ -251,7 +248,7 @@ public class CElementContentProvider extends BaseCElementContentProvider
 
 	/**
 	 * Processes a resource delta.
-	 * 
+	 *
 	 * @return true if the parent got refreshed
 	 */
 	private boolean processResourceDelta(IResourceDelta delta, Object parent) {

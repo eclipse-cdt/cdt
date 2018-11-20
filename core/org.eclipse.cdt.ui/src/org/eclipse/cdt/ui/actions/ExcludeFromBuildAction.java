@@ -16,6 +16,20 @@ package org.eclipse.cdt.ui.actions;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICContainer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICSourceEntry;
+import org.eclipse.cdt.core.settings.model.util.CDataUtil;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.actions.ExcludeFromBuildHandler;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.newui.AbstractPage;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -35,22 +49,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICContainer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICSourceEntry;
-import org.eclipse.cdt.core.settings.model.util.CDataUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.newui.AbstractPage;
-
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.actions.ExcludeFromBuildHandler;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * Action which excludes resources from build.
@@ -93,10 +91,10 @@ public class ExcludeFromBuildAction implements IWorkbenchWindowPulldownDelegate2
 								continue;
 
 							if (objects == null)
-								objects = new ArrayList<IResource>();
+								objects = new ArrayList<>();
 							objects.add(res);
 							if (cfgNames == null) {
-								cfgNames = new ArrayList<String>(cfgds.length);
+								cfgNames = new ArrayList<>(cfgds.length);
 								for (int j = 0; j < cfgds.length; j++) {
 									if (!canExclude(res, cfgds[j])) {
 										cfgNames = null;
@@ -181,7 +179,7 @@ public class ExcludeFromBuildAction implements IWorkbenchWindowPulldownDelegate2
 					status[i] = true;
 			}
 		}
-		ArrayList<String> lst = new ArrayList<String>();
+		ArrayList<String> lst = new ArrayList<>();
 		for (int i = 0; i < status.length; i++)
 			if (status[i])
 				lst.add(cfgNames.get(i));

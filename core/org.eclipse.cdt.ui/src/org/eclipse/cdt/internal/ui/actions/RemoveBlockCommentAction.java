@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPartitioningException;
 import org.eclipse.jface.text.IDocument;
@@ -27,21 +28,19 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.ui.texteditor.ITextEditor;
 
-import org.eclipse.cdt.ui.text.ICPartitions;
-
 /**
  * Action that removes the enclosing comment marks from a C block comment.
- * 
+ *
  * @since 3.0
  */
 public class RemoveBlockCommentAction extends BlockCommentAction {
 
 	/**
 	 * Creates a new instance.
-	 * 
+	 *
 	 * @param bundle the resource bundle
 	 * @param prefix a prefix to be prepended to the various resource keys
-	 *   (described in <code>ResourceAction</code> constructor), or 
+	 *   (described in <code>ResourceAction</code> constructor), or
 	 *   <code>null</code> if none
 	 * @param editor the text editor
 	 */
@@ -55,7 +54,7 @@ public class RemoveBlockCommentAction extends BlockCommentAction {
 		if (!(docExtension instanceof IDocument))
 			return;
 
-		List<Edit> edits = new LinkedList<Edit>();
+		List<Edit> edits = new LinkedList<>();
 
 		int partitionStart = -1;
 		int partitionEnd = selection.getOffset();

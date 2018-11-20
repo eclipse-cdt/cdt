@@ -16,8 +16,8 @@ package org.eclipse.cdt.ui.dialogs;
 /**
  * Reusing AbstractGNUBinaryParserPage.
  * New class is required for the algorithm in method performApply.
- * Must implement getRealBinaryParserPage method. 
- * 
+ * Must implement getRealBinaryParserPage method.
+ *
  * @author vhirsl
  * @noextend This class is not intended to be subclassed by clients.
  */

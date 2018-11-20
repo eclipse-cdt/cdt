@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format in editing (Bug 343021)
@@ -43,14 +43,14 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * 
+ *
  */
 @ThreadSafeAndProhibitedFromDsfExecutor("")
 public class WatchExpressionCellModifier implements ICellModifier {
 
 	/**
-	 * Constructor for the modifier requires a valid DSF session in order to 
-	 * initialize the service tracker.  
+	 * Constructor for the modifier requires a valid DSF session in order to
+	 * initialize the service tracker.
 	 * @param session DSF session this modifier will use.
 	 */
 	public WatchExpressionCellModifier() {
@@ -134,7 +134,7 @@ public class WatchExpressionCellModifier implements ICellModifier {
 				// is just the leaf; this is somewhat different than how
 				// FormatValueRetriever pass in a fully qualified tree path to
 				// the IElementFormatProvider. It is believed that IVMContext
-				// can be used to get its parents when needed. 
+				// can be used to get its parents when needed.
 				TreePath treePath = new TreePath(new Object[] { ctx });
 				Object viewerInput = null;
 				IWorkbenchPart part = presCtx.getPart();

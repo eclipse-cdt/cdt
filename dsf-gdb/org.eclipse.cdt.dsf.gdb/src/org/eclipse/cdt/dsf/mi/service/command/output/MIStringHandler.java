@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Mathias Kunter       - Initial Implementation (Bug 307311)
  *******************************************************************************/
@@ -35,7 +35,7 @@ public class MIStringHandler {
 	 * corresponding Unicode code point (i.e. character code).
 	 */
 	// Use a LinkedHashMap to preserve order, so as to get 'e' and not 'E'
-	private static Map<Character, Integer> fSpecialCharactersToCodePointMap = new LinkedHashMap<Character, Integer>();
+	private static Map<Character, Integer> fSpecialCharactersToCodePointMap = new LinkedHashMap<>();
 	static {
 		fSpecialCharactersToCodePointMap.put('a', 0x07); // Alert (bell) character
 		fSpecialCharactersToCodePointMap.put('b', 0x08); // Backspace character
@@ -169,20 +169,20 @@ public class MIStringHandler {
 	/**
 	 * Parses any escaped characters and replaces them with their corresponding Unicode code points.
 	 * This function parses all escape notations which are supported by gcc and / or gdb. Those are:</br></br>
-	 * 
+	 *
 	 * <ul>
 	 * <li>Special char escape notations: \a, \b, \e, \E, \f, \n, \r, \t, \v, \', \", \\, and \?</li>
-	 * 
+	 *
 	 * <li>Octal escape notation: An initial backslash, followed by 1, 2, or 3 octal digits. Values
 	 * above 0xFF are ignored. Octal escape notations may not use more than 3 octal digits.</li>
-	 * 
+	 *
 	 * <li>Hexadecimal escape notation: An initial backslash, followed by an "x" and 1 or more
 	 * hexadecimal digits. Hexadecimal escape notations may not use more than 4 hexadecimal digits
 	 * (although gcc accepts hexadecimal escape notations of any arbitrary length).</li>
-	 * 
+	 *
 	 * <li>Short Unicode escape notation: An initial backslash, followed by an "u" and exactly 4
 	 * hexadecimal digits.</li>
-	 * 
+	 *
 	 * <li>Long Unicode escape notation: An initial backslash, followed by an "U" and exactly 8
 	 * hexadecimal digits.</li>
 	 * </ul>

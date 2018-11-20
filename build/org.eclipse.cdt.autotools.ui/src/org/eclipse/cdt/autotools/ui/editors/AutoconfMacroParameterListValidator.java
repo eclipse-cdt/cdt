@@ -28,7 +28,7 @@ import org.eclipse.swt.custom.StyleRange;
 /**
  * This class provides the macro call parameter parsing for the Autoconf Editor hover
  * It is modified from the CDT class CParameterListValidator
- * 
+ *
  * @author jjohnstn
  *
  */
@@ -88,7 +88,7 @@ public class AutoconfMacroParameterListValidator implements IContextInformationV
 						// a comment starts, advance to the comment end
 						next = document.getChar(start + 1);
 						if (next == 'l')
-							// dnl-comment: nothing to do anymore on this line 
+							// dnl-comment: nothing to do anymore on this line
 							start = end;
 					}
 				}

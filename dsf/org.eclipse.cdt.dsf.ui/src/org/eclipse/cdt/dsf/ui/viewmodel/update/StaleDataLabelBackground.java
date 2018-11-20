@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -20,10 +20,10 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.RGB;
 
 /**
- * Stale data backgroun color label attribute to use with the 
- * PropertyBasedLabelProvider.  The background color should only be 
- * used when the view is in no-columns mode. 
- * 
+ * Stale data backgroun color label attribute to use with the
+ * PropertyBasedLabelProvider.  The background color should only be
+ * used when the view is in no-columns mode.
+ *
  * @since 2.0
  */
 public class StaleDataLabelBackground extends LabelBackground {

@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
-import org.eclipse.core.resources.IProject;
-
 import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.core.resources.IProject;
 
 public class CDTProjectWizard extends CDTCommonProjectWizard {
 

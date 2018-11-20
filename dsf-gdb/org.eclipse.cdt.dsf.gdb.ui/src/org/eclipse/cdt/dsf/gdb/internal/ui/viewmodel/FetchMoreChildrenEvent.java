@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.TreePath;
 
 /**
  * Event to fetch additional children for and expression context.
- * 
+ *
  * @since 3.0
  */
 public class FetchMoreChildrenEvent extends AbstractDMEvent<IExpressionDMContext> {

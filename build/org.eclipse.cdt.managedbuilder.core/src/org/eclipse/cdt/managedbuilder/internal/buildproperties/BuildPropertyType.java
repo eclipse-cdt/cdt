@@ -20,7 +20,7 @@ import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyType;
 import org.eclipse.cdt.managedbuilder.buildproperties.IBuildPropertyValue;
 
 public class BuildPropertyType extends PropertyBase implements IBuildPropertyType {
-	private Map<String, BuildPropertyValue> fValuesMap = new HashMap<String, BuildPropertyValue>();
+	private Map<String, BuildPropertyValue> fValuesMap = new HashMap<>();
 
 	BuildPropertyType(String id, String name) {
 		super(id, name);

@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle
@@ -22,10 +22,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
@@ -35,16 +31,18 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.cdt.internal.ui.editor.SourceHeaderPartnerFinder;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.utils.DefinitionFinder;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 
 /**
  * Finds the information that are needed to tell where a method definition of a certain
  * method declaration should be inserted.
- * 
+ *
  * @author Mirko Stocker, Lukas Felber
  */
 public class MethodDefinitionInsertLocationFinder {
@@ -52,7 +50,7 @@ public class MethodDefinitionInsertLocationFinder {
 	// might want to find multiple insert locations in the same translation unit. This prevents
 	// many redundant calls to DefinitionFinder.getDefinition and speeds up the process quite
 	// a bit. Unfortunately, this has the minor side-effect or having to instantiate this class.
-	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition = new HashMap<IASTSimpleDeclaration, IASTName>();
+	Map<IASTSimpleDeclaration, IASTName> cachedDeclarationToDefinition = new HashMap<>();
 
 	public InsertLocation find(ITranslationUnit declarationTu, IASTFileLocation methodDeclarationLocation,
 			IASTNode parent, CRefactoringContext refactoringContext, IProgressMonitor pm) throws CoreException {
@@ -149,15 +147,15 @@ public class MethodDefinitionInsertLocationFinder {
 	/**
 	 * Searches the given class for all IASTSimpleDeclarations occurring before 'method'
 	 * and returns them in reverse order.
-	 * 
+	 *
 	 * @param declarations to be searched
 	 * @param methodPosition on which the search aborts
-	 * @param pm 
+	 * @param pm
 	 * @return all declarations, sorted in reverse order
 	 */
 	private static Collection<IASTSimpleDeclaration> getAllPreviousSimpleDeclarationsFromClassInReverseOrder(
 			IASTDeclaration[] declarations, IASTFileLocation methodPosition, IProgressMonitor pm) {
-		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<IASTSimpleDeclaration>();
+		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<>();
 		if (declarations.length >= 0) {
 			for (IASTDeclaration decl : declarations) {
 				if (pm != null && pm.isCanceled()) {
@@ -177,7 +175,7 @@ public class MethodDefinitionInsertLocationFinder {
 
 	private static Collection<IASTSimpleDeclaration> getAllFollowingSimpleDeclarationsFromClass(
 			IASTDeclaration[] declarations, IASTFileLocation methodPosition, IProgressMonitor pm) {
-		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<IASTSimpleDeclaration>();
+		ArrayList<IASTSimpleDeclaration> outputDeclarations = new ArrayList<>();
 
 		if (declarations.length >= 0) {
 			for (IASTDeclaration decl : declarations) {

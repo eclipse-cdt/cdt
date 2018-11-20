@@ -13,22 +13,24 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.xlc.tests.base;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.lrparser.tests.LRDOMLocationTests;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCLanguage;
 import org.eclipse.cdt.core.lrparser.xlc.XlcCPPLanguage;
 import org.eclipse.cdt.core.model.ILanguage;
+
+import junit.framework.TestSuite;
 
 public class XlcLRDOMLocationTests extends LRDOMLocationTests {
 	public static TestSuite suite() {
 		return suite(XlcLRDOMLocationTests.class);
 	}
 
+	@Override
 	protected ILanguage getCLanguage() {
 		return XlcCLanguage.getDefault();
 	}
 
+	@Override
 	protected ILanguage getCPPLanguage() {
 		return XlcCPPLanguage.getDefault();
 	}

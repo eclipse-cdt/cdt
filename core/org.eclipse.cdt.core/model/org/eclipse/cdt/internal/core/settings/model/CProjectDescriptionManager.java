@@ -236,8 +236,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	private volatile Map<String, CConfigurationDataProviderDescriptor> fProviderMap;
 	private volatile CProjectConverterDesciptor fConverters[];
 	/** Set of Listeners listening for Project Description Deltas */
-	private Set<ListenerDescriptor> fListeners = new CopyOnWriteArraySet<ListenerDescriptor>();
-	private Map<String, CConfigurationDescriptionCache> fPreferenceMap = new HashMap<String, CConfigurationDescriptionCache>();
+	private Set<ListenerDescriptor> fListeners = new CopyOnWriteArraySet<>();
+	private Map<String, CConfigurationDescriptionCache> fPreferenceMap = new HashMap<>();
 	private volatile CConfigBasedDescriptorManager fDescriptorManager;
 	private ResourceChangeHandler fRcChangeHandler;
 	private CProjectDescriptionWorkspacePreferences fPreferences;
@@ -284,7 +284,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	}
 
 	private void disposeAssociatedListeners(IProject project) {
-		List<ScannerInfoProviderProxy> proxyListeners = new ArrayList<ScannerInfoProviderProxy>();
+		List<ScannerInfoProviderProxy> proxyListeners = new ArrayList<>();
 		for (ListenerDescriptor ldescriptor : fListeners) {
 			if (ldescriptor.fListener instanceof ScannerInfoProviderProxy)
 				proxyListeners.add((ScannerInfoProviderProxy) ldescriptor.fListener);
@@ -681,9 +681,9 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 	private Collection<IProject> projSetFromProjNameSet(Collection<String> projNames) {
 		if (projNames.size() == 0)
-			return new HashSet<IProject>(0);
+			return new HashSet<>(0);
 
-		Set<IProject> set = new LinkedHashSet<IProject>();
+		Set<IProject> set = new LinkedHashSet<>();
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 
 		for (String sproj : projNames)
@@ -710,21 +710,21 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			return false;
 
 		// We're still looking at the same configuration - any refs removed?
-		HashSet<String> removedRefs = new HashSet<String>();
+		HashSet<String> removedRefs = new HashSet<>();
 		if (oldCfg != null && oldCfg.getId().equals(newCfg.getId())) {
 			removedRefs.addAll(oldMap.keySet());
 			removedRefs.removeAll(newMap.keySet());
 		}
 
 		// Get the full set of references from all configuration
-		LinkedHashSet<String> allRefs = new LinkedHashSet<String>();
+		LinkedHashSet<String> allRefs = new LinkedHashSet<>();
 		for (ICConfigurationDescription cfg : newCDesc.getConfigurations())
 			allRefs.addAll(cfg.getReferenceInfo().keySet());
 
 		// Don't remove a reference if it's referenced by any configuration in the project description
 		removedRefs.removeAll(allRefs);
 
-		Collection<IProject> oldProjects = new LinkedHashSet<IProject>(Arrays.asList(des.getReferencedProjects()));
+		Collection<IProject> oldProjects = new LinkedHashSet<>(Arrays.asList(des.getReferencedProjects()));
 		Collection<IProject> newProjects = projSetFromProjNameSet(allRefs);
 
 		// If there are no changes, just return
@@ -787,11 +787,11 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		final String[] natureIds = des.getNatureIds();
 
 		// Get the set of items to remove ({oldNatures} - {newNatures}) + conflictingNatures
-		Set<String> toRemove = new HashSet<String>(oldNatures);
+		Set<String> toRemove = new HashSet<>(oldNatures);
 		toRemove.removeAll(newNatures); // Don't remove items we're re-adding
 		toRemove.addAll(conflictingNatures); // Add conflicting natures for removal
 		// Modify an ordered set of the existing natures with the changes
-		final LinkedHashSet<String> cur = new LinkedHashSet<String>(Arrays.asList(natureIds));
+		final LinkedHashSet<String> cur = new LinkedHashSet<>(Arrays.asList(natureIds));
 		cur.addAll(newNatures);
 		cur.removeAll(toRemove);
 
@@ -1010,7 +1010,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		if (cType != null) {
 			String[] exts = cType.getFileSpecs(IContentType.FILE_EXTENSION_SPEC);
 			if (exts != null && exts.length != 0) {
-				List<ICLanguageSetting> list = new ArrayList<ICLanguageSetting>();
+				List<ICLanguageSetting> list = new ArrayList<>();
 				ICLanguageSetting setting;
 				for (String ext : exts) {
 					setting = findLanguageSettingForExtension(ext, settings/*, src*/);
@@ -1055,7 +1055,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	 * @throws CoreException
 	 */
 	Map<String, ICStorageElement> createCfgStorages(ICProjectDescription des) throws CoreException {
-		LinkedHashMap<String, ICStorageElement> map = new LinkedHashMap<String, ICStorageElement>();
+		LinkedHashMap<String, ICStorageElement> map = new LinkedHashMap<>();
 		ICStorageElement rootElement = des.getStorage(MODULE_ID, false);
 		if (rootElement != null) {
 			ICStorageElement children[] = rootElement.getChildren();
@@ -1204,7 +1204,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry()
 					.getExtensionPoint(CConfigurationDataProviderDescriptor.DATA_PROVIDER_EXTPOINT_ID);
 			IExtension exts[] = extensionPoint.getExtensions();
-			fProviderMap = new HashMap<String, CConfigurationDataProviderDescriptor>(exts.length);
+			fProviderMap = new HashMap<>(exts.length);
 
 			for (IExtension ext : exts) {
 				CConfigurationDataProviderDescriptor des = new CConfigurationDataProviderDescriptor(ext);
@@ -1389,7 +1389,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	/*	void postProcessNewDescriptionCache(CProjectDescription des, ICProjectDescriptionDelta delta) {
 			if (delta == null && delta.getDeltaKind() != ICProjectDescriptionDelta.CHANGED)
 				return;
-	
+
 			ICConfigurationDescription indexCfg = des.getIndexConfiguration();
 			ICConfigurationDescription activeCfg = des.getActiveConfiguration();
 			ICProjectDescriptionDelta activeCfgDelta = findDelta(activeCfg.getId(), delta);
@@ -1399,8 +1399,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					des.setIndexConfiguration(activeCfg);
 				}
 			}
-	
-	
+
+
 		}
 	*/
 	private ICDescriptionDelta findDelta(String id, ICDescriptionDelta delta) {
@@ -1443,8 +1443,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 					break;
 				}
 
-				Set<CConfigExtensionReference> newSet = new HashSet<CConfigExtensionReference>(Arrays.asList(newRefs));
-				Set<CConfigExtensionReference> oldSet = new HashSet<CConfigExtensionReference>(Arrays.asList(oldRefs));
+				Set<CConfigExtensionReference> newSet = new HashSet<>(Arrays.asList(newRefs));
+				Set<CConfigExtensionReference> oldSet = new HashSet<>(Arrays.asList(oldRefs));
 				if (newSet.size() != oldSet.size()) {
 					flags |= ICDescriptionDelta.EXT_REF;
 					break;
@@ -1671,8 +1671,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 		if (delta.getDeltaKind() == ICDescriptionDelta.CHANGED) {
 			ICLanguageSetting newLss[] = newFo.getLanguageSettings();
 			ICLanguageSetting oldLss[] = oldFo.getLanguageSettings();
-			List<ICLanguageSetting> newList = new ArrayList<ICLanguageSetting>(Arrays.asList(newLss));
-			List<ICLanguageSetting> oldList = new ArrayList<ICLanguageSetting>(Arrays.asList(oldLss));
+			List<ICLanguageSetting> newList = new ArrayList<>(Arrays.asList(newLss));
+			List<ICLanguageSetting> oldList = new ArrayList<>(Arrays.asList(oldLss));
 			List<ICLanguageSetting[]> matched = sortSettings(newList, oldList);
 
 			for (ICLanguageSetting[] match : matched) {
@@ -1721,7 +1721,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			List<ICLanguageSetting> settings2) {
 		ICLanguageSetting setting1;
 		ICLanguageSetting setting2;
-		List<ICLanguageSetting[]> result = new ArrayList<ICLanguageSetting[]>();
+		List<ICLanguageSetting[]> result = new ArrayList<>();
 		for (Iterator<ICLanguageSetting> iter1 = settings1.iterator(); iter1.hasNext();) {
 			setting1 = iter1.next();
 			for (Iterator<ICLanguageSetting> iter2 = settings2.iterator(); iter2.hasNext();) {
@@ -1887,8 +1887,8 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 			newEntries = EMPTY_LANGUAGE_SETTINGS_ENTRIES_ARRAY;
 		}
 
-		Set<ICLanguageSettingEntry> newEntrySet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(newEntries));
-		Set<ICLanguageSettingEntry> oldEntrySet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(oldEntries));
+		Set<ICLanguageSettingEntry> newEntrySet = new HashSet<>(Arrays.asList(newEntries));
+		Set<ICLanguageSettingEntry> oldEntrySet = new HashSet<>(Arrays.asList(oldEntries));
 
 		// Check the removed entries.
 		for (ICLanguageSettingEntry oldEntry : oldEntries) {
@@ -1936,12 +1936,12 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 	/*	public boolean entriesEqual(ICLanguageSettingEntry entries1[], ICLanguageSettingEntry entries2[]) {
 			if (entries1.length != entries2.length)
 				return false;
-	
+
 			for (int i = 0; i < entries1.length; i++) {
 				if (!entries1[i].equals(entries2[i]))
 					return false;
 			}
-	
+
 			return true;
 		}
 	*/
@@ -1988,7 +1988,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 				indexDelta = createDelta(indexCfg, oldIndexCfg);
 			}
 			if (indexDelta != null) {
-				List<CElementDelta> list = new ArrayList<CElementDelta>();
+				List<CElementDelta> list = new ArrayList<>();
 				generateCElementDeltasFromCfgDelta(cProject, indexDelta, list);
 				return list.toArray(new ICElementDelta[list.size()]);
 			}
@@ -2567,7 +2567,7 @@ public class CProjectDescriptionManager implements ICProjectDescriptionManager {
 
 		for (CLanguageData lData : lDatas) {
 			String[] exts = CDataUtil.getSourceExtensions(project, lData);
-			HashSet<String> set = new HashSet<String>(Arrays.asList(exts));
+			HashSet<String> set = new HashSet<>(Arrays.asList(exts));
 			map.put(set, lData);
 		}
 

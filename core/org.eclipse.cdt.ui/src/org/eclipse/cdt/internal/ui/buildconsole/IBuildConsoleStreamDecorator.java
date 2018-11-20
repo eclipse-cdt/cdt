@@ -21,14 +21,14 @@ public interface IBuildConsoleStreamDecorator {
 	/**
 	 * Returns the color of this message stream, or <code>null</code> if
 	 * default.
-	 * 
+	 *
 	 * @return the color of this message stream, or <code>null</code>
 	 */
 	Color getColor();
 
 	/**
 	 * Returns the console this stream is connected to.
-	 * 
+	 *
 	 * @return the console this stream is connected to
 	 */
 	IConsole getConsole();

@@ -125,12 +125,12 @@ public class ProblemVisualizer extends GraphicCanvasVisualizer {
 			m_container.addChildObject("bar" + severity, bar); //$NON-NLS-1$
 		}
 
-		// set real bounds on parent "container" object - real bounds of 
+		// set real bounds on parent "container" object - real bounds of
 		// bars will be recursively computed in proportion of their virtual
 		// bounds, relative to their container
 		m_container.setBounds(m_canvas.getBounds());
 		// Add container object to canvas - when canvas draws the container,
-		// the bars will automatically be drawn too, so no need to add them 
+		// the bars will automatically be drawn too, so no need to add them
 		// to canvas.
 		m_canvas.add(m_container);
 	}

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Eugene Ostroukhov (NVIDIA) - new done(V) method
@@ -18,9 +18,9 @@ import java.util.concurrent.Executor;
 
 /**
  * Request monitor that allows data to be returned to the request initiator.
- * 
- * @param V The type of the data object that this monitor handles. 
- * 
+ *
+ * @param V The type of the data object that this monitor handles.
+ *
  * @since 1.0
  */
 public class DataRequestMonitor<V> extends RequestMonitor {
@@ -32,11 +32,11 @@ public class DataRequestMonitor<V> extends RequestMonitor {
 		super(executor, parentRequestMonitor);
 	}
 
-	/** 
-	 * Sets the data object to specified value.  To be called by the 
+	/**
+	 * Sets the data object to specified value.  To be called by the
 	 * asynchronous method implementor.
 	 * @param data Data value to set.
-	 * 
+	 *
 	 * @see #done(Object)
 	 */
 	public synchronized void setData(V data) {
@@ -55,9 +55,9 @@ public class DataRequestMonitor<V> extends RequestMonitor {
 	 * called by asynchronous method implementor.
 	 *
 	 * <p>
-	 * Note: Only one <code>done</code> method should be called and only once, 
+	 * Note: Only one <code>done</code> method should be called and only once,
 	 * for every request issued. Even if the request was canceled.
-	 * </p>  
+	 * </p>
 	 *
 	 * @param data Data value to set
 	 * @see #setData(Object)

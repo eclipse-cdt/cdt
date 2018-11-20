@@ -21,7 +21,7 @@ import org.eclipse.cdt.ui.CElementGrouping;
 
 /**
  * Grouping for macro definitions.
- * 
+ *
  * @since 5.2
  */
 public class MacrosGrouping extends CElementGrouping {

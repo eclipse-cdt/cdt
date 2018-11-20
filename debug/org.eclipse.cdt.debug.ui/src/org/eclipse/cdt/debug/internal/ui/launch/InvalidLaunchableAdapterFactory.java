@@ -28,7 +28,7 @@ import org.eclipse.debug.ui.actions.ILaunchable;
  */
 public class InvalidLaunchableAdapterFactory implements IAdapterFactory {
 	private static final Class<?>[] TYPES = { ILaunchable.class };
-	private static ArrayList<String> currentTraces = new ArrayList<String>();
+	private static ArrayList<String> currentTraces = new ArrayList<>();
 
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {

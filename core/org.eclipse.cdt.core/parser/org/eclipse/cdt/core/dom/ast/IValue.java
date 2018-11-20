@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Models a value of a variable, enumerator or expression.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.1
@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.CoreException;
 public interface IValue {
 	/**
 	 * Returns the value as a Long number, or {@code null} if it is not possible.
-	 * @deprecated Use numberValue() instead. 
+	 * @deprecated Use numberValue() instead.
 	 */
 	@Deprecated
 	default Long numericalValue() {
@@ -60,7 +60,7 @@ public interface IValue {
 	/**
 	 * If this value consists of sub-values, returns an array containing all of them.
 	 * Otherwise, returns an array containing 1 element representing this value.
-	 * Not all implementations implement this; some may return {@code null}. 
+	 * Not all implementations implement this; some may return {@code null}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	ICPPEvaluation[] getAllSubValues();
@@ -70,7 +70,7 @@ public interface IValue {
 	 * {@code null} otherwise. This can happen if the value is dependent, or it's a composite value.
 	 * If {@link #numberValue()} returns {@code null}, {@link #getEvaluation()} returns
 	 * not {@code null} and vice versa.
-	 * @noreference This method is not intended to be referenced by clients. 
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	ICPPEvaluation getEvaluation();
 
@@ -101,7 +101,7 @@ public interface IValue {
 	/**
 	 * If this value consists of sub-values, set the sub-value at the given position to the given new value.
 	 * Otherwise, set this value to the given new value.
-	 * Not all implementations implement this; for some, a call to this may have no effect. 
+	 * Not all implementations implement this; for some, a call to this may have no effect.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	void setSubValue(int position, ICPPEvaluation newValue);

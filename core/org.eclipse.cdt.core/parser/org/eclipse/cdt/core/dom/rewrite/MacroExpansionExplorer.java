@@ -48,13 +48,13 @@ public abstract class MacroExpansionExplorer {
 
 		/**
 		 * Returns the macro that gets expanded in this step, or <code>null</code> for
-		 * a step representing a full expansion. 
+		 * a step representing a full expansion.
 		 */
 		IMacroBinding getExpandedMacro();
 
 		/**
-		 * Returns the location of the macro-definition that gets expanded in this step, 
-		 * or <code>null</code> for built-in macros or for a step representing a full expansion. 
+		 * Returns the location of the macro-definition that gets expanded in this step,
+		 * or <code>null</code> for built-in macros or for a step representing a full expansion.
 		 */
 		IASTFileLocation getLocationOfExpandedMacroDefinition();
 	}
@@ -67,7 +67,7 @@ public abstract class MacroExpansionExplorer {
 	}
 
 	/**
-	 * Creates a macro expansion explorer for a given region in the outermost file of a 
+	 * Creates a macro expansion explorer for a given region in the outermost file of a
 	 * translation unit.
 	 */
 	public static MacroExpansionExplorer create(IASTTranslationUnit tu, IRegion loc) {

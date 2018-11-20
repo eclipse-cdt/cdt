@@ -108,7 +108,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 		super.createControls(par);
 		usercomp.setLayout(new GridLayout());
 
-		configToPageListMap = new HashMap<String, List<AbstractToolSettingUI>>();
+		configToPageListMap = new HashMap<>();
 		settingsStore = ToolSettingsPrefStore.getDefault();
 
 		// Create the sash form
@@ -674,7 +674,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			return null;
 		List<AbstractToolSettingUI> pages = configToPageListMap.get(getCfg().getId());
 		if (pages == null) {
-			pages = new ArrayList<AbstractToolSettingUI>();
+			pages = new ArrayList<>();
 			configToPageListMap.put(getCfg().getId(), pages);
 		}
 		return pages;
@@ -839,8 +839,8 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 	 * @return the one-for-one correspondence of tools, in order of <tt>t2</tt>
 	 */
 	private Map<ITool, ITool> getToolCorrespondence(ITool[] t1, ITool[] t2) {
-		Map<ITool, ITool> result = new java.util.LinkedHashMap<ITool, ITool>();
-		Map<ITool, List<ITool>> realT1Tools = new java.util.LinkedHashMap<ITool, List<ITool>>();
+		Map<ITool, ITool> result = new java.util.LinkedHashMap<>();
+		Map<ITool, List<ITool>> realT1Tools = new java.util.LinkedHashMap<>();
 
 		for (ITool next : t1) {
 			ITool real = ManagedBuildManager.getRealTool(next);
@@ -851,7 +851,7 @@ public class ToolSettingsTab extends AbstractCBuildPropertyTab implements IPrefe
 			} else {
 				if (list.size() == 1) {
 					// make the list mutable
-					list = new java.util.ArrayList<ITool>(list);
+					list = new java.util.ArrayList<>(list);
 					realT1Tools.put(real, list);
 				}
 				list.add(next);

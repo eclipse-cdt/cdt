@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.ui.text.spelling;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -29,8 +30,6 @@ import org.eclipse.ui.texteditor.spelling.ISpellingEngine;
 import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
 import org.eclipse.ui.texteditor.spelling.SpellingContext;
 import org.eclipse.ui.texteditor.spelling.SpellingEngineDescriptor;
-
-import org.eclipse.cdt.core.CCorePlugin;
 
 /**
  * A dispatcher that decides what spelling engine to use depending on content type.
@@ -53,7 +52,7 @@ public class SpellingEngineDispatcher implements ISpellingEngine {
 			.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
 
 	/** Available spelling engines by content type */
-	private Map<IContentType, SpellingEngine> fEngines = new HashMap<IContentType, SpellingEngine>();
+	private Map<IContentType, SpellingEngine> fEngines = new HashMap<>();
 	private ISpellingEngine defaultEngine;
 
 	/**

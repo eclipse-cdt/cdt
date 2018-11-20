@@ -37,7 +37,7 @@ public interface IASTInternalScope extends IScope {
 	 * Adds an IASTName to be cached in this scope.
 	 * @param adlOnly whether this declaration of this name only makes the name visible to
 	 *                argument-dependent lookup
-	 *                
+	 *
 	 * Implementation note: only CPPNamespaceScope cares about "adlOnly".
 	 */
 	public void addName(IASTName name, boolean adlOnly);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -15,13 +15,13 @@ package org.eclipse.cdt.dsf.concurrent;
 
 import org.eclipse.core.runtime.IStatus;
 
-/** 
- * The interface for a general purpose cache that caches the result of a single 
+/**
+ * The interface for a general purpose cache that caches the result of a single
  * request.  Implementations need to provide the logic to fetch data from an
  * asynchronous data source.
  * <p>
- * This cache requires an executor to use.  The executor is used to synchronize 
- * access to the cache state and data.   
+ * This cache requires an executor to use.  The executor is used to synchronize
+ * access to the cache state and data.
  * </p>
  * @since 2.2
  */
@@ -53,16 +53,16 @@ public interface ICache<V> {
 	 * already valid, the request is completed immediately, otherwise data will
 	 * first be retrieved from the source. Typically, this method is called by a
 	 * client after it discovers the cache is invalid via {@link #isValid()}
-	 * 
+	 *
 	 * @param rm
 	 *            RequestMonitor that is called when cache becomes valid.
 	 */
 	public void update(RequestMonitor rm);
 
 	/**
-	 * Returns <code>true</code> if the cache is currently valid.  I.e. 
-	 * whether the cache can return a value immediately without first 
-	 * retrieving it from the data source. 
+	 * Returns <code>true</code> if the cache is currently valid.  I.e.
+	 * whether the cache can return a value immediately without first
+	 * retrieving it from the data source.
 	 */
 	public boolean isValid();
 }

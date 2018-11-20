@@ -151,7 +151,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	}
 
 	/**
-	 * Adds a macro to the list of additional macros. 
+	 * Adds a macro to the list of additional macros.
 	 * The macro can either be of object- or of function-style.
 	 * <pre>
 	 * Example:
@@ -163,14 +163,14 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	 */
 	protected void addMacro(String signature, String value) {
 		if (fAddMacroList == null) {
-			fAddMacroList = new ArrayList<IMacro>();
+			fAddMacroList = new ArrayList<>();
 		}
 		fAddMacroList.add(new MacroDefinition(signature.toCharArray(), value.toCharArray()));
 		fAddMacros = null;
 	}
 
 	/**
-	 * Adds a preprocessor keyword to the map of additional preprocessor keywords. 
+	 * Adds a preprocessor keyword to the map of additional preprocessor keywords.
 	 * @param name the name of the keyword
 	 * @param tokenKind the kind of token the keyword is mapped to. See {@link IToken}.
 	 * @since 5.1
@@ -183,7 +183,7 @@ public abstract class AbstractScannerExtensionConfiguration implements IScannerE
 	}
 
 	/**
-	 * Adds a  keyword to the map of additional keywords. 
+	 * Adds a  keyword to the map of additional keywords.
 	 * @param name the name of the keyword
 	 * @param tokenKind the kind of token the keyword is mapped to. See {@link IToken}.
 	 * @since 5.1

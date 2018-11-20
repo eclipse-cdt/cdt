@@ -18,9 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -33,12 +30,12 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.extensions.ICallHierarchyProvider;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.ClassTypeHelper;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
-
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
+import org.eclipse.cdt.ui.extensions.ICallHierarchyProvider;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * Access to high level queries in the index.
@@ -181,7 +178,7 @@ public class CHQueries {
 	static ICElement[] findOverriders(IIndex index, ICPPMethod binding) throws CoreException {
 		IBinding[] virtualOverriders = ClassTypeHelper.findOverriders(index, binding);
 		if (virtualOverriders.length > 0) {
-			ArrayList<ICElementHandle> list = new ArrayList<ICElementHandle>();
+			ArrayList<ICElementHandle> list = new ArrayList<>();
 			list.addAll(Arrays.asList(IndexUI.findRepresentative(index, binding)));
 			for (IBinding overrider : virtualOverriders) {
 				list.addAll(Arrays.asList(IndexUI.findRepresentative(index, overrider)));

@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.actions;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.corext.util.Messages;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,13 +26,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
-
-import org.eclipse.cdt.core.model.ICElement;
-
-import org.eclipse.cdt.internal.corext.util.Messages;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
 
 /*
  * http://dev.eclipse.org/bugs/show_bug.cgi?id=19104
@@ -43,11 +40,11 @@ public class ActionUtil {
 		return false;
 		//		if (!(element instanceof IPackageFragment) && !(element instanceof IPackageFragmentRoot))
 		//			return false;
-		//		
+		//
 		//		IResource resource= ResourceUtil.getResource(element);
 		//		if ((resource == null) || (! (resource instanceof IFolder)) || (! resource.isLinked()))
 		//			return false;
-		//			
+		//
 		//		MessageDialog.openInformation(shell, ActionMessages.ActionUtil.not_possible"), ActionMessages.ActionUtil.no_linked")); //$NON-NLS-1$ //$NON-NLS-2$
 		//		return true;
 	}

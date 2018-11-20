@@ -15,22 +15,20 @@
 
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipantExtension;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-
 /**
  * CDocumentSetupParticipant
  */
 public class CDocumentSetupParticipant implements IDocumentSetupParticipant, IDocumentSetupParticipantExtension {
 	/**
-	 * 
+	 *
 	 */
 	public CDocumentSetupParticipant() {
 	}

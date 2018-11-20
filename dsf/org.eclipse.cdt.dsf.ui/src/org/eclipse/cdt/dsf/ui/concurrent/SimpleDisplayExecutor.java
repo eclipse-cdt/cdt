@@ -97,7 +97,7 @@ public class SimpleDisplayExecutor implements Executor {
 	private synchronized boolean enqueue(final Runnable runnable) {
 		boolean needsPosting = false;
 		if (runnables == null) {
-			runnables = new LinkedList<Runnable>();
+			runnables = new LinkedList<>();
 			needsPosting = true;
 		}
 		runnables.offer(runnable);

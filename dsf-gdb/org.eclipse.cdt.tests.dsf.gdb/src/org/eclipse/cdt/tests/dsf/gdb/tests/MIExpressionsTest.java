@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Simon Marchi (Ericsson) - Move some tests from AsyncCompletionWaitor to Query
@@ -166,7 +166,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testLocals");
 
 		// Create a map of expressions and their expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("0 + 0 - 0", new String[] { "0x0", "0", "0", "0", "0", "0" });
 		tests.put("3 + 4", new String[] { "0x7", "07", "111", "7", "7", "7" });
@@ -189,7 +189,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("testLocals");
 
 		// Create a map of expressions and their expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("3.14159 + 1.1111", new String[] { "0x4", "04", "100", "4", "4.2526", "4.2526" });
 		tests.put("100.0 / 3.0", new String[] { "0x21", "041", "100001", "33", "33.3333", "33.3333" });
@@ -215,7 +215,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(16, StepType.STEP_OVER);
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests1 = new HashMap<String, String[]>();
+		Map<String, String[]> tests1 = new HashMap<>();
 
 		tests1.put("lIntVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345", "12345" });
 		tests1.put("lDoubleVar", new String[] { "0x3039", "030071", "11000000111001", "12345", "12345.123449999999",
@@ -251,7 +251,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		stoppedEvent = SyncUtil.step(5, StepType.STEP_OVER);
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests2 = new HashMap<String, String[]>();
+		Map<String, String[]> tests2 = new HashMap<>();
 
 		tests2.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789", "6789" });
 		tests2.put("lDoubleArray[1]", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789.6788999999999",
@@ -284,7 +284,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_OVER);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		tests.put("a", new String[] { "0x8", "010", "1000", "8", "8", "8" });
 		tests.put("b", new String[] { "0x1", "01", "1", "1", "1", "1" });
@@ -294,7 +294,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// Now enter a subblock with the same variable names
 		SyncUtil.step(2, StepType.STEP_OVER);
 
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 
 		tests.put("a", new String[] { "0xc", "014", "1100", "12", "12", "12" });
 		tests.put("b", new String[] { "0x1", "01", "1", "1", "1", "1" });
@@ -304,7 +304,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// Now step to change the b variable
 		SyncUtil.step(1, StepType.STEP_OVER);
 
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 
 		tests.put("a", new String[] { "0xc", "014", "1100", "12", "12", "12" });
 		tests.put("b", new String[] { "0xc", "014", "1100", "12", "12", "12" });
@@ -315,7 +315,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		// same b
 		SyncUtil.step(1, StepType.STEP_OVER);
 
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 
 		tests.put("a", new String[] { "0x8", "010", "1000", "8", "8", "8" });
 		tests.put("b", new String[] { "0xc", "014", "1100", "12", "12", "12" });
@@ -393,22 +393,22 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	/**
 	 * This test makes sure we properly deal with a GDB display bug.
 	 * See bug 320277
-	 * 
+	 *
 	 * The following code causes a bug in GDB:
-	 * 
+	 *
 	 * class Base {};
 	 * class BaseTest: public Base {
 	 *   public:
 	 *     BaseTest() {} // Removing this lines removes GDB's bug
 	 *     void test() { return; }
 	 * };
-	 * 
+	 *
 	 * We see the bug with the following commands:
 	 * -var-create - * this
 	 * -var-list-children var1
 	 * -var-info-path-expression var1.BaseTest
 	 * -data-evaluate-expression "(*(Base*) this)"
-	 * 
+	 *
 	 * which we can reproduce by creating the children of this
 	 * and asking for the DETAILS_FORMAT of the var1.BaseTest child.
 	 */
@@ -1384,7 +1384,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	/**
 	 * Test that we can correctly evaluate C expressions involving global
 	 * variables.
-	 * 
+	 *
 	 * @return void
 	 */
 	@Test
@@ -1394,7 +1394,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.runToLocation("locals2");
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		// Global variables
 		tests.put("gIntVar", new String[] { "0x21F", "01037", "1000011111", "543", "543", "543" });
@@ -1440,21 +1440,21 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(1, StepType.STEP_OVER);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 		tests.put("a", new String[] { "0x1", "01", "1", "1", "1", "1" });
 		executeExpressionSubTests(tests, frameDmc);
 
 		SyncUtil.runToLocation("testName2");
 		stoppedEvent = SyncUtil.step(1, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x2", "02", "10", "2", "2", "2" });
 		executeExpressionSubTests(tests, frameDmc);
 
 		SyncUtil.runToLocation("testName1");
 		stoppedEvent = SyncUtil.step(1, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x3", "03", "11", "3", "3", "3" });
 		executeExpressionSubTests(tests, frameDmc);
 	}
@@ -1469,21 +1469,21 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
 		IFrameDMContext frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
 
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 		tests.put("a", new String[] { "0x1", "01", "1", "1", "1", "1" });
 		executeExpressionSubTests(tests, frameDmc);
 
 		SyncUtil.step(StepType.STEP_RETURN);
 		stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x2", "02", "10", "2", "2", "2" });
 		executeExpressionSubTests(tests, frameDmc);
 
 		SyncUtil.step(StepType.STEP_RETURN);
 		stoppedEvent = SyncUtil.step(2, StepType.STEP_INTO);
 		frameDmc = SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 0);
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("a", new String[] { "0x3", "03", "11", "3", "3", "3" });
 		executeExpressionSubTests(tests, frameDmc);
 	}
@@ -1500,7 +1500,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		MIStoppedEvent stoppedEvent = SyncUtil.step(StepType.STEP_OVER);
 
 		// Create a map of expressions to expected values.
-		Map<String, String[]> tests = new HashMap<String, String[]>();
+		Map<String, String[]> tests = new HashMap<>();
 
 		// First make sure we have a different value on the other stack frame and that we select
 		// a frame that is not the top frame
@@ -1508,7 +1508,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		executeExpressionSubTests(tests, SyncUtil.getStackFrame(stoppedEvent.getDMContext(), 1));
 
 		// Now check that we get the same values as the top stack when selecting the thread only
-		tests = new HashMap<String, String[]>();
+		tests = new HashMap<>();
 		tests.put("lIntVar", new String[] { "0x1a85", "015205", "1101010000101", "6789", "6789", "6789" });
 		executeExpressionSubTests(tests, stoppedEvent.getDMContext());
 	}
@@ -2046,7 +2046,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * the new value of 'a' if we switch the format to binary,
 	 * since binary of 3 is 11 which is the same as the old value
 	 * in natural format.  Our expression service should work around this.
-	 * 
+	 *
 	 * int main() {
 	 *    int a = 11;
 	 *    a = 3;
@@ -2138,15 +2138,15 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * var-update will not show a change if eval-expression is the same
 	 * in the current format.  This is a problem for us because we don't
 	 * know if another format changed:
-	 * 
+	 *
 	 * int main() {
 	 *    double a = 1.99;
 	 *    a = 1.11;
 	 * }
-	 * 
+	 *
 	 * If a is displayed in anything but natural, both values of a are the same
 	 * and we won't know it changed in the natural format.
-	 * 
+	 *
 	 * The test below is in case GDB fixes var-update to keep track of the last
 	 * printed value through eval-expression.  Until they do that, we do not have
 	 * a problem because of our caching: where, if we change formats since the last
@@ -2231,7 +2231,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 				IExpressionDMContext exprDmc = fExpService.createExpression(frameDmc2, "a");
 
 				// trigger the var-update in the last format (hex)
-				// then request the actual value in natural which should not be taken from the cache 
+				// then request the actual value in natural which should not be taken from the cache
 				wait.increment();
 				fExpService.getFormattedExpressionValue(
 						fExpService.getFormattedValueContext(exprDmc, IFormattedValues.NATURAL_FORMAT),
@@ -2264,16 +2264,16 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	 * var-update will not show a change if eval-expression is the same
 	 * in the current format.  This is a problem for us because we don't
 	 * know if another format changed:
-	 * 
+	 *
 	 * int main() {
 	 * 	 struct {
 	 *    	double d;
 	 * 	 } z;
-	 * 
+	 *
 	 *   z.d = 1.0;
 	 *   z.d = 1.22;
 	 * }
-	 * 
+	 *
 	 * If a is displayed in anything but natural, both values of a are the same
 	 * and we won't know it changed in the natural format.
 	 * This test uses a child to increase the value of the test.
@@ -2378,7 +2378,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 			public void run() {
 
 				// trigger the var-update in the last format (decimal)
-				// then request the actual value in natural which should not be taken from the cache 
+				// then request the actual value in natural which should not be taken from the cache
 				wait.increment();
 				fExpService.getFormattedExpressionValue(
 						fExpService.getFormattedValueContext(globalExpressionCtx1, IFormattedValues.NATURAL_FORMAT),
@@ -2914,7 +2914,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 
 	/**
 	 * Executes a group of sub-tests.
-	 * 
+	 *
 	 * @param tests
 	 *            A Map in which the key is an expression to evaluate and the
 	 *            value is an array of expected values, one for each of the
@@ -3251,7 +3251,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 	}
 
 	/**
-	 * This test verifies that large arrays are properly partitioned and 
+	 * This test verifies that large arrays are properly partitioned and
 	 * the handling of "small" arrays is not affected.
 	 */
 	@Test
@@ -3288,7 +3288,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		assertTrue(String.format("Invalid number of partition: expected 3 got %d", arrayIntPartitions.length),
 				arrayIntPartitions.length == 3);
 
-		// get children of the last partition: [20000-24321] 
+		// get children of the last partition: [20000-24321]
 		expectedValues = new String[44];
 		for (int i = 0; i < expectedValues.length - 1; ++i) {
 			expectedValues[i] = String.format("*((array_int)+%d)@100", 20000 + i * 100);
@@ -3385,7 +3385,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		}
 		IExpressionDMContext[] arrayChild2 = getChildren(arrayDoubleLargeChildExprDMC3, expectedValues);
 
-		// No more children for array_double_large[101][*]	    
+		// No more children for array_double_large[101][*]
 		for (IExpressionDMContext ctx : arrayChild2)
 			getChildren(ctx, new String[0]);
 
@@ -3429,7 +3429,7 @@ public class MIExpressionsTest extends BaseParametrizedTestCase {
 		IExpressionDMContext[] arrayDoubleSmallGrandChildren = getChildren(arrayDoubleSmallChildExprDMC,
 				expectedValues);
 
-		// No more children for array_double_small[3][*]	    
+		// No more children for array_double_small[3][*]
 		for (IExpressionDMContext ctx : arrayDoubleSmallGrandChildren)
 			getChildren(ctx, new String[0]);
 

@@ -28,7 +28,7 @@ public abstract class AbstractDisassemblyAction extends Action implements IUpdat
 
 	/**
 	 * Create a disassembly action.
-	 * 
+	 *
 	 * @param disassemblyPart
 	 */
 	public AbstractDisassemblyAction(IDisassemblyPart disassemblyPart) {
@@ -39,7 +39,7 @@ public abstract class AbstractDisassemblyAction extends Action implements IUpdat
 
 	/**
 	 * Create a disassembly action.
-	 * 
+	 *
 	 * @param disassemblyPart
 	 * @param style
 	 *            one of <code>AS_PUSH_BUTTON</code>,

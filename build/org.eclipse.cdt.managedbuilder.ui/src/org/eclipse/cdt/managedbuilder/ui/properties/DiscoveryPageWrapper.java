@@ -25,12 +25,12 @@ import org.eclipse.core.runtime.Preferences;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * This class is created to support backward compatibility 
+ * This class is created to support backward compatibility
  * with make.ui discovery pages.
- * It is subclassed from AbstractDiscoveryOptionsBlock 
+ * It is subclassed from AbstractDiscoveryOptionsBlock
  * just to be passed to existing discovery pages.
  * All methods referenced by these pages are rewritten.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

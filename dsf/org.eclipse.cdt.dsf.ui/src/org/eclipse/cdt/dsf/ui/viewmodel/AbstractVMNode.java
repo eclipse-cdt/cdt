@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -26,10 +26,10 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 
 /**
- * Base implementation of the view model node.  
- * The main functionality implemented here is for building the view model 
- * deltas (IModelDelta), based on the flags returned by child nodes. 
- * 
+ * Base implementation of the view model node.
+ * The main functionality implemented here is for building the view model
+ * deltas (IModelDelta), based on the flags returned by child nodes.
+ *
  * @since 1.0
  */
 abstract public class AbstractVMNode implements IVMNode {
@@ -77,7 +77,7 @@ abstract public class AbstractVMNode implements IVMNode {
 	 * should probably call the base implementation first; if the base
 	 * determines the request is a no-go, there's no point in the subclass doing
 	 * any further checking.
-	 * 
+	 *
 	 * <p>
 	 * If a roadblock is found, the implementation should give the update
 	 * request some appropriate default result (if applicable) and call its

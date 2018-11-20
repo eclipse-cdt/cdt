@@ -27,10 +27,10 @@ public class QObjectMembers<T extends IQObject.IMember> implements IQObject.IMem
 		//       the algorithm for computing #withoutOverrides will filter out the parent members and
 		//       not the local ones.
 		// @see withoutOverrides()
-		ArrayList<T> all = new ArrayList<T>(locals.size() + inherited.size());
+		ArrayList<T> all = new ArrayList<>(locals.size() + inherited.size());
 		all.addAll(locals);
 		all.addAll(inherited);
-		return new QObjectMembers<T>(all, locals);
+		return new QObjectMembers<>(all, locals);
 	}
 
 	private QObjectMembers(List<T> all, Collection<T> locals) {
@@ -69,7 +69,7 @@ public class QObjectMembers<T extends IQObject.IMember> implements IQObject.IMem
 					//       / \
 					//      o1 o2
 
-					ArrayList<T> filtered = new ArrayList<T>(all.size());
+					ArrayList<T> filtered = new ArrayList<>(all.size());
 					for (T member : all) {
 						boolean isOverridden = false;
 						for (Iterator<T> i = filtered.iterator(); !isOverridden && i.hasNext();)

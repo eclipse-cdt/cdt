@@ -17,6 +17,16 @@ package org.eclipse.cdt.internal.ui.text.contentassist;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.internal.corext.template.c.CommentContextType;
+import org.eclipse.cdt.internal.corext.template.c.DocCommentContextType;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.ITextViewer;
@@ -24,19 +34,6 @@ import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.templates.TemplateContextType;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
-import org.eclipse.cdt.internal.corext.template.c.CommentContextType;
-import org.eclipse.cdt.internal.corext.template.c.DocCommentContextType;
-
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.template.TemplateEngine;
 
 /**
  * A completion proposal computer for templates.
@@ -119,7 +116,7 @@ public class TemplateCompletionProposalComputer implements ICompletionProposalCo
 
 	/**
 	 * Checks whether the given invocation context looks valid for template completion.
-	 * 
+	 *
 	 * @param context  the content assist invocation context
 	 * @return <code>false</code> if the given invocation context looks like a field reference
 	 */

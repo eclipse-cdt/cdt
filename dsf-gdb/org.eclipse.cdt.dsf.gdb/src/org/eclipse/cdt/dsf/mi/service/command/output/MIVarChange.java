@@ -61,7 +61,7 @@ public class MIVarChange {
 	/**
 	 * @return Whether the associated variable's value and children are provided
 	 *         by a pretty printer.
-	 *         
+	 *
 	 * @since 4.0
 	 */
 	public boolean isDynamic() {
@@ -70,7 +70,7 @@ public class MIVarChange {
 
 	/**
 	 * @return Whether the number of children changed since the last update.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public boolean numChildrenChanged() {
@@ -79,9 +79,9 @@ public class MIVarChange {
 
 	/**
 	 * Only call if {@link #numChildrenChanged()} returns true.
-	 * 
+	 *
 	 * @return The new number of children the associated varobj now has already fetched.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public int getNewNumChildren() {
@@ -91,7 +91,7 @@ public class MIVarChange {
 
 	/**
 	 * @return Whether there more children available than {@link #getNewNumChildren()}.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public boolean hasMore() {
@@ -100,7 +100,7 @@ public class MIVarChange {
 
 	/**
 	 * @return The children added within the current update range.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public MIVar[] getNewChildren() {
@@ -109,7 +109,7 @@ public class MIVarChange {
 
 	/**
 	 * @return The new display hint
-	 *         
+	 *
 	 * @since 4.0
 	 */
 	public MIDisplayHint getDisplayHint() {
@@ -165,7 +165,7 @@ public class MIVarChange {
 
 	/**
 	 * @param hint
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public void setDisplayHint(MIDisplayHint hint) {

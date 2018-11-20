@@ -14,15 +14,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.internal.ui.newui.Messages;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CProjectNature;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * The wizard to create new MBS C Project.

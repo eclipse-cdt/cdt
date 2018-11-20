@@ -45,10 +45,10 @@ import org.eclipse.core.runtime.Preferences;
  * mainPage.setDescription("Create a new project resource.");
  * </pre>
  * </p>
- * 
+ *
  * @deprecated as of CDT 4.0. This option page was used for New Project Wizard
  * for 3.X style projects.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -128,7 +128,7 @@ public class MakeProjectWizardOptionPage extends NewCProjectWizardOptionPage {
 	}
 
 	public boolean isIndexerEnabled() {
-		//    isIndexEnabled() * @deprecated always returns false		
+		//    isIndexEnabled() * @deprecated always returns false
 		//	  return makeWizardBlock.indexBlock.isIndexEnabled();
 		return false;
 	}

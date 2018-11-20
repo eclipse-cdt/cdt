@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     Intel Corporation - initial API and implementation
- *     IBM Corporation 
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.ui.preferences;
 
@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 /**
  * @since 5.1
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

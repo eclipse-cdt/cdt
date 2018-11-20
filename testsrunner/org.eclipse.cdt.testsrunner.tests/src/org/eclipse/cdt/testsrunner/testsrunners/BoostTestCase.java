@@ -295,7 +295,7 @@ public class BoostTestCase extends BaseTestCase {
 				"No line number");
 		mockModelUpdater.addTestMessage("", 1, ITestMessage.Level.Warning, "Empty file name");
 		mockModelUpdater.addTestMessage(DEFAULT_LOCATION_FILE, 2, ITestMessage.Level.Warning, "No file name");
-		// NOTE: Last check point is not available, so EXCEPTION_CHECKPOINT_SUFFIX should not be added 
+		// NOTE: Last check point is not available, so EXCEPTION_CHECKPOINT_SUFFIX should not be added
 		mockModelUpdater.addTestMessage("file2.cpp", DEFAULT_LOCATION_LINE, ITestMessage.Level.Exception,
 				"Exception without line number");
 		mockModelUpdater.addTestMessage("", 3, ITestMessage.Level.Exception, "Exception with empty file name");

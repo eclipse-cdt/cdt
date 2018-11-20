@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * 
+ *
  */
 public class Test10 extends CommandControlTestsBase {
 
@@ -55,7 +55,7 @@ public class Test10 extends CommandControlTestsBase {
 		sendCommand("registers group1", "reg1 true|field1 0 2 |field2 2 2 zero 0 one 1 two 2 three 3 #reg2 false#");
 		sendCommand("registers group2", "reg3 true#");
 
-		// Run to the end of the program        
+		// Run to the end of the program
 		sendCommand("set 37 1");
 		sendCommand("vmresume");
 		expectEvent("vmresumed client");

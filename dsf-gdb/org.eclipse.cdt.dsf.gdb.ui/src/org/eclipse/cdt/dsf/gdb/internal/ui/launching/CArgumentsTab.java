@@ -50,10 +50,10 @@ import org.eclipse.swt.widgets.Text;
  */
 public class CArgumentsTab extends CLaunchConfigurationTab {
 	/**
-	 * Tab identifier used for ordering of tabs added using the 
+	 * Tab identifier used for ordering of tabs added using the
 	 * <code>org.eclipse.debug.ui.launchConfigurationTabs</code>
 	 * extension point.
-	 *   
+	 *
 	 * @since 2.0
 	 */
 	public static final String TAB_ID = "org.eclipse.cdt.dsf.gdb.launch.argumentsTab"; //$NON-NLS-1$
@@ -204,7 +204,7 @@ public class CArgumentsTab extends CLaunchConfigurationTab {
 
 	/**
 	 * Returns the string in the text widget, or <code>null</code> if empty.
-	 * 
+	 *
 	 * @return text or <code>null</code>
 	 */
 	protected String getAttributeValueFrom(Text text) {

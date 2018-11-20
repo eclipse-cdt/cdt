@@ -37,7 +37,7 @@ public class CWordFinder {
 	 * int b) --> word = afunction afunction!(int a, int b) --> word = afunction
 	 * afunction(!int a, int b) --> word = length 0 afunction(int a,! int b) -->
 	 * word = length 0 afunction(!) --> word = length 0
-	 * 
+	 *
 	 * @param document
 	 *            The document to be examined
 	 * @param offset
@@ -92,7 +92,7 @@ public class CWordFinder {
 	/**
 	 * This method will determine the region for the name of the function within
 	 * which the current offset is contained.
-	 * 
+	 *
 	 * @param document
 	 *            The document to be examined
 	 * @param offset
@@ -205,16 +205,16 @@ public class CWordFinder {
 	}
 
 	/**
-	 * This method will determine whether current offset is contained 
-	 * in any function's body or it's outside it. 
-	 * 
+	 * This method will determine whether current offset is contained
+	 * in any function's body or it's outside it.
+	 *
 	 * @param document
 	 *            The document to be examined
 	 * @param offset
 	 *            The offset into the document
-	 * @return 
-	 *      <code>true</code> if there is no function body around offset 
-	 *      <code>false</code> otherwise 
+	 * @return
+	 *      <code>true</code> if there is no function body around offset
+	 *      <code>false</code> otherwise
 	 */
 	public static boolean isGlobal(IDocument document, int offset) {
 		try {
@@ -244,14 +244,14 @@ public class CWordFinder {
 
 		} catch (BadLocationException x) {
 			/* Ignore */ }
-		// return true in case of unknown result or exception 
+		// return true in case of unknown result or exception
 		return true;
 	}
 
 	/**
 	 * Searches for line feed symbols in string.
 	 * First met '\r' or '\n' is treated as LF symbol
-	 * 
+	 *
 	 * @param s
 	 * 			string to search in.
 	 * @return  number of LFs met.
@@ -274,9 +274,9 @@ public class CWordFinder {
 	}
 
 	/**
-	 * Checks whether the string contains any C-block delimiters ( { } ) 
-	 * 
-	 * @param s 
+	 * Checks whether the string contains any C-block delimiters ( { } )
+	 *
+	 * @param s
 	 * 			text to check
 	 * @return  true if curled brace found.
 	 */

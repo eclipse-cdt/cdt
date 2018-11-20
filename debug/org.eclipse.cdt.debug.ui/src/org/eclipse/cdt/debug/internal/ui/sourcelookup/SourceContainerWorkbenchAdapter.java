@@ -14,6 +14,7 @@
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.io.File;
+
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;

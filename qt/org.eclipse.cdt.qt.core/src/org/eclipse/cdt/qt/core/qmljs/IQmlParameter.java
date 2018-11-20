@@ -17,7 +17,7 @@ public interface IQmlParameter extends IQmlASTNode {
 	@Override
 	default public String getType() {
 		return "QMLParameter"; //$NON-NLS-1$
-	};
+	}
 
 	public IQmlPropertyType getKind();
 

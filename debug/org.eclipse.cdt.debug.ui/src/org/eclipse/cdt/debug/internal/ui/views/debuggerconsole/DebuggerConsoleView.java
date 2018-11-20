@@ -50,10 +50,10 @@ import org.eclipse.ui.part.PageSwitcher;
 
 /**
  * The Debugger console view shows different {@link IDebuggerConsole}.
- * 
+ *
  * This class extends {@link IConsoleView} to allow it to easily display
  * consoles of type {@link IOConsole}.
- * 
+ *
  * @see {@link IDebuggerConsoleManager}
  */
 public class DebuggerConsoleView extends PageBookView
@@ -425,7 +425,7 @@ public class DebuggerConsoleView extends PageBookView
 	/**
 	 * Initialize the PageSwitcher.
 	 * The page switcher is triggered using a keyboard shortcut
-	 * configured in the user's eclipse and allows to switch 
+	 * configured in the user's eclipse and allows to switch
 	 * pages using a popup.
 	 */
 	private void initPageSwitcher() {

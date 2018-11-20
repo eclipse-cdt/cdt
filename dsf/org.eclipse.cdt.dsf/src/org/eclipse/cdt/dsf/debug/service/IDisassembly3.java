@@ -19,15 +19,15 @@ import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 
 /**
  * This interface extends the disassembly service with support for raw opcodes
- * 
+ *
  * @since 2.5
- * 
+ *
  */
 public interface IDisassembly3 extends IDisassembly2 {
 
 	/**
 	 * Gets a block of disassembled code given an address range.
-	 * 
+	 *
 	 * @param context
 	 *            Context of the disassembly code
 	 * @param startAddress
@@ -48,7 +48,7 @@ public interface IDisassembly3 extends IDisassembly2 {
 	/**
 	 * Gets a block of disassembled code given a filename, line number, and line
 	 * count.
-	 * 
+	 *
 	 * @param context
 	 *            Context of the disassembly code
 	 * @param filename
@@ -62,7 +62,7 @@ public interface IDisassembly3 extends IDisassembly2 {
 	 *            instructions (starting at [linenum])
 	 * @param opCodes
 	 *            If raw opcodes should be retrieved
-	 * 
+	 *
 	 * @param drm
 	 *            Disassembled code
 	 */
@@ -71,7 +71,7 @@ public interface IDisassembly3 extends IDisassembly2 {
 
 	/**
 	 * Gets a block of mixed disassembled code given an address range.
-	 * 
+	 *
 	 * @param context
 	 *            Context of the disassembly code
 	 * @param startAddress
@@ -90,7 +90,7 @@ public interface IDisassembly3 extends IDisassembly2 {
 	/**
 	 * Gets a block of mixed disassembled code given a filename, line number,
 	 * and line count.
-	 * 
+	 *
 	 * @param context
 	 *            Context of the disassembly code
 	 * @param filename

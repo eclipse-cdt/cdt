@@ -31,7 +31,7 @@ public interface IPagesAfterTemplateSelectionProvider {
 	 * @param wizard the wizard requesting the pages
 	 * @param workbench the current workbench
 	 * @param selection the current object selection, or null if no context is available
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	IWizardDataPage[] createAdditionalPages(IWorkbenchWizard wizard, IWorkbench workbench,
@@ -40,7 +40,7 @@ public interface IPagesAfterTemplateSelectionProvider {
 	/**
 	 * Gets the previously created pages
 	 * @param wizard the wizard that requested creation of the pages
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	IWizardDataPage[] getCreatedPages(IWorkbenchWizard wizard);

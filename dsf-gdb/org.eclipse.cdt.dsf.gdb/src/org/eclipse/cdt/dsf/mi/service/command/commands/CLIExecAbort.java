@@ -19,11 +19,11 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *     kill
  *
  *  Terminates the user (MI inferior) process
- * 
+ *
  */
 public class CLIExecAbort extends CLICommand<MIInfo> {
 	/**

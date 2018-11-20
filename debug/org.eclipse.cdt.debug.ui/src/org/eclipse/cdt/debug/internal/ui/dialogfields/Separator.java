@@ -80,7 +80,7 @@ public class Separator extends DialogField {
 		return gd;
 	}
 
-	// ------- ui creation	
+	// ------- ui creation
 
 	/**
 	 * Creates or returns the created separator.

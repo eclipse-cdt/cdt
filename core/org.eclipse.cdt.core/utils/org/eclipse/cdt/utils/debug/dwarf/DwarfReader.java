@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 
 /**
- * Light-weight parser of Dwarf2 data which is intended for getting only 
+ * Light-weight parser of Dwarf2 data which is intended for getting only
  * source files that contribute to the given executable.
  */
 public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptionsFinder {
@@ -55,13 +55,13 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 	final static String[] DWARF_ALT_SectionsToParse = { DWARF_DEBUG_STR, DWARF_DEBUG_MACRO };
 
-	private final Collection<String> m_fileCollection = new HashSet<String>();
-	private final Map<Long, String> m_stmtFileMap = new HashMap<Long, String>();
-	private final Map<String, ArrayList<String>> m_compileOptionsMap = new HashMap<String, ArrayList<String>>();
+	private final Collection<String> m_fileCollection = new HashSet<>();
+	private final Map<Long, String> m_stmtFileMap = new HashMap<>();
+	private final Map<String, ArrayList<String>> m_compileOptionsMap = new HashMap<>();
 	private String[] m_fileNames = null;
 	private boolean m_parsed = false;
 	private boolean m_macros_parsed = false;
-	private final ArrayList<Integer> m_parsedLineTableOffsets = new ArrayList<Integer>();
+	private final ArrayList<Integer> m_parsedLineTableOffsets = new ArrayList<>();
 	private long m_parsedLineTableSize = 0;
 
 	public DwarfReader(String file) throws IOException {
@@ -80,7 +80,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	}
 
 	// Override parent.
-	// 
+	//
 	@Override
 	public void init(Elf exe) throws IOException {
 		Elf.ELFhdr header = exe.getELFhdr();
@@ -169,7 +169,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							// 1. try and open the file in the same directory as the executable
 							debugFile = p.append(debugName).toFile();
 							if (!debugFile.exists()) {
-								// 2. try and open the file in the .debug directory where the executable is 
+								// 2. try and open the file in the .debug directory where the executable is
 								debugFile = p.append(".debug").append(debugName).toFile(); //$NON-NLS-1$
 								if (!debugFile.exists())
 									// 3. try and open /usr/lib/debug/$(EXE_DIR)/$(DEBUGINFO_NAME)
@@ -280,10 +280,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 	/*
 	 * Parse line table data of a compilation unit to get names of all source files
-	 * that contribute to the compilation unit. 
+	 * that contribute to the compilation unit.
 	 */
-	void parseSourceInCULineInfo(String cuCompDir, // compilation directory of the CU 
-			int cuStmtList) // offset of the CU line table in .debug_line section 
+	void parseSourceInCULineInfo(String cuCompDir, // compilation directory of the CU
+			int cuStmtList) // offset of the CU line table in .debug_line section
 	{
 		ByteBuffer data = dwarfSections.get(DWARF_DEBUG_LINE);
 		if (data != null) {
@@ -291,12 +291,12 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				data.position(cuStmtList);
 
 				/* Read line table header:
-				 * 
+				 *
 				 *  total_length:				4/12 bytes (excluding itself)
 				 *  version:					2
 				 *  prologue length:			4/8 bytes (depending on section version)
 				 *  minimum_instruction_len:	1
-				 *  maximum_operations_per_instruction 1 - it is defined for version >= 4 
+				 *  maximum_operations_per_instruction 1 - it is defined for version >= 4
 				 *  default_is_stmt:			1
 				 *  line_base:					1
 				 *  line_range:					1
@@ -334,7 +334,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 				// Read in directories.
 				//
-				ArrayList<String> dirList = new ArrayList<String>();
+				ArrayList<String> dirList = new ArrayList<>();
 
 				// Put the compilation directory of the CU as the first dir
 				dirList.add(cuCompDir);
@@ -383,8 +383,8 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	 * Check if there are any line tables in .debug_line section that are
 	 * not referenced by any TAG_compile_units. If yes, add source files
 	 * in those table entries to our "m_fileCollection".
-	 * If the compiler/linker is fully dwarf standard compliant, that should 
-	 * not happen. But that case does exist, hence this workaround. 
+	 * If the compiler/linker is fully dwarf standard compliant, that should
+	 * not happen. But that case does exist, hence this workaround.
 	 * .................. LWang. 08/24/07
 	 */
 	private void getSourceFilesFromDebugLineSection() {
@@ -405,12 +405,12 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		// in the section.
 		/*
 		 * Line table header for one compile_unit:
-		 * 
+		 *
 		 * total_length: 			4/12 bytes (excluding itself)
 		 * version:					2
 		 * prologue length:			4/8 bytes (depending on section version)
-		 * minimum_instruction_len: 1 
-		 * maximum_operations_per_instruction 1 - it is defined for version >= 4 
+		 * minimum_instruction_len: 1
+		 * maximum_operations_per_instruction 1 - it is defined for version >= 4
 		 * default_is_stmt:			1
 		 * line_base:				1
 		 * line_range:				1
@@ -437,11 +437,11 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 				// According to Dwarf standard, the "tableLength" should cover the
 				// the whole CU line table. But some compilers (e.g. ARM RVCT 2.2)
-				// produce extra padding (1 to 3 bytes) beyond that in order for 
+				// produce extra padding (1 to 3 bytes) beyond that in order for
 				// "lineTableStart" to be aligned at multiple of 4. The padding
-				// bytes are beyond the "tableLength" and not indicated by 
+				// bytes are beyond the "tableLength" and not indicated by
 				// any flag, which I believe is not Dwarf2 standard compliant.
-				// How to determine if that type of padding exists ? 
+				// How to determine if that type of padding exists ?
 				// I don't have a 100% safe way. But following hacking seems
 				// good enough in practice.........08/26/07
 				if (lineTableStart < sectionSize - minHeaderSize && (lineTableStart & 0x3) != 0) {
@@ -453,7 +453,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					int dwarfVer = read_2_bytes(data);
 					int minInstLengh = data.get(data.position() + (dwarf64Bit ? 8 : 4));
 
-					boolean dataValid = ltLength > minHeaderSize && ltLength < 16 * 64 * 1024 && // One source file has that much line data ? 
+					boolean dataValid = ltLength > minHeaderSize && ltLength < 16 * 64 * 1024 && // One source file has that much line data ?
 							dwarfVer > 0 && dwarfVer < 5 && // ver 5 is still draft at present.
 							minInstLengh > 0 && minInstLengh <= 8;
 
@@ -481,7 +481,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 				// Read in directories.
 				//
-				ArrayList<String> dirList = new ArrayList<String>();
+				ArrayList<String> dirList = new ArrayList<>();
 
 				String str, fileName;
 
@@ -503,7 +503,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					if (fileName.length() == 0) // no more file entry
 						break;
 
-					// dir index. Note "0" is reserved for compilation directory. 
+					// dir index. Note "0" is reserved for compilation directory.
 					leb128 = read_unsigned_leb128(data);
 
 					addSourceFile(dirList.get((int) leb128), fileName);
@@ -544,7 +544,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 	/*
 	 * Get source file names from compile units (CU) in .debug_info section,
 	 * which will also search line table for the CU in .debug_line section.
-	 * 
+	 *
 	 * The file names are stored in member "m_fileCollection".
 	 */
 	private void getSourceFilesFromDebugInfoSection() {
@@ -745,14 +745,14 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 		ByteBuffer str = dwarfSections.get(DWARF_DEBUG_STR);
 		ByteBuffer altdata = dwarfAltSections.get(DWARF_DEBUG_MACRO);
 		ByteBuffer altstr = dwarfAltSections.get(DWARF_DEBUG_STR);
-		Set<String> fixupList = new HashSet<String>();
-		Set<String> fixupAltList = new HashSet<String>();
+		Set<String> fixupList = new HashSet<>();
+		Set<String> fixupAltList = new HashSet<>();
 		boolean DEBUG = false;
 		if (data == null)
 			return;
 
-		HashMap<Long, ArrayList<String>> t_macros = new HashMap<Long, ArrayList<String>>();
-		HashMap<Long, ArrayList<String>> t_alt_macros = new HashMap<Long, ArrayList<String>>();
+		HashMap<Long, ArrayList<String>> t_macros = new HashMap<>();
+		HashMap<Long, ArrayList<String>> t_alt_macros = new HashMap<>();
 
 		// Parse the macro section, looking for command-line macros meant for compiling files (i.e.
 		// not internal macro definitions in headers or C/C++ files.  Keep track of any forward
@@ -836,7 +836,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 				// have non-standard entry types defined which we need to know when
 				// we come across macro entries later
 				if ((flags & 0x4) != 0) {
-					opcodeInfos = new HashMap<Integer, OpcodeInfo>();
+					opcodeInfos = new HashMap<>();
 					int num_opcodes = data.get();
 					for (int i = 0; i < num_opcodes; ++i) {
 						OpcodeInfo info = new OpcodeInfo(offset_size_8);
@@ -852,7 +852,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 					}
 				}
 
-				ArrayList<String> macros = new ArrayList<String>();
+				ArrayList<String> macros = new ArrayList<>();
 
 				boolean done = false;
 
@@ -871,7 +871,7 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 							m_compileOptionsMap.put(fileName, macros);
 							if (DEBUG)
 								System.out.println("following macros found for file " + macros.toString()); //$NON-NLS-1$
-							macros = new ArrayList<String>();
+							macros = new ArrayList<>();
 						}
 						if (fileName != null)
 							if (DEBUG)
@@ -1021,10 +1021,10 @@ public class DwarfReader extends Dwarf implements ISymbolReader, ICompileOptions
 
 	/**
 	 * Get the set of command line flags used for a particular file name.
-	 * 
+	 *
 	 * @param fileName - name of file
 	 * @return string containing all macros used on command line to compile the file
-	 * 
+	 *
 	 * @since 5.7
 	 */
 	@Override

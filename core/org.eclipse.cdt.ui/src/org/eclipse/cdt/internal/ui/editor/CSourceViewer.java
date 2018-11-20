@@ -19,6 +19,12 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICColorConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
@@ -50,14 +56,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICColorConstants;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 /**
  * Source viewer for C/C++ et al.
@@ -135,7 +133,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	private boolean fUseSpaces;
 
 	/**
-	 * Creates new source viewer. 
+	 * Creates new source viewer.
 	 * @param parent
 	 * @param ruler
 	 * @param overviewRuler
@@ -412,9 +410,9 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
 	/**
 	 * Prepend given listener to the list of presentation listeners
-	 * 
+	 *
 	 * @param listener  The listener to be added.
-	 * 
+	 *
 	 * @see TextViewer#addTextPresentationListener(ITextPresentationListener)
 	 * @since 4.0
 	 */
@@ -425,7 +423,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 		List<ITextPresentationListener> textPresentationListeners = fTextPresentationListeners;
 
 		if (textPresentationListeners == null)
-			fTextPresentationListeners = textPresentationListeners = new ArrayList<ITextPresentationListener>();
+			fTextPresentationListeners = textPresentationListeners = new ArrayList<>();
 
 		textPresentationListeners.remove(listener);
 		textPresentationListeners.add(0, listener);
@@ -438,7 +436,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * This is a performance optimization to reduce the computation of
 	 * the text presentation triggered by <code>setVisibleDocument(IDocument)</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see #setVisibleDocument(IDocument)
 	 * @since 4.0
 	 */
@@ -517,7 +515,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
 	/**
 	 * Configure the indentation mode for this viewer.
-	 * 
+	 *
 	 * @param indentWidth  the indentation width
 	 * @param useSpaces  if <code>true</code>, only spaces are used for indentation
 	 */
@@ -541,7 +539,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
 	/**
 	 * Increase/decrease indentation of current selection.
-	 * 
+	 *
 	 * @param increase  if <code>true</code>, indent is increased by one unit
 	 * @param shiftWidth  width in spaces of one indent unit
 	 * @param useSpaces  if <code>true</code>, only spaces are used for indentation
@@ -599,7 +597,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 
 	/**
 	 * Compute the length of the common prefix of two strings.
-	 * 
+	 *
 	 * @param s1
 	 * @param s2
 	 * @return the length of the common prefix
@@ -629,7 +627,7 @@ public class CSourceViewer extends ProjectionViewer implements IPropertyChangeLi
 	 * Sets the viewer's background color to the given control's background color.
 	 * The background color is <em>only</em> set if it's visibly distinct from the
 	 * default Java source text color.
-	 * 
+	 *
 	 * @param control the control with the default background color
 	 */
 	public void adaptBackgroundColor(Control control) {

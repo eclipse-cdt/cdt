@@ -61,7 +61,7 @@ public class GDBHardwareAndOS_7_10 extends GDBHardwareAndOS_7_5 {
 							coreListCache = new CoreList(getData()).getCoreList();
 							rm.done(parseCoresInfoForCPUs(dmc, coreListCache));
 						} else {
-							// not Linux? 
+							// not Linux?
 							rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 									"Operation not supported", null)); //$NON-NLS-1$
 						}
@@ -95,7 +95,7 @@ public class GDBHardwareAndOS_7_10 extends GDBHardwareAndOS_7_5 {
 								coreListCache = new CoreList(getData()).getCoreList();
 								rm.done(parseCoresInfoForCores(cpuDmc, coreListCache));
 							} else {
-								// not Linux? 
+								// not Linux?
 								rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, NOT_SUPPORTED,
 										"Operation not supported", null)); //$NON-NLS-1$
 							}

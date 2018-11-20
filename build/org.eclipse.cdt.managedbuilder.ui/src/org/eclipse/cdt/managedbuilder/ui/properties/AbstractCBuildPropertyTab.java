@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Proposed parent for Build System property tabs.
- * 
+ *
  * In addition to AbstractCPropertyTab functionality,
  * provides several utility methods for configurations
  * handling.

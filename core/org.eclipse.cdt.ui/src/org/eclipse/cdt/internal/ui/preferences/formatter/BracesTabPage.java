@@ -18,11 +18,10 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
-
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
 
 public class BracesTabPage extends FormatterTabPage {
 
@@ -35,7 +34,7 @@ public class BracesTabPage extends FormatterTabPage {
 			"\n\n" + //$NON-NLS-1$
 			"class Point {" + //$NON-NLS-1$
 			"public:" + //$NON-NLS-1$
-			"Point(double x, double y) : x(x), y(y) {}" + //$NON-NLS-1$ 
+			"Point(double x, double y) : x(x), y(y) {}" + //$NON-NLS-1$
 			"double distance(const Point& other) const;" + //$NON-NLS-1$
 			"int compareX(const Point& other) const;" + //$NON-NLS-1$
 			"double x;" + //$NON-NLS-1$
@@ -109,12 +108,12 @@ public class BracesTabPage extends FormatterTabPage {
 				DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_TYPE_DECLARATION);
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_namespace_declaration,
 				DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_NAMESPACE_DECLARATION);
-		//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_constructor_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_CONSTRUCTOR_DECLARATION); 
+		//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_constructor_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_CONSTRUCTOR_DECLARATION);
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_function_declaration,
 				DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_METHOD_DECLARATION);
-		//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_enum_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ENUM_DECLARATION); 
-		//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_enumconst_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ENUM_CONSTANT); 
-		//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_annotation_type_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ANNOTATION_TYPE_DECLARATION); 
+		//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_enum_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ENUM_DECLARATION);
+		//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_enumconst_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ENUM_CONSTANT);
+		//		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_annotation_type_declaration, DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_ANNOTATION_TYPE_DECLARATION);
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_blocks,
 				DefaultCodeFormatterConstants.FORMATTER_BRACE_POSITION_FOR_BLOCK);
 		createExtendedBracesCombo(group, numColumns, FormatterMessages.BracesTabPage_option_blocks_in_case,

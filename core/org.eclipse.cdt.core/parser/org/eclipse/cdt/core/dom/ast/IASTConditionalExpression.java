@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Conditional Expression of the format X ? Y : Z
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -47,7 +47,7 @@ public interface IASTConditionalExpression extends IASTExpression {
 
 	/**
 	 * Get the logical condition expression.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code> representing the logical condition.
 	 */
 
@@ -55,7 +55,7 @@ public interface IASTConditionalExpression extends IASTExpression {
 
 	/**
 	 * Set the logical condition expression.
-	 * 
+	 *
 	 * @param expression
 	 *            condition to be set
 	 */
@@ -64,28 +64,28 @@ public interface IASTConditionalExpression extends IASTExpression {
 	/**
 	 * Get the positive result expression, or <code>null</code> in case the positive condition was omitted (this is
 	 * a gcc extension).
-	 * 
+	 *
 	 * @return <code>IASTExpression</code>, or <code>null</code>.
 	 */
 	public IASTExpression getPositiveResultExpression();
 
 	/**
 	 * Set positive result expression.
-	 * 
+	 *
 	 * @param expression
 	 */
 	public void setPositiveResultExpression(IASTExpression expression);
 
 	/**
 	 * Get the negative result expression.
-	 * 
+	 *
 	 * @return <code>IASTExpression</code>
 	 */
 	public IASTExpression getNegativeResultExpression();
 
 	/**
 	 * Set negative result expression.
-	 * 
+	 *
 	 * @param expression
 	 *            <code>IASTExpression</code>
 	 */

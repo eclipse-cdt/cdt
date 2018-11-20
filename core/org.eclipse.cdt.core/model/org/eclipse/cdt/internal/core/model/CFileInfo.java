@@ -17,7 +17,7 @@ package org.eclipse.cdt.internal.core.model;
 public class CFileInfo extends CElementInfo {
 
 	/**
-	 * Constructs a new C Model Info 
+	 * Constructs a new C Model Info
 	 */
 	protected CFileInfo(CElement element) {
 		super(element);

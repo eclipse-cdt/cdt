@@ -9,11 +9,9 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation 
+ *    IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
-
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.cdt.core.dom.ast.ASTGenericVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -25,8 +23,8 @@ import org.eclipse.cdt.core.dom.ast.IASTProblem;
 import org.eclipse.cdt.core.dom.ast.IASTProblemHolder;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.core.runtime.IProgressMonitor;
 
 /**
  * @author dsteffle
@@ -51,11 +49,11 @@ public class CPPPopulateASTViewAction extends ASTGenericVisitor implements IPopu
 		}
 	}
 
-	/** 
+	/**
 	 * return null if the algorithm should stop (monitor was cancelled)
 	 * return DOMASTNodeLeafContinue if the algorithm should continue but no valid DOMASTNodeLeaf was added (i.e. node was null
-	 * return the DOMASTNodeLeaf added to the DOM AST View's model otherwise 
-	 * 
+	 * return the DOMASTNodeLeaf added to the DOM AST View's model otherwise
+	 *
 	 * @param node
 	 * @return
 	 */
@@ -167,7 +165,7 @@ public class CPPPopulateASTViewAction extends ASTGenericVisitor implements IPopu
 
 	@Override
 	public void groupIncludes(DOMASTNodeLeaf[] treeIncludes) {
-		// loop through the includes and make sure that all of the nodes 
+		// loop through the includes and make sure that all of the nodes
 		// that are children of the TU are in the proper include (based on offset)
 		for (int i = treeIncludes.length - 1; i >= 0; i--) {
 			final DOMASTNodeLeaf nodeLeaf = treeIncludes[i];

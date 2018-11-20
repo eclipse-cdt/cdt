@@ -1,33 +1,23 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * 	   Institute for Software - initial API and implementation
  * 	   Sergey Prigogin (Google)
- * 	   Marc-Andre Laperle - do not search for definition insert location twice. 
+ * 	   Marc-Andre Laperle - do not search for definition insert location twice.
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.gettersandsetters;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.OperationCanceledException;
-import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
-import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -45,11 +35,9 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ICProject;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.rewrite.astwriter.ContainerNode;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.ClassMemberInserter;
 import org.eclipse.cdt.internal.ui.refactoring.Container;
@@ -60,6 +48,15 @@ import org.eclipse.cdt.internal.ui.refactoring.utils.Checks;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.NodeHelper;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
+import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
 
 /**
  * @author Thomas Corbat
@@ -134,7 +131,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	}
 
 	private IFile[] getAllFilesToModify() {
-		List<IFile> files = new ArrayList<IFile>(2);
+		List<IFile> files = new ArrayList<>(2);
 		IFile file = (IFile) tu.getResource();
 		if (file != null) {
 			files.add(file);
@@ -167,7 +164,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	private IASTCompositeTypeSpecifier findCurrentCompositeTypeSpecifier(IASTTranslationUnit ast)
 			throws OperationCanceledException, CoreException {
 		final int start = selectedRegion.getOffset();
-		Container<IASTCompositeTypeSpecifier> container = new Container<IASTCompositeTypeSpecifier>();
+		Container<IASTCompositeTypeSpecifier> container = new Container<>();
 		ast.accept(new CompositeTypeSpecFinder(start, container));
 		return container.getObject();
 	}
@@ -225,8 +222,8 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 	@Override
 	protected void collectModifications(IProgressMonitor pm, ModificationCollector collector)
 			throws CoreException, OperationCanceledException {
-		List<IASTNode> getterAndSetters = new ArrayList<IASTNode>();
-		List<IASTFunctionDefinition> definitions = new ArrayList<IASTFunctionDefinition>();
+		List<IASTNode> getterAndSetters = new ArrayList<>();
+		List<IASTFunctionDefinition> definitions = new ArrayList<>();
 		ICPPASTCompositeTypeSpecifier classDefinition = ASTQueries.findAncestorWithType(context.existingFields.get(0),
 				ICPPASTCompositeTypeSpecifier.class);
 		for (AccessorDescriptor accessor : context.selectedAccessors) {
@@ -239,7 +236,7 @@ public class GenerateGettersAndSettersRefactoring extends CRefactoring {
 						definitionInsertLocation.getTranslationUnit(), definitionInsertLocation.getInsertPosition(),
 						refactoringContext);
 				IASTFunctionDefinition functionDefinition = accessor.getAccessorDefinition(declaratorName);
-				// Standalone definitions in a header file have to be declared inline. 
+				// Standalone definitions in a header file have to be declared inline.
 				if (definitionInsertLocation.getTranslationUnit().isHeaderUnit()) {
 					functionDefinition.getDeclSpecifier().setInline(true);
 				}

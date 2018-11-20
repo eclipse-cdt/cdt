@@ -22,7 +22,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIVarSetFormatInfo;
 
 /**
- * 
+ *
  *    -var-set-format NAME FORMAT-SPEC
  *
  *  Sets the output format for the value of the object NAME to be
@@ -32,7 +32,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIVarSetFormatInfo;
  *
  *     FORMAT-SPEC ==>
  *     {binary | decimal | hexadecimal | octal | natural}
- * 
+ *
  */
 public class MIVarSetFormat extends MICommand<MIVarSetFormatInfo> {
 	/**

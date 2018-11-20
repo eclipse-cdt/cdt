@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * TODO Provide description
- * 
+ *
  * @author vhirsl
  */
 public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsoleParserUtility {
@@ -61,7 +61,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 		String workingDir = getWorkingDirectory().toString();
 		List<Map<String, List<String>>> directoryCommandList = directoryCommandListMap.get(workingDir);
 		if (directoryCommandList == null) {
-			directoryCommandList = new CopyOnWriteArrayList<Map<String, List<String>>>();
+			directoryCommandList = new CopyOnWriteArrayList<>();
 			directoryCommandListMap.put(workingDir, directoryCommandList);
 			++workingDirsN;
 		}
@@ -77,17 +77,17 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 				return;
 			}
 		}
-		command21FileListMap = new HashMap<String, List<String>>(1);
+		command21FileListMap = new HashMap<>(1);
 		directoryCommandList.add(command21FileListMap);
 		++commandsN;
-		List<String> fileList = new CopyOnWriteArrayList<String>();
+		List<String> fileList = new CopyOnWriteArrayList<>();
 		command21FileListMap.put(genericCommand, fileList);
 		fileList.add(longFileName);
 		++filesN;
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	void generateReport() {
 		TraceUtil.metricsTrace("Stats for directory ", //$NON-NLS-1$
@@ -120,11 +120,11 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 	}
 
 	/**
-	 * @return CCommandDSC compile command description 
+	 * @return CCommandDSC compile command description
 	 */
 	public CCommandDSC getNewCCommandDSC(String[] tokens, final int idxOfCompilerCommand, boolean cppFileType) {
-		CopyOnWriteArrayList<KVStringPair> dirafter = new CopyOnWriteArrayList<KVStringPair>();
-		CopyOnWriteArrayList<String> includes = new CopyOnWriteArrayList<String>();
+		CopyOnWriteArrayList<KVStringPair> dirafter = new CopyOnWriteArrayList<>();
+		CopyOnWriteArrayList<String> includes = new CopyOnWriteArrayList<>();
 		CCommandDSC command = new CCommandDSC(cppFileType, getProject());
 		command.addSCOption(new KVStringPair(SCDOptionsEnum.COMMAND.toString(), tokens[idxOfCompilerCommand]));
 		for (int i = idxOfCompilerCommand + 1; i < tokens.length; ++i) {
@@ -161,7 +161,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 							KVStringPair pair = new KVStringPair(SCDOptionsEnum.IQUOTE.toString(), option);
 							command.addSCOption(pair);
 						}
-						includes = new CopyOnWriteArrayList<String>();
+						includes = new CopyOnWriteArrayList<>();
 						// -I- has no parameter
 					} else {
 						// ex. -I /dir
@@ -251,14 +251,14 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	//    void generateReport2() {
 	//        StringWriter buffer = new StringWriter();
 	//        PrintWriter writer = new PrintWriter(buffer);
 	//        for (Iterator i = commandsList2.iterator(); i.hasNext(); ) {
 	//            CCommandDSC cmd = (CCommandDSC)i.next();
-	//            writer.println("Stats for generic command: '" + cmd.getCommandAsString() + "' applicable for " + 
+	//            writer.println("Stats for generic command: '" + cmd.getCommandAsString() + "' applicable for " +
 	//                    Integer.toString(cmd.getNumberOfFiles()) + " files: ");
 	//            List filesList = cmd.getFilesList();
 	//            if (filesList != null) {
@@ -268,7 +268,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 	//            }
 	//        }
 	//        writer.close();
-	//            
+	//
 	//        TraceUtil.metricsTrace(buffer.toString());
 	//        TraceUtil.summaryTrace("Discovery summary", workingDirsN, commandsN, filesN);
 	//    }
@@ -279,7 +279,7 @@ public class GCCPerFileBOPConsoleParserUtility extends AbstractGCCBOPConsolePars
 	 * @return List of CCommandDSC
 	 */
 	public List<CCommandDSC> getCCommandDSCList() {
-		return new CopyOnWriteArrayList<CCommandDSC>(commandsList2);
+		return new CopyOnWriteArrayList<>(commandsList2);
 	}
 
 }

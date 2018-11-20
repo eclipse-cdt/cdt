@@ -13,20 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.text.rules.IToken;
-
 import org.eclipse.cdt.ui.IPropertyChangeParticipant;
 import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.text.rules.IToken;
 
 /**
  * An ITokenStore manages a set of tokens for a specified set of color property identifiers. Responsibilities include
  * <ul>
  * <li> Reacting to changes to preferences in a specified {@link IPreferenceStore}
  * <li> Managing whether further styles (bold, italic, strikethrough, underline) should be applied
- * <li> Coping with 
+ * <li> Coping with
  * </ul>
- * 
+ *
  * ITokenStore assumes style preferences are stored under the following names
  * <p>
  * Preference color key + {@link PreferenceConstants#EDITOR_BOLD_SUFFIX} are used

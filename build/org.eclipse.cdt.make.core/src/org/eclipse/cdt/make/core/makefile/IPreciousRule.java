@@ -17,7 +17,7 @@ package org.eclipse.cdt.make.core.makefile;
  * .PRECIOUS
  * Prerequisites of this special target shall not be removed if make recieves an
  * asynchronous events.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

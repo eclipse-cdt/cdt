@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,21 +22,21 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation indicating that given package, class, method, can be accessed on
- * any thread, except on the dispatch thread of given DsfExecutor. 
- * <br> This restriction is desirable if it is expected that the implementation 
- * behavior is to block the calling thread and execute a transaction using an 
+ * any thread, except on the dispatch thread of given DsfExecutor.
+ * <br> This restriction is desirable if it is expected that the implementation
+ * behavior is to block the calling thread and execute a transaction using an
  * executor.  In this situation, if the call is made on the executor's dispatch
  * thread, the execution would dead-lock.
- * <br> 
- * If declared on package or type, a field or method could still be declared 
+ * <br>
+ * If declared on package or type, a field or method could still be declared
  * with an annotation indicating that it's thread-safe.
  * <p>
- * Note: the runtime retention policy is there to allow automated testing 
+ * Note: the runtime retention policy is there to allow automated testing
  * and validation code.
- * 
- * @param value The value indicates the method to use to obtain the executor.  
- * It should be null if it cannot be determined from the given object. 
- * 
+ *
+ * @param value The value indicates the method to use to obtain the executor.
+ * It should be null if it cannot be determined from the given object.
+ *
  * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)

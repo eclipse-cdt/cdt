@@ -13,20 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools;
 
-import org.eclipse.jface.text.IAutoEditStrategy;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.ITextDoubleClickStrategy;
-
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.ICTokenScanner;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
+import org.eclipse.jface.text.IAutoEditStrategy;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
 
 /**
  * An IDocCommentViewerConfiguration aggregates a collection of editor tools that can be contributed to
- * the CDT editor. The tools will be active for CEditor partitions of type {@link ICPartitions#C_MULTI_LINE_DOC_COMMENT} or 
+ * the CDT editor. The tools will be active for CEditor partitions of type {@link ICPartitions#C_MULTI_LINE_DOC_COMMENT} or
  * {@link ICPartitions#C_SINGLE_LINE_DOC_COMMENT} when the {@link IDocCommentOwner} this instance originated from is active.
- * 
+ *
  * @see org.eclipse.jface.text.source.SourceViewerConfiguration (in analogy to)
  * @since 5.0
  */

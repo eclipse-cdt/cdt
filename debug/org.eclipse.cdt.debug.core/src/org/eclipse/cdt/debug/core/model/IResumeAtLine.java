@@ -24,14 +24,14 @@ public interface IResumeAtLine {
 
 	/**
 	 * Returns whether this operation is currently available for this file and line number.
-	 * 
+	 *
 	 * @return whether this operation is currently available
 	 */
 	public boolean canResumeAtLine(IFile file, int lineNumber);
 
 	/**
 	 * Causes this element to resume the execution at the specified line.
-	 * 
+	 *
 	 * @exception DebugException
 	 *                on failure. Reasons include:
 	 */
@@ -39,14 +39,14 @@ public interface IResumeAtLine {
 
 	/**
 	 * Returns whether this operation is currently available for this file and line number.
-	 * 
+	 *
 	 * @return whether this operation is currently available
 	 */
 	public boolean canResumeAtLine(String fileName, int lineNumber);
 
 	/**
 	 * Causes this element to resume the execution at the specified line.
-	 * 
+	 *
 	 * @exception DebugException on failure. Reasons include:
 	 */
 	public void resumeAtLine(String fileName, int lineNumber) throws DebugException;

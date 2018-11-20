@@ -78,10 +78,10 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	 * first one is canceled. We cancel the first one, remove it from this list,
 	 * schedule a new one, then add that to the list. It's safe to assume the
 	 * canceled one will complete before the new one.
-	 * 
-	 * <p> This collection must be accessed only from the UI thread 
+	 *
+	 * <p> This collection must be accessed only from the UI thread
 	 */
-	private Map<IPath, QuickParseJob> pathToJobMap = new HashMap<IPath, SourceFilesContentProvider.QuickParseJob>();
+	private Map<IPath, QuickParseJob> pathToJobMap = new HashMap<>();
 
 	/** those executables for which we asked the question and got a result.
 	 * NOTE: this contains a duplicate of into in Executable, because we can't
@@ -106,9 +106,9 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	}
 
 	/**
-	 * The cached file info. Key is the path of the executable. This collection must be accessed only on the UI thread. 
+	 * The cached file info. Key is the path of the executable. This collection must be accessed only on the UI thread.
 	 */
-	private Map<IPath, TUData> fetchedExecutables = new HashMap<IPath, TUData>();
+	private Map<IPath, TUData> fetchedExecutables = new HashMap<>();
 
 	private final SourceFilesViewer viewer;
 
@@ -255,7 +255,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 							// Executable.equals() is not a simple reference
 							// check. Two Executable objects are equal if they
 							// represent the same file on disk. I.e., our input
-							// object might not be one of the instances on the  
+							// object might not be one of the instances on the
 							// changed-list, but for sure the file on disk has
 							// changed. Now, the manager that called this
 							// listener has already told the Executable
@@ -385,10 +385,10 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	/**
 	 * Restarts a parse of the current input (Executable) if and only if its
 	 * last search was canceled. The viewer is refresh accordingly.
-	 * 
+	 *
 	 * <p>
 	 * Must be called on the UI thread
-	 * 
+	 *
 	 */
 	public void restartCanceledExecutableParse() {
 		assert Display.getCurrent() != null;
@@ -398,7 +398,7 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 			final Executable executable = (Executable) input;
 			final IPath exePath = executable.getPath();
 
-			// Ignore restart if there's an ongoing search. 
+			// Ignore restart if there's an ongoing search.
 			QuickParseJob job;
 			job = pathToJobMap.get(exePath);
 			if (job != null) {
@@ -457,8 +457,8 @@ public class SourceFilesContentProvider extends CElementContentProvider implemen
 	/**
 	 * Utility method to invoke a viewer refresh for the given element
 	 * @param input the Executable to show content for
-	 * 
-	 * <p> Must be called on the UI thread 
+	 *
+	 * <p> Must be called on the UI thread
 	 */
 	private void refreshViewer(Executable input) {
 		if (!viewer.getControl().isDisposed()) {

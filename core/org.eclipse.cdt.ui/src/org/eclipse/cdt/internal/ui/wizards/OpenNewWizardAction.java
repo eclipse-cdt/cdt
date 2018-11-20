@@ -56,7 +56,7 @@ public class OpenNewWizardAction extends AbstractOpenWizardAction {
 			String iconName = config.getAttribute(ATT_ICON);
 			if (iconName != null) {
 				URL pluginInstallUrl = Platform.getBundle(config.getDeclaringExtension().getContributor().getName())
-						.getEntry("/"); //$NON-NLS-1$			
+						.getEntry("/"); //$NON-NLS-1$
 				return ImageDescriptor.createFromURL(new URL(pluginInstallUrl, iconName));
 			}
 			return null;

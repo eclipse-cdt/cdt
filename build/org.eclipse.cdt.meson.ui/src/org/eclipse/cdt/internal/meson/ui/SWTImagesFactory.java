@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -74,7 +74,7 @@ public class SWTImagesFactory {
 
 	/**
 	 * Sets all available image descriptors for the given action.
-	 * 
+	 *
 	 * @param action
 	 *            - action
 	 * @param type

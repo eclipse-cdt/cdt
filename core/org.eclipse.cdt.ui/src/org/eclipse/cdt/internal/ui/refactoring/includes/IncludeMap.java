@@ -24,9 +24,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.eclipse.ui.IMemento;
-
 import org.eclipse.cdt.internal.corext.codemanipulation.IncludeInfo;
+import org.eclipse.ui.IMemento;
 
 /**
  * A set of header file substitution rules.
@@ -48,7 +47,7 @@ public class IncludeMap {
 	/**
 	 * @param keysAndValues an array of keys and values: [key1, value1, key2, value2, ...].
 	 *     Keys and values may be optionally surrounded by double quotes or angle brackets.
-	 *     Angle brackets indicate a system include.  
+	 *     Angle brackets indicate a system include.
 	 */
 	public IncludeMap(boolean unconditionalSubstitution, String[] keysAndValues) {
 		if (keysAndValues.length % 2 != 0)
@@ -69,7 +68,7 @@ public class IncludeMap {
 
 	/**
 	 * Indicates that header file {@code to} should be used instead of {@code from}.
-	 * 
+	 *
 	 * @param from The header file to be replaced.
 	 * @param to The header file to be used.
 	 */
@@ -86,7 +85,7 @@ public class IncludeMap {
 
 	/**
 	 * Indicates that header file {@code to} should be used instead of {@code from}.
-	
+
 	 * @param from The header file to be replaced. The header is represented by an include name
 	 *     optionally surrounded by double quotes or angle brackets. Angle brackets indicate
 	 *     a system include.
@@ -99,10 +98,10 @@ public class IncludeMap {
 
 	/**
 	 * Returns header files that should be used instead of the given one.
-	 * 
+	 *
 	 * @param from The header file to be replaced. A system header has to match exactly.
 	 *     A non-system header matches both, non-system and system headers.
-	 * @return The list of header files ordered by decreasing preference. 
+	 * @return The list of header files ordered by decreasing preference.
 	 */
 	public List<IncludeInfo> getMapping(IncludeInfo from) {
 		List<IncludeInfo> list = map.get(from);
@@ -139,10 +138,10 @@ public class IncludeMap {
 
 	/**
 	 * Returns header files that should be used instead of the given one.
-	 * 
+	 *
 	 * @param from The header file to be replaced. A system header has to match exactly.
 	 *     A non-system header matches both, non-system and system headers.
-	 * @return The list of header files ordered by decreasing preference. 
+	 * @return The list of header files ordered by decreasing preference.
 	 */
 	public List<IncludeInfo> getMapping(String from) {
 		return getMapping(new IncludeInfo(from));
@@ -174,7 +173,7 @@ public class IncludeMap {
 
 	public static IncludeMap fromMemento(boolean unconditionalSubstitution, IMemento memento) {
 		IncludeMap includeMap = new IncludeMap(unconditionalSubstitution);
-		Set<String> keys = unconditionalSubstitution ? new HashSet<String>() : Collections.<String>emptySet();
+		Set<String> keys = unconditionalSubstitution ? new HashSet<>() : Collections.<String>emptySet();
 		for (IMemento mapping : memento.getChildren(TAG_MAPPING)) {
 			String key = mapping.getString(TAG_KEY);
 			// There can be no more than one unconditional substitution for any header file.
@@ -224,7 +223,7 @@ public class IncludeMap {
 							IncludeInfo newTarget = newTargets.get(i);
 							if (!processed.contains(newTarget)) {
 								if (unconditionalSubstitution && newTarget.equals(source)) {
-									break queueLoop; // Leave the mapping empty. 
+									break queueLoop; // Leave the mapping empty.
 								}
 								queue.addFirst(newTarget);
 								added = true;

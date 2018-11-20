@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Exception_Reference, with prefix
  * Bug#50640 : Wrong completion kind when expecting an exception
  *

@@ -20,9 +20,9 @@ import org.eclipse.debug.core.commands.IRestartHandler;
 
 /**
  * Adapter factory for debug commands.
- * 
+ *
  * @see org.eclipse.debug.core.command
- * 
+ *
  * @since 7.0
  *
  */

@@ -50,7 +50,7 @@ public class MulticoreVisualizerCPU extends MulticoreVisualizerGraphicObject {
 	/** Constructor */
 	public MulticoreVisualizerCPU(int id) {
 		m_id = id;
-		m_cores = new ArrayList<MulticoreVisualizerCore>();
+		m_cores = new ArrayList<>();
 
 		// default load meter
 		m_loadMeter = new MulticoreVisualizerLoadMeter(null, null);

@@ -108,7 +108,7 @@ public class ResourceClassContributionItem extends ContributionItem {
 
 		// If we're invisible, we don't arrange for relayout to happen when the view becomes
 		// available, because it is not exactly trivial (we need to events on the right control)
-		// and it only matters when we start a new session and it has a different set of 
+		// and it only matters when we start a new session and it has a different set of
 		// resource classes and that requires longer combobox.
 		if (toolItem.getParent().isVisible())
 			toolItem.setWidth(width);

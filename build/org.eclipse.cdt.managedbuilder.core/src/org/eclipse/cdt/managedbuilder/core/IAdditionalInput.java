@@ -16,9 +16,9 @@ package org.eclipse.cdt.managedbuilder.core;
 /**
  * This interface represents an additionalInput instance in the managed build system.
  * This element is only present if the user or a tool integrator needs to define
- * additional inputs or dependencies to a tool.  An inputType element can have 
+ * additional inputs or dependencies to a tool.  An inputType element can have
  * multiple additionalInput children.
- * 
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -38,7 +38,7 @@ public interface IAdditionalInput {
 
 	/**
 	 * Returns the InputType parent of this AdditionalInput.
-	 * 
+	 *
 	 * @return IInputType
 	 */
 	public IInputType getParent();
@@ -46,22 +46,22 @@ public interface IAdditionalInput {
 	/**
 	 * Returns an array of the relative or absolute paths of the resources
 	 * to which this element applies.
-	 * The resources must be a member of the project, the output from another tool in the 
-	 * tool-chain, or an external file.  The file name of the path can use GNU Make pattern 
+	 * The resources must be a member of the project, the output from another tool in the
+	 * tool-chain, or an external file.  The file name of the path can use GNU Make pattern
 	 * rule syntax (in order to generate the name from the input file name).
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public String[] getPaths();
 
 	/**
-	 * Sets semicolon separated list of the relative or absolute paths of the resources to 
+	 * Sets semicolon separated list of the relative or absolute paths of the resources to
 	 * which this element applies.
 	 */
 	public void setPaths(String paths);
 
 	/**
-	 * Returns the kind of additional input.  The valid values are: 
+	 * Returns the kind of additional input.  The valid values are:
 	 *   KIND_ADDITIONAL_DEPENDENCY - added as a tool dependency, but not to the command line.
 	 *   KIND_ADDITIONAL_INPUT - added as an additional input to the command line, but not as a dependency.
 	 *   KIND_ADDITIONAL_INPUT_DEPENDENCY - added as both.
@@ -75,10 +75,10 @@ public interface IAdditionalInput {
 	public void setKind(int kind);
 
 	/**
-	 * Returns <code>true</code> if this element has changes that need to 
+	 * Returns <code>true</code> if this element has changes that need to
 	 * be saved in the project file, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isDirty();
 

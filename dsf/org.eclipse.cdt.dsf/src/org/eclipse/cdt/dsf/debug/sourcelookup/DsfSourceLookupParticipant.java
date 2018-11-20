@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -86,7 +86,7 @@ public class DsfSourceLookupParticipant extends AbstractSourceLookupParticipant 
 			if (results != null) {
 				return results.toArray();
 			} else {
-				results = new ArrayList<Object>();
+				results = new ArrayList<>();
 			}
 			ISourceContainer[] containers = getSourceContainers();
 			// if there is no containers, we can default to absolute path, since we should be able resolve file by absolute path
@@ -163,7 +163,7 @@ public class DsfSourceLookupParticipant extends AbstractSourceLookupParticipant 
 		try {
 			String result = query.get();
 			if ((result != null) && (result.length() == 0)) {
-				// interface javadoc says we should return null 
+				// interface javadoc says we should return null
 				result = null;
 			}
 			return result;

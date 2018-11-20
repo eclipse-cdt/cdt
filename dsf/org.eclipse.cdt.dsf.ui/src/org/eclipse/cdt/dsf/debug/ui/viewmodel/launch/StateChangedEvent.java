@@ -18,7 +18,7 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 
 /**
  * A generic UI state changed event.
- * 
+ *
  * @since 2.2
  */
 public class StateChangedEvent extends AbstractDMEvent<IDMContext> {

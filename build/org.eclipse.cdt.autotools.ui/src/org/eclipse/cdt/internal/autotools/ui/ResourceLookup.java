@@ -36,12 +36,12 @@ public class ResourceLookup {
 	}
 
 	/**
-	 * Searches for files with the given location suffix. 
-	 * 
-	 * At this point the method works for sources and headers (no other content types), only. 
-	 * This is done to use less memory and can be changed if necessary. 
+	 * Searches for files with the given location suffix.
+	 *
+	 * At this point the method works for sources and headers (no other content types), only.
+	 * This is done to use less memory and can be changed if necessary.
 	 * For linked resource files, the name of the link target is relevant.
-	 * 
+	 *
 	 * @param locationSuffix the suffix to match, always used as relative path.
 	 * @param projects the projects to search
 	 * @param ignoreCase whether or not to ignore case when comparing the suffix.
@@ -52,7 +52,7 @@ public class ResourceLookup {
 
 	/**
 	 * Uses a lookup-tree that finds resources for locations using the canonical representation
-	 * of the path. 
+	 * of the path.
 	 */
 	public static IFile[] findFilesForLocationURI(URI location) {
 		return lookupTree.findFilesForLocationURI(location);
@@ -60,7 +60,7 @@ public class ResourceLookup {
 
 	/**
 	 * Uses a lookup-tree that finds resources for locations using the canonical representation
-	 * of the path. The method does not work for files where the name (last segment) of the 
+	 * of the path. The method does not work for files where the name (last segment) of the
 	 * resources differs from the name of the location.
 	 */
 	public static IFile[] findFilesForLocation(IPath location) {
@@ -70,7 +70,7 @@ public class ResourceLookup {
 	/**
 	 * Uses {@link #findFilesForLocationURI(URI)} and selects the most relevant file
 	 * from the result. Files form the first project, from cdt-projects and those on source
-	 * roots are preferred, see {@link FileRelevance}. 
+	 * roots are preferred, see {@link FileRelevance}.
 	 * @param location an URI for the location of the files to search for.
 	 * @param preferredProject a project to be preferred over others, or <code>null</code>.
 	 * @return a file for the location in one of the given projects, or <code>null</code>.
@@ -83,7 +83,7 @@ public class ResourceLookup {
 	/**
 	 * Uses {@link #findFilesForLocation(IPath)} and selects the most relevant file
 	 * from the result. Files form the preferred project, from cdt-projects and those on source
-	 * roots are preferred, see {@link FileRelevance}. 
+	 * roots are preferred, see {@link FileRelevance}.
 	 * @param location a path for the location of the files to search for.
 	 * @param preferredProject a project to be preferred over others, or <code>null</code>.
 	 * @return a file for the location or <code>null</code>.
@@ -137,21 +137,21 @@ public class ResourceLookup {
 		});
 	}
 
-	/** 
+	/**
 	 * For testing, only.
 	 */
 	public static void dump() {
 		lookupTree.dump();
 	}
 
-	/** 
+	/**
 	 * For testing, only.
 	 */
 	public static void unrefNodeMap() {
 		lookupTree.unrefNodeMap();
 	}
 
-	/** 
+	/**
 	 * For testing, only.
 	 */
 	public static void simulateNodeMapCollection() {

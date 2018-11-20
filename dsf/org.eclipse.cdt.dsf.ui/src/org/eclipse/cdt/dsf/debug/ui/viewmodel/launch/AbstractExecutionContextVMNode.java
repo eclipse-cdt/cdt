@@ -39,39 +39,39 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 /**
  * This class is a base class of AbstractThreadVMNode and AbstractContainerVMNode.
  * It contains common functionality between these classes.
- * 
- * The main reason this class is introduced is to allow the debug view to 
- * show multiple levels of execution containers and properly handle the delta generation.  
- * 
- * In the longer term we would like to merge the classes AbstractContainerVMNode and 
- * AbstractThreadVMNode. That will make the implementation of both classes 
+ *
+ * The main reason this class is introduced is to allow the debug view to
+ * show multiple levels of execution containers and properly handle the delta generation.
+ *
+ * In the longer term we would like to merge the classes AbstractContainerVMNode and
+ * AbstractThreadVMNode. That will make the implementation of both classes
  * more generic and robust in the case of recursive containers.
- *  
- * Having this class as a base for both AbstractContainerVMNode and 
+ *
+ * Having this class as a base for both AbstractContainerVMNode and
  * AbstractThreadVMNode enables us to merge them in the future.
- * 
- * Originally DefaultVMModelProxyStrategy didn't accept recursive containers for 
+ *
+ * Originally DefaultVMModelProxyStrategy didn't accept recursive containers for
  * generating deltas, even though they are accepted and supported by
- * AbstractDMVMProvider for viewing. 
- * The approach I took to support recursive containers for delta generation is to have 
- * the VMNodes generate their deltas level by level, instead of one whole delta at once. 
- * That required changes in identifying which is the correct context for each of the events. 
+ * AbstractDMVMProvider for viewing.
+ * The approach I took to support recursive containers for delta generation is to have
+ * the VMNodes generate their deltas level by level, instead of one whole delta at once.
+ * That required changes in identifying which is the correct context for each of the events.
  *
  * See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=240208
- * 
+ *
  * @since 2.2
  * @experimental
  */
 public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	/**
-	 * List that keeps track of which events are considered leaf events for 
-	 * delta creation. 
+	 * List that keeps track of which events are considered leaf events for
+	 * delta creation.
 	 */
 	protected ArrayList<Class<?>> leafEventTypes = new ArrayList<>();
 
 	/**
-	 * List that keeps track of which events are considered container events for 
-	 * delta creation. 
+	 * List that keeps track of which events are considered container events for
+	 * delta creation.
 	 */
 	protected ArrayList<Class<?>> containerEventTypes = new ArrayList<>();
 
@@ -85,23 +85,23 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	 */
 	protected void addCommonEventTypes() {
 
-		// non container events. 
+		// non container events.
 		addEventType(ISuspendedDMEvent.class, false);
 		addEventType(IResumedDMEvent.class, false);
 		addEventType(FullStackRefreshEvent.class, false);
 		addEventType(SteppingTimedOutEvent.class, false);
 		addEventType(ExpandStackEvent.class, false);
 
-		// container events. 
+		// container events.
 		addEventType(IContainerSuspendedDMEvent.class, true);
 		addEventType(IContainerResumedDMEvent.class, true);
 	}
 
 	/**
 	 * When DSF debuggers define custom events for which the container and thread
-	 * nodes need to be updated, they need to register these events using this 
-	 * function, so the proper recursive deltas are created. 
-	 *  
+	 * nodes need to be updated, they need to register these events using this
+	 * function, so the proper recursive deltas are created.
+	 *
 	 * @param eventClass The event class to keep track of
 	 * @param containerEvent Is the event a container event or now
 	 */
@@ -114,10 +114,10 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	}
 
 	/**
-	 * If DSF debuggers override the behavior of AbstractThreadVMNode 
+	 * If DSF debuggers override the behavior of AbstractThreadVMNode
 	 * or AbstractContainerVMNode, some events may no longer be needed
-	 * and the derived VMNode can call this method to remove such events. 
-	 *  
+	 * and the derived VMNode can call this method to remove such events.
+	 *
 	 * @param eventClass The event class to remove
 	 * @param containerEvent Is the event a container event or now
 	 */
@@ -132,7 +132,7 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	/**
 	 * When we support recursive containers we want to make sure the immediate parent is returned only.
 	 *
-	 * @return true if the context is set by the method. 
+	 * @return true if the context is set by the method.
 	 */
 	protected boolean getContextsForRecursiveVMNode(VMDelta parentDelta, Object e,
 			DataRequestMonitor<IVMContext[]> rm) {
@@ -152,9 +152,9 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 
 	/**
 	 * Make sure we build the delta for the recursive containers one level at a time.
-	 * 
-	 * @param e - the event 
-	 * @return true if the delta is built by this method. 
+	 *
+	 * @param e - the event
+	 * @return true if the delta is built by this method.
 	 */
 	protected boolean buildDeltaForRecursiveVMNode(Object e, final VMDelta parentDelta, int nodeOffset,
 			RequestMonitor rm) {
@@ -173,8 +173,8 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	}
 
 	/**
-	 * When the deltas are generated one level at a time we need to distinguish  
-	 * between container and regular events to return the proper context for the event.    
+	 * When the deltas are generated one level at a time we need to distinguish
+	 * between container and regular events to return the proper context for the event.
 	 */
 	protected IExecutionDMContext getLeafContextForContainerEvent(Object event) {
 
@@ -200,8 +200,8 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	}
 
 	/**
-	 * When the deltas are generated one level at a time we need to distinguish  
-	 * between container and regular events to return the proper context for the event.    
+	 * When the deltas are generated one level at a time we need to distinguish
+	 * between container and regular events to return the proper context for the event.
 	 */
 	protected IExecutionDMContext getLeafContextForLeafEvent(Object event) {
 
@@ -221,7 +221,7 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	}
 
 	/**
-	 * Considers the parent delta when we construct the next level. 
+	 * Considers the parent delta when we construct the next level.
 	 */
 	protected void addOneLevelToDelta(IExecutionDMContext leafContext, VMDelta parentDelta,
 			RequestMonitor requestMonitor) {
@@ -231,7 +231,7 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 					IContainerDMContext.class);
 
 			// It is possible for a thread node to be an immediate child of a launch node
-			// with no container node in between.  
+			// with no container node in between.
 			if (topContainer != null) {
 				parentDelta.addNode(createVMContext(topContainer), 0, IModelDelta.NO_CHANGE);
 			}
@@ -252,8 +252,8 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	}
 
 	/**
-	 * Based on the event (container or not), set the proper context that is the immediate 
-	 * parent one level at a time. 
+	 * Based on the event (container or not), set the proper context that is the immediate
+	 * parent one level at a time.
 	 */
 	protected void setImmediateParentAsContexts(IExecutionDMContext leafContext, VMDelta parentDelta,
 			DataRequestMonitor<IVMContext[]> rm) {
@@ -290,7 +290,7 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	}
 
 	/**
-	 * Returns whether the event should be considered a container event or not. 
+	 * Returns whether the event should be considered a container event or not.
 	 */
 	protected boolean isExecutionContainerEvent(Object event) {
 		if (event != null) {
@@ -303,7 +303,7 @@ public abstract class AbstractExecutionContextVMNode extends AbstractDMVMNode {
 	}
 
 	/**
-	 * Returns whether the event should be use to generate deltas for each of the levels.  
+	 * Returns whether the event should be use to generate deltas for each of the levels.
 	 */
 	protected boolean isExecutionLeafEvent(Object event) {
 		if (event != null) {

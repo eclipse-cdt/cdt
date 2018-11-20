@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- *  
- * Contributors: 
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Marc-Andre Laperle (Ericsson)
@@ -34,7 +34,6 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTArrayDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.rewrite.TypeHelper;
 import org.eclipse.cdt.core.parser.Keywords;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTDeclarator;
 import org.eclipse.cdt.internal.core.dom.parser.c.CASTPointer;
@@ -55,7 +54,6 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTReturnStatement;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclSpecifier;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTSimpleDeclaration;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
-
 import org.eclipse.cdt.internal.ui.refactoring.gettersandsetters.AccessorDescriptor.AccessorKind;
 
 public abstract class AccessorFactory {
@@ -92,7 +90,7 @@ public abstract class AccessorFactory {
 
 	/**
 	 * Creates an accessor definition.
-	 * 
+	 *
 	 * @param declaratorName name to use for the declarator
 	 */
 	public abstract IASTFunctionDefinition createDefinition(IASTName declaratorName);
@@ -166,7 +164,7 @@ public abstract class AccessorFactory {
 				innermost = innermost.getNestedDeclarator();
 			}
 
-			// Create a new innermost function declarator based on the field declarator 
+			// Create a new innermost function declarator based on the field declarator
 			CPPASTFunctionDeclarator functionDeclarator = new CPPASTFunctionDeclarator();
 			functionDeclarator.setConst(true);
 			functionDeclarator.setName(declaratorName);

@@ -10,7 +10,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Marc Khouzam (Ericsson) - Must synchronized creation of breakpoint creation (Bug 444395) 
+ * Marc Khouzam (Ericsson) - Must synchronized creation of breakpoint creation (Bug 444395)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.breakpoints;
 
@@ -53,18 +53,18 @@ public abstract class CBreakpoint extends Breakpoint
 		implements ICBreakpoint2, ICBreakpointType, IDebugEventSetListener {
 
 	/**
-	 * Map of breakpoint extensions.  The keys to the map are debug model IDs 
+	 * Map of breakpoint extensions.  The keys to the map are debug model IDs
 	 * and values are arrays of breakpoint extensions.
-	 * 
-	 * This map is sorted to allow consistent iteration order so that extension 
+	 *
+	 * This map is sorted to allow consistent iteration order so that extension
 	 * message does not unexpectedly change order
 	 */
-	private SortedMap<String, ICBreakpointExtension[]> fExtensions = new TreeMap<String, ICBreakpointExtension[]>();
+	private SortedMap<String, ICBreakpointExtension[]> fExtensions = new TreeMap<>();
 
 	/**
 	 * The number of debug targets the breakpoint is installed in. We don't use
 	 * the INSTALL_COUNT attribute to manage this property (see bugzilla 218194)
-	 * 
+	 *
 	 */
 	private int fInstallCount = 0;
 
@@ -284,12 +284,12 @@ public abstract class CBreakpoint extends Breakpoint
 	}
 
 	/**
-	 * Reads platform extension registry for breakpoint extensions registered 
+	 * Reads platform extension registry for breakpoint extensions registered
 	 * for the given debug model.
-	 * @param debugModelId Requested debug model that the extensions were 
+	 * @param debugModelId Requested debug model that the extensions were
 	 * registerd for.
 	 * @return Breakpoint extensions.
-	 * @throws CoreException Throws exception in case the breakpoint marker 
+	 * @throws CoreException Throws exception in case the breakpoint marker
 	 * cannot be accessed.
 	 */
 	private ICBreakpointExtension[] getExtensionsForModelId(String debugModelId) throws CoreException {
@@ -303,7 +303,7 @@ public abstract class CBreakpoint extends Breakpoint
 					IMarker marker = ensureMarker();
 
 					// Read the extension registry and create applicable extensions.
-					List<ICBreakpointExtension> extensions = new ArrayList<ICBreakpointExtension>(4);
+					List<ICBreakpointExtension> extensions = new ArrayList<>(4);
 					IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(
 							CDebugCorePlugin.getUniqueIdentifier(),
 							CDebugCorePlugin.BREAKPOINT_EXTENSION_EXTENSION_POINT_ID);

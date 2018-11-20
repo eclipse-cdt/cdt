@@ -37,7 +37,7 @@ public class PerFileDiscoveredPathContainer extends DiscoveredPathContainer impl
 
 	@Override
 	public IPathEntry[] getPathEntries(IPath path, int mask) {
-		ArrayList<IPathEntry> entries = new ArrayList<IPathEntry>();
+		ArrayList<IPathEntry> entries = new ArrayList<>();
 		try {
 			IDiscoveredPathInfo info = MakeCorePlugin.getDefault().getDiscoveryManager().getDiscoveredInfo(fProject);
 			if (info instanceof IPerFileDiscoveredPathInfo) {

@@ -21,6 +21,18 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingWithOwnPreference;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
+import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
+import org.eclipse.cdt.internal.ui.text.util.CColorManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ColorSelector;
@@ -66,23 +78,9 @@ import org.eclipse.ui.texteditor.ChainedPreferenceStore;
 
 import com.ibm.icu.text.Collator;
 
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.ui.editor.CSourceViewer;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlighting;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingWithOwnPreference;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightings;
-import org.eclipse.cdt.internal.ui.text.SimpleCSourceViewerConfiguration;
-import org.eclipse.cdt.internal.ui.text.util.CColorManager;
-
 /**
  * Configures C/C++ Editor code coloring preferences.
- * 
+ *
  * @since 4.0
  */
 class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
@@ -362,7 +360,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	/**
 	 * Highlighting color list
 	 */
-	private final java.util.List<HighlightingColorListItem> fListModel = new ArrayList<HighlightingColorListItem>();
+	private final java.util.List<HighlightingColorListItem> fListModel = new ArrayList<>();
 	/**
 	 * Highlighting color list viewer
 	 */
@@ -416,7 +414,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	}
 
 	private OverlayPreferenceStore.OverlayKey[] createOverlayStoreKeys() {
-		List<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<OverlayPreferenceStore.OverlayKey>();
+		List<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_SEMANTIC_HIGHLIGHTING_ENABLED));
@@ -443,7 +441,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 
 	/**
 	 * Creates page for hover preferences.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
@@ -463,7 +461,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param chars
 	 *            the number of characters
 	 * @return the number of pixels
@@ -485,7 +483,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * <p>
 	 * Clients may call this framework method, but should not override it.
 	 * </p>
-	 * 
+	 *
 	 * @param chars
 	 *            the number of characters
 	 * @return the number of pixels
@@ -846,7 +844,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	private Control createPreviewer(Composite parent) {
 		IPreferenceStore generalTextStore = EditorsUI.getPreferenceStore();
 		// Task tags can have their own coloring, and to demonstrate this, the preview code
-		// contains a "TODO" task tag. In order for the comment scanner to recognize this 
+		// contains a "TODO" task tag. In order for the comment scanner to recognize this
 		// as a task tag and apply the coloring, "TODO" needs to be present under the
 		// TODO_TASK_TAGS preference key. Normally this is contained in the core preference
 		// store, but since the user can override the set of task tags, we provide a custom
@@ -923,7 +921,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 
 	/**
 	 * Returns the current highlighting color list item.
-	 * 
+	 *
 	 * @return the current highlighting color list item
 	 */
 	private HighlightingColorListItem getHighlightingColorListItem() {
@@ -941,7 +939,7 @@ class CEditorColoringConfigurationBlock extends AbstractConfigurationBlock {
 	 * This method must be called before any of the dialog unit based conversion
 	 * methods are called.
 	 * </p>
-	 * 
+	 *
 	 * @param testControl
 	 *            a control from which to obtain the current font
 	 */

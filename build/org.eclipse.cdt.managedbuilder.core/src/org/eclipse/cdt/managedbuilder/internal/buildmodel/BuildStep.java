@@ -59,13 +59,13 @@ public class BuildStep implements IBuildStep {
 	 * On Windows XP and above, the maximum command line length is 8191, on Linux it is at least 131072, but
 	 * that includes the environment. We want to limit the invocation of a single command to this number of
 	 * characters, and we want to ensure that the number isn't so low as to slow down operation.
-	 * 
+	 *
 	 * Doing each rm in its own command would be very slow, especially on Windows.
 	 */
 	private static final int MAX_CLEAN_LENGTH = 6000;
 
-	private List<BuildIOType> fInputTypes = new ArrayList<BuildIOType>();
-	private List<BuildIOType> fOutputTypes = new ArrayList<BuildIOType>();
+	private List<BuildIOType> fInputTypes = new ArrayList<>();
+	private List<BuildIOType> fOutputTypes = new ArrayList<>();
 	private ITool fTool;
 	private BuildGroup fBuildGroup;
 	private boolean fNeedsRebuild;
@@ -190,7 +190,7 @@ public class BuildStep implements IBuildStep {
 	public BuildIOType[] getPrimaryTypes(boolean input) {
 		List<BuildIOType> types = input ? fInputTypes : fOutputTypes;
 
-		List<BuildIOType> list = new ArrayList<BuildIOType>();
+		List<BuildIOType> list = new ArrayList<>();
 		for (BuildIOType arg : types) {
 			if (arg.isPrimary())
 				list.add(arg);
@@ -229,7 +229,7 @@ public class BuildStep implements IBuildStep {
 
 	public IBuildResource[] getResources(boolean input) {
 		List<BuildIOType> list = input ? fInputTypes : fOutputTypes;
-		Set<IBuildResource> set = new HashSet<IBuildResource>();
+		Set<IBuildResource> set = new HashSet<>();
 
 		for (BuildIOType arg : list) {
 			IBuildResource rcs[] = arg.getResources();
@@ -250,7 +250,7 @@ public class BuildStep implements IBuildStep {
 
 				String cleanCmd = fBuildDescription.getConfiguration().getCleanCommand();
 				if (cleanCmd != null && (cleanCmd = cleanCmd.trim()).length() > 0) {
-					List<IBuildCommand> list = new ArrayList<IBuildCommand>();
+					List<IBuildCommand> list = new ArrayList<>();
 					cleanCmd = resolveMacros(cleanCmd, resolveAll);
 					String commands[] = cleanCmd.split(";"); //$NON-NLS-1$
 					for (int i = 0; i < commands.length - 1; i++) {
@@ -309,7 +309,7 @@ public class BuildStep implements IBuildStep {
 					if (step != null && (step = step.trim()).length() > 0) {
 						String commands[] = step.split(";"); //$NON-NLS-1$
 
-						List<IBuildCommand> list = new ArrayList<IBuildCommand>();
+						List<IBuildCommand> list = new ArrayList<>();
 						for (int i = 0; i < commands.length; i++) {
 							IBuildCommand cmds[] = createCommandsFromString(commands[i], cwd, getEnvironment());
 							for (int j = 0; j < cmds.length; j++) {
@@ -427,7 +427,7 @@ public class BuildStep implements IBuildStep {
 		char expect = 0;
 		char prev = 0;
 		// int start = 0;
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < arr.length; i++) {
 			char ch = arr[i];
@@ -476,7 +476,7 @@ public class BuildStep implements IBuildStep {
 		BuildIOType[] types = getPrimaryTypes(input);
 		if (types.length == 0)
 			types = input ? (BuildIOType[]) getInputIOTypes() : (BuildIOType[]) getOutputIOTypes();
-		List<BuildResource> list = new ArrayList<BuildResource>();
+		List<BuildResource> list = new ArrayList<>();
 
 		for (int i = 0; i < types.length; i++) {
 			BuildResource[] rcs = (BuildResource[]) types[i].getResources();
@@ -490,7 +490,7 @@ public class BuildStep implements IBuildStep {
 	}
 
 	private String[] resourcesToStrings(IPath cwd, BuildResource rcs[], String prefixToRm) {
-		List<String> list = new ArrayList<String>(rcs.length);
+		List<String> list = new ArrayList<>(rcs.length);
 
 		for (int i = 0; i < rcs.length; i++) {
 			IPath path = BuildDescriptionManager.getRelPath(cwd, rcs[i].getLocation());

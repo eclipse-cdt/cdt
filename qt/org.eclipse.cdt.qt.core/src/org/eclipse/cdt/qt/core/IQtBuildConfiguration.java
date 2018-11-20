@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Qt specific build configuration settings.
- * 
+ *
  * @noimplement
  */
 public interface IQtBuildConfiguration extends ICBuildConfiguration {
@@ -34,6 +34,7 @@ public interface IQtBuildConfiguration extends ICBuildConfiguration {
 	@Deprecated
 	Path getProgramPath() throws CoreException;
 
+	@Override
 	String getLaunchMode();
 
 	IQtInstall getQtInstall();

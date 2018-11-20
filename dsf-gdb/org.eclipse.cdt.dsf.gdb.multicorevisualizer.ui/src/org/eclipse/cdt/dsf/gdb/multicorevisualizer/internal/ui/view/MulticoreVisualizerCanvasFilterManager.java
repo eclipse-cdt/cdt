@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.service.DsfSession.SessionEndedListener;
 
 /**
- * Manages the canvas filters for all current debug sessions.  
+ * Manages the canvas filters for all current debug sessions.
  */
 public class MulticoreVisualizerCanvasFilterManager implements SessionEndedListener {
 
@@ -36,7 +36,7 @@ public class MulticoreVisualizerCanvasFilterManager implements SessionEndedListe
 
 	/** Constructor */
 	public MulticoreVisualizerCanvasFilterManager(MulticoreVisualizerCanvas canvas) {
-		m_filterSessionMap = new Hashtable<String, MulticoreVisualizerCanvasFilter>();
+		m_filterSessionMap = new Hashtable<>();
 		m_canvas = canvas;
 		// add listener to be notified when a debug session ends
 		DsfSession.addSessionEndedListener(this);
@@ -60,7 +60,7 @@ public class MulticoreVisualizerCanvasFilterManager implements SessionEndedListe
 	}
 
 	/**
-	 * Returns the filter for a given debug session if it exists, or else 
+	 * Returns the filter for a given debug session if it exists, or else
 	 * creates a new filter for that session.
 	 */
 	public MulticoreVisualizerCanvasFilter getFilter(String sessionId) {

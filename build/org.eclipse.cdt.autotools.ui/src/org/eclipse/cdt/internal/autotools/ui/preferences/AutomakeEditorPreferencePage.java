@@ -66,7 +66,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 
 	/**
 	 * Item in the highlighting color list.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static class HighlightingColorListItem {
@@ -83,7 +83,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 
 		/**
 		 * Initialize the item with the given values.
-		 * 
+		 *
 		 * @param displayName the display name
 		 * @param colorKey the color preference key
 		 * @param boldKey the bold preference key
@@ -137,7 +137,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 
 	/**
 	 * Color list label provider.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static class ColorListLabelProvider extends LabelProvider implements IColorProvider {
@@ -160,7 +160,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 
 	/**
 	 * Color list content provider.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private static class ColorListContentProvider implements IStructuredContentProvider {
@@ -181,7 +181,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public AutomakeEditorPreferencePage() {
 		super();
@@ -191,11 +191,16 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 	protected OverlayPreferenceStore createOverlayStore() {
 		fSyntaxColorListModel = new String[][] {
 				{ AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_comment"), //$NON-NLS-1$
-						ColorManager.MAKE_COMMENT_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_macro_ref"), //$NON-NLS-1$
-						ColorManager.MAKE_MACRO_REF_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_macro_def"), //$NON-NLS-1$
-						ColorManager.MAKE_MACRO_DEF_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_function"), //$NON-NLS-1$
-						ColorManager.MAKE_FUNCTION_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_keyword"), //$NON-NLS-1$
-						ColorManager.MAKE_KEYWORD_COLOR, null }, { AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_default"), //$NON-NLS-1$
+						ColorManager.MAKE_COMMENT_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_macro_ref"), //$NON-NLS-1$
+						ColorManager.MAKE_MACRO_REF_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_macro_def"), //$NON-NLS-1$
+						ColorManager.MAKE_MACRO_DEF_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_function"), //$NON-NLS-1$
+						ColorManager.MAKE_FUNCTION_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_keyword"), //$NON-NLS-1$
+						ColorManager.MAKE_KEYWORD_COLOR, null },
+				{ AutotoolsPreferencesMessages.getString("AutomakeEditorPreferencePage.makefile_editor_default"), //$NON-NLS-1$
 						ColorManager.MAKE_DEFAULT_COLOR, null }, };
 		ArrayList<OverlayPreferenceStore.OverlayKey> overlayKeys = new ArrayList<>();
 
@@ -412,7 +417,7 @@ public class AutomakeEditorPreferencePage extends AbstractEditorPreferencePage {
 
 	/**
 	 * Returns the current highlighting color list item.
-	 * 
+	 *
 	 * @return the current highlighting color list item
 	 * @since 3.0
 	 */

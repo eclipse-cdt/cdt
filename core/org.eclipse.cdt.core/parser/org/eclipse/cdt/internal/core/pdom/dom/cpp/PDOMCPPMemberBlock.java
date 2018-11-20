@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.CoreException;
 public class PDOMCPPMemberBlock {
 	/*
 	 * The MAX_MEMBER_COUNT was chosen empirically by comparing PDOM file sizes of a real-life
-	 * project. Six members per block resulted in the most compact PDOM.  
+	 * project. Six members per block resulted in the most compact PDOM.
 	 */
 	private static final int MAX_MEMBER_COUNT = 6;
 	private static final int VISIBILITY_BITS = 2;

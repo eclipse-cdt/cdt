@@ -14,17 +14,17 @@
 
 package org.eclipse.cdt.core.model.tests;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.ICModelStatusConstants;
 import org.eclipse.cdt.internal.core.model.CModelStatus;
 import org.eclipse.core.runtime.CoreException;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 /**
  * CModelExceptionTest
- * 
+ *
  * @author Judy N. Green
  * @since Jul 19, 2002
  */
@@ -45,8 +45,8 @@ public class CModelExceptionTest extends TestCase {
 	 * Sets up the test fixture.
 	 *
 	 * Called before every test case method.
-	 * 
-	 * Example code test the packages in the project 
+	 *
+	 * Example code test the packages in the project
 	 *  "com.qnx.tools.ide.cdt.core"
 	 */
 	@Override

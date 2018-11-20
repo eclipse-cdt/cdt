@@ -356,7 +356,7 @@ public class CElementDelta implements ICElementDelta {
 		if (parent == null) {
 			return null;
 		}
-		ArrayList<ICElement> parents = new ArrayList<ICElement>();
+		ArrayList<ICElement> parents = new ArrayList<>();
 		while (!parent.equals(fChangedElement)) {
 			parents.add(parent);
 			parent = parent.getParent();
@@ -384,7 +384,7 @@ public class CElementDelta implements ICElementDelta {
 		if (length == 0) {
 			return new ICElementDelta[] {};
 		}
-		ArrayList<ICElementDelta> children = new ArrayList<ICElementDelta>(length);
+		ArrayList<ICElementDelta> children = new ArrayList<>(length);
 		for (int i = 0; i < length; i++) {
 			if (fAffectedChildren[i].getKind() == type) {
 				children.add(fAffectedChildren[i]);

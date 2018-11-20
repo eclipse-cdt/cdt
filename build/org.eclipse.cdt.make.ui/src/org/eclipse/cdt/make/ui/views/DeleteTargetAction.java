@@ -84,7 +84,7 @@ public class DeleteTargetAction extends SelectionListenerAction {
 			for (Object target : getSelectedElements()) {
 				if (target instanceof IMakeTarget) {
 					manager.removeTarget((IMakeTarget) target);
-					// if necessary remove last target property 
+					// if necessary remove last target property
 					String lastTargetName = null;
 					IContainer container = ((IMakeTarget) target).getContainer();
 					try {

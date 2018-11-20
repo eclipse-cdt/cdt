@@ -17,7 +17,7 @@ package org.eclipse.cdt.core.dom.ast.cpp;
 /**
  * This interface represents a class template partial specialization.  A partial specialization is
  * a class template in its own right.
- * 
+ *
  * E.g.:
  * template <class T> class A {};     // the primary class template
  * template <class T> class A<T*> {}; // a partial specialization of the primary class template

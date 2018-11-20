@@ -39,7 +39,7 @@ public final class StringSetSerializer {
 
 	public static Set<String> deserialize(String serialized) {
 		Assert.isLegal(serialized != null);
-		Set<String> marked = new HashSet<String>();
+		Set<String> marked = new HashSet<>();
 		StringTokenizer tok = new StringTokenizer(serialized, DELIM);
 		while (tok.hasMoreTokens())
 			marked.add(tok.nextToken());
@@ -49,7 +49,7 @@ public final class StringSetSerializer {
 	public static String[] getDifference(String oldValue, String newValue) {
 		Set<String> oldSet = deserialize(oldValue);
 		Set<String> newSet = deserialize(newValue);
-		Set<String> intersection = new HashSet<String>(oldSet);
+		Set<String> intersection = new HashSet<>(oldSet);
 		intersection.retainAll(newSet);
 		oldSet.removeAll(intersection);
 		newSet.removeAll(intersection);

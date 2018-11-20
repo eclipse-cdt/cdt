@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.console.IOConsolePage;
 /**
  * Page used for a basic GDB console.  Each Debug session which uses the basic GDB console will
  * use its own instance of this page.  The basic console is used for older GDB versions.
- * 
+ *
  * Contributions to this page's context menu can be done using id "GdbBasicCliConsole.#ContextMenu".
  * For example, using the extension point:<br>
  * <code>
@@ -92,7 +92,7 @@ public class GdbBasicCliConsolePage extends IOConsolePage implements IDebugConte
 
 	/**
 	 * Returns the launch to which the current selection belongs.
-	 * 
+	 *
 	 * @return the launch to which the current selection belongs.
 	 */
 	protected ILaunch getCurrentLaunch() {

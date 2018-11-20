@@ -16,14 +16,6 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICElement;
@@ -39,6 +31,13 @@ import org.eclipse.cdt.core.model.IPathEntryContainer;
 import org.eclipse.cdt.core.model.IPathEntryContainerExtension;
 import org.eclipse.cdt.core.model.ISourceEntry;
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 
 public class CPElement {
 	public static final String SOURCEATTACHMENT = "sourcepath"; //$NON-NLS-1$
@@ -60,7 +59,7 @@ public class CPElement {
 	private final IPath fPath;
 	private final ICProject fCProject;
 	private final IResource fResource;
-	private final ArrayList<Object> fChildren = new ArrayList<Object>(1);
+	private final ArrayList<Object> fChildren = new ArrayList<>(1);
 
 	private boolean fIsExported;
 
@@ -389,7 +388,7 @@ public class CPElement {
 
 	/**
 	 * Gets the path entry path.
-	 * 
+	 *
 	 * @see IPathEntry#getPath()
 	 */
 	public IPath getPath() {
@@ -398,7 +397,7 @@ public class CPElement {
 
 	/**
 	 * Gets the classpath entry kind.
-	 * 
+	 *
 	 * @see IPathEntry#getEntryKind()
 	 */
 	public int getEntryKind() {
@@ -491,7 +490,7 @@ public class CPElement {
 		//				return new Object[] { findAttributeElement(SOURCEATTACHMENT) };
 
 		case IPathEntry.CDT_CONTAINER: {
-			List<Object> list = new ArrayList<Object>();
+			List<Object> list = new ArrayList<>();
 			for (int i = 0; i < fChildren.size(); i++) {
 				Object curr = fChildren.get(i);
 				if (curr instanceof CPElementGroup) {
@@ -585,7 +584,7 @@ public class CPElement {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -595,7 +594,7 @@ public class CPElement {
 
 	/**
 	 * Returns if a entry is missing.
-	 * 
+	 *
 	 * @return Returns a boolean
 	 */
 	public IStatus getStatus() {
@@ -736,7 +735,7 @@ public class CPElement {
 
 	/**
 	 * Returns if a entry is exported (only applies to libraries)
-	 * 
+	 *
 	 * @return Returns a boolean
 	 */
 	public boolean isExported() {
@@ -760,7 +759,7 @@ public class CPElement {
 
 	/**
 	 * Gets the project.
-	 * 
+	 *
 	 * @return Returns a ICProject
 	 */
 	public ICProject getCProject() {

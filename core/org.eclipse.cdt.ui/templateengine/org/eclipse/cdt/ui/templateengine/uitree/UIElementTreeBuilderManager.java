@@ -15,11 +15,10 @@ package org.eclipse.cdt.ui.templateengine.uitree;
 
 import java.util.List;
 
-import org.w3c.dom.Element;
-
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
 import org.eclipse.cdt.ui.templateengine.SimpleElementException;
+import org.w3c.dom.Element;
 
 /**
  *

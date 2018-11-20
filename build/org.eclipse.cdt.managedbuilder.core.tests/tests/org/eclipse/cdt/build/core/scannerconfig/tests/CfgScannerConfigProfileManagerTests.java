@@ -7,16 +7,13 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.build.core.scannerconfig.tests;
 
 import java.util.Map;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.build.core.scannerconfig.CfgInfoContext;
 import org.eclipse.cdt.build.core.scannerconfig.ICfgScannerConfigBuilderInfo2Set;
@@ -34,6 +31,9 @@ import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 	IProject fProject;
@@ -59,7 +59,7 @@ public class CfgScannerConfigProfileManagerTests extends BaseTestCase {
 
 	/**
 	 * Basic testing of Config based ScannerConfigProfile management.
-	 * 
+	 *
 	 * This test runs through some of the funcationality used by the DiscoveryTab
 	 * @throws CoreException
 	 */

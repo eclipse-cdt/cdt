@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class OptionalMessageDialog extends MessageDialog {
 	// String constants for widgets
-	private static final String CHECKBOX_TEXT = MakeUIMessages.getResourceString("OptionalMessageDialog_dontShowAgain"); //$NON-NLS-1$  
+	private static final String CHECKBOX_TEXT = MakeUIMessages.getResourceString("OptionalMessageDialog_dontShowAgain"); //$NON-NLS-1$
 
 	// Dialog store id constants
 	private static final String STORE_ID = "OptionalMessageDialog.hide."; //$NON-NLS-1$
@@ -93,7 +93,7 @@ public class OptionalMessageDialog extends MessageDialog {
 
 	/**
 	 * Returns this dialog
-	 * 
+	 *
 	 * @return the settings to be used
 	 */
 	private static IDialogSettings getDialogSettings() {

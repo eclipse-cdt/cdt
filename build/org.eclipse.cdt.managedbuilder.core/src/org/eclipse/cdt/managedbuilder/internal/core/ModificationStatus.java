@@ -25,9 +25,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 public class ModificationStatus extends Status implements IModificationStatus {
-	private HashMap<String, String> fUnsupportedProperties = new HashMap<String, String>();
-	private HashMap<String, String> fUnsupportedRequiredProperties = new HashMap<String, String>();
-	private HashSet<String> fUndefinedProperties = new HashSet<String>();
+	private HashMap<String, String> fUnsupportedProperties = new HashMap<>();
+	private HashMap<String, String> fUnsupportedRequiredProperties = new HashMap<>();
+	private HashSet<String> fUndefinedProperties = new HashSet<>();
 	private ITool[][] fToolConflicts;
 	private ITool[] fNonManagedBuildTools;
 

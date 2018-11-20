@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -60,9 +60,9 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
- * The breakpoint provider is used to populate the contents of the breakpoints 
+ * The breakpoint provider is used to populate the contents of the breakpoints
  * view.
- * 
+ *
  * @since 2.1
  */
 public class BreakpointVMProvider extends AbstractVMProvider {
@@ -115,7 +115,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 				@SuppressWarnings({ "cast", "unchecked" })
 				@Override
 				protected void handleSuccess() {
-					Map<IAdaptable, List<IBreakpoint>> bpsLists = new HashMap<IAdaptable, List<IBreakpoint>>();
+					Map<IAdaptable, List<IBreakpoint>> bpsLists = new HashMap<>();
 					for (IBreakpoint bp : getData()) {
 						IAdaptable[] bpCategories = fOrganizerVMNode.getOrganizer().getCategories(bp);
 						if (bpCategories == null || bpCategories.length == 0) {
@@ -125,7 +125,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 						for (IAdaptable category : bpCategories) {
 							List<IBreakpoint> categoryBPs = bpsLists.get(category);
 							if (categoryBPs == null) {
-								categoryBPs = new ArrayList<IBreakpoint>();
+								categoryBPs = new ArrayList<>();
 								bpsLists.put(category, categoryBPs);
 							}
 							categoryBPs.add(bp);
@@ -138,13 +138,13 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 						if (independentCategories != null) {
 							for (IAdaptable category : independentCategories) {
 								if (!bpsLists.containsKey(category)) {
-									bpsLists.put(category, (List<IBreakpoint>) Collections.EMPTY_LIST);
+									bpsLists.put(category, Collections.EMPTY_LIST);
 								}
 							}
 						}
 					}
 
-					List<BreakpointOrganizerVMContext> vmcs = new ArrayList<BreakpointOrganizerVMContext>(
+					List<BreakpointOrganizerVMContext> vmcs = new ArrayList<>(
 							bpsLists.size());
 					for (Map.Entry<IAdaptable, List<IBreakpoint>> entry : bpsLists.entrySet()) {
 						List<IBreakpoint> bpsList = entry.getValue();
@@ -163,9 +163,9 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 				}
 			});
 		}
-	};
+	}
 
-	private final Map<TreePath, ContainerBreakpointsCache> fContainerBreakpointsCacheMap = new HashMap<TreePath, ContainerBreakpointsCache>();
+	private final Map<TreePath, ContainerBreakpointsCache> fContainerBreakpointsCacheMap = new HashMap<>();
 
 	private DataCache<IBreakpoint[]> fFilteredBreakpointsCache = new DataCache<IBreakpoint[]>(getExecutor()) {
 		@Override
@@ -178,7 +178,7 @@ public class BreakpointVMProvider extends AbstractVMProvider {
 		super(adapter, context);
 
 		// Create the top level node which provides the anchor starting point.
-		// This node is referenced by the BreakpointVMInput element so it 
+		// This node is referenced by the BreakpointVMInput element so it
 		// should not change when the view layout is updated.
 		setRootNode(new RootDMVMNode(this));
 		// Configure the rest of the layout nodes.

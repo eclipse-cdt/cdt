@@ -20,9 +20,9 @@ public class VersionComparator {
 	 * Compare two version numbers if
 	 * return -1 if v1 is older than v2 0 if they are the same and +1
 	 * if v1 is newer than v2
-	 * 
+	 *
 	 * Version numbers are expected to be in the format x.y.z...
-	 * 
+	 *
 	 * So:
 	 * 	VersionComparator.compare("1.0", "1.2") return -1
 	 *  VersionComparator.compare("1.5", "1.2") returns 1

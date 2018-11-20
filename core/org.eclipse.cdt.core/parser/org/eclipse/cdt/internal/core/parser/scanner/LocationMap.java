@@ -157,7 +157,7 @@ public class LocationMap implements ILocationResolver {
 	}
 
 	/**
-	 * Creates a name representing an implicit macro expansion. The returned name can be fed into 
+	 * Creates a name representing an implicit macro expansion. The returned name can be fed into
 	 * {@link #pushMacroExpansion(int, int, int, int, IMacroBinding, IASTName[], ImageLocationInfo[])}
 	 * @param macro the macro that has been expanded
 	 * @param imageLocationInfo the image-location for the name of the macro.
@@ -168,7 +168,7 @@ public class LocationMap implements ILocationResolver {
 	}
 
 	/**
-	 * Creates a name representing a macro in a defined-expression. The returned name can be fed into 
+	 * Creates a name representing a macro in a defined-expression. The returned name can be fed into
 	 * {@link #encounterPoundIf(int, int, int, int, boolean, IASTName[])}.
 	 */
 	public IASTName encounterDefinedExpression(IMacroBinding macro, int startOffset, int endOffset) {
@@ -474,7 +474,7 @@ public class LocationMap implements ILocationResolver {
 	}
 
 	/**
-	 * Returns the sequence number corresponding to the offset in the current context. 
+	 * Returns the sequence number corresponding to the offset in the current context.
 	 * <p>
 	 * You must insert all child contexts before the given offset before conversion.
 	 */

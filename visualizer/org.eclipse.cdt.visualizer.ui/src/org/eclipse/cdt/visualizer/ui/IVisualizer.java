@@ -28,14 +28,14 @@ import org.eclipse.swt.widgets.Control;
 
 /**
  * CDT Visualizer interface.
- * 
+ *
  * An IVisualizer encapsulates a specific graphic presentation of the
  * currently selected object (launch, target, etc.).
- * 
+ *
  * It knows how to create a Control to draw on, which is displayed by
  * the Visualizer Viewer, and also knows how to draw its presentation on
  * that control.
- * 
+ *
  * A visualizer can be generic (e.g. knows how to draw any kind of
  * launch) or specific (e.g. specialized for a particular type of
  * launch or execution target). The viewer automatically chooses
@@ -129,12 +129,12 @@ public interface IVisualizer extends ISelectionProvider {
 	/**
 	 * Tests whether if the IVisualizer can display the selection
 	 * (or something reachable from it).
-	 *  
+	 *
 	 * Returns a positive "weight" if true, and zero otherwise.
 	 * If multiple visualizers can handle a given selection,
 	 * the one reporting the highest weight value "wins".
 	 * In case of ties, an arbitrary visualizer is selected.
-	 * 
+	 *
 	 * The weight should reflect the specificity of the visualizer;
 	 * in other words, a "default" visualization for a given selection
 	 * should have a low weight, and a special case should have
@@ -151,15 +151,19 @@ public interface IVisualizer extends ISelectionProvider {
 	// --- selection changed event handling ---
 
 	/** Adds external listener for selection change events. */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener);
 
 	/** Removes external listener for selection change events. */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener);
 
 	/** Gets current externally-visible selection. */
+	@Override
 	public ISelection getSelection();
 
 	/** Sets current externally-visible selection. */
+	@Override
 	public void setSelection(ISelection selection);
 
 }

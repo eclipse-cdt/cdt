@@ -17,7 +17,7 @@ import org.eclipse.cdt.debug.ui.ICDebugUIConstants;
 
 /**
  * Constants defining the keys to be used for accessing preferences inside the debug ui plugin's preference bundle.
- * In descriptions (of the keys) below describe the preference stored at the given key. 
+ * In descriptions (of the keys) below describe the preference stored at the given key.
  * The type indicates type of the stored preferences
  * The preference store is loaded by the plugin (CDebugUIPlugin).
  * @see CDebugUIPlugin.initializeDefaultPreferences(IPreferenceStore) - for initialization of the store

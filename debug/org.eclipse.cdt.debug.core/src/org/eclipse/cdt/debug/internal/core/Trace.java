@@ -27,16 +27,16 @@ import org.osgi.util.tracker.ServiceTracker;
  * utility for troubleshooting race condition bugs. Each trace statement
  * contains the thread and the time (in millisecond granularity). The trace goes
  * to the file: {workspace}/.metadata/trace.log
- * 
+ *
  * <p>
  * For performance reasons, trace statements should explicitly check a trace
  * flag before calling into a DebugTrace method. E.g.,
- * 
+ *
  * <p>
  * <code>
  * if (Trace.DEBUG_EXECUTABLES) DebugTrace.getTrace.trace(null, ...);
  * </code>
- * 
+ *
  * <p>
  * The alternative is to have DebugTrace check the debug option for you (i.e.,
  * don't pass null for first param), but this incurs a relatively heavy price
@@ -44,12 +44,12 @@ import org.osgi.util.tracker.ServiceTracker;
  * asking DebugTrace to do the check is that is that it supports trace options
  * changing during the workbench lifetime. However that's an unlikely and
  * esoteric scenario.
- * 
+ *
  * <p>
  * This class is also a central location for trace flags. They are public static
  * fields, so checking them in trace statements is very efficient. They are set
  * at plugin startup.
- * 
+ *
  * <p>
  * DebugTrace objects are particular to a plugin. Plugins can reuse most of this
  * class definition. However, since it's all based on static methods and fields,
@@ -116,7 +116,7 @@ public class Trace {
 	/**
 	 * Gets the singleton trace object, or a null trace object if a real one
 	 * isn't available
-	 * 
+	 *
 	 * @return trace object; never null
 	 */
 	synchronized public static DebugTrace getTrace() {
@@ -127,7 +127,7 @@ public class Trace {
 				if (bundle != null) {
 					BundleContext context = bundle.getBundleContext();
 					if (context != null) {
-						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<DebugOptions, DebugOptions>(
+						ServiceTracker<DebugOptions, DebugOptions> tracker = new ServiceTracker<>(
 								context, DebugOptions.class.getName(), null);
 						try {
 							tracker.open();

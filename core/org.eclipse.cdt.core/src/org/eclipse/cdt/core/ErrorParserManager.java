@@ -170,8 +170,8 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 			String[] parsersIDs) {
 		fProject = project;
 		fMarkerGenerator = markerGenerator;
-		fDirectoryStack = new Vector<URI>();
-		fErrors = new ArrayList<ProblemMarkerInfo>();
+		fDirectoryStack = new Vector<>();
+		fErrors = new ArrayList<>();
 		enableErrorParsers(parsersIDs);
 
 		if (baseDirectoryURI != null) {
@@ -187,7 +187,7 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 		if (parserIDs == null) {
 			parserIDs = ErrorParserExtensionManager.getDefaultErrorParserIds();
 		}
-		fErrorParsers = new LinkedHashMap<String, IErrorParser[]>(parserIDs.length);
+		fErrorParsers = new LinkedHashMap<>(parserIDs.length);
 		for (String parsersID : parserIDs) {
 			IErrorParser errorParser = getErrorParserCopy(parsersID);
 			if (errorParser != null) {
@@ -930,7 +930,7 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	/**
 	 * Flag the marker generator to defer the de-duplication of error markers
 	 * until {@link #deDuplicate()} is called
-	 * 
+	 *
 	 * @since 6.3
 	 */
 	public void deferDeDuplication() {
@@ -942,7 +942,7 @@ public class ErrorParserManager extends OutputStream implements IConsoleParser, 
 	/**
 	 * De-duplicate error markers on resource that have had error markers added
 	 * since {@link #deferDeDuplication()} was called.
-	 * 
+	 *
 	 * @since 6.3
 	 */
 	public void deDuplicate() {

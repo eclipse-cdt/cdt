@@ -14,15 +14,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.codan.core.cfg.ControlFlowGraphTest;
 import org.eclipse.cdt.codan.core.cxx.CxxAstUtilsTest;
 import org.eclipse.cdt.codan.core.param.BasicProblemPreferenceTest;
 import org.eclipse.cdt.codan.core.param.ListProblemPreferenceTest;
 import org.eclipse.cdt.codan.core.param.MapProblemPreferenceTest;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class CodanFastTestSuite extends TestSuite {
 	public CodanFastTestSuite() {

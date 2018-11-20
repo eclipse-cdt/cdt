@@ -89,7 +89,7 @@ public class ComboDialogField extends DialogField {
 		return true;
 	}
 
-	// ------- ui creation			
+	// ------- ui creation
 
 	/**
 	 * Creates or returns the created combo control.
@@ -162,7 +162,7 @@ public class ComboDialogField extends DialogField {
 		}
 	}
 
-	// ------ text access 
+	// ------ text access
 
 	/**
 	 * Gets the combo items.

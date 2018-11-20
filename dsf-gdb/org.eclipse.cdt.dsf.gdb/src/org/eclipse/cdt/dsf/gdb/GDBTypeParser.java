@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial implementation
  *     Anders Dahlberg (Ericsson)  - Need additional API to extend support for memory spaces (Bug 431627)
@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * GDB Type Parser (duplicate of org.eclipse.cdt.debug.mi.core.GDBTypeParser)
  * The code was lifted from: The C Programming Language
  * B. W. Kernighan and D. Ritchie
- * 
+ *
  * @since 3.0
  */
 public class GDBTypeParser {
@@ -35,7 +35,7 @@ public class GDBTypeParser {
 	//             direct-dcl '(' ')'
 	//             direct-dcl '[' integer ']'
 	// name: ([a-zA-z][0-9])+
-	// integer ([0-9)+ 
+	// integer ([0-9)+
 
 	private static final int EOF = -1;
 	private static final int NAME = 0;

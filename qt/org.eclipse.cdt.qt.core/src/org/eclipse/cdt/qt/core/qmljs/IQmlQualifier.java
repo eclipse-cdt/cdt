@@ -17,7 +17,7 @@ public interface IQmlQualifier extends IQmlASTNode {
 	@Override
 	default public String getType() {
 		return "QMLQualifier"; //$NON-NLS-1$
-	};
+	}
 
 	public IJSIdentifier getIdentifier();
 }

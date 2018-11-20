@@ -57,7 +57,7 @@ public class QtPDOMNameIndex {
 		if (finder.headRec == 0)
 			return Collections.emptyList();
 
-		List<PDOMName> names = new ArrayList<PDOMName>();
+		List<PDOMName> names = new ArrayList<>();
 		for (long node = db.getRecPtr(finder.headRec); node != 0; node = db.getRecPtr(node + Database.PTR_SIZE))
 			names.add(new PDOMName(qtLinkage, db.getRecPtr(node)));
 		return names;

@@ -16,20 +16,18 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.ui.IEditorInput;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IProblemRequestor;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.IWorkingCopyManagerExtension;
-
 import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.IWorkingCopyManagerExtension;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.ui.IEditorInput;
 
 /**
  * This working copy manager works together with a given compilation unit document provider and
@@ -44,7 +42,7 @@ public class WorkingCopyManager implements IWorkingCopyManager, IWorkingCopyMana
 	/**
 	 * Creates a new working copy manager that co-operates with the given
 	 * compilation unit document provider.
-	 * 
+	 *
 	 * @param provider the provider
 	 */
 	public WorkingCopyManager(CDocumentProvider provider) {

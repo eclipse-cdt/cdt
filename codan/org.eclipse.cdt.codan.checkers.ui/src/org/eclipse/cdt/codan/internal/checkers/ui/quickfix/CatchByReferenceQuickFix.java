@@ -69,7 +69,7 @@ public class CatchByReferenceQuickFix extends AbstractAstRewriteQuickFix {
 	 * <p>
 	 * Subclasses can override this method to provide custom behavior.
 	 * </p>
-	 * 
+	 *
 	 * @param declaration The original declaration
 	 * @return A, possibly empty, {@link Optional} containing the new
 	 *         IASTDeclSpecifier

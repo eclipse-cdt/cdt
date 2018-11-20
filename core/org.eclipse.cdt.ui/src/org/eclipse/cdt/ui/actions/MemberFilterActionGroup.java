@@ -32,6 +32,13 @@ package org.eclipse.cdt.ui.actions;
  */
 import java.util.ArrayList;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.actions.ActionMessages;
+import org.eclipse.cdt.internal.ui.viewsupport.MemberFilter;
+import org.eclipse.cdt.internal.ui.viewsupport.MemberFilterAction;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -41,15 +48,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.actions.ActionGroup;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.actions.ActionMessages;
-import org.eclipse.cdt.internal.ui.viewsupport.MemberFilter;
-import org.eclipse.cdt.internal.ui.viewsupport.MemberFilterAction;
 
 public class MemberFilterActionGroup extends ActionGroup {
 	public static final int FILTER_NONPUBLIC = MemberFilter.FILTER_NONPUBLIC;
@@ -186,7 +184,7 @@ public class MemberFilterActionGroup extends ActionGroup {
 		fFilter = new MemberFilter();
 
 		String title, helpContext;
-		ArrayList<MemberFilterAction> actions = new ArrayList<MemberFilterAction>(4);
+		ArrayList<MemberFilterAction> actions = new ArrayList<>(4);
 
 		// fields
 		int filterProperty = FILTER_FIELDS;

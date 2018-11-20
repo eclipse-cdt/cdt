@@ -20,6 +20,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.ICDescriptor;
+import org.eclipse.cdt.core.ICDescriptorOperation;
+import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -36,22 +50,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.ICDescriptor;
-import org.eclipse.cdt.core.ICDescriptorOperation;
-import org.eclipse.cdt.core.settings.model.ICConfigExtensionReference;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.CheckedListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 /**
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
@@ -164,7 +162,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 				CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
-			configMap = new HashMap<String, BinaryParserConfiguration>(exts.length);
+			configMap = new HashMap<>(exts.length);
 			for (IExtension ext : exts) {
 				if (isExtensionVisible(ext)) {
 					configMap.put(ext.getUniqueIdentifier(), new BinaryParserConfiguration(ext));
@@ -232,7 +230,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 		}
 		monitor.beginTask(CUIMessages.BinaryParserBlock_settingBinaryParser, 2);
 		List<BinaryParserConfiguration> parsers = binaryList.getElements();
-		final List<BinaryParserConfiguration> selected = new ArrayList<BinaryParserConfiguration>(); // must do this to get proper order.
+		final List<BinaryParserConfiguration> selected = new ArrayList<>(); // must do this to get proper order.
 		for (int i = 0; i < parsers.size(); i++) {
 			if (binaryList.isChecked(parsers.get(i))) {
 				selected.add(parsers.get(i));
@@ -288,13 +286,13 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	public void setContainer(ICOptionContainer container) {
 		super.setContainer(container);
 
-		List<BinaryParserConfiguration> elements = new ArrayList<BinaryParserConfiguration>();
+		List<BinaryParserConfiguration> elements = new ArrayList<>();
 
 		if (getContainer().getProject() != null) {
 			try {
 				ICConfigExtensionReference[] ref = CCorePlugin.getDefault()
 						.getDefaultBinaryParserExtensions(getContainer().getProject());
-				initialSelected = new ArrayList<BinaryParserConfiguration>(ref.length);
+				initialSelected = new ArrayList<>(ref.length);
 				for (ICConfigExtensionReference element : ref) {
 					if (configMap.get(element.getID()) != null) {
 						initialSelected.add(configMap.get(element.getID()));
@@ -321,7 +319,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 
 			if (id != null && id.length() > 0) {
 				String[] ids = parseStringToArray(id);
-				initialSelected = new ArrayList<BinaryParserConfiguration>(ids.length);
+				initialSelected = new ArrayList<>(ids.length);
 				for (String id2 : ids) {
 					if (configMap.get(id2) != null) {
 						initialSelected.add(configMap.get(id2));
@@ -354,7 +352,7 @@ public class BinaryParserBlock extends AbstractBinaryParserPage {
 	private String[] parseStringToArray(String syms) {
 		if (syms != null && syms.length() > 0) {
 			StringTokenizer tok = new StringTokenizer(syms, ";"); //$NON-NLS-1$
-			ArrayList<String> list = new ArrayList<String>(tok.countTokens());
+			ArrayList<String> list = new ArrayList<>(tok.countTokens());
 			while (tok.hasMoreElements()) {
 				list.add(tok.nextToken());
 			}

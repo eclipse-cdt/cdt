@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2015 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 
@@ -93,7 +93,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 
 	/**
 	 * Adds an Attribute to an existing IASTAttributeList
-	 * 
+	 *
 	 * @param owner IASTAttributeOwner
 	 * @param attributeName Name of the new Attribute
 	 * @param index Index of existing IASTAttributeList
@@ -107,7 +107,7 @@ public class ReplaceTests extends ChangeGeneratorTest {
 
 	/**
 	 * Addds a new AttributeList to a IASTAttributeOwner
-	 * 
+	 *
 	 * @param owner IASTAttributeOwner
 	 * @param attributeName Name of the new Attribute
 	 */

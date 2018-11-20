@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Ericsson - Initial API and implementation 
+ *     Ericsson - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -128,7 +128,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints {
 	 * With GDB 7.0, we can create a breakpoint that is disabled.  This avoids having to disable it as
 	 * a separate command.  It is also much better because in non-stop, we don't risk habing a thread
 	 * hitting the breakpoint between creation and disablement.
-	 * 
+	 *
 	 * @param context
 	 * @param breakpoint
 	 * @param finalRm
@@ -218,7 +218,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints {
 
 	/**
 	 * Add a tracepoint
-	 * 
+	 *
 	 * @param context
 	 * @param breakpoint
 	 * @param drm
@@ -288,7 +288,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints {
 												// Also, tracepoints are created with no passcount.
 												// We have to set the passcount manually now.
 												// Same for commands.
-												Map<String, Object> delta = new HashMap<String, Object>();
+												Map<String, Object> delta = new HashMap<>();
 												delta.put(MIBreakpoints.IS_ENABLED,
 														getProperty(attributes, MIBreakpoints.IS_ENABLED, true));
 												delta.put(MIBreakpoints.PASS_COUNT,
@@ -349,8 +349,8 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints {
 			attributes.remove(passCountAttribute);
 		}
 
-		// Determine if tracepoint commands changed 
-		// Note that breakpoint commands (actions) are not handled by the backend 
+		// Determine if tracepoint commands changed
+		// Note that breakpoint commands (actions) are not handled by the backend
 		// which is why we don't check for changes here
 		String commandsAttribute = MIBreakpoints.COMMANDS;
 		if (attributes.containsKey(commandsAttribute)
@@ -393,7 +393,7 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints {
 			return;
 		}
 
-		ArrayList<String> actionStrings = new ArrayList<String>();
+		ArrayList<String> actionStrings = new ArrayList<>();
 		for (ITracepointAction action : actions) {
 			if (action != null) {
 				actionStrings.add(action.getSummary());
@@ -447,12 +447,12 @@ public class GDBBreakpoints_7_0 extends MIBreakpoints {
 
 	/**
 	 * Update the tracepoint passCount
-	 * 
+	 *
 	 * @param context
 	 * @param reference
 	 * @param ignoreCount
 	 * @param rm
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	protected void changePassCount(IBreakpointsTargetDMContext context, final String reference, final int ignoreCount,

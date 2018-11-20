@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Base interface for a declarator.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -55,14 +55,14 @@ public interface IASTDeclarator extends IASTNameOwner, IASTAttributeOwner {
 
 	/**
 	 * This is the list of pointer operators applied to the type for the declarator.
-	 * 
+	 *
 	 * @return array of IASTPointerOperator
 	 */
 	public IASTPointerOperator[] getPointerOperators();
 
 	/**
 	 * Adds a pointer operator to the declarator.
-	 * 
+	 *
 	 * @param operator a <code>IASTPointerOperator</code> to be added.
 	 */
 	public void addPointerOperator(IASTPointerOperator operator);
@@ -70,7 +70,7 @@ public interface IASTDeclarator extends IASTNameOwner, IASTAttributeOwner {
 	/**
 	 * If the declarator is nested in parentheses, returns the declarator
 	 * as found in those parentheses.
-	 * 
+	 *
 	 * @return the nested declarator or null
 	 */
 	public IASTDeclarator getNestedDeclarator();
@@ -80,14 +80,14 @@ public interface IASTDeclarator extends IASTNameOwner, IASTAttributeOwner {
 	/**
 	 * Returns the name of the declarator. If this is an abstract
 	 * declarator, this will return an empty name.
-	 * 
+	 *
 	 * @return the name of the declarator
 	 */
 	public IASTName getName();
 
 	/**
 	 * Sets the name of he declarator.
-	 * 
+	 *
 	 * @param name
 	 *            <code>IASTName</code>
 	 */
@@ -95,14 +95,14 @@ public interface IASTDeclarator extends IASTNameOwner, IASTAttributeOwner {
 
 	/**
 	 * Returns the optional initializer for this declarator.
-	 * 
+	 *
 	 * @return the initializer expression or null
 	 */
 	public IASTInitializer getInitializer();
 
 	/**
 	 * Set the optional initializer.
-	 * 
+	 *
 	 * @param initializer
 	 *            <code>IASTInitializer</code>
 	 */

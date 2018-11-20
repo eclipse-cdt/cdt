@@ -126,12 +126,12 @@ public class CDebugUIUtils {
 	}
 
 	/**
-	 * Returns the currently selected stack frame or the topmost frame 
-	 * in the currently selected thread in the Debug view 
-	 * of the current workbench page. Returns <code>null</code> 
+	 * Returns the currently selected stack frame or the topmost frame
+	 * in the currently selected thread in the Debug view
+	 * of the current workbench page. Returns <code>null</code>
 	 * if no stack frame or thread is selected, or if not called from the UI thread.
-	 *  
-	 * @return the currently selected stack frame or the topmost frame 
+	 *
+	 * @return the currently selected stack frame or the topmost frame
 	 * 		   in the currently selected thread
 	 */
 	static public ICStackFrame getCurrentStackFrame() {
@@ -282,7 +282,7 @@ public class CDebugUIUtils {
 	/**
 	 * Resolves the {@link IBreakpoint} from the given editor and ruler information. Returns <code>null</code>
 	 * if no breakpoint exists or the operation fails.
-	 * 
+	 *
 	 * @param editor the editor
 	 * @param info the current ruler information
 	 * @return the {@link IBreakpoint} from the current editor position or <code>null</code>
@@ -363,13 +363,13 @@ public class CDebugUIUtils {
 	}
 
 	/**
-	 * Formats the given key stroke or click name and the modifier keys 
-	 * to a key binding string that can be used in action texts. 
-	 * 
+	 * Formats the given key stroke or click name and the modifier keys
+	 * to a key binding string that can be used in action texts.
+	 *
 	 * @param modifierKeys the modifier keys
 	 * @param keyOrClick a key stroke or click, e.g. "Double Click"
 	 * @return the formatted keyboard shortcut string, e.g. "Shift+Double Click"
-	 * 
+	 *
 	 * @since 8.1
 	 */
 	public static final String formatKeyBindingString(int modifierKeys, String keyOrClick) {
@@ -398,8 +398,8 @@ public class CDebugUIUtils {
 	 * default text editor is available.</li>
 	 * </ol>
 	 * </p>
-	 * 
-	 * @param fileStore 
+	 *
+	 * @param fileStore
 	 *            the file store
 	 * @return the id of an editor, appropriate for opening the file
 	 * @throws PartInitException
@@ -443,7 +443,7 @@ public class CDebugUIUtils {
 	/**
 	 * Get the editor descriptor for a given name using the editorDescriptor
 	 * passed in as a default as a starting point.
-	 * 
+	 *
 	 * @param name
 	 *            The name of the element to open.
 	 * @param editorReg
@@ -453,7 +453,7 @@ public class CDebugUIUtils {
 	 * @return IEditorDescriptor
 	 * @throws PartInitException
 	 *             if no valid editor can be found
-	 * 
+	 *
 	 * @todo The IDE class has this method as a private, copied here so that it can be
 	 * exposed via getEditorId. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=516470
 	 * @deprecated Deprecated on creation as this is waiting for Bug 516470 to be resolved
@@ -488,11 +488,12 @@ public class CDebugUIUtils {
 	 * @return The strategy to use in order to open unknown file. Either as set
 	 *         by preference, or a {@link SystemEditorOrTextEditorStrategy} if
 	 *         none is explicitly configured. Never returns {@code null}.
-	 * 
+	 *
 	 * @todo The IDE class has this method as a private, copied here so that it can be
 	 * exposed via getEditorId. See https://bugs.eclipse.org/bugs/show_bug.cgi?id=516470
 	 * @deprecated Deprecated on creation as this is waiting for Bug 516470 to be resolved
 	 */
+	@Deprecated
 	private static IUnassociatedEditorStrategy getUnassociatedEditorStrategy(boolean allowInteractive) {
 		String preferedStrategy = IDEWorkbenchPlugin.getDefault().getPreferenceStore()
 				.getString(IDE.UNASSOCIATED_EDITOR_STRATEGY_PREFERENCE_KEY);

@@ -190,7 +190,7 @@ public class CPPFunctionTemplate extends CPPTemplateDefinition implements ICPPFu
 				parent = parent.getParent();
 
 			IType t = CPPVisitor.createType((IASTDeclarator) parent);
-			// TODO(nathanridge): Do we need to search for the definition here, if t is 
+			// TODO(nathanridge): Do we need to search for the definition here, if t is
 			// ProblemType.NO_NAME, as in CPPFunction?
 			type = CPPFunction.toFunctionType(t);
 		}

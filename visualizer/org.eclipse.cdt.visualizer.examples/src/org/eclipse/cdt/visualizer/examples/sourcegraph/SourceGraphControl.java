@@ -78,8 +78,8 @@ public class SourceGraphControl extends BufferedCanvas {
 			int cmp = (c1 < c2) ? -1 : (c1 > c2) ? 1 : 0;
 			// we want to sort in descending order, so negate result
 			return -cmp;
-		};
-	};
+		}
+	}
 
 	/** List of characters we discovered and their occurrences. */
 	ArrayList<CharStat> m_characters;
@@ -89,7 +89,7 @@ public class SourceGraphControl extends BufferedCanvas {
 	/** Constructor. */
 	public SourceGraphControl(Composite parent) {
 		super(parent);
-		m_characters = new ArrayList<CharStat>();
+		m_characters = new ArrayList<>();
 		m_banner = new GraphicObject();
 	}
 
@@ -117,7 +117,7 @@ public class SourceGraphControl extends BufferedCanvas {
 
 		// TODO: reuse the array/hashtable and stat objects
 
-		Hashtable<String, CharStat> characters = new Hashtable<String, CharStat>();
+		Hashtable<String, CharStat> characters = new Hashtable<>();
 
 		int len = m_sourceText.length();
 		int fragment_length = 2;
@@ -181,7 +181,7 @@ public class SourceGraphControl extends BufferedCanvas {
 		int lh = LINE_HEIGHT;
 
 		int x = margin;
-		// skip banner space 
+		// skip banner space
 		int y = BANNER_HEIGHT + margin;
 
 		Rectangle area = getClientArea();

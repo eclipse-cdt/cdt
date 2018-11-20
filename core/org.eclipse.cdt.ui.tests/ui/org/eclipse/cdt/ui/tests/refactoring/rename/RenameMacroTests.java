@@ -14,12 +14,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class RenameMacroTests extends RenameTestBase {
 

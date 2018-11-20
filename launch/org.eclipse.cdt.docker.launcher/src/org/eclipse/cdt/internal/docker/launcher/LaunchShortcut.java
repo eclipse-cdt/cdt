@@ -96,7 +96,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Method getLaunchConfigType.
-	 * 
+	 *
 	 * @return ILaunchConfigurationType
 	 */
 	protected ILaunchConfigurationType getLaunchConfigType() {
@@ -105,7 +105,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Search and launch binary.
-	 * 
+	 *
 	 * @param elements
 	 *            Binaries to search.
 	 * @param mode
@@ -128,7 +128,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 							IProgressMonitor sub = new SubProgressMonitor(pm, 1);
 							for (int i = 0; i < nElements; i++) {
 								if (elements[i] instanceof IAdaptable) {
-									IResource r = (IResource) ((IAdaptable) elements[i]).getAdapter(IResource.class);
+									IResource r = ((IAdaptable) elements[i]).getAdapter(IResource.class);
 									if (r != null) {
 										ICProject cproject = CoreModel.getDefault().create(r.getProject());
 										if (cproject != null) {
@@ -184,7 +184,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 
 	/**
 	 * Prompts the user to select a binary
-	 * 
+	 *
 	 * @param binList
 	 *            The list of binaries.
 	 * @param mode
@@ -240,7 +240,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Locate a configuration to launch for the given type. If one cannot be
 	 * found, create one.
-	 * 
+	 *
 	 * @param bin
 	 *            The binary to look launch for.
 	 * @param mode
@@ -527,7 +527,7 @@ public class LaunchShortcut implements ILaunchShortcut {
 	/**
 	 * Show a selection dialog that allows the user to choose one of the
 	 * specified launch configurations.
-	 * 
+	 *
 	 * @param configList
 	 *            The list of launch configurations to choose from.
 	 * @param mode

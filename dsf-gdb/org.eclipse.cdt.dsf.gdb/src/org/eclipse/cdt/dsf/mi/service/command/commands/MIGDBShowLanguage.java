@@ -14,15 +14,15 @@
 package org.eclipse.cdt.dsf.mi.service.command.commands;
 
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
-import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIGDBShowLanguageInfo;
+import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  *     -gdb-show language
- *     
+ *
  * @since 4.3
- * 
+ *
  */
 public class MIGDBShowLanguage extends MIGDBShow<MIGDBShowLanguageInfo> {
 	public MIGDBShowLanguage(IDMContext ctx) {

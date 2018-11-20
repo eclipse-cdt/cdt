@@ -17,7 +17,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
  * C++ allows for visibility labels to be mixed with declarations in class specifiers.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -39,14 +39,14 @@ public interface ICPPASTVisibilityLabel extends IASTDeclaration {
 
 	/**
 	 * Returns the visibility.
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getVisibility();
 
 	/**
 	 * Sets visibility.
-	 * 
+	 *
 	 * @param visibility one of v_public, v_protected, v_private
 	 */
 	public void setVisibility(int visibility);

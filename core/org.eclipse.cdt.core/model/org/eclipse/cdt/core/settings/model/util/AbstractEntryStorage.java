@@ -36,7 +36,7 @@ public abstract class AbstractEntryStorage {
 	public List<ICLanguageSettingEntry> getEntries(List<ICLanguageSettingEntry> list) {
 		SettingsSet settings = initCache();
 		if (list == null)
-			list = new ArrayList<ICLanguageSettingEntry>();
+			list = new ArrayList<>();
 
 		ICLanguageSettingEntry entries[] = settings.getEntries();
 		list.addAll(Arrays.asList(entries));

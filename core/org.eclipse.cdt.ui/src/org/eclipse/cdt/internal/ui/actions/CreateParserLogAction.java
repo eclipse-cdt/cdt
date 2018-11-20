@@ -30,32 +30,6 @@ import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.URIUtil;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IObjectActionDelegate;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -84,27 +58,50 @@ import org.eclipse.cdt.core.parser.ISignificantMacros;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.core.settings.model.ICProjectDescriptionManager;
-import org.eclipse.cdt.ui.CDTUITools;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-
 import org.eclipse.cdt.internal.core.model.ASTCache;
 import org.eclipse.cdt.internal.core.model.TranslationUnit;
 import org.eclipse.cdt.internal.core.pdom.ASTFilePathResolver;
 import org.eclipse.cdt.internal.core.pdom.PDOM;
 import org.eclipse.cdt.internal.core.pdom.indexer.ProjectIndexerInputAdapter;
-
 import org.eclipse.cdt.internal.ui.editor.ASTProvider;
 import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IObjectActionDelegate;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 @SuppressWarnings("nls")
 public class CreateParserLogAction implements IObjectActionDelegate {
 	private static final String INDENT = "   ";
 
 	private static final class MyVisitor extends ASTVisitor {
-		List<IASTProblem> fProblems = new ArrayList<IASTProblem>();
-		List<IProblemBinding> fProblemBindings = new ArrayList<IProblemBinding>();
-		List<Exception> fExceptions = new ArrayList<Exception>();
+		List<IASTProblem> fProblems = new ArrayList<>();
+		List<IProblemBinding> fProblemBindings = new ArrayList<>();
+		List<Exception> fExceptions = new ArrayList<>();
 
 		MyVisitor() {
 			shouldVisitProblems = true;
@@ -157,7 +154,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			return;
 		}
 
-		List<IWorkingCopy> workingCopies = new ArrayList<IWorkingCopy>();
+		List<IWorkingCopy> workingCopies = new ArrayList<>();
 		final IWorkbenchPage activePage = fSite.getWorkbenchWindow().getActivePage();
 		for (IEditorReference eref : activePage.getEditorReferences()) {
 			IEditorPart editor = eref.getEditor(false);
@@ -315,7 +312,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		output(out, "Preincluded files (option -include):", scfg.getIncludeFiles());
 		output(out, "Preincluded macro files (option -imacros):", scfg.getMacroFiles());
 
-		HashSet<String> reported = new HashSet<String>();
+		HashSet<String> reported = new HashSet<>();
 		output(out, "Macro definitions (option -D):", scfg.getDefinedSymbols(), reported);
 		output(out, "Macro definitions (from language + headers in index):", ast.getBuiltinMacroDefinitions(),
 				reported);
@@ -377,7 +374,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			IASTPreprocessorIncludeStatement[] includeDirectives, int linkageID) throws CoreException {
 		fWroteUnresolvedTitle = false;
 		ASTFilePathResolver resolver = new ProjectIndexerInputAdapter(prj);
-		HashSet<IIndexFile> handled = new HashSet<IIndexFile>();
+		HashSet<IIndexFile> handled = new HashSet<>();
 		for (IASTPreprocessorIncludeStatement include : includeDirectives) {
 			if (include.isResolved()) {
 				IIndexFileLocation ifl = resolver.resolveASTPath(include.getPath());
@@ -432,7 +429,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 		if (!definedSymbols.isEmpty()) {
 			out.println(label);
 
-			SortedMap<String, String> sorted = new TreeMap<String, String>(COMP_INSENSITIVE);
+			SortedMap<String, String> sorted = new TreeMap<>(COMP_INSENSITIVE);
 			sorted.putAll(definedSymbols);
 			for (Entry<String, String> entry : sorted.entrySet()) {
 				final String macro = entry.getKey() + '=' + entry.getValue();
@@ -448,7 +445,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 			HashSet<String> reported) {
 		if (defs.length > 0) {
 			out.println(label);
-			SortedSet<String> macros = new TreeSet<String>(COMP_INSENSITIVE);
+			SortedSet<String> macros = new TreeSet<>(COMP_INSENSITIVE);
 			for (IASTPreprocessorMacroDefinition def : defs) {
 				macros.add(def.toString());
 			}
@@ -521,7 +518,7 @@ public class CreateParserLogAction implements IObjectActionDelegate {
 	}
 
 	private ArrayList<ITranslationUnit> getSelectedTranslationUnits() {
-		ArrayList<ITranslationUnit> tuSelection = new ArrayList<ITranslationUnit>();
+		ArrayList<ITranslationUnit> tuSelection = new ArrayList<>();
 		if (fSelection instanceof IStructuredSelection) {
 			IStructuredSelection cElements = SelectionConverter.convertSelectionToCElements(fSelection);
 			Iterator<?> i = cElements.iterator();

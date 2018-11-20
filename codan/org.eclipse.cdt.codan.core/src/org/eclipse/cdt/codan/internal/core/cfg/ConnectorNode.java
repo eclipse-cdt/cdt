@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,7 @@ import org.eclipse.cdt.codan.core.model.cfg.IJumpNode;
  * TODO: add description
  */
 public class ConnectorNode extends AbstractSingleOutgoingNode implements IConnectorNode {
-	protected ArrayList<IBasicBlock> incoming = new ArrayList<IBasicBlock>(2);
+	protected ArrayList<IBasicBlock> incoming = new ArrayList<>(2);
 
 	protected ConnectorNode() {
 		super();
@@ -36,7 +36,7 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements IConnec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IBasicBlock#
 	 * getIncomingIterator()
 	 */
@@ -47,7 +47,7 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements IConnec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.codan.core.model.cfg.IBasicBlock#getIncomingSize ()
 	 */
 	@Override
@@ -57,7 +57,7 @@ public class ConnectorNode extends AbstractSingleOutgoingNode implements IConnec
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @seeorg.eclipse.cdt.codan.provisional.core.model.cfg.IConnectorNode#
 	 * hasBackwardIncoming()
 	 */

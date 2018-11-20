@@ -37,7 +37,7 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	/**
 	 * Override this method to do something
 	 * with the name of the task.
-	 * 
+	 *
 	 * @see IProgressMonitor#setTaskName(String)
 	 */
 	@Override
@@ -57,7 +57,7 @@ public class CreateProjectProgressMonitor extends NullProgressMonitor {
 	}
 
 	/**
-	 * This implementation returns the value of the internal 
+	 * This implementation returns the value of the internal
 	 * state variable set by <code>setCanceled</code>.
 	 *
 	 * @see IProgressMonitor#isCanceled()

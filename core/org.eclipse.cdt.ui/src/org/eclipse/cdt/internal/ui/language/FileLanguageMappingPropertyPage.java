@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *  IBM Corporation - Initial API and implementation
  *******************************************************************************/
@@ -17,6 +17,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.LanguageManager;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.core.CContentTypes;
+import org.eclipse.cdt.internal.core.Util;
+import org.eclipse.cdt.internal.core.language.LanguageMapping;
+import org.eclipse.cdt.internal.core.language.LanguageMappingResolver;
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
@@ -41,22 +54,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.dialogs.PropertyPage;
-
-import org.eclipse.cdt.core.language.ProjectLanguageConfiguration;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.LanguageManager;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.CContentTypes;
-import org.eclipse.cdt.internal.core.Util;
-import org.eclipse.cdt.internal.core.language.LanguageMapping;
-import org.eclipse.cdt.internal.core.language.LanguageMappingResolver;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 public class FileLanguageMappingPropertyPage extends PropertyPage {
 
@@ -329,7 +326,7 @@ public class FileLanguageMappingPropertyPage extends PropertyPage {
 			LanguageManager manager = LanguageManager.getInstance();
 			ProjectLanguageConfiguration config = manager.getLanguageConfiguration(project);
 
-			Map<String, String> mappings = new TreeMap<String, String>();
+			Map<String, String> mappings = new TreeMap<>();
 			TableItem[] items = fTable.getItems();
 			for (int i = 0; i < items.length; i++) {
 				TableItem item = items[i];

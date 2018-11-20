@@ -35,8 +35,8 @@ public class ExpectedStringsTests extends TestCase {
 	* Sets up the test fixture.
 	*
 	* Called before every test case method.
-	* 
-	* Example code test the packages in the project 
+	*
+	* Example code test the packages in the project
 	*  "com.qnx.tools.ide.cdt.core"
 	*/
 	@Override

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -231,7 +231,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		/**
 		 * Expands the line selection from the remembered start line to the
 		 * given line.
-		 * 
+		 *
 		 * @param lineNumber
 		 *            the line to which to expand the selection
 		 */
@@ -263,7 +263,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 		/**
 		 * Called on drag selection.
-		 * 
+		 *
 		 * @param event
 		 *            the mouse event caught by the mouse move listener
 		 * @return <code>true</code> if scrolling happened, <code>false</code>
@@ -288,7 +288,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 		/**
 		 * Scrolls the viewer into the given direction.
-		 * 
+		 *
 		 * @param direction
 		 *            the scroll direction
 		 */
@@ -340,7 +340,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 		/**
 		 * Returns the viewer's first visible line, even if only partially
 		 * visible.
-		 * 
+		 *
 		 * @return the viewer's first visible line
 		 */
 		private int getInclusiveTopIndex() {
@@ -408,7 +408,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Constructs a new vertical ruler column.
-	 * 
+	 *
 	 */
 	public DisassemblyRulerColumn() {
 		this(SWT.LEFT);
@@ -439,7 +439,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Sets the foreground color of this column.
-	 * 
+	 *
 	 * @param foreground
 	 *            the foreground color
 	 */
@@ -449,7 +449,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Returns the foreground color being used to print the line numbers.
-	 * 
+	 *
 	 * @return the configured foreground color
 	 */
 	protected Color getForeground() {
@@ -458,7 +458,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Sets the background color of this column.
-	 * 
+	 *
 	 * @param background
 	 *            the background color
 	 */
@@ -470,7 +470,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Returns the System background color for list widgets.
-	 * 
+	 *
 	 * @param display
 	 *            the display
 	 * @return the System background color for list widgets
@@ -506,7 +506,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 * if the number of digits changed compared to the previous call of this
 	 * method. If the method is called for the first time, the return value is
 	 * also <code>true</code>.
-	 * 
+	 *
 	 * @return whether the number of digits has been changed
 	 */
 	protected boolean updateNumberOfDigits() {
@@ -527,7 +527,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 * Does the real computation of the number of characters. The default
 	 * implementation computes the number of digits for the line number.
 	 * Subclasses may override this method if they need extra space on the ruler.
-	 * 
+	 *
 	 * @return the number of characters to be displayed on the ruler.
 	 */
 	protected int computeNumberOfCharacters() {
@@ -544,7 +544,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	/**
 	 * Layouts the enclosing viewer to adapt the layout to changes of the size
 	 * of the individual components.
-	 * 
+	 *
 	 * @param redraw
 	 *            <code>true</code> if this column can be redrawn
 	 */
@@ -674,7 +674,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Double buffer drawing.
-	 * 
+	 *
 	 * @param dest
 	 *            the gc to draw into
 	 */
@@ -718,7 +718,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Returns the viewport height in lines.
-	 * 
+	 *
 	 * @return the viewport height in lines
 	 */
 	protected int getVisibleLinesInViewport() {
@@ -728,7 +728,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Draws the ruler column.
-	 * 
+	 *
 	 * @param gc
 	 *            the gc to draw into
 	 */
@@ -816,7 +816,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	/**
 	 * Computes the string to be printed for <code>line</code>. The default
 	 * implementation returns <code>Integer.toString(line + 1)</code>.
-	 * 
+	 *
 	 * @param line
 	 *            the line number for which the string is generated
 	 * @return the string to be printed on the ruler column for <code>line</code>
@@ -828,7 +828,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	/**
 	 * Draws the ruler column. Uses <code>ITextViewerExtension5</code> for the
 	 * implementation. Will replace <code>doPinat(GC)</code>.
-	 * 
+	 *
 	 * @param gc
 	 *            the gc to draw into
 	 */
@@ -929,7 +929,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 * baseline as specified by the font for <code>gc</code>. When drawing
 	 * text, the returned bias should be added to obtain text line up on
 	 * the correct base line of the text widget.
-	 * 
+	 *
 	 * @param gc
 	 *            the <code>GC</code> to get the font metrics from
 	 * @return the baseline bias to use when drawing text that is line up with
@@ -956,7 +956,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 	 * <p>
 	 * This default implementation does nothing.
 	 * </p>
-	 * 
+	 *
 	 * @param line
 	 *            the line of the document which the ruler is painted for
 	 * @param y
@@ -1030,7 +1030,7 @@ public class DisassemblyRulerColumn extends AbstractContributedRulerColumn imple
 
 	/**
 	 * Returns the parent (composite) ruler of this ruler column.
-	 * 
+	 *
 	 * @return the parent ruler
 	 */
 	protected CompositeRuler getParentRuler() {

@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson			  - Version 7.0	
+ *     Ericsson			  - Version 7.0
  *     Mikhail Khodjaiants (Mentor Graphics) - Refactor common code in GDBControl* classes (bug 372795)
  *     Marc Khouzam (Ericsson) - Display exit code in process console (Bug 402054)
  *******************************************************************************/
@@ -111,7 +111,7 @@ public class MIRunControlEventProcessor_7_0 implements IEventProcessor {
 	}
 
 	/**
-	 * This processor must be disposed before the control service is un-registered. 
+	 * This processor must be disposed before the control service is un-registered.
 	 */
 	@Override
 	public void dispose() {
@@ -123,14 +123,14 @@ public class MIRunControlEventProcessor_7_0 implements IEventProcessor {
 	@Override
 	public void eventReceived(Object output) {
 		for (MIOOBRecord oobr : ((MIOutput) output).getMIOOBRecords()) {
-			List<MIEvent<?>> events = new LinkedList<MIEvent<?>>();
+			List<MIEvent<?>> events = new LinkedList<>();
 			if (oobr instanceof MIExecAsyncOutput) {
 				MIExecAsyncOutput exec = (MIExecAsyncOutput) oobr;
 				// Change of state.
 				String state = exec.getAsyncClass();
 				if (STOPPED_REASON.equals(state)) {
-					// Re-set the thread and stack level to -1 when stopped event is recvd. 
-					// This is to synchronize the state between GDB back-end and AbstractMIControl. 
+					// Re-set the thread and stack level to -1 when stopped event is recvd.
+					// This is to synchronize the state between GDB back-end and AbstractMIControl.
 					fCommandControl.resetCurrentThreadLevel();
 					fCommandControl.resetCurrentStackLevel();
 
@@ -374,7 +374,7 @@ public class MIRunControlEventProcessor_7_0 implements IEventProcessor {
 			if (groupId == null) {
 				// MI does not currently provide the group-id in these events
 
-				// In some cases, gdb sends a bare stopped event. Likely a bug, but 
+				// In some cases, gdb sends a bare stopped event. Likely a bug, but
 				// we need to react to it all the same. See bug 311118.
 				if (threadId == null) {
 					threadId = "all"; //$NON-NLS-1$

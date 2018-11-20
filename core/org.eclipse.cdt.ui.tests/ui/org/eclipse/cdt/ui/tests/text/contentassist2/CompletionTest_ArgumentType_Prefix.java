@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Argument_Type completion kind , with a prefix
  * Bug#50642 : Wrong completion kind when declaring an argument type
  *

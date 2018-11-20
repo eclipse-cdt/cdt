@@ -19,8 +19,6 @@ import static org.eclipse.cdt.core.testplugin.CProjectHelper.createCCProject;
 import java.io.File;
 import java.net.URI;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -46,6 +44,8 @@ import org.eclipse.cdt.internal.core.pdom.WritablePDOM;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Test;
 
 /**
  * Tests addition of external pdom's into the logical index

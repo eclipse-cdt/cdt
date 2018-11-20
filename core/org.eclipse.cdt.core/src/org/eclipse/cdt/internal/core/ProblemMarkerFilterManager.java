@@ -47,13 +47,13 @@ public class ProblemMarkerFilterManager {
 	/**
 	 * List of all executable extension registered in Extension Registry
 	 */
-	private final List<ProblemMarkerFilterDesc> filters = new ArrayList<ProblemMarkerFilterDesc>();
+	private final List<ProblemMarkerFilterDesc> filters = new ArrayList<>();
 
 	/**
 	 * Cache of active filters for known projects.
 	 * This cache allow to skip evaluation of enablementExpression for every marker.
 	 */
-	private final Map<IProject, List<ProblemMarkerFilterDesc>> filtersCache = new WeakHashMap<IProject, List<ProblemMarkerFilterDesc>>();
+	private final Map<IProject, List<ProblemMarkerFilterDesc>> filtersCache = new WeakHashMap<>();
 
 	/**
 	 * Last Problem Marker that was accepted.
@@ -61,9 +61,9 @@ public class ProblemMarkerFilterManager {
 	private Map<IResource, ProblemMarkerInfo> lastAcceptedProblemMarker = new HashMap<>();
 
 	/**
-	 * Return singleton instance of ProblemMarkerFilterManager 
-	 * 
-	 * @return singleton instance of ProblemMarkerFilterManager 
+	 * Return singleton instance of ProblemMarkerFilterManager
+	 *
+	 * @return singleton instance of ProblemMarkerFilterManager
 	 */
 	public static ProblemMarkerFilterManager getInstance() {
 		return INSTANCE;
@@ -72,7 +72,7 @@ public class ProblemMarkerFilterManager {
 	/**
 	 * Constructor.
 	 *
-	 * Creates instances of executable extension for ProblemMarkerFilter extension point 
+	 * Creates instances of executable extension for ProblemMarkerFilter extension point
 	 *
 	 */
 	private ProblemMarkerFilterManager() {
@@ -95,12 +95,12 @@ public class ProblemMarkerFilterManager {
 	}
 
 	/**
-	 * Called by {@link ErrorParserManager#addProblemMarker(ProblemMarkerInfo)} to filter out unnecessary problem markers 
-	 * 
+	 * Called by {@link ErrorParserManager#addProblemMarker(ProblemMarkerInfo)} to filter out unnecessary problem markers
+	 *
 	 * Problem marker is ignored if any plug-in that implements ProblemMarkerFilter extension point rejects it.
-	 * 
-	 * @see IProblemMarkerFilter#acceptMarker(ProblemMarkerInfo) 
-	 * 
+	 *
+	 * @see IProblemMarkerFilter#acceptMarker(ProblemMarkerInfo)
+	 *
 	 * @param markerInfo description of the problem marker that is going to be added
 	 * @return true if markers should be reported, false if should be ignored
 	 */
@@ -131,7 +131,7 @@ public class ProblemMarkerFilterManager {
 		synchronized (filtersCache) {
 			List<ProblemMarkerFilterDesc> result = filtersCache.get(project);
 			if (result == null) {
-				result = new ArrayList<ProblemMarkerFilterDesc>();
+				result = new ArrayList<>();
 				for (ProblemMarkerFilterDesc filterDesc : filters) {
 					if (filterDesc.matches(project)) {
 						result.add(filterDesc);

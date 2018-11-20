@@ -26,7 +26,7 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 
 /**
  * DSF session state object.
- * 
+ *
  * Encapsulates and manages DsfSession we're currently tracking.
  */
 public class DSFSessionState {
@@ -45,7 +45,7 @@ public class DSFSessionState {
 
 	public DSFSessionState(String sessionId) {
 		m_sessionId = sessionId;
-		m_sessionListeners = new ArrayList<Object>();
+		m_sessionListeners = new ArrayList<>();
 		m_servicesTracker = new DsfServicesTracker(MulticoreVisualizerUIPlugin.getBundleContext(), m_sessionId);
 	}
 

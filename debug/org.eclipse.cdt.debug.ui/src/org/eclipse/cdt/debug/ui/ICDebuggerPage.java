@@ -16,18 +16,18 @@ package org.eclipse.cdt.debug.ui;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 
 /**
- * Interface for debugger pages contributed via the "CDebuggerPage" 
+ * Interface for debugger pages contributed via the "CDebuggerPage"
  * extension point.
- * 
+ *
  * @since 3.1
  */
 public interface ICDebuggerPage extends ILaunchConfigurationTab {
 
 	/**
-	 * Allows the page to initialize itself after being created. 
-	 * This lifecycle method is called after the page has been created 
+	 * Allows the page to initialize itself after being created.
+	 * This lifecycle method is called after the page has been created
 	 * and before any other method of the page is called.
-	 * 
+	 *
 	 * @param debuggerID the identifier of the debugger this page is created for.
 	 */
 	public void init(String debuggerID);

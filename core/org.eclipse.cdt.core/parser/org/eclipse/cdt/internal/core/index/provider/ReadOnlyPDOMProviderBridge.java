@@ -36,7 +36,7 @@ public class ReadOnlyPDOMProviderBridge implements IIndexFragmentProvider {
 
 	@Override
 	public IIndexFragment[] getIndexFragments(ICConfigurationDescription config) throws CoreException {
-		List<PDOM> result = new ArrayList<PDOM>();
+		List<PDOM> result = new ArrayList<>();
 		IPDOMDescriptor[] descriptions = provider.getDescriptors(config);
 
 		if (descriptions != null) {

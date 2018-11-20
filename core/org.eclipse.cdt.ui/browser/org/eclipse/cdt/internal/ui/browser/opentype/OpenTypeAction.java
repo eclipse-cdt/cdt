@@ -15,6 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.browser.opentype;
 
+import org.eclipse.cdt.core.browser.ITypeInfo;
+import org.eclipse.cdt.core.browser.ITypeReference;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -31,14 +37,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.browser.ITypeInfo;
-import org.eclipse.cdt.core.browser.ITypeReference;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -104,7 +102,7 @@ public class OpenTypeAction implements IWorkbenchWindowActionDelegate {
 
 	/**
 	 * Opens an editor and displays the selected type.
-	 * 
+	 *
 	 * @param info Type to display.
 	 * @return true if successfully displayed.
 	 */

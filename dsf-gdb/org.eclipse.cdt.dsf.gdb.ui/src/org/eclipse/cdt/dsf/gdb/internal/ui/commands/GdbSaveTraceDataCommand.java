@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -41,7 +41,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Command to save the trace data to file
- * 
+ *
  * @since 2.1
  */
 public class GdbSaveTraceDataCommand extends AbstractDebugCommand implements ISaveTraceDataHandler {
@@ -75,7 +75,7 @@ public class GdbSaveTraceDataCommand extends AbstractDebugCommand implements ISa
 			@Override
 			public void run() {
 				fileName[0] = promptForFileName();
-			};
+			}
 		});
 
 		if (fileName[0] != null) {
@@ -152,7 +152,7 @@ public class GdbSaveTraceDataCommand extends AbstractDebugCommand implements ISa
 	 * Keep the command enabled since there is no automatic re-selection of the debug
 	 * context for this command.  If not, it will remain disabled until something causes
 	 * the debug context to change.
-	 * 
+	 *
 	 * (non-Javadoc)
 	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#isRemainEnabled(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */

@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text;
 
-import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.cdt.ui.IPropertyChangeParticipant;
+import org.eclipse.jface.text.rules.ITokenScanner;
 
 /**
  * Interface for CDT Scanners. Scanners used in CDT must additionally be

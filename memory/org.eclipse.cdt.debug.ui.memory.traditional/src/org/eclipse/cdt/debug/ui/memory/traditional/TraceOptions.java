@@ -24,12 +24,12 @@ import org.osgi.framework.BundleContext;
  * Hooks debug options to the Platform trace functionality.
  * In essence, we can open Window -> Preferences -> Tracing
  * and turn on debug options for this package. The debug output
- * will come out on the console and can be saved directly to 
- * a file. Classes that need to be debugged can call into 
+ * will come out on the console and can be saved directly to
+ * a file. Classes that need to be debugged can call into
  * TraceOptions to get debug flags. If new flags need to be
  * created, they will need to have a unique identifier and added to
  * the .options file in this plugin
- * 
+ *
  */
 class TraceOptions implements DebugOptionsListener {
 
@@ -48,7 +48,7 @@ class TraceOptions implements DebugOptionsListener {
 	 */
 	public TraceOptions(BundleContext context, String pluginID) {
 		this.pluginID = pluginID;
-		Hashtable<String, String> props = new Hashtable<String, String>(2);
+		Hashtable<String, String> props = new Hashtable<>(2);
 		props.put(org.eclipse.osgi.service.debug.DebugOptions.LISTENER_SYMBOLICNAME, pluginID);
 		context.registerService(DebugOptionsListener.class.getName(), this, props);
 	}

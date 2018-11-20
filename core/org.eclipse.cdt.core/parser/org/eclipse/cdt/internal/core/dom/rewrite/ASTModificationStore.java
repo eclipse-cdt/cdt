@@ -24,7 +24,7 @@ public class ASTModificationStore {
 	private HashMap<ASTModification, ASTModificationMap> fNestedModMaps;
 
 	public ASTModificationStore() {
-		fNestedModMaps = new HashMap<ASTModification, ASTModificationMap>();
+		fNestedModMaps = new HashMap<>();
 	}
 
 	/**

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Marc Khouzam (Ericsson) - Add support disable "View Memory" action (bug 418710)
@@ -151,8 +151,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
 	/**
 	 * The label provider delegate.  This VM node will delegate label updates to this provider
-	 * which can be created by sub-classes. 
-	 *  
+	 * which can be created by sub-classes.
+	 *
 	 * @since 2.0
 	 */
 	private final IElementLabelProvider fLabelProvider;
@@ -273,11 +273,11 @@ public class VariableVMNode extends AbstractExpressionVMNode
 	}
 
 	/**
-	 * Creates the label provider delegate.  This VM node will delegate label 
-	 * updates to this provider which can be created by sub-classes.   
-	 *  
-	 * @return Returns the label provider for this node. 
-	 *  
+	 * Creates the label provider delegate.  This VM node will delegate label
+	 * updates to this provider which can be created by sub-classes.
+	 *
+	 * @return Returns the label provider for this node.
+	 *
 	 * @since 2.0
 	 */
 	private LabelBackground columnIdValueBackground;
@@ -287,7 +287,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.ui.viewmodel.datamodel.AbstractDMVMNode#dispose()
-	 * 
+	 *
 	 * We need to take over the dispose so we can get rid of the preference listener we created.
 	 */
 	@Override
@@ -303,10 +303,10 @@ public class VariableVMNode extends AbstractExpressionVMNode
 	}
 
 	/**
-	 * Create label image objects which are used in more than one column. 
-	 * 
+	 * Create label image objects which are used in more than one column.
+	 *
 	 * @since 2.1
-	 * 
+	 *
 	 * Pointer image is used for variable and function pointers.
 	 */
 	public final static LabelImage POINTER_LABEL_IMAGE = new LabelImage(CDebugImages.DESC_OBJS_VARIABLE_POINTER) {
@@ -324,7 +324,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
 	/**
 	 * @since 2.1
-	 * 
+	 *
 	 * Aggregate image is used for array, struct, etc.
 	 */
 	public final static LabelImage AGGREGATE_LABEL_IMAGE = new LabelImage(CDebugImages.DESC_OBJS_VARIABLE_AGGREGATE) {
@@ -342,7 +342,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
 	/**
 	 * @since 2.1
-	 * 
+	 *
 	 * Simple variable image is used for all other types, except when there is no type specified.
 	 */
 	public final static LabelImage SIMPLE_LABEL_IMAGE = new LabelImage(CDebugImages.DESC_OBJS_VARIABLE_SIMPLE) {
@@ -398,7 +398,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 						+ FormattedValueVMUtil.getPropertyForFormatId(IFormattedValues.STRING_FORMAT));
 				return Boolean.TRUE.equals(stringChanged)
 						|| (Boolean.TRUE.equals(activeChanged) && !Boolean.TRUE.equals(activeFormatChanged));
-			};
+			}
 		};
 
 		columnNoColumnsBackground = new LabelBackground(
@@ -441,14 +441,14 @@ public class VariableVMNode extends AbstractExpressionVMNode
 		// Create the initial properties provider which can be built on.
 		PropertiesBasedLabelProvider provider = new PropertiesBasedLabelProvider();
 
-		// The name column consists of the expression name.  The name column image depends on the variable type. 
+		// The name column consists of the expression name.  The name column image depends on the variable type.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__NAME, new LabelColumnInfo(new LabelAttribute[] {
 				new LabelText(MessagesForVariablesVM.VariableVMNode_Name_column__text_format,
 						new String[] { PROP_NAME }),
 				POINTER_LABEL_IMAGE, AGGREGATE_LABEL_IMAGE, PARTITION_LABEL_IMAGE, SIMPLE_LABEL_IMAGE,
 				new StaleDataLabelForeground(), new VariableLabelFont(), }));
 
-		// Expression column is visible only in the expressions view.  It shows the expression string that the user 
+		// Expression column is visible only in the expressions view.  It shows the expression string that the user
 		// entered.  Expression column images are the same as for the name column.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__EXPRESSION, new LabelColumnInfo(new LabelAttribute[] {
 				new LabelText(MessagesForVariablesVM.VariableVMNode_Expression_column__text_format,
@@ -464,16 +464,16 @@ public class VariableVMNode extends AbstractExpressionVMNode
 				new StaleDataLabelForeground(), new VariableLabelFont(), }));
 
 		// Value column is more complicated:
-		// - If a STRING value format is supported.  Then the value label consists of the active format label followed 
+		// - If a STRING value format is supported.  Then the value label consists of the active format label followed
 		//   by the string format.
 		// - If the STRIGN value format is not supported.  Then only show the active value format.  The GDB reference
-		//   implementation currently does not support the string format, but by default it does append extra 
+		//   implementation currently does not support the string format, but by default it does append extra
 		//   information to the value label itself.
-		// 
-		// In case of error, show the error message in the value column (instead of the usual "...".  This is needed 
-		// for the expressions view, where an invalid expression entered by the user is a normal use case.  
-		// 
-		// For changed value high-lighting check both the string value and the value in the active format.  But,  
+		//
+		// In case of error, show the error message in the value column (instead of the usual "...".  This is needed
+		// for the expressions view, where an invalid expression entered by the user is a normal use case.
+		//
+		// For changed value high-lighting check both the string value and the value in the active format.  But,
 		// ignore the active format value change if the format itself has changed.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__VALUE,
 				new LabelColumnInfo(new LabelAttribute[] {
@@ -494,8 +494,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
 						}, new FormattedValueLabelText(), new ErrorLabelText(), new ErrorLabelForeground(),
 						columnIdValueBackground, new StaleDataLabelForeground(), new VariableLabelFont(), }));
 
-		// Address column shows the variable's address.  It is highlighted with the change background color when the 
-		// address value changes. 
+		// Address column shows the variable's address.  It is highlighted with the change background color when the
+		// address value changes.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__ADDRESS, new LabelColumnInfo(new LabelAttribute[] {
 				new LabelText(MessagesForVariablesVM.VariableVMNode_Location_column__text_format,
 						new String[] { PROP_VARIABLE_ADDRESS }),
@@ -511,10 +511,10 @@ public class VariableVMNode extends AbstractExpressionVMNode
 					public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 						Boolean changed = (Boolean) properties.get(PROP_VARIABLE_ADDRESS_CHANGED);
 						return Boolean.TRUE.equals(changed);
-					};
+					}
 				}, new StaleDataLabelForeground(), new VariableLabelFont(), }));
 
-		// Description column is shown in the expression view, but is not supported for variables. 
+		// Description column is shown in the expression view, but is not supported for variables.
 		provider.setColumnInfo(IDebugVMConstants.COLUMN_ID__DESCRIPTION,
 
 				new LabelColumnInfo(new LabelAttribute[] {
@@ -615,7 +615,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 								Boolean activeChanged = (Boolean) properties
 										.get(IDebugVMConstants.PROP_IS_ACTIVE_FORMATTED_VALUE_CHANGED);
 								return Boolean.TRUE.equals(stringChanged) || Boolean.TRUE.equals(activeChanged);
-							};
+							}
 						}, columnNoColumnsBackground, new StaleDataLabelBackground(), new VariableLabelFont(), }));
 
 		return provider;
@@ -637,13 +637,13 @@ public class VariableVMNode extends AbstractExpressionVMNode
 	}
 
 	/**
-	 * Update the variable view properties.  The formatted values need to be 
+	 * Update the variable view properties.  The formatted values need to be
 	 * updated in the VM executor thread while the rest of the properties is
 	 * updated in the service session's executor thread.  The implementation
-	 * splits the handling of the updates to accomplish that.  
-	 * 
+	 * splits the handling of the updates to accomplish that.
+	 *
 	 * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	@Override
@@ -654,7 +654,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 				for (int i = 0; i < updates.length; i++) {
 					updates[i].done();
 				}
-			};
+			}
 		};
 		int count = 0;
 
@@ -712,7 +712,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 				for (final IPropertiesUpdate update : updates) {
 					update.done();
 				}
-			};
+			}
 		};
 		int count = 0;
 
@@ -739,7 +739,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 			if (update.getProperties().contains(PROP_NAME) || update.getProperties().contains(PROP_VARIABLE_TYPE_NAME)
 					|| update.getProperties().contains(PROP_VARIABLE_BASIC_TYPE)) {
 				service.getExpressionData(dmc,
-						// Use the ViewerDataRequestMonitor in order to propagate the update's cancel request. Use an immediate 
+						// Use the ViewerDataRequestMonitor in order to propagate the update's cancel request. Use an immediate
 						// executor to avoid the possibility of a rejected execution exception.
 						new ViewerDataRequestMonitor<IExpressionDMData>(ImmediateExecutor.getInstance(), update) {
 							@Override
@@ -770,7 +770,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 
 			if (update.getProperties().contains(PROP_VARIABLE_ADDRESS)) {
 				service.getExpressionAddressData(dmc,
-						// Use the ViewerDataRequestMonitor in order to propagate the update's cancel request. Use an immediate 
+						// Use the ViewerDataRequestMonitor in order to propagate the update's cancel request. Use an immediate
 						// executor to avoid the possibility of a rejected execution exception.
 						new ViewerDataRequestMonitor<IExpressionDMAddress>(ImmediateExecutor.getInstance(), update) {
 							@Override
@@ -1120,7 +1120,7 @@ public class VariableVMNode extends AbstractExpressionVMNode
 				// Create a List in which we store the DM data objects for the local variables.  This is
 				// necessary because there is no MultiDataRequestMonitor. :)
 
-				final List<IVariableDMData> localsDMData = new ArrayList<IVariableDMData>();
+				final List<IVariableDMData> localsDMData = new ArrayList<>();
 
 				// Create the MultiRequestMonitor to handle completion of the set of getModelData() calls.
 
@@ -1216,8 +1216,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
 	public void buildDelta(final Object e, final VMDelta parentDelta, final int nodeOffset,
 			final RequestMonitor requestMonitor) {
 
-		// The following events can affect any expression's values, 
-		// refresh the contents of the parent element (i.e. all the expressions). 
+		// The following events can affect any expression's values,
+		// refresh the contents of the parent element (i.e. all the expressions).
 		if (e instanceof ISuspendedDMEvent || e instanceof IMemoryChangedEvent || e instanceof IExpressionChangedDMEvent
 				|| (e instanceof PropertyChangeEvent && (((PropertyChangeEvent) e)
 						.getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE
@@ -1270,8 +1270,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
 	@Override
 	public void buildDeltaForExpression(IExpression expression, int elementIdx, Object event, VMDelta parentDelta,
 			TreePath path, RequestMonitor rm) {
-		// The following events can affect any expression's values, 
-		// refresh the contents of the parent element (i.e. all the expressions). 
+		// The following events can affect any expression's values,
+		// refresh the contents of the parent element (i.e. all the expressions).
 		if (event instanceof ISuspendedDMEvent || event instanceof IMemoryChangedEvent
 				|| event instanceof IExpressionChangedDMEvent
 				|| (event instanceof PropertyChangeEvent && ((PropertyChangeEvent) event)
@@ -1297,8 +1297,8 @@ public class VariableVMNode extends AbstractExpressionVMNode
 	@Override
 	public void buildDeltaForExpressionElement(Object element, int elementIdx, Object event, VMDelta parentDelta,
 			RequestMonitor rm) {
-		// The following events can affect expression values, refresh the state 
-		// of the expression. 
+		// The following events can affect expression values, refresh the state
+		// of the expression.
 		if (event instanceof IExpressionChangedDMEvent || event instanceof IMemoryChangedEvent
 				|| (event instanceof PropertyChangeEvent && ((PropertyChangeEvent) event)
 						.getProperty() == IDebugVMConstants.PROP_FORMATTED_VALUE_FORMAT_PREFERENCE)) {

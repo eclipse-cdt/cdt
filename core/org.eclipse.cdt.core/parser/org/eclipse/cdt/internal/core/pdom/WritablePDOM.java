@@ -15,6 +15,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.pdom;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
@@ -43,11 +48,6 @@ import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacro;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMMacroReferenceName;
 import org.eclipse.cdt.internal.core.pdom.dom.PDOMName;
 import org.eclipse.core.runtime.CoreException;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	private boolean fClearedBecauseOfVersionMismatch = false;
@@ -215,7 +215,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 	 * @throws CoreException
 	 */
 	public void rewriteLocations(final IIndexLocationConverter newConverter) throws CoreException {
-		final List<PDOMFile> pdomfiles = new ArrayList<PDOMFile>();
+		final List<PDOMFile> pdomfiles = new ArrayList<>();
 		getFileIndex().accept(new IBTreeVisitor() {
 			@Override
 			public int compare(long record) throws CoreException {
@@ -231,7 +231,7 @@ public class WritablePDOM extends PDOM implements IWritableIndexFragment {
 		});
 
 		clearFileIndex();
-		final List<PDOMFile> notConverted = new ArrayList<PDOMFile>();
+		final List<PDOMFile> notConverted = new ArrayList<>();
 		for (PDOMFile file : pdomfiles) {
 			String internalFormat = newConverter.toInternalFormat(file.getLocation());
 			if (internalFormat != null) {

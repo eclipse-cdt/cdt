@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 
 /**
  * Template declaration.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -64,7 +64,7 @@ public interface ICPPASTTemplateDeclaration extends IASTDeclaration {
 
 	/**
 	 * Adds a template parameter.
-	 * 
+	 *
 	 * @param paramm the parameter to add
 	 * @since 5.2
 	 */

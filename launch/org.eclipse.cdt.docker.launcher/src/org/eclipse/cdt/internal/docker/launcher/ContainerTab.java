@@ -217,7 +217,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 		Composite composite = createComposite(parent, 1, 1,
 				GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END);
 		composite.setFont(font);
-		newButton = createPushButton(composite, Messages.ContainerTab_New_Button, null); //$NON-NLS-1$
+		newButton = createPushButton(composite, Messages.ContainerTab_New_Button, null);
 		newButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		GridData gdb = new GridData(GridData.VERTICAL_ALIGN_CENTER);
 		gdb.grabExcessHorizontalSpace = false;
@@ -231,7 +231,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 			}
 		});
 
-		removeButton = createPushButton(composite, Messages.ContainerTab_Remove_Button, null); //$NON-NLS-1$
+		removeButton = createPushButton(composite, Messages.ContainerTab_Remove_Button, null);
 		removeButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 		removeButton.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -539,7 +539,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 				return;
 			}
 			connection.removeImageListener(containerTab);
-			ArrayList<String> imageNames = new ArrayList<String>();
+			ArrayList<String> imageNames = new ArrayList<>();
 			for (IDockerImage image : images) {
 				java.util.List<String> tags = image.repoTags();
 				if (tags != null) {
@@ -612,7 +612,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 					tableViewer.setChecked(m, true);
 				}
 			}
-			connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, (String) "");
+			connectionUri = configuration.getAttribute(ILaunchConstants.ATTR_CONNECTION_URI, "");
 			int defaultIndex = 0;
 			connections = DockerConnectionManager.getInstance().getConnections();
 			if (connections.length > 0) {
@@ -638,7 +638,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 			privilegedButton.setSelection(privilegedValue);
 		} catch (CoreException e) {
 			setErrorMessage(
-					Messages.bind(Messages.ContainerTab_Error_Reading_Configuration, e.getStatus().getMessage())); //$NON-NLS-1$
+					Messages.bind(Messages.ContainerTab_Error_Reading_Configuration, e.getStatus().getMessage()));
 			DockerLaunchUIPlugin.log(e);
 		}
 	}
@@ -663,7 +663,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 			String image = launchConfig.getAttribute(ILaunchConstants.ATTR_IMAGE, (String) null);
 			if (image == null)
 				return false;
-			int index = image.lastIndexOf(':'); //$NON-NLS-1$
+			int index = image.lastIndexOf(':');
 			if (index <= 0)
 				return false;
 			if (connection.hasImage(image.substring(0, index), image.substring(index + 1))) {
@@ -728,6 +728,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 		connectionSelector.addModifyListener(connectionModifyListener);
 	}
 
+	@Override
 	public void listChanged(IDockerConnection c, java.util.List<IDockerImage> list) {
 		setErrorMessage(null);
 		final IDockerImage[] finalList = list.toArray(new IDockerImage[0]);
@@ -739,7 +740,7 @@ public class ContainerTab extends AbstractLaunchConfigurationTab
 				@Override
 				public void run() {
 					connection.removeImageListener(containerTab);
-					ArrayList<String> imageNames = new ArrayList<String>();
+					ArrayList<String> imageNames = new ArrayList<>();
 					for (IDockerImage image : finalList) {
 						java.util.List<String> tags = image.repoTags();
 						if (tags != null) {

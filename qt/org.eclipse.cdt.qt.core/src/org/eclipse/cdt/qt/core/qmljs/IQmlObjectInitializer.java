@@ -19,7 +19,7 @@ public interface IQmlObjectInitializer extends IQmlASTNode {
 	@Override
 	default public String getType() {
 		return "QMLObjectInitializer"; //$NON-NLS-1$
-	};
+	}
 
 	public List<IQmlObjectMember> getMembers();
 }

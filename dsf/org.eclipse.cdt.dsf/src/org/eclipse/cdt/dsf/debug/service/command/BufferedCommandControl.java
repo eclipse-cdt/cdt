@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,11 +22,11 @@ import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 
 /**
- * A command control which delays the <strong>results</strong> of commands 
- * sent to a command control, as well as events from the command control.  
- * The delay is specified in the constructor using a number of executor 
+ * A command control which delays the <strong>results</strong> of commands
+ * sent to a command control, as well as events from the command control.
+ * The delay is specified in the constructor using a number of executor
  * dispatch cycles.
- * 
+ *
  * @since 2.1
  */
 public class BufferedCommandControl implements ICommandControl {
@@ -84,8 +84,8 @@ public class BufferedCommandControl implements ICommandControl {
 		}
 	};
 
-	private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
-	private final List<IEventListener> fEventProcessors = new ArrayList<IEventListener>();
+	private final List<ICommandListener> fCommandProcessors = new ArrayList<>();
+	private final List<IEventListener> fEventProcessors = new ArrayList<>();
 
 	public BufferedCommandControl(ICommandControl controlDelegate, DsfExecutor executor, int depth) {
 		fControlDelegate = controlDelegate;

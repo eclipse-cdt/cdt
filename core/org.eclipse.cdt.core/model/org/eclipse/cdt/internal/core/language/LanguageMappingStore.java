@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 	   IBM Corporation - Initial API and implementation
  *     James Blackburn (Broadcom Corp.)
@@ -95,7 +95,7 @@ public class LanguageMappingStore {
 	}
 
 	private Map<String, Map<String, String>> decodeProjectContentTypeMappings(ICStorageElement rootElement) {
-		Map<String, Map<String, String>> decodedMappings = new TreeMap<String, Map<String, String>>();
+		Map<String, Map<String, String>> decodedMappings = new TreeMap<>();
 		ICStorageElement[] mappingElements = rootElement.getChildrenByName(CONTENT_TYPE_MAPPING);
 		for (int j = 0; j < mappingElements.length; j++) {
 			ICStorageElement mapping = mappingElements[j];
@@ -103,7 +103,7 @@ public class LanguageMappingStore {
 
 			Map<String, String> contentTypeMappings = decodedMappings.get(configuration);
 			if (contentTypeMappings == null) {
-				contentTypeMappings = new TreeMap<String, String>();
+				contentTypeMappings = new TreeMap<>();
 				decodedMappings.put(configuration, contentTypeMappings);
 			}
 			String contentType = mapping.getAttribute(ATTRIBUTE_CONTENT_TYPE);
@@ -122,7 +122,7 @@ public class LanguageMappingStore {
 	}
 
 	private Map<String, Map<String, String>> decodeFileMappings(ICStorageElement rootElement) throws CoreException {
-		Map<String, Map<String, String>> decodedMappings = new TreeMap<String, Map<String, String>>();
+		Map<String, Map<String, String>> decodedMappings = new TreeMap<>();
 		ICStorageElement[] mappingElements = rootElement.getChildrenByName(FILE_MAPPING);
 		for (int j = 0; j < mappingElements.length; j++) {
 			ICStorageElement mapping = mappingElements[j];
@@ -130,7 +130,7 @@ public class LanguageMappingStore {
 
 			Map<String, String> configurationMappings = decodedMappings.get(path);
 			if (configurationMappings == null) {
-				configurationMappings = new TreeMap<String, String>();
+				configurationMappings = new TreeMap<>();
 				decodedMappings.put(path, configurationMappings);
 			}
 			String configuration = mapping.getAttribute(ATTRIBUTE_CONFIGURATION);
@@ -141,7 +141,7 @@ public class LanguageMappingStore {
 	}
 
 	private Map<String, String> decodeMappings(Element rootElement, String category, String keyName, String valueName) {
-		Map<String, String> decodedMappings = new TreeMap<String, String>();
+		Map<String, String> decodedMappings = new TreeMap<>();
 		NodeList mappingElements = rootElement.getElementsByTagName(category);
 		for (int j = 0; j < mappingElements.getLength(); j++) {
 			Element mapping = (Element) mappingElements.item(j);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -17,8 +17,8 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.ui.viewmodel.IVMContext;
 
 /**
- * Interface for a view model context based on a DSF data model context.  
- * 
+ * Interface for a view model context based on a DSF data model context.
+ *
  * @since 1.0
  */
 public interface IDMVMContext extends IVMContext {

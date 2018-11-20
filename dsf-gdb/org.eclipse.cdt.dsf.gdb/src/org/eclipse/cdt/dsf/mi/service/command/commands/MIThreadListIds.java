@@ -20,12 +20,12 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadListIdsInfo;
 
 /**
- * 
+ *
  *    -thread-list-ids
  *
  * Produces a list of the currently known GDB thread ids.  At the end
  * of the list it also prints the total number of such threads.
- * 
+ *
  */
 public class MIThreadListIds extends MICommand<MIThreadListIdsInfo> {
 

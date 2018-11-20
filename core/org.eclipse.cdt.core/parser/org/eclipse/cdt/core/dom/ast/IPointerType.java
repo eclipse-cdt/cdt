@@ -29,7 +29,7 @@ public interface IPointerType extends IType {
 	 */
 	public boolean isConst();
 
-	/** 
+	/**
 	 * Returns whether the pointer is volatile qualified.
 	 */
 	public boolean isVolatile();

@@ -25,13 +25,13 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * -break-insert [ -t ] [ -h ] [ -f ] [ -d ] [ -a ]
  *       [ -c CONDITION ] [ -i IGNORE-COUNT ]
  *       [ -p THREAD ] [ LOCATION ]
- *  
+ *
  * If specified, LOCATION, can be one of:
  *  * function
  *  * filename:linenum
  *  * filename:function
  *  * *address
- * 
+ *
  * The possible optional parameters of this command are:
  *
  * '-t'
@@ -48,7 +48,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  *      Initialize the IGNORE-COUNT (number of breakpoint hits before breaking).
  *
  * '-f'
- *      If location cannot be parsed (for example if it refers to unknown files or 
+ *      If location cannot be parsed (for example if it refers to unknown files or
  *      functions), create a pending breakpoint. Without this flag, if a location
  *      cannot be parsed, the breakpoint will not be created and an error will be
  *      reported.
@@ -57,11 +57,11 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
  * '-d'
  *      Create a disabled breakpoint.
  *      Only available starting GDB 7.0
- *      
+ *
  * '-a'
  *      Insert a tracepoint instead of a breakpoint
  *      Only available starting GDB 7.2
- *      
+ *
  * '-p THREAD'
  *      THREAD on which to apply the breakpoint
  */
@@ -129,7 +129,7 @@ public class MIBreakInsert extends MICommand<MIBreakInsertInfo> {
 
 		String[] opts = new String[i];
 
-		// Fill in the optional parameters  
+		// Fill in the optional parameters
 		i = 0;
 		if (isTemporary) {
 			opts[i] = "-t"; //$NON-NLS-1$

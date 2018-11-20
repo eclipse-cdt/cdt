@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.build.IToolChain;
 
 /**
  * Manages toolchain files for CMake.
- * 
+ *
  * @noimplement
  * @noextend
  */

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * 	   Sergey Prigogin (Google)
@@ -16,6 +16,19 @@
 
 package org.eclipse.cdt.internal.ui.text.spelling;
 
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
+import org.eclipse.cdt.internal.ui.text.FastCPartitioner;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentSpellDictionary;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary;
+import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEventListener;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.ITokenStore;
+import org.eclipse.cdt.ui.text.ITokenStoreFactory;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentDictionary;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentSimpleDictionary;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -31,21 +44,6 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.texteditor.spelling.ISpellingProblemCollector;
-
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.ITokenStore;
-import org.eclipse.cdt.ui.text.ITokenStoreFactory;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentDictionary;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentSimpleDictionary;
-
-import org.eclipse.cdt.internal.ui.text.CPreprocessorScanner;
-import org.eclipse.cdt.internal.ui.text.FastCPartitioner;
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentSpellDictionary;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellChecker;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellDictionary;
-import org.eclipse.cdt.internal.ui.text.spelling.engine.ISpellEventListener;
 
 /**
  * C/C++ spelling engine
@@ -201,7 +199,7 @@ public class CSpellingEngine extends SpellingEngine {
 	}
 
 	/**
-	 * Returns <code>true</code> if the token at the given offset and length is an include directive. 
+	 * Returns <code>true</code> if the token at the given offset and length is an include directive.
 	 * @param document
 	 * @param offset
 	 * @param length

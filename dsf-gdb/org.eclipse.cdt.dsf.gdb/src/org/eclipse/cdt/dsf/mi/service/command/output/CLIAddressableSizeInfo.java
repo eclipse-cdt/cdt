@@ -16,11 +16,11 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * This class takes care of parsing and providing the result of the CLI command
- * <br>"p/x (char)-1" 
- *   
+ * <br>"p/x (char)-1"
+ *
  * <p>E.g. if the response to 'p/x (char)-1' is</p>
  * $n = 0xffff
- *         
+ *
  * <p>Then we can easily resolve it to 2 octets (e.g. 2 hex characters per octet)</p>
  * @since 4.4
  */

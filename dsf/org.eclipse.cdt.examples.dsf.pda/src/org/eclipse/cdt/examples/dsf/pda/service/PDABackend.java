@@ -21,15 +21,14 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.Sequence;
-import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.concurrent.Sequence.Step;
+import org.eclipse.cdt.dsf.concurrent.ThreadSafe;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.examples.dsf.pda.PDAPlugin;
@@ -45,6 +44,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.Launch;
 import org.osgi.framework.BundleContext;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Service that manages the backend process: starting the process
@@ -67,7 +68,7 @@ public class PDABackend extends AbstractDsfService {
 	private String fBackendProcessName;
 
 	/**
-	 * 
+	 *
 	 * @param session
 	 * @param launch - can be null, e.g. for JUnit test.
 	 * @param program - can be a full path or a workspace resource path, must denote an existing file.
@@ -141,7 +142,7 @@ public class PDABackend extends AbstractDsfService {
 			@Override
 			public void execute(final RequestMonitor rm) {
 
-				// To avoid blocking the DSF dispatch thread use a job to initialize communication sockets.  
+				// To avoid blocking the DSF dispatch thread use a job to initialize communication sockets.
 				new Job("PDA Socket Initialize") {
 					@Override
 					protected IStatus run(IProgressMonitor monitor) {
@@ -223,7 +224,7 @@ public class PDABackend extends AbstractDsfService {
 
 	private Process launchPDABackendDebugger() throws CoreException {
 
-		List<String> commandList = new ArrayList<String>();
+		List<String> commandList = new ArrayList<>();
 
 		// Get Java VM path
 		String javaVMHome = System.getProperty("java.home");
@@ -253,7 +254,7 @@ public class PDABackend extends AbstractDsfService {
 		String absolutePath = fProgram;
 
 		// check if fProgram is already a full path of an existing file
-		// Note if "fProgram" is workspace resource path like /ProjectName/file.pda, we should not 
+		// Note if "fProgram" is workspace resource path like /ProjectName/file.pda, we should not
 		// change it to absolute path, otherwise the breakpoints in the PDA file won't work.
 		// See PDABreakpoints.doInsertBreakpoint() for more.
 		File f = new File(fProgram);
@@ -312,7 +313,7 @@ public class PDABackend extends AbstractDsfService {
 
 	/*
 	 * =========== Following are PDA debugger specific ====================
-	 * 
+	 *
 	 *  Caller should make sure these are called after the PDABackend is initialized.
 	 */
 	public OutputStream getRequestOutputStream() {

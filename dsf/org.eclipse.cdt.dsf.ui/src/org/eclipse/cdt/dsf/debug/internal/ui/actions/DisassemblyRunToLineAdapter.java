@@ -37,7 +37,7 @@ import org.eclipse.ui.IWorkbenchPart;
 
 /**
  * Run to line target adapter for the DSF Disassembly view
- * 
+ *
  * @since 2.1
  */
 public class DisassemblyRunToLineAdapter implements IRunToLineTarget {

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -15,17 +15,16 @@ package org.eclipse.cdt.managedbuilder.core;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IPath;
-
 import org.eclipse.cdt.core.settings.model.extension.CLanguageData;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGenerator;
 import org.eclipse.cdt.managedbuilder.makegen.IManagedDependencyGeneratorType;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * This interface represents a utility of some sort that is used in the build process.
  * A tool will generally process one or more resources to produce output resources.
  * Most tools have a set of options that can be used to modify the behavior of the tool.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -53,7 +52,7 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * @since 8.4
 	 */
-	public static final String IS_HIDDEN = "isHidden"; //$NON-NLS-1$	
+	public static final String IS_HIDDEN = "isHidden"; //$NON-NLS-1$
 
 	public static final String VERSIONS_SUPPORTED = "versionsSupported"; //$NON-NLS-1$
 	public static final String CONVERT_TO_ID = "convertToId"; //$NON-NLS-1$
@@ -67,19 +66,19 @@ public interface ITool extends IHoldsOptions {
 
 	/**
 	 * Returns the tool-chain or resource configuration that is the parent of this tool.
-	 * 
+	 *
 	 * @return IBuildObject
 	 */
 	public IBuildObject getParent();
 
 	/**
 	 * Creates a child InputType for this tool.
-	 * 
+	 *
 	 * @param superClass The superClass, if any
-	 * @param Id The id for the new InputType 
+	 * @param Id The id for the new InputType
 	 * @param name The name for the new InputType
 	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
-	 * 
+	 *
 	 * @return IInputType
 	 * @since 3.0
 	 */
@@ -87,30 +86,30 @@ public interface ITool extends IHoldsOptions {
 
 	/**
 	 * Removes an InputType from the tool's list.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void removeInputType(IInputType type);
 
 	/**
 	 * Returns the complete list of input types that are available for this tool.
-	 * The list is a merging of the input types specified for this tool with the 
+	 * The list is a merging of the input types specified for this tool with the
 	 * input types of its superclasses.  The lowest input type instance in the hierarchy
-	 * takes precedence.  
-	 * 
+	 * takes precedence.
+	 *
 	 * @return IInputType[]
 	 * @since 3.0
 	 */
 	public IInputType[] getInputTypes();
 
 	/**
-	 * Returns the <code>IInputType</code> in the tool with the specified 
+	 * Returns the <code>IInputType</code> in the tool with the specified
 	 * ID. This is an efficient search in the receiver.
-	 * 
-	 * <p>If the receiver does not have an InputType with that ID, the method 
-	 * returns <code>null</code>. It is the responsibility of the caller to 
-	 * verify the return value.  
-	 * 
+	 *
+	 * <p>If the receiver does not have an InputType with that ID, the method
+	 * returns <code>null</code>. It is the responsibility of the caller to
+	 * verify the return value.
+	 *
 	 * @param id unique identifier of the InputType to search for
 	 * @return <code>IInputType</code>
 	 * @since 3.0
@@ -118,13 +117,13 @@ public interface ITool extends IHoldsOptions {
 	public IInputType getInputTypeById(String id);
 
 	/**
-	 * Returns the <code>IInputType</code> in the tool that uses the 
+	 * Returns the <code>IInputType</code> in the tool that uses the
 	 * specified extension.
-	 * 
-	 * <p>If the receiver does not have an InputType that uses the extension, 
-	 * the method returns <code>null</code>. It is the responsibility of the 
-	 * caller to verify the return value.  
-	 * 
+	 *
+	 * <p>If the receiver does not have an InputType that uses the extension,
+	 * the method returns <code>null</code>. It is the responsibility of the
+	 * caller to verify the return value.
+	 *
 	 * @param inputExtension File extension
 	 * @return <code>IInputType</code>
 	 * @since 3.0
@@ -133,11 +132,11 @@ public interface ITool extends IHoldsOptions {
 
 	/**
 	 * Returns the primary <code>IInputType</code> in this tool
-	 * 
-	 * <p>If the receiver has no InputTypes, 
-	 * the method returns <code>null</code>. It is the responsibility of the 
-	 * caller to verify the return value.  
-	 * 
+	 *
+	 * <p>If the receiver has no InputTypes,
+	 * the method returns <code>null</code>. It is the responsibility of the
+	 * caller to verify the return value.
+	 *
 	 * @return <code>IInputType</code>
 	 * @since 3.0
 	 */
@@ -147,28 +146,28 @@ public interface ITool extends IHoldsOptions {
 	 * Returns all of the additional input resources of all InputType children.
 	 * Note: This does not include the primary InputType and does not include
 	 * additional dependencies.
-	 * 
+	 *
 	 * @return IPath[]
 	 */
 	public IPath[] getAdditionalResources();
 
 	/**
 	 * Returns all of the additional dependency resources of all InputType children.
-	 * Note: This does not include the primary InputType and does not include 
+	 * Note: This does not include the primary InputType and does not include
 	 * additional inputs.
-	 * 
+	 *
 	 * @return IPath[]
 	 */
 	public IPath[] getAdditionalDependencies();
 
 	/**
 	 * Creates a child OutputType for this tool.
-	 * 
+	 *
 	 * @param superClass The superClass, if any
-	 * @param Id The id for the new OutputType 
+	 * @param Id The id for the new OutputType
 	 * @param name The name for the new OutputType
 	 * @param isExtensionElement Indicates whether this is an extension element or a managed project element
-	 * 
+	 *
 	 * @return IOutputType
 	 * @since 3.0
 	 */
@@ -176,30 +175,30 @@ public interface ITool extends IHoldsOptions {
 
 	/**
 	 * Removes an OutputType from the tool's list.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void removeOutputType(IOutputType type);
 
 	/**
 	 * Returns the complete list of output types that are available for this tool.
-	 * The list is a merging of the output types specified for this tool with the 
+	 * The list is a merging of the output types specified for this tool with the
 	 * output types of its superclasses.  The lowest output type instance in the hierarchy
-	 * takes precedence.  
-	 * 
+	 * takes precedence.
+	 *
 	 * @return IOutputType[]
 	 * @since 3.0
 	 */
 	public IOutputType[] getOutputTypes();
 
 	/**
-	 * Get the <code>IOutputType</code> in the receiver with the specified 
+	 * Get the <code>IOutputType</code> in the receiver with the specified
 	 * ID. This is an efficient search in the receiver.
-	 * 
-	 * <p>If the receiver does not have an OutputType with that ID, the method 
-	 * returns <code>null</code>. It is the responsibility of the caller to 
-	 * verify the return value.  
-	 * 
+	 *
+	 * <p>If the receiver does not have an OutputType with that ID, the method
+	 * returns <code>null</code>. It is the responsibility of the caller to
+	 * verify the return value.
+	 *
 	 * @param id unique identifier of the OutputType to search for
 	 * @return <code>IOutputType</code>
 	 * @since 3.0
@@ -207,13 +206,13 @@ public interface ITool extends IHoldsOptions {
 	public IOutputType getOutputTypeById(String id);
 
 	/**
-	 * Returns the <code>IOutputType</code> in the tool that creates the 
+	 * Returns the <code>IOutputType</code> in the tool that creates the
 	 * specified extension.
-	 * 
-	 * <p>If the receiver does not have an OutputType that creates the extension, 
-	 * the method returns <code>null</code>. It is the responsibility of the 
-	 * caller to verify the return value.  
-	 * 
+	 *
+	 * <p>If the receiver does not have an OutputType that creates the extension,
+	 * the method returns <code>null</code>. It is the responsibility of the
+	 * caller to verify the return value.
+	 *
 	 * @param outputExtension File extension
 	 * @return <code>IOutputType</code>
 	 * @since 3.0
@@ -222,11 +221,11 @@ public interface ITool extends IHoldsOptions {
 
 	/**
 	 * Returns the primary <code>IOutputType</code> in this tool
-	 * 
-	 * <p>If the receiver has no OutputTypes, 
-	 * the method returns <code>null</code>. It is the responsibility of the 
-	 * caller to verify the return value.  
-	 * 
+	 *
+	 * <p>If the receiver has no OutputTypes,
+	 * the method returns <code>null</code>. It is the responsibility of the
+	 * caller to verify the return value.
+	 *
 	 * @return <code>IOutputType</code>
 	 * @since 3.0
 	 */
@@ -235,7 +234,7 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Returns the <code>ITool</code> that is the superclass of this
 	 * tool, or <code>null</code> if the attribute was not specified.
-	 * 
+	 *
 	 * @return ITool
 	 */
 	public ITool getSuperClass();
@@ -243,35 +242,35 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Returns whether this element is abstract.  Returns <code>false</code>
 	 * if the attribute was not specified.
-	 * @return boolean 
+	 * @return boolean
 	 */
 	public boolean isAbstract();
 
 	/**
-	 * Sets the isAbstract attribute of the tool-chain. 
+	 * Sets the isAbstract attribute of the tool-chain.
 	 */
 	public void setIsAbstract(boolean b);
 
 	/**
 	 * Returns a semi-colon delimited list of child Ids of the superclass'
 	 * children that should not be automatically inherited by this element.
-	 * Returns an empty string if the attribute was not specified. 
-	 * @return String 
+	 * Returns an empty string if the attribute was not specified.
+	 * @return String
 	 */
 	public String getUnusedChildren();
 
 	/**
 	 * Returns the semicolon separated list of unique IDs of the error parsers associated
 	 * with the tool.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getErrorParserIds();
 
 	/**
-	 * Returns the ordered list of unique IDs of the error parsers associated with the 
+	 * Returns the ordered list of unique IDs of the error parsers associated with the
 	 * tool.
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public String[] getErrorParserList();
@@ -284,7 +283,7 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Returns the list of valid source extensions this tool knows how to build.
 	 * The list may be empty but will never be <code>null</code>.
-	 * 
+	 *
 	 * @return List
 	 * @deprecated - use getPrimaryInputExtensions or getAllInputExtensions
 	 */
@@ -294,7 +293,7 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Returns the array of valid primary source extensions this tool knows how to build.
 	 * The array may be empty but will never be <code>null</code>.
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public String[] getPrimaryInputExtensions();
@@ -302,14 +301,14 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Returns the array of all valid source extensions this tool knows how to build.
 	 * The array may be empty but will never be <code>null</code>.
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public String[] getAllInputExtensions();
 
 	/**
 	 * Returns the default input extension for the primary input of the tool
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getDefaultInputExtension();
@@ -317,7 +316,7 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Returns the array of all valid dependency extensions for this tool's inputs.
 	 * The array may be empty but will never be <code>null</code>.
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public String[] getAllDependencyExtensions();
@@ -326,7 +325,7 @@ public interface ITool extends IHoldsOptions {
 	 * Returns the list of valid header extensions for this tool.
 	 * Returns the value of the headerExtensions attribute
 	 * The list may be empty but will never be <code>null</code>.
-	 * 
+	 *
 	 * @return List
 	 * @deprecated - use getDependency* methods
 	 */
@@ -334,20 +333,20 @@ public interface ITool extends IHoldsOptions {
 	public List<String> getInterfaceExtensions();
 
 	/**
-	 * Answers a constant corresponding to the project nature the tool should be used 
+	 * Answers a constant corresponding to the project nature the tool should be used
 	 * for. Possible answers are:
-	 *  
+	 *
 	 * <dl>
 	 * <dt>ITool.FILTER_C
-	 * <dd>The tool should only be displayed for C projects. <i>Notes:</i> even 
-	 * though a C++ project has a C nature, this flag will mask the tool for C++ 
-	 * projects. 
+	 * <dd>The tool should only be displayed for C projects. <i>Notes:</i> even
+	 * though a C++ project has a C nature, this flag will mask the tool for C++
+	 * projects.
 	 * <dt>ITool.FILTER_CC
 	 * <dd>The tool should only be displayed for C++ projects.
 	 * <dt>ITool.FILTER_BOTH
 	 * <dd>The tool should be displayed for projects with both natures.
 	 * </dl>
-	 * 
+	 *
 	 * @return int
 	 */
 	public int getNatureFilter();
@@ -355,7 +354,7 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Returns the array of all valid output extensions this tool can create.
 	 * The array may be empty but will never be <code>null</code>.
-	 * 
+	 *
 	 * @return String[]
 	 */
 	public String[] getAllOutputExtensions();
@@ -363,7 +362,7 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Answers all of the output extensions that the receiver can build.
 	 * This routine returns the value if the outputs attribute.
-	 * 
+	 *
 	 * @return <code>String[]</code> of extensions
 	 * @deprecated - use getAllOutputExtensions
 	 */
@@ -373,16 +372,16 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Answers all of the output extensions that the receiver can build,
 	 * from the value of the outputs attribute
-	 * 
+	 *
 	 * @return <code>String[]</code> of extensions
 	 */
 	public String[] getOutputsAttribute();
 
 	/**
-	 * Answer the output extension the receiver will create from the input, 
+	 * Answer the output extension the receiver will create from the input,
 	 * or <code>null</code> if the tool does not understand that extension.
-	 * 
-	 * @param inputExtension The extension of the source file. 
+	 *
+	 * @param inputExtension The extension of the source file.
 	 * @return String
 	 */
 	public String getOutputExtension(String inputExtension);
@@ -390,23 +389,23 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Sets all of the output extensions that the receiver can build,
 	 * into the outputs attribute.  Note that the outputs attribute is
-	 * ignored when one or more outputTypes are specified.  
+	 * ignored when one or more outputTypes are specified.
 	 */
 	public void setOutputsAttribute(String extensions);
 
 	/**
-	 * Answers the argument that must be passed to a specific tool in order to 
-	 * control the name of the output artifact. For example, the GCC compile and 
-	 * linker use '-o', while the archiver does not. 
-	 * 
+	 * Answers the argument that must be passed to a specific tool in order to
+	 * control the name of the output artifact. For example, the GCC compile and
+	 * linker use '-o', while the archiver does not.
+	 *
 	 * @return String
 	 */
 	public String getOutputFlag();
 
 	/**
-	 * Sets the argument that must be passed to a specific tool in order to 
-	 * control the name of the output artifact. For example, the GCC compile and 
-	 * linker use '-o', while the archiver does not. 
+	 * Sets the argument that must be passed to a specific tool in order to
+	 * control the name of the output artifact. For example, the GCC compile and
+	 * linker use '-o', while the archiver does not.
 	 */
 	public void setOutputFlag(String flag);
 
@@ -420,34 +419,34 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Sets the prefix that the tool should prepend to the name of the build artifact.
 	 * For example, a librarian usually prepends 'lib' to the target.a
-	 * 
-	 * @see #setOutputPrefixForPrimaryOutput(String) 
+	 *
+	 * @see #setOutputPrefixForPrimaryOutput(String)
 	 */
 	public void setOutputPrefix(String prefix);
 
 	public void setOutputPrefixForPrimaryOutput(String prefix);
 
 	/**
-	 * Returns <code>true</code> if the Tool wants the MBS to display the Advanced 
+	 * Returns <code>true</code> if the Tool wants the MBS to display the Advanced
 	 * Input category that allows the user to specify additional input resources and
 	 * dependencies, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean getAdvancedInputCategory();
 
 	/**
-	 * Sets whether the Tool wants the MBS to display the Advanced 
+	 * Sets whether the Tool wants the MBS to display the Advanced
 	 * Input category that allows the user to specify additional input resources and
-	 * dependencies. 
+	 * dependencies.
 	 */
 	public void setAdvancedInputCategory(boolean display);
 
 	/**
 	 * Returns <code>true</code> if the Tool represents a user-define custom build
 	 * step, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean getCustomBuildStep();
 
@@ -457,38 +456,38 @@ public interface ITool extends IHoldsOptions {
 	public void setCustomBuildStep(boolean customBuildStep);
 
 	/**
-	 * Returns the announcement string for this tool 
+	 * Returns the announcement string for this tool
 	 * @return String
 	 */
 	public String getAnnouncement();
 
 	/**
-	 * Sets the announcement string for this tool 
+	 * Sets the announcement string for this tool
 	 */
 	public void setAnnouncement(String announcement);
 
 	/**
 	 * Answers the command-line invocation defined for the receiver.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getToolCommand();
 
 	/**
 	 * Sets the command-line invocation command defined for this tool.
-	 * 
-	 * @return boolean  if <code>true</code>, then the tool command was modified 
+	 *
+	 * @return boolean  if <code>true</code>, then the tool command was modified
 	 */
 	public boolean setToolCommand(String command);
 
 	/**
-	 * Returns command line pattern for this tool 
+	 * Returns command line pattern for this tool
 	 * @return String
 	 */
 	public String getCommandLinePattern();
 
 	/**
-	 * Sets the command line pattern for this tool 
+	 * Sets the command line pattern for this tool
 	 */
 	public void setCommandLinePattern(String pattern);
 
@@ -499,10 +498,10 @@ public interface ITool extends IHoldsOptions {
 	public IManagedCommandLineGenerator getCommandLineGenerator();
 
 	/**
-	 * Returns a class instance that implements an interface to generate 
-	 * source-level dependencies for the tool specified in the argument. 
-	 * This method may return <code>null</code> in which case, the receiver 
-	 * should assume that the tool does not require dependency information 
+	 * Returns a class instance that implements an interface to generate
+	 * source-level dependencies for the tool specified in the argument.
+	 * This method may return <code>null</code> in which case, the receiver
+	 * should assume that the tool does not require dependency information
 	 * when the project is built.
 	 *
 	 * @return IManagedDependencyGenerator
@@ -512,10 +511,10 @@ public interface ITool extends IHoldsOptions {
 	public IManagedDependencyGenerator getDependencyGenerator();
 
 	/**
-	 * Returns a class instance that implements an interface to generate 
-	 * source-level dependencies for the tool specified in the argument. 
-	 * This method may return <code>null</code> in which case, the receiver 
-	 * should assume that the tool does not require dependency information 
+	 * Returns a class instance that implements an interface to generate
+	 * source-level dependencies for the tool specified in the argument.
+	 * This method may return <code>null</code> in which case, the receiver
+	 * should assume that the tool does not require dependency information
 	 * when the project is built.
 	 *
 	 * @param sourceExt  source file extension
@@ -528,11 +527,11 @@ public interface ITool extends IHoldsOptions {
 	 * the tool.
 	 * The flags contain build macros resolved to the makefile format.
 	 * That is if a user has chosen to expand all macros in the buildfile,
-	 * the flags contain all macro references resolved, otherwise, if a user has 
+	 * the flags contain all macro references resolved, otherwise, if a user has
 	 * chosen to keep the environment build macros unresolved, the flags contain
 	 * the environment macro references converted to the buildfile variable format,
-	 * all other macro references are resolved 
-	 * 
+	 * all other macro references are resolved
+	 *
 	 * @deprecated - use getToolCommandFlags instead
 	 */
 	@Deprecated
@@ -543,13 +542,13 @@ public interface ITool extends IHoldsOptions {
 	 * the tool.
 	 * The string contains build macros resolved to the makefile format.
 	 * That is if a user has chosen to expand all macros in the buildfile,
-	 * the string contains all macro references resolved, otherwise, if a user has 
+	 * the string contains all macro references resolved, otherwise, if a user has
 	 * chosen to keep the environment build macros unresolved, the string contains
 	 * the environment macro references converted to the buildfile variable format,
-	 * all other macro references are resolved 
-	 * 
+	 * all other macro references are resolved
+	 *
 	 * @return String
-	 * 
+	 *
 	 * @deprecated - use getToolCommandFlagsString instead
 	 */
 	@Deprecated
@@ -560,10 +559,10 @@ public interface ITool extends IHoldsOptions {
 	 * the tool.
 	 * The flags contain build macros resolved to the makefile format.
 	 * That is if a user has chosen to expand all macros in the buildfile,
-	 * the flags contain all macro references resolved, otherwise, if a user has 
+	 * the flags contain all macro references resolved, otherwise, if a user has
 	 * chosen to keep the environment build macros unresolved, the flags contain
 	 * the environment macro references converted to the buildfile variable format,
-	 * all other macro references are resolved 
+	 * all other macro references are resolved
 	 */
 	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation) throws BuildException;
 
@@ -572,10 +571,10 @@ public interface ITool extends IHoldsOptions {
 	 * the tool.
 	 * The string contains build macros resolved to the makefile format.
 	 * That is if a user has chosen to expand all macros in the buildfile,
-	 * the string contains all macro references resolved, otherwise, if a user has 
+	 * the string contains all macro references resolved, otherwise, if a user has
 	 * chosen to keep the environment build macros unresolved, the string contains
 	 * the environment macro references converted to the buildfile variable format,
-	 * all other macro references are resolved 
+	 * all other macro references are resolved
 	 */
 	public String getToolCommandFlagsString(IPath inputFileLocation, IPath outputFileLocation) throws BuildException;
 
@@ -583,7 +582,7 @@ public interface ITool extends IHoldsOptions {
 	 * Options are organized into categories for UI purposes.
 	 * These categories are organized into a tree.  This is the root
 	 * of that tree.
-	 * 
+	 *
 	 * @return IOptionCategory
 	 */
 	public IOptionCategory getTopOptionCategory();
@@ -591,7 +590,7 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Return <code>true</code> if the receiver builds files with the
 	 * specified extension, else <code>false</code>.
-	 * 
+	 *
 	 * @param extension file extension of the source
 	 * @return boolean
 	 */
@@ -602,16 +601,16 @@ public interface ITool extends IHoldsOptions {
 	 * specified extension as input, else <code>false</code>.  This
 	 * returns true for a superset of the extensions that buildFileType
 	 * returns true for - it includes secondary inputs.
-	 * 
+	 *
 	 * @param extension file extension of the source
 	 * @return boolean
 	 */
 	public boolean isInputFileType(String extension);
 
 	/**
-	 * Answers <code>true</code> if the tool considers the file extension to be 
+	 * Answers <code>true</code> if the tool considers the file extension to be
 	 * one associated with a header file.
-	 * 
+	 *
 	 * @param ext file extension of the source
 	 * @return boolean
 	 */
@@ -620,17 +619,17 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Answers <code>true</code> if the receiver builds a file with the extension specified
 	 * in the argument, else <code>false</code>.
-	 * 
+	 *
 	 * @param outputExtension extension of the file being produced by a tool
 	 * @return boolean
 	 */
 	public boolean producesFileType(String outputExtension);
 
 	/**
-	 * Returns <code>true</code> if this tool has changes that need to 
+	 * Returns <code>true</code> if this tool has changes that need to
 	 * be saved in the project file, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isDirty();
 
@@ -642,38 +641,38 @@ public interface ITool extends IHoldsOptions {
 	/**
 	 * Returns <code>true</code> if this tool was loaded from a manifest file,
 	 * and <code>false</code> if it was loaded from a project (.cdtbuild) file.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isExtensionElement();
 
 	/**
 	 * Returns the 'versionsSupported' of this tool
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getVersionsSupported();
 
 	/**
 	 * Returns the 'convertToId' of this tool
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getConvertToId();
 
 	/**
-	 * Sets the 'versionsSupported' attribute of the tool. 
+	 * Sets the 'versionsSupported' attribute of the tool.
 	 */
 	public void setVersionsSupported(String versionsSupported);
 
 	/**
-	 * Sets the 'convertToId' attribute of the tool. 
+	 * Sets the 'convertToId' attribute of the tool.
 	 */
 	public void setConvertToId(String convertToId);
 
 	/**
 	 * Returns an array of the Environment Build Path variable descriptors
-	 * 
+	 *
 	 * @return IEnvVarBuildPath[]
 	 */
 	public IEnvVarBuildPath[] getEnvVarBuildPaths();

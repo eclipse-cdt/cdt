@@ -28,18 +28,18 @@ import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.jface.viewers.ISelection;
 
 /**
- * White-list Filter for the graphical objects displayed in the multicore 
- * visualizer canvas. 
+ * White-list Filter for the graphical objects displayed in the multicore
+ * visualizer canvas.
  */
 public class MulticoreVisualizerCanvasFilter {
 
 	/** white list of objects on which the filter is based */
 	List<IVisualizerModelObject> m_filterList = null;
 
-	/** 
+	/**
 	 * the dynamically expanded list, containing elements in the
 	 * white list and their parents - recalculated as required
-	 * since some elements can move around and change parent 
+	 * since some elements can move around and change parent
 	 */
 	List<IVisualizerModelObject> m_dynamicFilterList = null;
 
@@ -103,8 +103,8 @@ public class MulticoreVisualizerCanvasFilter {
 	// --- filter methods ---
 
 	/**
-	 * Sets-up a canvas white-list filter from the current canvas selection.  
-	 * Any applicable selected objects are added to the filter. 
+	 * Sets-up a canvas white-list filter from the current canvas selection.
+	 * Any applicable selected objects are added to the filter.
 	 */
 	public void applyFilter() {
 		// replace current filter? Clear old one first.
@@ -112,8 +112,8 @@ public class MulticoreVisualizerCanvasFilter {
 			clearFilter();
 		}
 
-		m_filterList = new ArrayList<IVisualizerModelObject>();
-		m_dynamicFilterList = new ArrayList<IVisualizerModelObject>();
+		m_filterList = new ArrayList<>();
+		m_dynamicFilterList = new ArrayList<>();
 
 		m_filterActive = true;
 
@@ -162,7 +162,7 @@ public class MulticoreVisualizerCanvasFilter {
 		m_dynamicFilterList.clear();
 
 		for (IVisualizerModelObject elem : m_filterList) {
-			// element still in current model? 
+			// element still in current model?
 			if (isElementInCurrentModel(elem)) {
 				// add element to list
 				addElementToFilterList(elem);
@@ -170,7 +170,7 @@ public class MulticoreVisualizerCanvasFilter {
 				// also add all its ancestors
 				IVisualizerModelObject parent;
 
-				// Bug 407673 - if element is a thread, lookup the parent (core) 
+				// Bug 407673 - if element is a thread, lookup the parent (core)
 				// from the current model, to be sure it's up-to-date
 				if (elem instanceof VisualizerThread && model != null) {
 					parent = model.getThread(((VisualizerThread) elem).getGDBTID()).getParent();
@@ -186,16 +186,16 @@ public class MulticoreVisualizerCanvasFilter {
 	}
 
 	/**
-	 * returns whether a candidate model object should be displayed, 
-	 * according to the current filter.  
+	 * returns whether a candidate model object should be displayed,
+	 * according to the current filter.
 	 */
 	public boolean displayObject(final IVisualizerModelObject candidate) {
-		// filter not active? Let anything be displayed 
+		// filter not active? Let anything be displayed
 		if (!m_filterActive) {
 			return true;
 		}
 
-		// Candidate is in white list?  
+		// Candidate is in white list?
 		if (isElementInFilterList(candidate)) {
 			return true;
 		}
@@ -206,7 +206,7 @@ public class MulticoreVisualizerCanvasFilter {
 	// --- filter list management ---
 
 	/**
-	 * Adds an element to the dynamic filter list, if an equivalent 
+	 * Adds an element to the dynamic filter list, if an equivalent
 	 * element is not already in there.
 	 */
 	private void addElementToFilterList(final IVisualizerModelObject elem) {
@@ -217,13 +217,13 @@ public class MulticoreVisualizerCanvasFilter {
 	}
 
 	/**
-	 * Returns whether an element already has an equivalent in the 
+	 * Returns whether an element already has an equivalent in the
 	 * dynamic filter list.
 	 */
 	private boolean isElementInFilterList(final IVisualizerModelObject candidate) {
 		// is the candidate in the dynamic filter list?
 		for (IVisualizerModelObject elem : m_dynamicFilterList) {
-			// Note: we are comparing the content (IDs), not references.  
+			// Note: we are comparing the content (IDs), not references.
 			if (candidate.compareTo(elem) == 0) {
 				return true;
 			}
@@ -231,7 +231,7 @@ public class MulticoreVisualizerCanvasFilter {
 		return false;
 	}
 
-	/** returns whether a model object currently in the filter still exists in 
+	/** returns whether a model object currently in the filter still exists in
 	 * the current model.
 	 */
 	private boolean isElementInCurrentModel(IVisualizerModelObject element) {
@@ -268,7 +268,7 @@ public class MulticoreVisualizerCanvasFilter {
 
 	// --- Stats counters ---
 
-	/**	
+	/**
 	 * Steps the filter counters for a given type of model object.
 	 */
 	private void stepStatsCounter(IVisualizerModelObject modelObj) {

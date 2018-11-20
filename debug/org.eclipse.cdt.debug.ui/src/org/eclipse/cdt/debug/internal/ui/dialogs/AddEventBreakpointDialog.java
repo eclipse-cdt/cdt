@@ -52,7 +52,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 	private String fEventType;
 	private String fEventArgument;
 	private Composite fEventArgumentControl;
-	private HashMap<String, String> fIdLabelMap = new LinkedHashMap<String, String>();
+	private HashMap<String, String> fIdLabelMap = new LinkedHashMap<>();
 	private FieldEditorPreferencePage page;
 	private CBreakpointUIContributionFactory factory;
 	private String debugModelId;
@@ -77,7 +77,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 		protected void createFieldEditors() {
 			Composite parent = getFieldEditorParent();
 			try {
-				Map<String, Object> map = new HashMap<String, Object>();
+				Map<String, Object> map = new HashMap<>();
 				map.put(ICEventBreakpoint.EVENT_TYPE_ID, eventType);
 				ICBreakpointsUIContribution cons[] = CBreakpointUIContributionFactory.getInstance()
 						.getBreakpointUIContributions(modelId, ICEventBreakpoint.C_EVENT_BREAKPOINT_MARKER, map);
@@ -101,7 +101,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param parentShell
 	 */
 	public AddEventBreakpointDialog(Shell parentShell) {
@@ -134,7 +134,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -229,7 +229,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 	 */
 	@Override
@@ -240,7 +240,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override
@@ -272,7 +272,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	@Override
@@ -285,7 +285,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.TrayDialog#createButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -295,7 +295,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	@Override
@@ -305,7 +305,7 @@ public class AddEventBreakpointDialog extends Dialog implements ModifyListener, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	@Override

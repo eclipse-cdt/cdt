@@ -752,7 +752,7 @@ public class PDOMASTAdapter {
 	}
 
 	/**
-	 * If the provided binding is anonymous, either an adapter is returned 
+	 * If the provided binding is anonymous, either an adapter is returned
 	 * that computes a name for the binding, or <code>null</code> if that
 	 * is not appropriate (e.g. binding is not a type).
 	 * Otherwise, if the binding has a name it is returned unchanged.
@@ -800,7 +800,7 @@ public class PDOMASTAdapter {
 	/**
 	 * Retrieves the original binding from an adapter previously returned by
 	 * {@link #getAdapterForAnonymousASTBinding(IBinding)}. If the parameter binding is not
-	 * an adapter, returns the binding itself. 
+	 * an adapter, returns the binding itself.
 	 */
 	public static IBinding getOriginalForAdaptedBinding(IBinding binding) {
 		if (binding instanceof AnonymousCPPBinding) {
@@ -810,10 +810,10 @@ public class PDOMASTAdapter {
 	}
 
 	/**
-	 * If the name is empty and has no file location, either an adapter 
-	 * that has a file location is returned, or <code>null</code> if that 
+	 * If the name is empty and has no file location, either an adapter
+	 * that has a file location is returned, or <code>null</code> if that
 	 * is not possible (no parent with a file location).
-	 * Otherwise if the provided name is not empty or has a file location, 
+	 * Otherwise if the provided name is not empty or has a file location,
 	 * it is returned unchanged.
 	 */
 	public static IASTName getAdapterIfAnonymous(IASTName name) {

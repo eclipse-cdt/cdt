@@ -17,26 +17,26 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * This class represents a project instance in the managed build system.
- * Project instances are stored in the .cdtbuild file.  Note that there 
- * is no reason to define a project element in a manifest file - it 
+ * Project instances are stored in the .cdtbuild file.  Note that there
+ * is no reason to define a project element in a manifest file - it
  * would never be used.
  * <p>
- * The following steps occur when a CDT user creates a new Managed Build 
+ * The following steps occur when a CDT user creates a new Managed Build
  * project:
  * 1. A new project element is created.  Its projectType attribute is set
- *    to the projectType that the user selected.  Its name attribute is 
+ *    to the projectType that the user selected.  Its name attribute is
  *    set to the project name that the user entered.
  * 2. When the user adds a default configuration, a configuration
- *    element is created as a child of the project element created in 
+ *    element is created as a child of the project element created in
  *    step 1.
- * 3. Add a tool-chain element that specifies as its superClass the 
+ * 3. Add a tool-chain element that specifies as its superClass the
  *    tool-chain that is the child of the selected configuration element.
- * 4. For each tool element child of the tool-chain that is the child of 
- *    the selected configuration element, create a tool element child of 
- *    the cloned configuration's tool-chain element that specifies the 
+ * 4. For each tool element child of the tool-chain that is the child of
+ *    the selected configuration element, create a tool element child of
+ *    the cloned configuration's tool-chain element that specifies the
  *    original tool element as its superClass.
- * This prepares the new project/configurations for modification by the user. 
- * 
+ * This prepares the new project/configurations for modification by the user.
+ *
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -54,12 +54,12 @@ public interface IManagedProject
 
 	/**
 	 * Creates a configuration for this project populated with the tools
-	 * and options settings from the parent configuration.  As options and 
-	 * tools change in the parent, unoverridden values are updated in the 
+	 * and options settings from the parent configuration.  As options and
+	 * tools change in the parent, unoverridden values are updated in the
 	 * child configuration as well.
 	 * <p>
 	 * This method performs steps 3 & 4 described above.
-	 * 
+	 *
 	 * @param parent The <code>IConfiguration</code> to use as a settings template
 	 * @param id The unique id the new configuration will have
 	 * @return IConfiguration of the new configuration
@@ -68,13 +68,13 @@ public interface IManagedProject
 
 	/**
 	 * Creates a configuration for this project populated with the tools
-	 * and options settings from the parent configuration.  As opposed to the 
+	 * and options settings from the parent configuration.  As opposed to the
 	 * <code>createConfiguration</code> method, this method creates a configuration
 	 * from an existing configuration in the project.
 	 * <p>
 	 * In this case, the new configuration is cloned from the existing configuration,
 	 * and does not retain a pointer to the existing configuration.
-	 * 
+	 *
 	 * @param parent The <code>IConfiguration</code> to clone
 	 * @param id The unique id the new configuration will have
 	 * @return IConfiguration of the new configuration
@@ -83,21 +83,21 @@ public interface IManagedProject
 
 	/**
 	 * Removes the configuration with the ID specified in the argument.
-	 * 
+	 *
 	 * @param id The unique id of the configuration
 	 */
 	public void removeConfiguration(String id);
 
 	/**
 	 * Returns all of the configurations defined by this project-type.
-	 * 
+	 *
 	 * @return IConfiguration[]
 	 */
 	public IConfiguration[] getConfigurations();
 
 	/**
 	 * Returns the configuration with the given id, or <code>null</code> if not found.
-	 * 
+	 *
 	 * @param id The unique id of the configuration
 	 * @return IConfiguration
 	 */
@@ -106,14 +106,14 @@ public interface IManagedProject
 	/**
 	 * Answers the <code>IProjectType</code> that is the superclass of this
 	 * project-type, or <code>null</code> if the attribute was not specified.
-	 * 
+	 *
 	 * @return IProjectType
 	 */
 	public IProjectType getProjectType();
 
 	/**
 	 * Returns the owner of the managed project (an IProject).
-	 * 
+	 *
 	 * @return IResource
 	 */
 	public IResource getOwner();
@@ -124,10 +124,10 @@ public interface IManagedProject
 	public void updateOwner(IResource resource);
 
 	/**
-	 * Returns <code>true</code> if this project has changes that need to 
+	 * Returns <code>true</code> if this project has changes that need to
 	 * be saved in the project file, else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isDirty();
 
@@ -137,10 +137,10 @@ public interface IManagedProject
 	public void setDirty(boolean isDirty);
 
 	/**
-	 * Returns <code>true</code> if this project is valid 
+	 * Returns <code>true</code> if this project is valid
 	 * else <code>false</code>.
-	 * 
-	 * @return boolean 
+	 *
+	 * @return boolean
 	 */
 	public boolean isValid();
 
@@ -151,7 +151,7 @@ public interface IManagedProject
 
 	//	/**
 	//	 * Persist the managed project to the project file (.cdtbuild).
-	//	 * 
+	//	 *
 	//	 * @param doc
 	//	 * @param element
 	//	 */
@@ -159,7 +159,7 @@ public interface IManagedProject
 
 	/**
 	 * Returns the default build artifact name for the project
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getDefaultArtifactName();

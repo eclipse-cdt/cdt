@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 
 /**
  * @author Doug Schaefer
- * 
+ *
  * Root class for Index View Actions. Add an check to make sure the
  * action is valid with the current context.
  */

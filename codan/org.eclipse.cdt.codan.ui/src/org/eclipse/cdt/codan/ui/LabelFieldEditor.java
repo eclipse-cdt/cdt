@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Label;
 
 /***
  * A field editor for displaying labels not associated with other widgets.
- * 
+ *
  * @author fgiust
  * @version $Revision: 1.1 $ ($Author: elaskavaia $)
  * @since 2.0
@@ -37,7 +37,7 @@ public class LabelFieldEditor extends FieldEditor {
 	/***
 	 * All labels can use the same preference name since they don't store any
 	 * preference.
-	 * 
+	 *
 	 * @param labelText text for the label
 	 * @param parent Composite
 	 */
@@ -48,7 +48,7 @@ public class LabelFieldEditor extends FieldEditor {
 	/***
 	 * Adjusts the field editor to be displayed correctly for the given number
 	 * of columns.
-	 * 
+	 *
 	 * @param numColumns number of columns
 	 */
 	@Override
@@ -58,7 +58,7 @@ public class LabelFieldEditor extends FieldEditor {
 
 	/***
 	 * Fills the field editor's controls into the given parent.
-	 * 
+	 *
 	 * @param parent Composite
 	 * @param numColumns cumber of columns
 	 */
@@ -76,7 +76,7 @@ public class LabelFieldEditor extends FieldEditor {
 
 	/***
 	 * Returns the number of controls in the field editor.
-	 * 
+	 *
 	 * @return 1
 	 */
 	@Override

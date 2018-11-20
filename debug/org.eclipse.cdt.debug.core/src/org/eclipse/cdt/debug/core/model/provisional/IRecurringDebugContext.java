@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Texas Instruments - initial API and implementation
  *******************************************************************************/
@@ -27,7 +27,7 @@ import org.eclipse.debug.core.DebugException;
  * identifiers that are assigned by the underlying runtime system (e.g., PIDs
  * and TIDs), since such IDs are often assigned and reused in non-deterministic
  * ways.
- * 
+ *
  * @author Alain Lee
  */
 public interface IRecurringDebugContext {

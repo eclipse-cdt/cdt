@@ -45,7 +45,7 @@ public interface ISpellCheckIterator extends Iterator<String> {
 	/**
 	 * Tells whether to ignore single letters
 	 * from being checked.
-	 * 
+	 *
 	 * @param state <code>true</code> if single letters should be ignored
 	 */
 	public void setIgnoreSingleLetters(boolean state);

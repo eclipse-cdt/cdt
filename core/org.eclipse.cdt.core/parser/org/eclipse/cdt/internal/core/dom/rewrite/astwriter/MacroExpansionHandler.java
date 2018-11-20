@@ -47,7 +47,7 @@ public class MacroExpansionHandler {
 	private final Scribe scribe;
 	private int lastMacroExpOffset;
 	private IASTTranslationUnit ast;
-	private Map<String, List<IIndexName>> macroExpansion = new TreeMap<String, List<IIndexName>>();
+	private Map<String, List<IIndexName>> macroExpansion = new TreeMap<>();
 
 	public MacroExpansionHandler(Scribe scribe) {
 		this.scribe = scribe;
@@ -189,10 +189,10 @@ public class MacroExpansionHandler {
 			ast = unit;
 			IIndex index = ast.getIndex();
 			if (index != null) {
-				macroExpansion = new TreeMap<String, List<IIndexName>>();
+				macroExpansion = new TreeMap<>();
 				IASTPreprocessorMacroDefinition[] md = ast.getMacroDefinitions();
 
-				TreeSet<String> paths = new TreeSet<String>();
+				TreeSet<String> paths = new TreeSet<>();
 				for (IASTPreprocessorIncludeStatement is : ast.getIncludeDirectives()) {
 					if (!is.isSystemInclude()) {
 						paths.add(is.getContainingFilename());
@@ -212,7 +212,7 @@ public class MacroExpansionHandler {
 									List<IIndexName> fileList = macroExpansion.get(filename);
 									if (paths.contains(filename)) {
 										if (fileList == null) {
-											fileList = new ArrayList<IIndexName>();
+											fileList = new ArrayList<>();
 											macroExpansion.put(filename, fileList);
 										}
 										fileList.add(iIndexName);

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.TreePath;
 /**
  * The IModelProxy implementation to be used with an expression
  * view model provider.
- * 
+ *
  * @see ExpressionVMProvider
  */
 public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyStrategy {
@@ -57,8 +57,8 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
 		if (matchingNode != null && !matchingNode.equals(node)) {
 			flags = flags | getNodeDeltaFlagsForExpression(matchingNode, expression, event);
 		} else {
-			// Check the child nodes of this expression node for additional 
-			// delta flags. 
+			// Check the child nodes of this expression node for additional
+			// delta flags.
 			for (IVMNode childNode : getVMProvider().getChildVMNodes(node)) {
 				if (!childNode.equals(node)) {
 					int childNodeDeltaFlags = getDeltaFlags(childNode, null, event);
@@ -108,7 +108,7 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
 
 										@Override
 										protected void handleErrorOrWarning() {
-											// Avoid propagating the error to avoid processing the delta by 
+											// Avoid propagating the error to avoid processing the delta by
 											// all nodes.
 											rm.done();
 										}
@@ -127,10 +127,10 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
 		node.buildDeltaForExpressionElement(expressionElement, expressionElementIdx, event, parentDelta, multiRm);
 		multiRmCount++;
 
-		// Find the child nodes that have deltas for the given event. 
+		// Find the child nodes that have deltas for the given event.
 		Map<IVMNode, Integer> childNodesWithDeltaFlags = getChildNodesWithDeltaFlags(node, parentDelta, event);
 
-		// If no child layout nodes have deltas we can stop here. 
+		// If no child layout nodes have deltas we can stop here.
 		if (childNodesWithDeltaFlags.size() != 0) {
 			callChildNodesToBuildDelta(node, childNodesWithDeltaFlags,
 					parentDelta.addNode(expressionElement, expressionElementIdx, IModelDelta.NO_CHANGE), event,
@@ -151,10 +151,10 @@ public class ExpressionVMProviderModelProxyStrategy extends DefaultVMModelProxyS
 			VMDelta parentDelta, final RequestMonitor rm) {
 		switch (event.getType()) {
 		case ADDED:
-			// New expressions are always added one element before last.  
+			// New expressions are always added one element before last.
 			// Last element is the "Add new expression" element.
-			// Note: Index should be calculated when the IExpressionListener.expressionsAdded 
-			// is called.  If it's not, try to calculate it here based on parent count. 
+			// Note: Index should be calculated when the IExpressionListener.expressionsAdded
+			// is called.  If it's not, try to calculate it here based on parent count.
 			int parentCount = parentDelta.getChildCount();
 			if (elementIdx == -1 && parentCount > 1) {
 				elementIdx = parentCount - 2;

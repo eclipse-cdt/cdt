@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Texas Instruments, Freescale Semiconductor - initial API and implementation
  *******************************************************************************/
@@ -21,11 +21,11 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * A memory service that is memory space aware.
- * 
+ *
  * <p>
  * Memory contexts are not meant to be represented in tree or table views, so it
  * doesn't need to implement IDMService interface.
- * 
+ *
  * @author Alain Lee and John Cortell
  * @since 2.1
  */
@@ -41,7 +41,7 @@ public interface IMemorySpaces extends IDsfService {
 		/**
 		 * The string-based handle used to refer to the memory space, as per
 		 * what's returned in
-		 * {@link IMemorySpaces#getMemorySpaces(IDMContext, DataRequestMonitor) 
+		 * {@link IMemorySpaces#getMemorySpaces(IDMContext, DataRequestMonitor)
 		 */
 		public String getMemorySpaceId();
 	}
@@ -52,7 +52,7 @@ public interface IMemorySpaces extends IDsfService {
 	 * [memory-space-id]:[expression]. If this is adequate, the client can
 	 * return null from this method. This method is called when having to
 	 * represent a memory-space qualified address as a single string.
-	 * 
+	 *
 	 * @param expression
 	 *            the expression representing a location within a memory space.
 	 *            This can be a simple numeric expression like "0x10000" or
@@ -60,7 +60,7 @@ public interface IMemorySpaces extends IDsfService {
 	 * @param memorySpaceID
 	 *            a string which represents the memory space
 	 * @return the encoded string representation of the address, or null to
-	 *         indicate no custom encoding is required 
+	 *         indicate no custom encoding is required
 	 */
 	String encodeAddress(String expression, String memorySpaceID);
 
@@ -68,7 +68,7 @@ public interface IMemorySpaces extends IDsfService {
 	 * The inverse of {@link #encodeAddress(String, String)}. Client should
 	 * provide decoding if it provides encoding. Conversely, it should not
 	 * provide decoding if it doesn't provide encoding.
-	 * 
+	 *
 	 * @param str
 	 *            the encoded string
 	 * @return the result of decoding the string into its components, or null to
@@ -86,7 +86,7 @@ public interface IMemorySpaces extends IDsfService {
 
 	/**
 	 * Provides the memory spaces available in the given context.
-	 * 
+	 *
 	 * @param ctx
 	 *            a context which might <i>contain</i> one or more memory
 	 *            spaces. Contexts that may be <i>associated</i> with a memory
@@ -110,7 +110,7 @@ public interface IMemorySpaces extends IDsfService {
 
 	/**
 	 * Provides the default memory space to be used in the given context.
-	 * 
+	 *
 	 * @param ctx
 	 *            a context which might <i>contain</i> one or more memory
 	 *            spaces. Contexts that may be <i>associated</i> with a memory

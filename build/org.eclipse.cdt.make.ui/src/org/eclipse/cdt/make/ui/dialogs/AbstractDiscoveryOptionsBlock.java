@@ -178,7 +178,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
 	 *
 	 */
 	private void initializeProfilePageMap() {
-		fProfilePageMap = new HashMap<String, DiscoveryProfilePageConfiguration>(5);
+		fProfilePageMap = new HashMap<>(5);
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(MakeUIPlugin.getPluginId(),
 				"DiscoveryProfilePage"); //$NON-NLS-1$
@@ -349,7 +349,7 @@ public abstract class AbstractDiscoveryOptionsBlock extends AbstractCOptionPage 
 	}
 
 	protected List<String> getDiscoveryProfileIdList() {
-		return new ArrayList<String>(fProfilePageMap.keySet());
+		return new ArrayList<>(fProfilePageMap.keySet());
 	}
 
 	protected abstract String getCurrentProfileId();

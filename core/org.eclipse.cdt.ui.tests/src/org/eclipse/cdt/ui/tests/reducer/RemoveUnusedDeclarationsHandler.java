@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.reducer;
 
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICEditor;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -20,12 +24,6 @@ import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.handlers.HandlerUtil;
-
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICEditor;
-
-import org.eclipse.cdt.internal.ui.refactoring.RefactoringRunner;
 
 public class RemoveUnusedDeclarationsHandler extends AbstractHandler {
 	@Override

@@ -30,7 +30,7 @@ public class XlcKeywords extends CLanguageKeywords {
 	public static final XlcKeywords ALL_C_KEYWORDS = createC(true, true);
 	public static final XlcKeywords ALL_CPP_KEYWORDS = createCPP(true, true, true, true, true);
 
-	private final CharArrayMap<Integer> map = new CharArrayMap<Integer>();
+	private final CharArrayMap<Integer> map = new CharArrayMap<>();
 	private final ParserLanguage language;
 	private String[] allKeywords = null;
 
@@ -94,7 +94,7 @@ public class XlcKeywords extends CLanguageKeywords {
 	}
 
 	/**
-	 * Returns the LPG token kind for additional keywords defined by 
+	 * Returns the LPG token kind for additional keywords defined by
 	 * the XLC extensions, null otherwise.
 	 */
 	public Integer getTokenKind(char[] keyword) {
@@ -107,7 +107,7 @@ public class XlcKeywords extends CLanguageKeywords {
 			ICLanguageKeywords base = new CLanguageKeywords(language, getConfig(language));
 			String[] baseKeywords = base.getKeywords();
 
-			List<String> keywords = new ArrayList<String>();
+			List<String> keywords = new ArrayList<>();
 			keywords.addAll(Arrays.asList(baseKeywords));
 
 			for (char[] keyword : map.keys()) {

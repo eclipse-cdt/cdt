@@ -42,7 +42,7 @@ public class PathEntryVariableChangeEvent extends EventObject {
 	private String variableName;
 
 	/**
-	 * The value of the changed variable (may be null). 
+	 * The value of the changed variable (may be null).
 	 */
 	private IPath value;
 

@@ -10,10 +10,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
+import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
+import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.StatusDialog;
@@ -29,12 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.core.CConventions;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.TextFieldNavigationHandler;
-import org.eclipse.cdt.internal.ui.viewsupport.BasicElementLabels;
 
 public class ParameterEditDialog extends StatusDialog {
 	private final NameInformation fParameter;

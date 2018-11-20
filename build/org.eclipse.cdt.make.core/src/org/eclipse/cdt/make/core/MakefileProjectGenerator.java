@@ -33,7 +33,7 @@ import org.osgi.framework.Bundle;
 
 /**
  * Generator for Makefile projects.
- * 
+ *
  * @since 7.4
  */
 public class MakefileProjectGenerator extends FMProjectGenerator {

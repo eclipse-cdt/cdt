@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 
 /**
- * Adds File to the project 
+ * Adds File to the project
  */
 public class AddFile extends ProcessRunner {
 

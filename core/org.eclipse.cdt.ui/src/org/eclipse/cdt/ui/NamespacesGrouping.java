@@ -28,12 +28,11 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.INamespace;
 import org.eclipse.cdt.core.model.ITranslationUnit;
-
 import org.eclipse.cdt.internal.ui.MembersGrouping;
 
 /**
  * NamespacesGrouping
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class NamespacesGrouping extends CElementGrouping {
@@ -48,7 +47,7 @@ public class NamespacesGrouping extends CElementGrouping {
 
 	/**
 	 * Create new namespace grouping and optional member grouping.
-	 * 
+	 *
 	 * @param unit  the parent translation unit
 	 * @param namespace  the namespace
 	 * @param memberGrouping  whether member grouping is enabled
@@ -71,7 +70,7 @@ public class NamespacesGrouping extends CElementGrouping {
 	 */
 	@Override
 	public Object[] getChildren(Object object) {
-		Set<Object> list = new LinkedHashSet<Object>();
+		Set<Object> list = new LinkedHashSet<>();
 		try {
 			INamespace[] namespaces = getNamespaces();
 			for (INamespace iNamespace : namespaces) {
@@ -88,7 +87,7 @@ public class NamespacesGrouping extends CElementGrouping {
 	 * @since 5.1
 	 */
 	public INamespace[] getNamespaces() {
-		List<INamespace> list = new ArrayList<INamespace>();
+		List<INamespace> list = new ArrayList<>();
 		try {
 			List<ICElement> namespaces = fUnit.getChildrenOfType(ICElement.C_NAMESPACE);
 			for (ICElement icElement : namespaces) {
@@ -109,9 +108,9 @@ public class NamespacesGrouping extends CElementGrouping {
 		if (!fMemberGrouping) {
 			return Arrays.asList(children);
 		}
-		List<Object> list = new ArrayList<Object>(children.length);
+		List<Object> list = new ArrayList<>(children.length);
 		// check if there is another member with the same namespace for the same parent
-		Map<String, MembersGrouping> map = new HashMap<String, MembersGrouping>();
+		Map<String, MembersGrouping> map = new HashMap<>();
 		for (int i = 0; i < children.length; ++i) {
 			if (children[i] instanceof IMember) {
 				final ICElement member = (ICElement) children[i];

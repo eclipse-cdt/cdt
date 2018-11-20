@@ -17,9 +17,9 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.mi.service.IMIContainerDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
-/**	
+/**
  *   -inferior-tty-set TTY
- *   
+ *
  * Set terminal for future runs of the specified program.
  */
 public class MIInferiorTTYSet extends MICommand<MIInfo> {

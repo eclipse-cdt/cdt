@@ -14,13 +14,16 @@
 
 package org.eclipse.cdt.internal.ui.text.c.hover;
 
-import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -31,11 +34,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.osgi.framework.Bundle;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.c.hover.ICEditorTextHover;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import com.ibm.icu.text.Collator;
 
 /**
  * CEditorTexHoverDescriptor
@@ -74,7 +73,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 
 	/**
 	 * Computes the state mask for the given modifier string.
-	 * 
+	 *
 	 * @param modifiers	the string with the modifiers, separated by '+', '-', ';', ',' or '.'
 	 * @return the state mask or -1 if the input is invalid
 	 */
@@ -157,7 +156,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 
 	/**
 	 * Returns the hover's description.
-	 * 
+	 *
 	 * @return the hover's description or <code>null</code> if not provided
 	 */
 	public String getDescription() {
@@ -193,7 +192,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 	}
 
 	private static CEditorTextHoverDescriptor[] createDescriptors(IConfigurationElement[] elements) {
-		List<CEditorTextHoverDescriptor> result = new ArrayList<CEditorTextHoverDescriptor>(elements.length);
+		List<CEditorTextHoverDescriptor> result = new ArrayList<>(elements.length);
 		for (IConfigurationElement element : elements) {
 			if (HOVER_TAG.equals(element.getName())) {
 				CEditorTextHoverDescriptor desc = new CEditorTextHoverDescriptor(element);
@@ -209,7 +208,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 				.getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIERS);
 
 		StringTokenizer tokenizer = new StringTokenizer(compiledTextHoverModifiers, VALUE_SEPARATOR);
-		HashMap<String, String> idToModifier = new HashMap<String, String>(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifier = new HashMap<>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id = tokenizer.nextToken();
@@ -221,7 +220,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 				.getString(PreferenceConstants.EDITOR_TEXT_HOVER_MODIFIER_MASKS);
 
 		tokenizer = new StringTokenizer(compiledTextHoverModifierMasks, VALUE_SEPARATOR);
-		HashMap<String, String> idToModifierMask = new HashMap<String, String>(tokenizer.countTokens() / 2);
+		HashMap<String, String> idToModifierMask = new HashMap<>(tokenizer.countTokens() / 2);
 
 		while (tokenizer.hasMoreTokens()) {
 			String id = tokenizer.nextToken();
@@ -265,7 +264,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 
 	/**
 	 * Returns the configured modifier getStateMask for this hover.
-	 * 
+	 *
 	 * @return the hover modifier stateMask or -1 if no hover is configured
 	 */
 	public int getStateMask() {
@@ -274,7 +273,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 
 	/**
 	 * Returns the modifier String as set in the preference store.
-	 * 
+	 *
 	 * @return the modifier string
 	 */
 	public String getModifierString() {
@@ -283,7 +282,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 
 	/**
 	 * Returns whether this hover is enabled or not.
-	 * 
+	 *
 	 * @return <code>true</code> if enabled
 	 */
 	public boolean isEnabled() {
@@ -292,7 +291,7 @@ public class CEditorTextHoverDescriptor implements Comparable<CEditorTextHoverDe
 
 	/**
 	 * Returns this hover descriptors configuration element.
-	 * 
+	 *
 	 * @return the configuration element
 	 */
 	public IConfigurationElement getConfigurationElement() {

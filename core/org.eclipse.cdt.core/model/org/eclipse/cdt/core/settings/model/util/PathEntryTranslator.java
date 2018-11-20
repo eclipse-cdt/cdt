@@ -121,7 +121,7 @@ public class PathEntryTranslator {
 	private IProject fProject;
 	private CConfigurationData fCfgData;
 	private PathSettingsContainer fTranslatedFilters;
-	private Map<IPath, ResourceInfo> fResourceMap = new HashMap<IPath, ResourceInfo>();
+	private Map<IPath, ResourceInfo> fResourceMap = new HashMap<>();
 	private IWorkspaceRoot fRoot = ResourcesPlugin.getWorkspace().getRoot();
 
 	private static class VarSubstitutor extends CoreVariableSubstitutor {
@@ -171,13 +171,13 @@ public class PathEntryTranslator {
 
 		public Map<String, String> getRefProjectsMap() {
 			if (fRefProjPaths != null && fRefProjPaths.length != 0) {
-				Map<String, String> map = new HashMap<String, String>(fRefProjPaths.length);
+				Map<String, String> map = new HashMap<>(fRefProjPaths.length);
 				for (IPath fRefProjPath : fRefProjPaths) {
 					map.put(fRefProjPath.segment(0), ""); //$NON-NLS-1$
 				}
 				return map;
 			}
-			return new HashMap<String, String>(0);
+			return new HashMap<>(0);
 		}
 
 		public ICExternalSetting[] getExternalSettings() {
@@ -263,14 +263,14 @@ public class PathEntryTranslator {
 		KindBasedStore<List<LangEntryInfo>> fLangEntries;
 
 		private RcDesInfo(ResourceInfo rcInfo) {
-			fResolvedEntries = new ArrayList<ResolvedEntry>();
-			fLangEntries = new KindBasedStore<List<LangEntryInfo>>();
+			fResolvedEntries = new ArrayList<>();
+			fLangEntries = new KindBasedStore<>();
 		}
 
 		public void add(LangEntryInfo info) {
 			List<LangEntryInfo> list = fLangEntries.get(info.fLangEntry.getKind());
 			if (list == null) {
-				list = new ArrayList<LangEntryInfo>();
+				list = new ArrayList<>();
 				fLangEntries.put(info.fLangEntry.getKind(), list);
 			}
 			list.add(info);
@@ -546,7 +546,7 @@ public class PathEntryTranslator {
 						if (rcInfo.fRc.getType() == IResource.FILE) {
 							fFilterInfos = new ResourceInfo[0];
 						} else {
-							List<ResourceInfo> list = new ArrayList<ResourceInfo>();
+							List<ResourceInfo> list = new ArrayList<>();
 							for (IPath path : paths) {
 								list.addAll(Arrays.asList(processFilter((IContainer) rcInfo.fRc, path)));
 							}
@@ -616,7 +616,7 @@ public class PathEntryTranslator {
 			fProject = project;
 			IPath[] exclusions = entry.getExclusionPatterns();
 			if (exclusions.length != 0) {
-				fFiltersSet = new HashSet<IPath>(exclusions.length);
+				fFiltersSet = new HashSet<>(exclusions.length);
 				fFiltersSet.addAll(Arrays.asList(entry.getExclusionPatterns()));
 			}
 		}
@@ -631,7 +631,7 @@ public class PathEntryTranslator {
 
 		public void addFilter(IPath path) {
 			if (fFiltersSet == null)
-				fFiltersSet = new HashSet<IPath>();
+				fFiltersSet = new HashSet<>();
 
 			fFiltersSet.add(path);
 		}
@@ -802,8 +802,8 @@ public class PathEntryTranslator {
 		private PathEntryCollector(IProject project/*, ICConfigurationDescription cfgDescription*/) {
 			fStorage = PathSettingsContainer.createRootContainer();
 			fStorage.setValue(this);
-			fStore = new KindBasedStore<LinkedHashMap<ICSettingEntry, PathEntryComposer>>(false);
-			fNameKeyMapStore = new KindBasedStore<LinkedHashMap<EntryNameKey, PathEntryComposer>>(false);
+			fStore = new KindBasedStore<>(false);
+			fNameKeyMapStore = new KindBasedStore<>(false);
 			fProject = project;
 		}
 
@@ -812,7 +812,7 @@ public class PathEntryTranslator {
 				IProject project/*, ICConfigurationDescription cfgDescription*/) {
 			fStorage = container;
 			fStore = store;
-			fNameKeyMapStore = new KindBasedStore<LinkedHashMap<EntryNameKey, PathEntryComposer>>(false);
+			fNameKeyMapStore = new KindBasedStore<>(false);
 			fProject = project;
 		}
 
@@ -837,7 +837,7 @@ public class PathEntryTranslator {
 			if (paths == null || paths.length == 0) {
 				fRefProjMap = null;
 			} else {
-				fRefProjMap = new LinkedHashMap<IPath, PathEntryComposer>();
+				fRefProjMap = new LinkedHashMap<>();
 				for (IPath path : paths) {
 					PathEntryComposer cs = new PathEntryComposer(path, fProject/*, fCfg*/);
 					IPath composerPath = cs.getPath();
@@ -885,7 +885,7 @@ public class PathEntryTranslator {
 			HashSet<ICSettingEntry> parentSet = getEntriesSetCopy(kind);
 			@SuppressWarnings("unchecked")
 			HashSet<ICSettingEntry> removedParentSet = (HashSet<ICSettingEntry>) parentSet.clone();
-			HashSet<ICLanguageSettingEntry> addedThisSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(entries));
+			HashSet<ICLanguageSettingEntry> addedThisSet = new HashSet<>(Arrays.asList(entries));
 			removedParentSet.removeAll(addedThisSet);
 			addedThisSet.removeAll(parentSet);
 
@@ -926,7 +926,7 @@ public class PathEntryTranslator {
 		private LinkedHashMap<ICSettingEntry, PathEntryComposer> getEntriesMap(int kind, boolean create) {
 			LinkedHashMap<ICSettingEntry, PathEntryComposer> map = fStore.get(kind);
 			if (map == null && create) {
-				map = new LinkedHashMap<ICSettingEntry, PathEntryComposer>();
+				map = new LinkedHashMap<>();
 				fStore.put(kind, map);
 			}
 			return map;
@@ -935,7 +935,7 @@ public class PathEntryTranslator {
 		private LinkedHashMap<EntryNameKey, PathEntryComposer> getEntriesNameKeyMap(int kind, boolean create) {
 			LinkedHashMap<EntryNameKey, PathEntryComposer> map = fNameKeyMapStore.get(kind);
 			if (map == null && create) {
-				map = new LinkedHashMap<EntryNameKey, PathEntryComposer>();
+				map = new LinkedHashMap<>();
 				fNameKeyMapStore.put(kind, map);
 			}
 			return map;
@@ -962,14 +962,14 @@ public class PathEntryTranslator {
 		private HashSet<ICSettingEntry> getEntriesSetCopy(int kind) {
 			Map<ICSettingEntry, PathEntryComposer> map = getEntriesMap(kind, false);
 			if (map != null) {
-				return new HashSet<ICSettingEntry>(map.keySet());
+				return new HashSet<>(map.keySet());
 			}
-			return new HashSet<ICSettingEntry>(0);
+			return new HashSet<>(0);
 		}
 
 		private List<PathEntryComposer> getCollectedEntriesList(final int kind) {
-			final List<PathEntryComposer> list = new ArrayList<PathEntryComposer>();
-			final Set<PathEntryComposer> set = new HashSet<PathEntryComposer>();
+			final List<PathEntryComposer> list = new ArrayList<>();
+			final Set<PathEntryComposer> set = new HashSet<>();
 			fStorage.accept(new IPathSettingsContainerVisitor() {
 
 				@Override
@@ -999,7 +999,7 @@ public class PathEntryTranslator {
 
 		public List<IPathEntry> getEntries(int peKind, List<IPathEntry> list, int flags,
 				ICConfigurationDescription cfgDescription) {
-			Set<IPathEntry> set = new LinkedHashSet<IPathEntry>();
+			Set<IPathEntry> set = new LinkedHashSet<>();
 
 			int sKind = peKindToSettingKind(peKind);
 			List<PathEntryComposer> composerList = null;
@@ -1007,7 +1007,7 @@ public class PathEntryTranslator {
 				composerList = getCollectedEntriesList(sKind);
 			} else if (peKind == IPathEntry.CDT_PROJECT) {
 				if (fRefProjMap != null && fRefProjMap.size() != 0) {
-					composerList = new ArrayList<PathEntryComposer>(fRefProjMap.values());
+					composerList = new ArrayList<>(fRefProjMap.values());
 				}
 			}
 			if (composerList != null) {
@@ -1020,7 +1020,7 @@ public class PathEntryTranslator {
 							String name = entry.getName();
 							Map<String, IPathEntry> map = store.get(peKind);
 							if (map == null) {
-								map = new HashMap<String, IPathEntry>();
+								map = new HashMap<>();
 								store.put(peKind, map);
 							}
 							if (!map.containsKey(name)) {
@@ -1042,7 +1042,7 @@ public class PathEntryTranslator {
 			}
 
 			if (list == null) {
-				list = new ArrayList<IPathEntry>(set);
+				list = new ArrayList<>(set);
 			} else {
 				list.addAll(set);
 			}
@@ -1068,7 +1068,7 @@ public class PathEntryTranslator {
 		public List<IPathEntry> getEntries(List<IPathEntry> list, int flags,
 				ICConfigurationDescription cfgDescription) {
 			if (list == null)
-				list = new ArrayList<IPathEntry>();
+				list = new ArrayList<>();
 			int peKinds[] = PathEntryKyndStore.getSupportedKinds();
 			for (int peKind : peKinds) {
 				getEntries(peKind, list, flags, cfgDescription);
@@ -1162,10 +1162,10 @@ public class PathEntryTranslator {
 	private ReferenceSettingsInfo addPathEntries(ResolvedEntry[] rEntries, int op) {
 		PathSettingsContainer cr = PathSettingsContainer.createRootContainer();
 		cr.setValue(new RcDesInfo(new ResourceInfo(fProject, true)));
-		List<IPathEntry> srcList = new ArrayList<IPathEntry>();
-		List<IPathEntry> outList = new ArrayList<IPathEntry>();
-		List<ResolvedEntry> projList = new ArrayList<ResolvedEntry>();
-		List<ResolvedEntry> exportSettingsList = new ArrayList<ResolvedEntry>();
+		List<IPathEntry> srcList = new ArrayList<>();
+		List<IPathEntry> outList = new ArrayList<>();
+		List<ResolvedEntry> projList = new ArrayList<>();
+		List<ResolvedEntry> exportSettingsList = new ArrayList<>();
 		ICSourceEntry srcEntries[] = null;
 		ICOutputEntry outEntries[] = null;
 		ResourceInfo rcInfo;
@@ -1224,7 +1224,7 @@ public class PathEntryTranslator {
 		ICExternalSetting extSettings[];
 		if (exportSettingsList.size() != 0) {
 			extSettings = new ICExternalSetting[1];
-			List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>(exportSettingsList.size());
+			List<ICLanguageSettingEntry> list = new ArrayList<>(exportSettingsList.size());
 			for (int i = 0; i < exportSettingsList.size(); i++) {
 				ResolvedEntry re = exportSettingsList.get(i);
 				ICLanguageSettingEntry le = createLangEntry(re);
@@ -1273,7 +1273,7 @@ public class PathEntryTranslator {
 	}
 
 	private static ICSettingEntry[] replaceUserEntries(ICSettingEntry[] oldEntries, ICSettingEntry[] newUsrEntries) {
-		Set<ICSettingEntry> set = new LinkedHashSet<ICSettingEntry>();
+		Set<ICSettingEntry> set = new LinkedHashSet<>();
 		Class<?> componentType = null;
 
 		if (newUsrEntries != null) {
@@ -1311,7 +1311,7 @@ public class PathEntryTranslator {
 		switch (op) {
 		case OP_ADD:
 			if (entries != null && entries.length != 0) {
-				Set<ICSourceEntry> set = new LinkedHashSet<ICSourceEntry>();
+				Set<ICSourceEntry> set = new LinkedHashSet<>();
 				set.addAll(Arrays.asList(oldEntries));
 				set.addAll(Arrays.asList(entries));
 				fCfgData.setSourceEntries(set.toArray(new ICSourceEntry[set.size()]));
@@ -1319,7 +1319,7 @@ public class PathEntryTranslator {
 			break;
 		case OP_REMOVE:
 			if (entries != null && entries.length != 0) {
-				Set<ICSourceEntry> set = new HashSet<ICSourceEntry>();
+				Set<ICSourceEntry> set = new HashSet<>();
 				set.addAll(Arrays.asList(oldEntries));
 				set.removeAll(Arrays.asList(entries));
 				fCfgData.setSourceEntries(set.toArray(new ICSourceEntry[set.size()]));
@@ -1351,7 +1351,7 @@ public class PathEntryTranslator {
 		switch (op) {
 		case OP_ADD:
 			if (entries != null && entries.length != 0) {
-				Set<ICOutputEntry> set = new LinkedHashSet<ICOutputEntry>();
+				Set<ICOutputEntry> set = new LinkedHashSet<>();
 				set.addAll(Arrays.asList(oldEntries));
 				set.addAll(Arrays.asList(entries));
 				bData.setOutputDirectories(set.toArray(new ICOutputEntry[set.size()]));
@@ -1359,7 +1359,7 @@ public class PathEntryTranslator {
 			break;
 		case OP_REMOVE:
 			if (entries != null && entries.length != 0) {
-				Set<ICOutputEntry> set = new HashSet<ICOutputEntry>();
+				Set<ICOutputEntry> set = new HashSet<>();
 				set.addAll(Arrays.asList(oldEntries));
 				set.removeAll(Arrays.asList(entries));
 				bData.setOutputDirectories(set.toArray(new ICOutputEntry[set.size()]));
@@ -1402,7 +1402,7 @@ public class PathEntryTranslator {
 
 	private CResourceData[] getResourceDatas() {
 		PathSettingsContainer crs[] = fRcDataHolder.getChildren(true);
-		List<CResourceData> list = new ArrayList<CResourceData>(crs.length);
+		List<CResourceData> list = new ArrayList<>(crs.length);
 		for (PathSettingsContainer cur : crs) {
 			list.add((CResourceData) cur.getValue());
 		}
@@ -1478,8 +1478,8 @@ public class PathEntryTranslator {
 		ICLanguageSettingEntry result[];
 		switch (op) {
 		case OP_ADD: {
-			Set<ICLanguageSettingEntry> oldSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(oldEntries));
-			Set<ICLanguageSettingEntry> newSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(newEntries));
+			Set<ICLanguageSettingEntry> oldSet = new HashSet<>(Arrays.asList(oldEntries));
+			Set<ICLanguageSettingEntry> newSet = new HashSet<>(Arrays.asList(newEntries));
 			newSet.removeAll(oldSet);
 			if (newSet.size() == 0) {
 				result = oldEntries;
@@ -1491,8 +1491,8 @@ public class PathEntryTranslator {
 			break;
 		}
 		case OP_REMOVE: {
-			Set<ICLanguageSettingEntry> oldSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(oldEntries));
-			Set<ICLanguageSettingEntry> newSet = new HashSet<ICLanguageSettingEntry>(Arrays.asList(newEntries));
+			Set<ICLanguageSettingEntry> oldSet = new HashSet<>(Arrays.asList(oldEntries));
+			Set<ICLanguageSettingEntry> newSet = new HashSet<>(Arrays.asList(newEntries));
 			oldSet.removeAll(newSet);
 			if (oldSet.size() == 0) {
 				result = new ICLanguageSettingEntry[0];
@@ -1521,7 +1521,7 @@ public class PathEntryTranslator {
 		RcDesInfo rcDes = (RcDesInfo) cr.getValue();
 		if (rcDes != null) {
 			List<ResolvedEntry> rEntries = rcDes.fResolvedEntries;
-			List<LangEntryInfo> curLanfInfos = new ArrayList<LangEntryInfo>(rEntries.size() + langEntryInfoList.size());
+			List<LangEntryInfo> curLanfInfos = new ArrayList<>(rEntries.size() + langEntryInfoList.size());
 			for (ResolvedEntry re : rEntries) {
 				LangEntryInfo li = createLangEntryInfo(re);
 				if (li != null) {
@@ -1544,7 +1544,7 @@ public class PathEntryTranslator {
 	}
 
 	private void filterAndPropagate(PathSettingsContainer cr, List<LangEntryInfo> list) {
-		list = new ArrayList<LangEntryInfo>(list);
+		list = new ArrayList<>(list);
 		IPath path = cr.getPath();
 		for (Iterator<LangEntryInfo> iter = list.iterator(); iter.hasNext();) {
 			LangEntryInfo li = iter.next();
@@ -1613,7 +1613,7 @@ public class PathEntryTranslator {
 
 	private ResolvedEntry[] getResolvedEntries(PathEntryResolveInfo info) {
 		PathEntryResolveInfoElement els[] = info.getElements();
-		List<ResolvedEntry> list = new ArrayList<ResolvedEntry>();
+		List<ResolvedEntry> list = new ArrayList<>();
 		for (PathEntryResolveInfoElement el : els) {
 			getResolvedEntries(el, list);
 		}
@@ -1622,7 +1622,7 @@ public class PathEntryTranslator {
 
 	private List<ResolvedEntry> getResolvedEntries(PathEntryResolveInfoElement el, List<ResolvedEntry> list) {
 		if (list == null)
-			list = new ArrayList<ResolvedEntry>();
+			list = new ArrayList<>();
 
 		IPathEntry[] rpEntries = el.getResolvedEntries();
 		ResolvedEntry resolvedE;
@@ -1733,7 +1733,7 @@ public class PathEntryTranslator {
 	private ResourceInfo[] performTranslation(IPath basePath, ResourceInfo[] baseInfos, String seg) {
 		IPath filterFullPath = basePath.append(seg);
 		boolean needsParsing = hasSpecChars(seg);
-		List<ResourceInfo> list = new ArrayList<ResourceInfo>();
+		List<ResourceInfo> list = new ArrayList<>();
 		char[] segChars = seg.toCharArray();
 		for (ResourceInfo baseInfo : baseInfos) {
 			IResource baseRc = baseInfo.fRc;
@@ -1828,7 +1828,7 @@ public class PathEntryTranslator {
 	}
 
 	public static IPathEntry[] decodePathEntries(IProject project, ICStorageElement el) {
-		ArrayList<IPathEntry> pathEntries = new ArrayList<IPathEntry>();
+		ArrayList<IPathEntry> pathEntries = new ArrayList<>();
 		ICStorageElement children[] = el.getChildren();
 		for (ICStorageElement child : children) {
 			if (child.getName().equals(PATH_ENTRY)) {
@@ -2011,7 +2011,7 @@ public class PathEntryTranslator {
 		for (CConfigurationData allData : allDatas) {
 			addOutputEntries(collector, allData);
 		}
-		final HashSet<ICSettingEntry> exportedSettings = new HashSet<ICSettingEntry>();
+		final HashSet<ICSettingEntry> exportedSettings = new HashSet<>();
 		collector.setRefProjects(refInfo.getReferencedProjectsPaths());
 		ICExternalSetting[] settings = refInfo.getExternalSettings();
 		for (ICExternalSetting setting : settings) {
@@ -2026,7 +2026,7 @@ public class PathEntryTranslator {
 				if (rcData != null) {
 					PathEntryCollector child = collector.createChild(container.getPath());
 					for (int kind : kinds) {
-						Set<ICLanguageSettingEntry> set = new LinkedHashSet<ICLanguageSettingEntry>();
+						Set<ICLanguageSettingEntry> set = new LinkedHashSet<>();
 						if (collectResourceDataEntries(cfgDescription, kind, rcData, set)) {
 							ICLanguageSettingEntry[] entries = set.toArray(new ICLanguageSettingEntry[set.size()]);
 							child.setEntries(kind, entries, exportedSettings);

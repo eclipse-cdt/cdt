@@ -15,7 +15,7 @@ package org.eclipse.cdt.core;
 
 /**
  * Interface to provide flexibility for error parsers to parse unprocessed build output
- * 
+ *
  * @since 5.1
  */
 public interface IErrorParser2 extends IErrorParser {
@@ -28,10 +28,10 @@ public interface IErrorParser2 extends IErrorParser {
 
 	/**
 	 * Defines how much output would be processed before calling {@link #processLine(String, ErrorParserManager)}
-	 * 
+	 *
 	 * @return combination of flags that describe parser expectations of input line
 	 * @see #KEEP_UNTRIMMED
-	 * @see #KEEP_LONGLINES 
+	 * @see #KEEP_LONGLINES
 	 * */
 	int getProcessLineBehaviour();
 }

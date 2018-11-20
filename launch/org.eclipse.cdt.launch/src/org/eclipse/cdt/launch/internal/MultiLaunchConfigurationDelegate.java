@@ -68,7 +68,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	public static class LaunchElement {
 		public static enum EPostLaunchAction {
 			NONE, WAIT_FOR_TERMINATION, DELAY
-		};
+		}
 
 		/**
 		 * Allows us decouple the enum identifier in the code from its textual representation in the GUI
@@ -131,7 +131,7 @@ public class MultiLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		 * A map of all our sub-launches and the current processes that belong
 		 * to each one.
 		 */
-		private Map<ILaunch, IProcess[]> subLaunches = new HashMap<ILaunch, IProcess[]>();
+		private Map<ILaunch, IProcess[]> subLaunches = new HashMap<>();
 
 		public MultiLaunch(ILaunchConfiguration launchConfiguration, String mode) {
 			super(launchConfiguration, mode, null);

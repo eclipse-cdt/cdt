@@ -93,7 +93,7 @@ public class AddBreakpointRulerAction extends AbstractDisassemblyBreakpointRuler
 
 	/**
 	* Report an error to the user.
-	* 
+	*
 	* @param e underlying exception
 	*/
 	private void reportException(Exception e) {
@@ -106,9 +106,9 @@ public class AddBreakpointRulerAction extends AbstractDisassemblyBreakpointRuler
 
 	/**
 	 * Determines the text selection for the breakpoint action.  If clicking on the ruler inside
-	 * the highlighted text, return the text selection for the highlighted text.  Otherwise, 
+	 * the highlighted text, return the text selection for the highlighted text.  Otherwise,
 	 * return a text selection representing the start of the line.
-	 * 
+	 *
 	 * @return  An ISelection as described.
 	 * @throws BadLocationException If underlying operations throw.
 	 */

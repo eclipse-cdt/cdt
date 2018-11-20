@@ -31,7 +31,7 @@ import org.eclipse.ui.actions.ActionDelegate;
 /**
  * A delegate for the "Add Watchpoint" action.  Clients can register this object on
  * a model-specific element which supports a toggle breakpoints target.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 7.2
  */

@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Nokia - create and use backend service. 
+ *     Nokia - create and use backend service.
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.internal.ui.actions;
 
@@ -78,8 +78,8 @@ public class DsfTerminateCommand implements ITerminateHandler {
 					if (gdbControl != null && gdbControl.isActive()) {
 						request.setEnabled(true);
 					} else {
-						// The GDB session may be terminated at this moment but if there 
-						// are processes in this launch that are not controlled by GDB 
+						// The GDB session may be terminated at this moment but if there
+						// are processes in this launch that are not controlled by GDB
 						// we need to check them as well.
 						for (IProcess p : launch.getProcesses()) {
 							if (p.canTerminate()) {
@@ -177,7 +177,6 @@ public class DsfTerminateCommand implements ITerminateHandler {
 		class ScheduledFutureWrapper {
 			ScheduledFuture<?> fFuture;
 		}
-		;
 
 		final ScheduledFutureWrapper fFutureWrapper = new ScheduledFutureWrapper();
 
@@ -221,11 +220,11 @@ public class DsfTerminateCommand implements ITerminateHandler {
 				if (DsfSession.isSessionActive(fSession.getId())) {
 					DsfSession.removeSessionEndedListener(endedListener);
 
-					// Marking the request as cancelled will prevent the removal of 
+					// Marking the request as cancelled will prevent the removal of
 					// the launch from the Debug view in case of "Terminate and Remove".
 					// This is important for multi-process sessions when "Terminate and Remove"
 					// is applied to one of the running processes. In this case the selected
-					// process will be terminated but the associated launch will not be removed 
+					// process will be terminated but the associated launch will not be removed
 					// from the Debug view.
 					request.setStatus(Status.CANCEL_STATUS);
 					request.done();
@@ -235,7 +234,7 @@ public class DsfTerminateCommand implements ITerminateHandler {
 	}
 
 	private IProcessDMContext[] getProcessDMContexts(Object[] elements) {
-		final Set<IProcessDMContext> procDmcs = new HashSet<IProcessDMContext>();
+		final Set<IProcessDMContext> procDmcs = new HashSet<>();
 		for (Object obj : elements) {
 			if (obj instanceof IDMVMContext) {
 				IProcessDMContext procDmc = DMContexts.getAncestorOfType(((IDMVMContext) obj).getDMContext(),
@@ -308,8 +307,8 @@ public class DsfTerminateCommand implements ITerminateHandler {
 	}
 
 	private void terminateRemainingProcesses(final GdbLaunch launch, final IDebugCommandRequest request) {
-		// Run this in a separate job since this method is called from 
-		// the executor thread. The job is scheduled with a delay to make 
+		// Run this in a separate job since this method is called from
+		// the executor thread. The job is scheduled with a delay to make
 		// sure that MIInferiorProcess is terminated. See MIInferiorProcess.waitForSync()
 		new Job("Terminate Job") { //$NON-NLS-1$
 			@Override

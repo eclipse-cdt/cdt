@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.Display;
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.
  */
 public class CDebugImageDescriptorRegistry {
-	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<ImageDescriptor, Image>(10);
+	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<>(10);
 	private Display fDisplay;
 
 	/**
@@ -37,7 +37,7 @@ public class CDebugImageDescriptorRegistry {
 
 	/**
 	 * Creates a new image descriptor registry for the given display. All images managed by this registry will be disposed when the display gets disposed.
-	 * 
+	 *
 	 * @param diaplay
 	 *            the display the images managed by this registry are allocated for
 	 */
@@ -49,7 +49,7 @@ public class CDebugImageDescriptorRegistry {
 
 	/**
 	 * Returns the image associated with the given image descriptor.
-	 * 
+	 *
 	 * @param descriptor
 	 *            the image descriptor for which the registry manages an image
 	 * @return the image associated with the image descriptor or <code>null</code> if the image

@@ -124,7 +124,7 @@ public class ResourceManager {
 				m_stringResources = null;
 			}
 
-			// if not found, we try in the default package 
+			// if not found, we try in the default package
 			// (that is, the top-level "src" or "resources" folder)
 			String propertyFileName2 = filename;
 			if (m_stringResources == null) {

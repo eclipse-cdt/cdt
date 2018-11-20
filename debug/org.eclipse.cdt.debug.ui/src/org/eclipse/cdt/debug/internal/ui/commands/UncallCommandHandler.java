@@ -18,7 +18,7 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
 /**
  * Command handler to trigger an uncall operation
- * 
+ *
  * @since 7.0
  */
 public class UncallCommandHandler extends DebugCommandHandler {

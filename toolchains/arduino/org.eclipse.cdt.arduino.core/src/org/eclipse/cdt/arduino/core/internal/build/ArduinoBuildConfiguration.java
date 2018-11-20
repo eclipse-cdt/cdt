@@ -96,7 +96,7 @@ public class ArduinoBuildConfiguration extends CBuildConfiguration
 
 	/**
 	 * Default configuration.
-	 * 
+	 *
 	 * @param config
 	 */
 	ArduinoBuildConfiguration(IBuildConfiguration config, String name, String launchMode, ArduinoBoard defaultBoard,

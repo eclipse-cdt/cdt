@@ -57,7 +57,7 @@ public class ToolListContentProvider implements ITreeContentProvider {
 	private ToolListElement[] createElements(IConfiguration config) {
 		IOptionCategory toolChainCategories[];
 		ITool filteredTools[];
-		List<ToolListElement> elementList = new ArrayList<ToolListElement>();
+		List<ToolListElement> elementList = new ArrayList<>();
 		if (config != null) {
 			// Get the the option categories of the toolChain
 			IToolChain toolChain = config.getToolChain();
@@ -88,7 +88,7 @@ public class ToolListContentProvider implements ITreeContentProvider {
 	}
 
 	private ToolListElement[] createElements(IResourceInfo info) {
-		List<ToolListElement> elementList = new ArrayList<ToolListElement>();
+		List<ToolListElement> elementList = new ArrayList<>();
 		if (info != null) {
 			ITool[] tools = null;
 			if (info instanceof IFolderInfo) {

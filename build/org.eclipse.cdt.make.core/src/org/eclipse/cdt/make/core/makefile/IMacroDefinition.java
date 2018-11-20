@@ -16,7 +16,7 @@ package org.eclipse.cdt.make.core.makefile;
 /**
  * IMacroDefinitions are in the form:
  * string1 = [string2]
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -39,7 +39,7 @@ public interface IMacroDefinition extends IDirective {
 
 	/**
 	 * @return the macro was found in a Makefile.
-	 * 
+	 *
 	 */
 	boolean isFromMakefile();
 

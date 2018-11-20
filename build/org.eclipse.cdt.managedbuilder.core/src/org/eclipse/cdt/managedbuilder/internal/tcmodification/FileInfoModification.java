@@ -59,7 +59,7 @@ public class FileInfoModification extends ToolListModification implements IFileI
 	@Override
 	protected Set<IPath> getToolApplicabilityPathSet(Tool realTool, boolean isProject) {
 		if (fApplPathSet == null) {
-			Set<IPath> s = new HashSet<IPath>(1);
+			Set<IPath> s = new HashSet<>(1);
 			s.add(getResourceInfo().getPath());
 			fApplPathSet = Collections.unmodifiableSet(s);
 		}

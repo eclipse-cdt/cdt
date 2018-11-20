@@ -24,20 +24,20 @@ import org.eclipse.cdt.core.parser.OffsetLimitReachedException;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
 
 /**
- * In short this class converts line endings (to '\n') and trigraphs 
- * (to their corresponding character), 
+ * In short this class converts line endings (to '\n') and trigraphs
+ * (to their corresponding character),
  * removes line-splices, comments and whitespace other than newline.
  * Returns preprocessor tokens.
  * <p>
  * In addition to the preprocessor tokens the following tokens may also be returned:
  * {@link #tBEFORE_INPUT}, {@link IToken#tEND_OF_INPUT}, {@link IToken#tCOMPLETION}.
  * <p>
- * Number literals are split up into {@link IToken#tINTEGER} and {@link IToken#tFLOATINGPT}. 
+ * Number literals are split up into {@link IToken#tINTEGER} and {@link IToken#tFLOATINGPT}.
  * No checks are done on the number literals.
  * <p>
  * UNCs are accepted, however characters from outside of the basic source character set are
- * not converted to UNCs. Rather than that they are tested with 
- * {@link Character#isUnicodeIdentifierPart(char)} and may be accepted as part of an 
+ * not converted to UNCs. Rather than that they are tested with
+ * {@link Character#isUnicodeIdentifierPart(char)} and may be accepted as part of an
  * identifier.
  * <p>
  * The characters in string literals and char-literals are left as they are found, no conversion to
@@ -145,14 +145,14 @@ final public class Lexer implements ITokenSequence {
 	}
 
 	/**
-	 * Resets the lexer to the first char and prepares for content-assist mode. 
+	 * Resets the lexer to the first char and prepares for content-assist mode.
 	 */
 	public void setContentAssistMode(int offset) {
 		fSupportContentAssist = true;
 		if (isValidOffset(offset)) {
 			fLimit = offset;
 		}
-		// re-initialize 
+		// re-initialize
 		fOffset = fEndOffset = fStart;
 		nextCharPhase3();
 	}
@@ -162,14 +162,14 @@ final public class Lexer implements ITokenSequence {
 	}
 
 	/**
-	 * Call this before consuming the name-token in the include directive. It causes the header-file 
-	 * tokens to be created. 
+	 * Call this before consuming the name-token in the include directive. It causes the header-file
+	 * tokens to be created.
 	 */
 	public void setInsideIncludeDirective(boolean val) {
 		fInsideIncludeDirective = val;
 	}
 
-	/** 
+	/**
 	 * Returns the current preprocessor token, does not advance.
 	 */
 	@Override
@@ -203,7 +203,7 @@ final public class Lexer implements ITokenSequence {
 	/**
 	 * Advances to the next newline or the end of input. The newline will not be consumed. If the
 	 * current token is a newline no action is performed.
-	 * Returns the end offset of the last token before the newline. 
+	 * Returns the end offset of the last token before the newline.
 	 * @param origin parameter for the {@link OffsetLimitReachedException} when it has to be thrown.
 	 * @since 5.0
 	 */
@@ -236,8 +236,8 @@ final public class Lexer implements ITokenSequence {
 		}
 	}
 
-	/** 
-	 * Advances to the next pound token that starts a preprocessor directive. 
+	/**
+	 * Advances to the next pound token that starts a preprocessor directive.
 	 * @return pound token of the directive or end-of-input.
 	 * @throws OffsetLimitReachedException when completion is requested in a literal or an header-name.
 	 */
@@ -1405,7 +1405,7 @@ final public class Lexer implements ITokenSequence {
 			case ' ':
 			case '\f':
 			case '\t':
-			case 0xb: // vertical tab  
+			case 0xb: // vertical tab
 				if (haveBackslash) {
 					continue loop;
 				}

@@ -179,7 +179,7 @@ public class CPPASTRangeBasedForStatement extends CPPASTAttributeOwner
 				CPPASTSimpleDeclaration rangeVarDecl = new CPPASTSimpleDeclaration();
 				rangeVarDecl.setDeclSpecifier(rangeVarDeclSpec);
 				// Make the notional declaration of '__range_ a child of the range-for
-				// statement's body, so that name resolution in its initializer has 
+				// statement's body, so that name resolution in its initializer has
 				// a scope to work with.
 				rangeVarDecl.setParent(fBody);
 				CPPASTDeclarator rangeVarDeclarator = new CPPASTDeclarator(rangeVarDeclName);

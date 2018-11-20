@@ -25,7 +25,7 @@ public interface ICConsole extends IConsole {
 	/**
 	 * Initialize console with user-controlled context, name and icon
 	 * in "Display Selected Console" dropbox in the Console view.
-	 * 
+	 *
 	 * @param contextId - context menu id in the Console view. A caller needs to define
 	 *    a distinct one for own use.
 	 * @param name - name of console to appear in the list of consoles in context menu

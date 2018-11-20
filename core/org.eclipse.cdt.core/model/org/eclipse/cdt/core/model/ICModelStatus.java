@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.IStatus;
  * <code>ICModelStatusConstants</code>.
  * </p>
  * <p>
- * A C model status may also carry additional information (that is, in 
+ * A C model status may also carry additional information (that is, in
  * addition to the information defined in <code>IStatus</code>):
  * <ul>
  *   <li>elements - optional handles to C elements associated with the failure</li>
@@ -35,7 +35,7 @@ import org.eclipse.core.runtime.IStatus;
  * </ul>
  * @see org.eclipse.core.runtime.IStatus
  * @see ICModelStatusConstants
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -52,8 +52,8 @@ public interface ICModelStatus extends IStatus {
 
 	/**
 	 * Returns the path associated with the failure (see specification
-	 * of the status code), or <code>null</code> if the failure is not 
-	 * one of <code>DEVICE_PATH</code>, <code>INVALID_PATH</code>, 
+	 * of the status code), or <code>null</code> if the failure is not
+	 * one of <code>DEVICE_PATH</code>, <code>INVALID_PATH</code>,
 	 * <code>PATH_OUTSIDE_PROJECT</code>, or <code>RELATIVE_PATH</code>.
 	 *
 	 * @return the path that caused the failure, or <code>null</code> if none

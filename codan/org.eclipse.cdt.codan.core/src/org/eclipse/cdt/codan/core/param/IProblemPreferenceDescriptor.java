@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,14 +21,14 @@ import java.util.Map;
  * Problem parameter usually key=value settings that allows to alter checker
  * behaviour for given problem. For example if checker finds violation of naming
  * conventions for function, parameter would be the pattern of allowed names.
- * 
+ *
  * IProblemPreferenceDescriptor represent preference's meta-info for the ui. If
  * more than one parameter is required it can be map or list of sub-preferences.
  * This is only needed for auto-generated ui for parameter
  * editing. For more complex cases custom ui control should be used. Extend
  * {@link AbstractProblemPreference} class
  * to implement this interface.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -115,7 +115,7 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 	/**
 	 * Key of the preference. Key must be java-like identified or number. Cannot
 	 * contain dots. Cannot be null.
-	 * 
+	 *
 	 * @return key
 	 */
 	String getKey();
@@ -125,7 +125,7 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 	 * map. For list type child preference can be
 	 * accessed by number (index), if map is the type child preference can be
 	 * accessed by a key (string)
-	 * 
+	 *
 	 * @return type of the preference
 	 */
 	PreferenceType getType();
@@ -134,28 +134,28 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 	 * Additional info on how it is represented in the ui, for example boolean
 	 * can be represented as checkbox, drop-down and so on, Values TBD.
 	 * Not supported at the moment.
-	 * 
+	 *
 	 * @return ui info or null if not set
 	 */
 	String getUiInfo();
 
 	/**
 	 * User visible label for the parameter control in UI
-	 * 
+	 *
 	 * @return the label
 	 */
 	String getLabel();
 
 	/**
 	 * Detailed explanation of parameter. Not supported at the moment.
-	 * 
+	 *
 	 * @return the toolTip text
 	 */
 	String getToolTip();
 
 	/**
 	 * default clone implementation
-	 * 
+	 *
 	 * @return clone of the object
 	 */
 	Object clone();
@@ -167,7 +167,7 @@ public interface IProblemPreferenceDescriptor extends Cloneable {
 
 	/**
 	 * Combined key of values from parents plus itself separated by dot
-	 * 
+	 *
 	 * @return qualified key
 	 */
 	String getQualifiedKey();

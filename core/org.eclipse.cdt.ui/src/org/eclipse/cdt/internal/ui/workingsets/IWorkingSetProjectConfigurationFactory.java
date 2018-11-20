@@ -19,6 +19,9 @@ import java.util.Comparator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.ui.workingsets.WorkspaceSnapshot.ProjectState;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNatureDescriptor;
 import org.eclipse.core.resources.IWorkspace;
@@ -34,36 +37,31 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.workingsets.WorkspaceSnapshot.ProjectState;
-
 /**
  * Protocol for a factory of {@link IWorkingSetProjectConfiguration}s. Factories are {@linkplain Registry
  * registered} against project natures.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public interface IWorkingSetProjectConfigurationFactory {
 	/**
 	 * Queries my factory ID. The ID is persisted in the working set configuration data so that the same
 	 * factory can be used to reconstruct project configurations when loading the working set configurations.
-	 * 
+	 *
 	 * @return my unique identifier
 	 */
 	String getID();
 
 	/**
 	 * Creates a new project configuration element.
-	 * 
+	 *
 	 * @param parent
 	 *            the working set configuration that owns the new project configuration
 	 * @param project
 	 *            the workspace project for which to create the configuration
-	 * 
+	 *
 	 * @return the new project configuration
 	 */
 	IWorkingSetProjectConfiguration createProjectConfiguration(IWorkingSetConfiguration parent, IProject project);
@@ -73,10 +71,10 @@ public interface IWorkingSetProjectConfigurationFactory {
 	 * have been obtained from a configuration that I previously
 	 * {@linkplain #createProjectConfiguration(org.eclipse.cdt.internal.ui.workingsets.IWorkingSetConfiguration, IProject)
 	 * created}, myself.
-	 * 
+	 *
 	 * @param config
 	 *            a project configuration snapshot that I created
-	 * 
+	 *
 	 * @return a suitable controller for it. Must not be <code>null</code>
 	 */
 	IWorkingSetProjectConfigurationController createProjectConfigurationController(
@@ -85,12 +83,12 @@ public interface IWorkingSetProjectConfigurationFactory {
 	/**
 	 * Creates a snapshot of the configuration state of a project in the workspace. This may capture
 	 * additional build meta-data beyond just the "active configuration."
-	 * 
+	 *
 	 * @param project
 	 *            a project to capture in a {@link WorkspaceSnapshot}
 	 * @param desc
 	 *            the project description, from which to capture the initial configuration data
-	 * 
+	 *
 	 * @return the project state capture. Must not be <code>null</code>
 	 */
 	WorkspaceSnapshot.ProjectState createProjectState(IProject project, ICProjectDescription desc);
@@ -102,9 +100,9 @@ public interface IWorkingSetProjectConfigurationFactory {
 	/**
 	 * A registry of {@linkplain IWorkingSetProjectConfigurationFactory project configuration factories}
 	 * contributed on the <tt>org.eclipse.cdt.ui.workingSetConfigurations</tt> extension point.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	class Registry {
@@ -120,8 +118,8 @@ public interface IWorkingSetProjectConfigurationFactory {
 		public static Registry INSTANCE = new Registry();
 
 		private final IWorkingSetProjectConfigurationFactory defaultFactory = new Default();
-		private final Map<String, IWorkingSetProjectConfigurationFactory> factoriesByID = new java.util.HashMap<String, IWorkingSetProjectConfigurationFactory>();
-		private final Map<String, IWorkingSetProjectConfigurationFactory> factoriesByNature = new java.util.HashMap<String, IWorkingSetProjectConfigurationFactory>();
+		private final Map<String, IWorkingSetProjectConfigurationFactory> factoriesByID = new java.util.HashMap<>();
+		private final Map<String, IWorkingSetProjectConfigurationFactory> factoriesByNature = new java.util.HashMap<>();
 
 		private Map<String, Set<String>> projectNaturePartOrdering;
 
@@ -207,13 +205,13 @@ public interface IWorkingSetProjectConfigurationFactory {
 		}
 
 		private Map<String, Set<String>> computeProjectNaturePartOrdering() {
-			Map<String, Set<String>> result = new java.util.HashMap<String, Set<String>>();
+			Map<String, Set<String>> result = new java.util.HashMap<>();
 
 			// first pass to populate the map with immediate requireds
 			IWorkspace ws = ResourcesPlugin.getWorkspace();
 			for (IProjectNatureDescriptor next : ws.getNatureDescriptors()) {
 				result.put(next.getNatureId(),
-						new java.util.HashSet<String>(Arrays.asList(next.getRequiredNatureIds())));
+						new java.util.HashSet<>(Arrays.asList(next.getRequiredNatureIds())));
 			}
 
 			// now, iterate to add transitive requireds
@@ -223,7 +221,7 @@ public interface IWorkingSetProjectConfigurationFactory {
 
 				for (Map.Entry<String, Set<String>> next : result.entrySet()) {
 					Set<String> requireds = next.getValue();
-					Set<String> newRequireds = new java.util.HashSet<String>(requireds);
+					Set<String> newRequireds = new java.util.HashSet<>(requireds);
 
 					boolean changed = false;
 
@@ -354,9 +352,9 @@ public interface IWorkingSetProjectConfigurationFactory {
 		/**
 		 * The default project configuration factory. Clients may extend this class to implement custom
 		 * factories for their project natures.
-		 * 
+		 *
 		 * @author Christian W. Damus (cdamus)
-		 * 
+		 *
 		 * @since 6.0
 		 */
 		public static class Default implements IWorkingSetProjectConfigurationFactory, IExecutableExtension {

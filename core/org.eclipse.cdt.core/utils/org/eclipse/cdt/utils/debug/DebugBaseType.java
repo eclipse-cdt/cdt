@@ -16,7 +16,7 @@ package org.eclipse.cdt.utils.debug;
 
 /**
  * DebugType
- *  
+ *
  */
 public class DebugBaseType extends DebugType {
 

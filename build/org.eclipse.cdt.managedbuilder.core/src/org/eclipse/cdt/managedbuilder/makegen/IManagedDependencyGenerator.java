@@ -20,7 +20,7 @@ import org.eclipse.core.resources.IResource;
 /**
  * @since 2.0
  * @deprecated 3.1
- * 
+ *
  * Use IManagedDependencyGenerator2 instead.
 */
 @Deprecated

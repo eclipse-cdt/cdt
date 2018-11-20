@@ -17,7 +17,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 /**
  *   -add-inferior
  *   ^done,inferior="i2"
- *   
+ *
  *   @since 4.0
  */
 public class MIAddInferiorInfo extends MIInfo {

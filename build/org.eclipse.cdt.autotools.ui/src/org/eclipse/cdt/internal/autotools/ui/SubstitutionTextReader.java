@@ -19,7 +19,7 @@ import java.io.Reader;
 
 /**
  * Reads the text contents from a reader and computes for each character
- * a potential substitution. The substitution may eat more characters than 
+ * a potential substitution. The substitution may eat more characters than
  * only the one passed into the computation routine.
  */
 public abstract class SubstitutionTextReader extends SingleCharReader {
@@ -44,7 +44,7 @@ public abstract class SubstitutionTextReader extends SingleCharReader {
 	}
 
 	/**
-	 * Implement to compute the substitution for the given character and 
+	 * Implement to compute the substitution for the given character and
 	 * if necessary subsequent characters. Use <code>nextChar</code>
 	 * to read subsequent characters.
 	 */

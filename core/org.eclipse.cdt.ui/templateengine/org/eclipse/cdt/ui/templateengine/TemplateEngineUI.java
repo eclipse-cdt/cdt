@@ -22,10 +22,10 @@ import org.eclipse.cdt.core.templateengine.TemplateInitializationException;
 import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
- * TemplateEngine is implemented as a Singleton. TemplateEngine is responsible for 
+ * TemplateEngine is implemented as a Singleton. TemplateEngine is responsible for
  * creating SharedDefaults and initializing the SharedDefaults. Template instances
  * are obtained from TemplateEngine.
- * 
+ *
  * @since 4.0
  */
 public class TemplateEngineUI {
@@ -45,7 +45,7 @@ public class TemplateEngineUI {
 	public Template[] getTemplates(String projectType, String toolChain, String usageFilter) {
 		TemplateInfo[] templateInfoArray = TemplateEngine.getDefault().getTemplateInfos(projectType, toolChain,
 				usageFilter);
-		List<Template> templatesList = new ArrayList<Template>();
+		List<Template> templatesList = new ArrayList<>();
 		for (int i = 0; i < templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
@@ -70,7 +70,7 @@ public class TemplateEngineUI {
 	 */
 	public Template[] getTemplates() {
 		TemplateInfo[] templateInfoArray = TemplateEngine.getDefault().getTemplateInfos();
-		List<Template> templatesList = new ArrayList<Template>();
+		List<Template> templatesList = new ArrayList<>();
 		for (int i = 0; i < templateInfoArray.length; i++) {
 			try {
 				templatesList.add(new Template(templateInfoArray[i]));

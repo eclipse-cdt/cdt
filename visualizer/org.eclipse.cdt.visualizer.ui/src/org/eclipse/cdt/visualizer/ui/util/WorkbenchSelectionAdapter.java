@@ -57,6 +57,7 @@ public class WorkbenchSelectionAdapter implements ISelectionListener, ISelection
 		m_selectionListeners = new ListenerList(view,
 				"WorkbenchSelectionAdapter for view " + view.getClass().getSimpleName()) {
 			/** Dispatches event to listeners */
+			@Override
 			public void raise(Object listener, Object event) {
 				if (listener instanceof ISelectionChangedListener && event instanceof SelectionChangedEvent) {
 					ISelectionChangedListener typedListener = (ISelectionChangedListener) listener;
@@ -106,6 +107,7 @@ public class WorkbenchSelectionAdapter implements ISelectionListener, ISelection
 	// --- ISelectionListener implementation ---
 
 	/** Invoked when selection changes externally. */
+	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		// ignore selection change events that came from us
 		if (part == m_view)
@@ -139,11 +141,13 @@ public class WorkbenchSelectionAdapter implements ISelectionListener, ISelection
 	// --- ISelectionProvider implementation ---
 
 	/** Gets current selection. */
+	@Override
 	public ISelection getSelection() {
 		return m_selection;
 	}
 
 	/** Sets current selection, and raises selection changed event. */
+	@Override
 	public void setSelection(ISelection selection) {
 		// for some reason, SelectionChangedEvent can't stand a null selection
 		if (selection == null)
@@ -171,11 +175,13 @@ public class WorkbenchSelectionAdapter implements ISelectionListener, ISelection
 	}
 
 	/** Adds external listener for selection change events. */
+	@Override
 	public void addSelectionChangedListener(ISelectionChangedListener listener) {
 		m_selectionListeners.addListener(listener);
 	}
 
 	/** Removes external listener for selection change events. */
+	@Override
 	public void removeSelectionChangedListener(ISelectionChangedListener listener) {
 		m_selectionListeners.removeListener(listener);
 	}

@@ -16,7 +16,7 @@ import org.eclipse.core.runtime.IPath;
 /**
  * An IOptionPathConverter converts between tool-specific paths
  * and their platform locations
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -30,7 +30,7 @@ public interface IOptionPathConverter {
 	 * @param option TODO
 	 * @param tool TODO
 	 * @return A path which is a meaningful platform location
-	 * or null, if the conversion fails. 
+	 * or null, if the conversion fails.
 	 */
 	IPath convertToPlatformLocation(String toolSpecificPath, IOption option, ITool tool);
 

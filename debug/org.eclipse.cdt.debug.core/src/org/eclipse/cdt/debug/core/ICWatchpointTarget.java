@@ -19,7 +19,7 @@ import org.eclipse.debug.core.IRequest;
  * View model types for which the "Add Watchpoint (C/C++)" action is applicable
  * should implement this interface. The action is a popupMenu/objectContribution
  * that targets this type.
- * 
+ *
  * @since 7.2
  */
 public interface ICWatchpointTarget {
@@ -29,13 +29,13 @@ public interface ICWatchpointTarget {
 		int getSize(); // returns -1 if size not available
 
 		void setSize(int size);
-	};
+	}
 
 	interface CanCreateWatchpointRequest extends IRequest {
 		boolean getCanCreate();
 
 		void setCanCreate(boolean value);
-	};
+	}
 
 	/**
 	 * Determine if a watchpoint can be set on the element. The result does not
@@ -55,7 +55,7 @@ public interface ICWatchpointTarget {
 	/**
 	 * Asynchronous method to retrieve the size of the variable/expression, in
 	 * bytes.
-	 * 
+	 *
 	 * @param request
 	 *            the async request object
 	 */

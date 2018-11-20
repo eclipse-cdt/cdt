@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Ye ol' while statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -36,28 +36,28 @@ public interface IASTWhileStatement extends IASTStatement {
 
 	/**
 	 * Returns the condition on the while loop
-	 * 
+	 *
 	 * @return expression for the condition
 	 */
 	public IASTExpression getCondition();
 
 	/**
 	 * Sets the condition of the while loop.
-	 * 
+	 *
 	 * @param condition
 	 */
 	public void setCondition(IASTExpression condition);
 
 	/**
 	 * The body of the loop.
-	 * 
+	 *
 	 * @return the body
 	 */
 	public IASTStatement getBody();
 
 	/**
 	 * Sets the body of the while loop.
-	 * 
+	 *
 	 * @param body
 	 */
 	public void setBody(IASTStatement body);

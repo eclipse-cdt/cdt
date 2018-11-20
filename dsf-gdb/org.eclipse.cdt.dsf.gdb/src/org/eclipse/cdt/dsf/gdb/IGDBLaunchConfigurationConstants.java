@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Support for fast tracepoints (Bug 346320)
@@ -98,13 +98,13 @@ public class IGDBLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute key. Boolean value. See
 	 * IGDBBackend.getUpdateThreadListOnSuspend()
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND = GdbPlugin.PLUGIN_ID
-			+ ".UPDATE_THREADLIST_ON_SUSPEND"; //$NON-NLS-1$	
+			+ ".UPDATE_THREADLIST_ON_SUSPEND"; //$NON-NLS-1$
 
-	/**         
+	/**
 	 * Launch configuration attribute key. The value is a String specifying the type of post mortem launch.
 	 * @since 3.0
 	 */
@@ -113,7 +113,7 @@ public class IGDBLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute key. Boolean value to set the 'detach-on-fork' GDB option.
 	 * When detach-on-fork is off, we will automatically attach to forked processes.  This will yield
-	 * a multi-process session, which is supported with GDB >= 7.2 
+	 * a multi-process session, which is supported with GDB >= 7.2
 	 * Note that detach-on-fork == !ATTR_DEBUGGER_DEBUG_ON_FORK
 	 * @since 4.0
 	 */
@@ -133,7 +133,7 @@ public class IGDBLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_TRACEPOINT_MODE = GdbPlugin.PLUGIN_ID + ".TRACEPOINT_MODE"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key. The value is a String specifying the path of the executable 
+	 * Launch configuration attribute key. The value is a String specifying the path of the executable
 	 * on the target.
 	 * @since 4.2
 	 */
@@ -142,7 +142,7 @@ public class IGDBLaunchConfigurationConstants {
 	/**
 	 * Enablement setting to set Remote Timeout in GDB to (set remotetimeout num).
 	 * The value to use is in {@link #ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE}
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public static final String ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED = GdbPlugin.PLUGIN_ID + ".REMOTE_TIMEOUT_ENABLED"; //$NON-NLS-1$
@@ -151,7 +151,7 @@ public class IGDBLaunchConfigurationConstants {
 	 * Setting to set Remote Timeout in GDB to (set remotetimeout num) if enabled
 	 * with {@link #ATTR_DEBUGGER_REMOTE_TIMEOUT_ENABLED} The value is a string and
 	 * does not have to be a number (but it normally is).
-	 * 
+	 *
 	 * @since 5.5
 	 */
 	public static final String ATTR_DEBUGGER_REMOTE_TIMEOUT_VALUE = GdbPlugin.PLUGIN_ID + ".REMOTE_TIMEOUT_VALUE"; //$NON-NLS-1$
@@ -210,34 +210,34 @@ public class IGDBLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute value. The key is
 	 * ATTR_DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final boolean DEBUGGER_UPDATE_THREADLIST_ON_SUSPEND_DEFAULT = false;
 
-	/**  
+	/**
 	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
 	 * Indicates a core file.
-	 *   
-	 * @since 3.0                        
+	 *
+	 * @since 3.0
 	 */
 	public static final String DEBUGGER_POST_MORTEM_CORE_FILE = "CORE_FILE"; //$NON-NLS-1$
 
 	/**
 	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
 	 * Indicates a trace data file.
-	 *      
-	 * @since 3.0 
+	 *
+	 * @since 3.0
 	 */
 	public static final String DEBUGGER_POST_MORTEM_TRACE_FILE = "TRACE_FILE"; //$NON-NLS-1$
 
-	/**  
+	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
 	 * @since 3.0
 	 */
 	public static final String DEBUGGER_POST_MORTEM_TYPE_DEFAULT = DEBUGGER_POST_MORTEM_CORE_FILE;
 
-	/**  
+	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_DEBUG_ON_FORK.
 	 * @since 4.0
 	 */
@@ -249,21 +249,21 @@ public class IGDBLaunchConfigurationConstants {
 	 */
 	public static final boolean DEBUGGER_EXTERNAL_CONSOLE_DEFAULT = false;
 
-	/**  
+	/**
 	 * Possible attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
 	 * Indicates that only normal tracepoints should be used.
 	 * @since 4.1
 	 */
 	public static final String DEBUGGER_TRACEPOINT_NORMAL_ONLY = "TP_NORMAL_ONLY"; //$NON-NLS-1$
 
-	/**  
+	/**
 	 * Possible attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
 	 * Indicates that only fast tracepoints should be used.
 	 * @since 4.1
 	 */
 	public static final String DEBUGGER_TRACEPOINT_FAST_ONLY = "TP_FAST_ONLY"; //$NON-NLS-1$
 
-	/**  
+	/**
 	 * Possible attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
 	 * Indicates that normal tracepoints should be used whenever a fast tracepoint
 	 * cannot be inserted.
@@ -271,13 +271,13 @@ public class IGDBLaunchConfigurationConstants {
 	 */
 	public static final String DEBUGGER_TRACEPOINT_FAST_THEN_NORMAL = "TP_FAST_THEN_NORMAL"; //$NON-NLS-1$
 
-	/**  
+	/**
 	 * Default attribute value for the key is ATTR_DEBUGGER_TRACEPOINT_MODE.
 	 * @since 4.1
 	 */
 	public static final String DEBUGGER_TRACEPOINT_MODE_DEFAULT = DEBUGGER_TRACEPOINT_NORMAL_ONLY;
 
-	/**  
+	/**
 	 * The default value of DebugPlugin.ATTR_PROCESS_FACTORY_ID.
 	 * @since 4.1
 	 */

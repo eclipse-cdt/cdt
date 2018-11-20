@@ -36,6 +36,7 @@ public class ProcessList implements IProcessList {
 	 * Insert the method's description here.
 	 * @see IProcessList#getProcessList
 	 */
+	@Override
 	public IProcessInfo[] getProcessList() {
 		File proc = new File("/proc"); //$NON-NLS-1$
 		File[] pidFiles = null;
@@ -43,6 +44,7 @@ public class ProcessList implements IProcessList {
 		// We are only interrested in the pid so filter the rest out.
 		try {
 			FilenameFilter filter = new FilenameFilter() {
+				@Override
 				public boolean accept(File dir, String name) {
 					boolean isPID = false;
 					try {

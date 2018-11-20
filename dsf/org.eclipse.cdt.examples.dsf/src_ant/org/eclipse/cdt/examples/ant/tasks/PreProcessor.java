@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -34,7 +34,7 @@ import org.apache.tools.ant.util.FileUtils;
 
 /**
  * Java preprocessor for code examples. Used to export source code for
- * example plug-ins with parts of code missing/inserted etc., for 
+ * example plug-ins with parts of code missing/inserted etc., for
  * various exercises.
  * <p>
  * The preprocessor looks for #ifdef statements in java comments, and is
@@ -75,7 +75,7 @@ public class PreProcessor extends Task {
 
 	/**
 	 * Adds a set of files to process.
-	 * 
+	 *
 	 * @param set a set of files to process
 	 */
 	public void addFileset(FileSet set) {
@@ -84,7 +84,7 @@ public class PreProcessor extends Task {
 
 	/**
 	 * Sets the destination directory for processed files.
-	 * 
+	 *
 	 * @param destDir destination directory for processed files
 	 */
 	public void setDestdir(File destDir) {
@@ -93,7 +93,7 @@ public class PreProcessor extends Task {
 
 	/**
 	 * Sets the symbols that are "on" for the preprocessing.
-	 * 
+	 *
 	 * @param symbols symbols that are "on" for the preprocessing
 	 */
 	public void setSymbols(String symbols) {
@@ -146,7 +146,7 @@ public class PreProcessor extends Task {
 	 * Process the file
 	 * @param baseDir base directory source file is relative to
 	 * @param fileName source file name
-	 * @param destDir root destination directory 
+	 * @param destDir root destination directory
 	 */
 	private void processFile(File baseDir, String fileName, File destDir) throws BuildException {
 		File destFile = new File(destDir, fileName);
@@ -184,7 +184,7 @@ public class PreProcessor extends Task {
 
 	/**
 	 * Preprocesses a file
-	 * 
+	 *
 	 * @param srcFile the file to process
 	 * @param strip chars to stip off lines in a true condition, or <code>null</code>
 	 * @return

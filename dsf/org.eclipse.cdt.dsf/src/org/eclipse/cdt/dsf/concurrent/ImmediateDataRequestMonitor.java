@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     William R. Swanson (Tilera) - initial API and implementation (Bug 365966)
  *******************************************************************************/

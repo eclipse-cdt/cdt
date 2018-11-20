@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.TreePath;
  * An update tester for element format event (ElementFormatEvent). This tester
  * flushes partial properties for elements that are affected by a change of
  * element format.
- * 
+ *
  * @since 2.2
  */
 public class ElementFormatUpdateTester implements IElementUpdateTesterExtension {

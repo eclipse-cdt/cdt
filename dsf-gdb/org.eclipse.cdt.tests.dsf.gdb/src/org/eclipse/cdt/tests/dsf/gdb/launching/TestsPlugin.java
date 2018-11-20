@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson) - Bug 437562 - Split the dsf-gdb tests to a plug-in and fragment pair
@@ -89,7 +89,7 @@ public class TestsPlugin extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status to log
 	 */
@@ -97,7 +97,7 @@ public class TestsPlugin extends Plugin {
 		getDefault().getLog().log(status);
 	}
 
-	/**     
+	/**
 	 * Convenience method which returns the unique identifier of this plugin.
 	 */
 	public static String getUniqueIdentifier() {
@@ -106,7 +106,7 @@ public class TestsPlugin extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e
 	 *            the exception to be logged
 	 */
@@ -122,7 +122,7 @@ public class TestsPlugin extends Plugin {
 	 * would up the timeout value by 50%. This gives the executor of the tests
 	 * the ability to widen the timeouts across the board for all operations to
 	 * accommodate a slow machine.
-	 * 
+	 *
 	 * @param timeoutMs
 	 *            the timeout, in milliseconds
 	 * @return the adjusted value

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Wait for *stopped event when suspending (bug 429621)
@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Version of the non-stop runControl for GDB 7.2.
- * 
+ *
  * @since 4.0
  */
 public class GDBRunControl_7_2_NS extends GDBRunControl_7_0_NS {

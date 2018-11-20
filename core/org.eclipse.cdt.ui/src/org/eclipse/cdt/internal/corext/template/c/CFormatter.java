@@ -22,6 +22,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.CodeFormatter;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.editor.IndentUtil;
+import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
@@ -40,17 +48,6 @@ import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.RangeMarker;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.CodeFormatter;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.editor.IndentUtil;
-import org.eclipse.cdt.internal.ui.text.FastCPartitionScanner;
 
 /**
  * A template editor using the C/C++ formatter to format a template buffer.
@@ -71,7 +68,7 @@ public class CFormatter {
 
 	/**
 	 * Creates a CFormatter with the target line delimiter.
-	 * 
+	 *
 	 * @param lineDelimiter the line delimiter to use
 	 * @param initialIndentLevel the initial indentation level
 	 * @param useCodeFormatter <code>true</code> if the core code formatter should be used
@@ -109,7 +106,7 @@ public class CFormatter {
 	/**
 	 * @param document
 	 * @param context
-	 * @param buffer 
+	 * @param buffer
 	 * @throws BadLocationException
 	 */
 	private void internalFormat(IDocument document, TemplateContext context, TemplateBuffer buffer)
@@ -191,9 +188,9 @@ public class CFormatter {
 
 	/**
 	 * Convert leading tabs to correct indentation and add initial indentation level.
-	 * 
+	 *
 	 * @param document
-	 * @throws BadLocationException 
+	 * @throws BadLocationException
 	 */
 	private void adjustIndentation(IDocument document) throws BadLocationException {
 		int lines = document.getNumberOfLines();
@@ -231,7 +228,7 @@ public class CFormatter {
 	/**
 	 * Prefix each line of <code>line_selection</code> substitutions with
 	 * the prefix of the first line.
-	 * 
+	 *
 	 * @param document
 	 * @param buffer
 	 */
@@ -289,7 +286,7 @@ public class CFormatter {
 
 		/**
 		 * Creates a new tracker.
-		 * 
+		 *
 		 * @param buffer the buffer to track
 		 * @throws MalformedTreeException
 		 * @throws BadLocationException
@@ -321,7 +318,7 @@ public class CFormatter {
 		/**
 		 * Returns the document with the buffer contents. Whitespace variables are decorated with
 		 * comments.
-		 * 
+		 *
 		 * @return the buffer document
 		 */
 		public IDocument getDocument() {
@@ -336,7 +333,7 @@ public class CFormatter {
 
 		/**
 		 * Restores any decorated regions and updates the buffer's variable offsets.
-		 * 
+		 *
 		 * @return the buffer.
 		 * @throws MalformedTreeException
 		 * @throws BadLocationException
@@ -357,10 +354,10 @@ public class CFormatter {
 
 		private List<TypedPosition> createRangeMarkers(TemplateVariable[] variables, IDocument document)
 				throws MalformedTreeException, BadLocationException {
-			Map<ReplaceEdit, String> markerToOriginal = new HashMap<ReplaceEdit, String>();
+			Map<ReplaceEdit, String> markerToOriginal = new HashMap<>();
 
 			MultiTextEdit root = new MultiTextEdit(0, document.getLength());
-			List<TextEdit> edits = new ArrayList<TextEdit>();
+			List<TextEdit> edits = new ArrayList<>();
 			boolean hasModifications = false;
 			for (int i = 0; i != variables.length; i++) {
 				final TemplateVariable variable = variables[i];
@@ -391,7 +388,7 @@ public class CFormatter {
 				root.apply(document, TextEdit.UPDATE_REGIONS);
 			}
 
-			List<TypedPosition> positions = new ArrayList<TypedPosition>();
+			List<TypedPosition> positions = new ArrayList<>();
 			for (Iterator<TextEdit> it = edits.iterator(); it.hasNext();) {
 				TextEdit edit = it.next();
 				try {

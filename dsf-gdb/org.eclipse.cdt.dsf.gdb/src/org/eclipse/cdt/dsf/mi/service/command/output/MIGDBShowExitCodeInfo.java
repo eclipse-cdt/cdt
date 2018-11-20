@@ -17,7 +17,7 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * GDB/MI show parsing.
- * (gdb) 
+ * (gdb)
  * -data-evaluate-expression $_exitcode
  * ^done,value="10"
  * (gdb)

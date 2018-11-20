@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 /**
  * Automatically growing integer array.
- * 
+ *
  * @since 5.5
  */
 public class IntArray {

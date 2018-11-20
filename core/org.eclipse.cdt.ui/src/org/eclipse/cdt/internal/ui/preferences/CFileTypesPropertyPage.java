@@ -16,6 +16,10 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
@@ -23,8 +27,8 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.content.IContentTypeManager.ContentTypeChangeEvent;
+import org.eclipse.core.runtime.content.IContentTypeSettings;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -37,13 +41,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-
-import org.eclipse.cdt.internal.core.model.CModelManager;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-
 /*
  * The preference page used for displaying/editing CDT file
  * type associations for a project
@@ -51,7 +48,7 @@ import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 public class CFileTypesPropertyPage extends PropertyPage {
 
 	class FixCFileTypesPreferenceBlock extends CFileTypesPreferenceBlock {
-		ArrayList<ContentTypeChangeEvent> list = new ArrayList<ContentTypeChangeEvent>();
+		ArrayList<ContentTypeChangeEvent> list = new ArrayList<>();
 
 		public FixCFileTypesPreferenceBlock() {
 			super();
@@ -235,7 +232,7 @@ public class CFileTypesPropertyPage extends PropertyPage {
 	void computeEvents(IProject project) {
 		IScopeContext projectScope = new ProjectScope(project);
 		IContentType[] ctypes = getRegistedContentTypes();
-		ArrayList<IContentType> list = new ArrayList<IContentType>(ctypes.length);
+		ArrayList<IContentType> list = new ArrayList<>(ctypes.length);
 		for (IContentType ctype : ctypes) {
 			try {
 				IContentTypeSettings projectSettings = ctype.getSettings(projectScope);

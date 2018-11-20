@@ -17,6 +17,15 @@ package org.eclipse.cdt.internal.ui.preferences;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.internal.corext.util.Messages;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.layout.PixelConverter;
@@ -35,18 +44,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-
-import org.eclipse.cdt.internal.corext.util.Messages;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.SelectionButtonDialogField;
 
 /**
  * UI for editing task tags.
@@ -106,7 +103,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 			} else if (TASK_PRIORITY_LOW.equals(task.priority)) {
 				return PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_low_priority;
 			}
-			return ""; //$NON-NLS-1$	
+			return ""; //$NON-NLS-1$
 		}
 
 		@Override
@@ -143,7 +140,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_edit_button,
 				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_remove_button, null,
 				PreferencesMessages.TodoTaskConfigurationBlock_markers_tasks_setdefault_button, };
-		fTodoTasksList = new ListDialogField<TodoTask>(adapter, buttons, new TodoTaskLabelProvider());
+		fTodoTasksList = new ListDialogField<>(adapter, buttons, new TodoTaskLabelProvider());
 		fTodoTasksList.setDialogFieldListener(adapter);
 		fTodoTasksList.setRemoveButtonIndex(IDX_REMOVE);
 
@@ -305,7 +302,7 @@ public class TodoTaskConfigurationBlock extends OptionsConfigurationBlock {
 		String currPrios = getValue(PREF_TODO_TASK_PRIORITIES);
 		String[] tags = getTokens(currTags, ","); //$NON-NLS-1$
 		String[] prios = getTokens(currPrios, ","); //$NON-NLS-1$
-		ArrayList<TodoTask> elements = new ArrayList<TodoTask>(tags.length);
+		ArrayList<TodoTask> elements = new ArrayList<>(tags.length);
 		for (int i = 0; i < tags.length; i++) {
 			TodoTask task = new TodoTask();
 			task.name = tags[i].trim();

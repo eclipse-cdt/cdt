@@ -14,15 +14,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.IDeclaration;
 import org.eclipse.cdt.core.model.IField;
 import org.eclipse.cdt.core.model.IMember;
 import org.eclipse.cdt.core.model.ISourceReference;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * Filter for the methods viewer.

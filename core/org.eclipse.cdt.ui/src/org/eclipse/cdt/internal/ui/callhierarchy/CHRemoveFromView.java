@@ -27,7 +27,7 @@ public class CHRemoveFromView extends Action {
 
 	/**
 	 * Constructs a Remove From View action.
-	 * 
+	 *
 	 * @param view the Call Hierarchy view
 	 */
 	public CHRemoveFromView(CHViewPart view) {

@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.testplugin;
 
-import org.eclipse.swt.graphics.Image;
-
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.swt.graphics.Image;
 
 /**
  * Allows to test decorators for Java elements

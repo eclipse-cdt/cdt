@@ -17,6 +17,7 @@ package org.eclipse.cdt.internal.ui.cview;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Assert;
@@ -34,14 +35,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.part.ResourceTransfer;
 
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-
 /**
  * Standard action for copying the currently selected resources to the clipboard.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public class CopyAction extends SelectionListenerAction {
@@ -90,7 +89,7 @@ public class CopyAction extends SelectionListenerAction {
 	 * @param shell the shell for any dialogs
 	 * @param clipboard a platform clipboard
 	 * @param pasteAction a paste action
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	public CopyAction(Shell shell, Clipboard clipboard, PasteAction pasteAction) {
@@ -99,8 +98,8 @@ public class CopyAction extends SelectionListenerAction {
 	}
 
 	/**
-	 * The <code>CopyAction</code> implementation of this method defined 
-	 * on <code>IAction</code> copies the selected resources to the 
+	 * The <code>CopyAction</code> implementation of this method defined
+	 * on <code>IAction</code> copies the selected resources to the
 	 * clipboard.
 	 */
 	@Override
@@ -139,7 +138,7 @@ public class CopyAction extends SelectionListenerAction {
 
 	/**
 	 * Set the clipboard contents. Prompt to retry if clipboard is busy.
-	 * 
+	 *
 	 * @param resources the resources to copy to the clipboard
 	 * @param fileNames file names of the resources to copy to the clipboard
 	 * @param names string representation of all names
@@ -165,7 +164,7 @@ public class CopyAction extends SelectionListenerAction {
 
 	/**
 	 * The <code>CopyAction</code> implementation of this
-	 * <code>SelectionListenerAction</code> method enables this action if 
+	 * <code>SelectionListenerAction</code> method enables this action if
 	 * one or more resources of compatible types are selected.
 	 */
 	@Override
@@ -189,7 +188,7 @@ public class CopyAction extends SelectionListenerAction {
 		if (projSelected && fileFoldersSelected)
 			return false;
 
-		// must have a common parent	
+		// must have a common parent
 		IContainer firstParent = ((IResource) selectedResources.get(0)).getParent();
 		if (firstParent == null)
 			return false;

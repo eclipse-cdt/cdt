@@ -7,12 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson 		  - Modified for multi threaded functionality
  *     Patrick Chuong (Texas Instruments) - Add support for icon overlay in the debug view (Bug 334566)
- *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 240208)   
+ *     Dobrin Alexiev (Texas Instruments) - user groups support  (bug 240208)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.ui.viewmodel.launch;
 
@@ -67,15 +67,15 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 /**
  * Abstract implementation of a thread view model node.
  * Clients need to implement {@link #updateLabelInSessionThread(ILabelUpdate[])}.
- * 
+ *
  * @since 1.1
  */
 public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNode
 		implements IElementLabelProvider, IElementPropertiesProvider {
 	/**
 	 * The label provider delegate.  This VM node will delegate label updates to this provider
-	 * which can be created by sub-classes. 
-	 *  
+	 * which can be created by sub-classes.
+	 *
 	 * @since 2.0
 	 */
 	private IElementLabelProvider fLabelProvider;
@@ -86,11 +86,11 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
 	}
 
 	/**
-	 * Creates the label provider delegate.  This VM node will delegate label 
-	 * updates to this provider which can be created by sub-classes.   
-	 *  
-	 * @return Returns the label provider for this node. 
-	 *  
+	 * Creates the label provider delegate.  This VM node will delegate label
+	 * updates to this provider which can be created by sub-classes.
+	 *
+	 * @return Returns the label provider for this node.
+	 *
 	 * @since 2.0
 	 */
 	protected IElementLabelProvider createLabelProvider() {
@@ -98,7 +98,7 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
 
 		provider.setColumnInfo(PropertiesBasedLabelProvider.ID_COLUMN_NO_COLUMNS,
 				new LabelColumnInfo(new LabelAttribute[] {
-						// Text is made of the thread name followed by its state and state change reason. 
+						// Text is made of the thread name followed by its state and state change reason.
 						new ExecutionContextLabelText(MessagesForLaunchVM.AbstractThreadVMNode_No_columns__text_format,
 								new String[] { ExecutionContextLabelText.PROP_NAME_KNOWN, PROP_NAME,
 										ExecutionContextLabelText.PROP_ID_KNOWN, ILaunchVMConstants.PROP_ID,
@@ -116,7 +116,7 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
 							@Override
 							public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 								return Boolean.FALSE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
-							};
+							}
 						}, new LabelImage(
 								DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_THREAD_SUSPENDED)), }));
 		return provider;
@@ -153,7 +153,7 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
 
 	/**
 	 * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	@Override
@@ -371,34 +371,34 @@ public abstract class AbstractThreadVMNode extends AbstractExecutionContextVMNod
 			// filters out those event.
 			rm.done();
 		} else if (e instanceof IResumedDMEvent) {
-			// Resumed: 
+			// Resumed:
 			// - If not stepping, update the thread and its content (its stack).
-			// - If stepping, do nothing to avoid too many updates.  If a 
-			// time-out is reached before the step completes, the 
+			// - If stepping, do nothing to avoid too many updates.  If a
+			// time-out is reached before the step completes, the
 			// ISteppingTimedOutEvent will trigger a refresh.
 			if (((IResumedDMEvent) e).getReason() != IRunControl.StateChangeReason.STEP) {
 				parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
 			}
 			rm.done();
 		} else if (e instanceof ISuspendedDMEvent) {
-			// Container suspended.  Do nothing here to give the stack the 
-			// priority in updating. The thread will update as a result of 
-			// FullStackRefreshEvent. 
+			// Container suspended.  Do nothing here to give the stack the
+			// priority in updating. The thread will update as a result of
+			// FullStackRefreshEvent.
 			rm.done();
 		} else if (e instanceof SteppingTimedOutEvent) {
-			// Stepping time-out indicates that a step operation is taking 
-			// a long time, and the view needs to be refreshed to show 
-			// the user that the program is running.  
+			// Stepping time-out indicates that a step operation is taking
+			// a long time, and the view needs to be refreshed to show
+			// the user that the program is running.
 			parentDelta.addNode(createVMContext(dmc), IModelDelta.CONTENT);
 			rm.done();
 		} else if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
-			// Model Proxy install event is generated when the model is first 
+			// Model Proxy install event is generated when the model is first
 			// populated into the view.  This happens when a new debug session
-			// is started or when the view is first opened.  
-			// In both cases, if there are already threads in the debug model, 
+			// is started or when the view is first opened.
+			// In both cases, if there are already threads in the debug model,
 			// the desired user behavior is to show the threads and to select
-			// the first thread.  
-			// If the thread is suspended, do not select the thread, instead, 
+			// the first thread.
+			// If the thread is suspended, do not select the thread, instead,
 			// its top stack frame will be selected.
 			getThreadVMCForModelProxyInstallEvent(parentDelta,
 					new DataRequestMonitor<VMContextInfo>(getExecutor(), rm) {

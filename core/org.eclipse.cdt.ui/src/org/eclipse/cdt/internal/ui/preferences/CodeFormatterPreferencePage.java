@@ -15,6 +15,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.preferences.formatter.CodeFormatterConfigurationBlock;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.preference.IPreferencePageContainer;
@@ -24,9 +26,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.eclipse.ui.preferences.WorkingCopyManager;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.preferences.formatter.CodeFormatterConfigurationBlock;
 
 /*
  * The page to configure the code formatter options.
@@ -51,7 +50,7 @@ public class CodeFormatterPreferencePage extends PropertyAndPreferencePage {
 		if (container instanceof IWorkbenchPreferenceContainer) {
 			workingCopyManager = ((IWorkbenchPreferenceContainer) container).getWorkingCopyManager();
 		} else {
-			workingCopyManager = new WorkingCopyManager(); // non shared 
+			workingCopyManager = new WorkingCopyManager(); // non shared
 		}
 		PreferencesAccess access = PreferencesAccess.getWorkingCopyPreferences(workingCopyManager);
 		fConfigurationBlock = new CodeFormatterConfigurationBlock(getProject(), access);

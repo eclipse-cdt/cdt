@@ -81,7 +81,7 @@ public class InternalParserUtil extends ParserFactory {
 	}
 
 	/**
-	 * Creates a code reader for an external location, normalizing path to 
+	 * Creates a code reader for an external location, normalizing path to
 	 * canonical path.
 	 * @deprecated, use {@link FileContent}, instead.
 	 */
@@ -191,8 +191,8 @@ public class InternalParserUtil extends ParserFactory {
 	}
 
 	/**
-	 * Creates a code reader for an external location, normalizing path to 
-	 * canonical path. 
+	 * Creates a code reader for an external location, normalizing path to
+	 * canonical path.
 	 */
 	public static InternalFileContent createExternalFileContent(final String externalLocation, String encoding) {
 		long fileReadTime = System.currentTimeMillis();

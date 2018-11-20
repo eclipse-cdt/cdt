@@ -48,7 +48,7 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 
 			if (CExternalSettingSerializer.ELEMENT_SETTING_INFO.equals(name)) {
 				if (externalSettingList == null)
-					externalSettingList = new ArrayList<CExternalSetting>();
+					externalSettingList = new ArrayList<>();
 
 				CExternalSetting setting = CExternalSettingSerializer.load(child);
 				externalSettingList.add(setting);
@@ -66,7 +66,7 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 
 	CExternalSettingsHolder(CExternalSettingsHolder base) {
 		if (base.fSettingsMap != null)
-			fSettingsMap = new HashMap<ExtSettingMapKey, CExternalSetting>(base.fSettingsMap);
+			fSettingsMap = new HashMap<>(base.fSettingsMap);
 	}
 
 	@Override
@@ -113,7 +113,7 @@ public class CExternalSettingsHolder extends CExternalSettingsContainer {
 			fSettingsMap.put(key, newSetting);
 		} else {
 			newSetting = new CExternalSetting(setting);
-			fSettingsMap = new HashMap<ExtSettingMapKey, CExternalSetting>();
+			fSettingsMap = new HashMap<>();
 			fSettingsMap.put(key, newSetting);
 		}
 		fIsModified = true;

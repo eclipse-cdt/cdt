@@ -71,12 +71,14 @@ public class VisualizerAction extends Action {
 	// --- methods ---
 
 	/** Invoked when action is triggered. */
+	@Override
 	public void run() {
 	}
 
 	/** Invoked when action is triggered,
 	 *  with the event that caused it.
 	 */
+	@Override
 	public void runWithEvent(Event event) {
 		run();
 	}

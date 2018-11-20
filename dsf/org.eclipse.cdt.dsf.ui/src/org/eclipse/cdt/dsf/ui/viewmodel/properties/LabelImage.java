@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,11 +21,11 @@ import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * The image attribute of a label.
- * 
+ *
  * @see LabelAttribute
  * @see LabelColumnInfo
  * @see PropertiesBasedLabelProvider
- * 
+ *
  * @since 1.0
  */
 public class LabelImage extends LabelAttribute {

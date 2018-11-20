@@ -84,7 +84,7 @@ public class LaunchUtils {
 	}
 
 	/**
-	 * For given launch configuration returns the program arguments as 
+	 * For given launch configuration returns the program arguments as
 	 * an array of individual arguments.
 	 */
 	public static String[] getProgramArgumentsArray(ILaunchConfiguration config) throws CoreException {
@@ -188,7 +188,7 @@ public class LaunchUtils {
 	 * Get the build configuration that most likely builds the given program path.
 	 * The build configuration is chosen as the one that outputs to a directory that contains
 	 * the given program.
-	 * 
+	 *
 	 * @param projectDesc The description for the project in which to search for the configuration.
 	 * @param programPath The path to the program to search the build configurations for
 	 * @return The build configuration that builds programName; or null if none or more than one were found.

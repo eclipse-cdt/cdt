@@ -1503,7 +1503,7 @@ public class IndexUpdateTests extends IndexTestBase {
 	//}
 	public void testDependentProjectGetsUpdated_Bug310837() throws Exception {
 		CharSequence[] contents = getContentsForTest(2);
-		List<ICProject> projects = new ArrayList<ICProject>();
+		List<ICProject> projects = new ArrayList<>();
 
 		try {
 			ProjectBuilder projectABuilder = new ProjectBuilder("projA_" + getName(), true);

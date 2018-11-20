@@ -29,7 +29,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIValue;
  * is a response to an MI command, we trigger an MI event internally
  * because it should cause the same behaviour as if we stopped at a
  * breakpoint.  The output record looks like this:
- * 
+ *
  * <code>
  * ^done,found="1",tracepoint="1",traceframe="0",frame={level="0",addr="0x08048900",func="foo",args=[{name="i",value="2"}],file="file.cpp",fullname="/home/marc/file.cpp",line="505"}
 

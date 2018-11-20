@@ -1,16 +1,16 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2011, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ * 	   Martin Schwab & Thomas Kallenberg - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.togglefunction;
 
@@ -27,10 +27,8 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTFunctionDefinition;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTemplateDeclaration;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTCompositeTypeSpecifier;
-
 import org.eclipse.cdt.internal.ui.refactoring.Container;
 
 public class InsertionPointFinder {
@@ -85,7 +83,7 @@ public class InsertionPointFinder {
 	 * @param ast the translation unit where to find the definitions
 	 */
 	private static void findAllDefinitionsoutSideClass(IASTTranslationUnit ast) {
-		final ArrayList<ICPPASTFunctionDefinition> definitions = new ArrayList<ICPPASTFunctionDefinition>();
+		final ArrayList<ICPPASTFunctionDefinition> definitions = new ArrayList<>();
 		if (ast == null) {
 			alldefinitionsoutside = definitions;
 			return;
@@ -112,7 +110,7 @@ public class InsertionPointFinder {
 
 	private static ArrayList<ICPPASTFunctionDeclarator> getDeclarationsInClass(ICPPASTCompositeTypeSpecifier klass,
 			final IASTFunctionDeclarator selected) {
-		final ArrayList<ICPPASTFunctionDeclarator> declarations = new ArrayList<ICPPASTFunctionDeclarator>();
+		final ArrayList<ICPPASTFunctionDeclarator> declarations = new ArrayList<>();
 
 		klass.accept(new ASTVisitor() {
 			{
@@ -139,7 +137,7 @@ public class InsertionPointFinder {
 	}
 
 	private static ICPPASTCompositeTypeSpecifier getklass(IASTTranslationUnit unit) {
-		final Container<ICPPASTCompositeTypeSpecifier> result = new Container<ICPPASTCompositeTypeSpecifier>();
+		final Container<ICPPASTCompositeTypeSpecifier> result = new Container<>();
 
 		unit.accept(new ASTVisitor() {
 			{

@@ -101,14 +101,14 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 */
 	public void reset(VersionRange pdomVersionRange) {
 		this.fragmentProviders = new IIndexFragmentProvider[0];
-		this.provisionMap = new HashMap<ProvisionMapKey, Boolean>();
+		this.provisionMap = new HashMap<>();
 		this.pdomVersionRange = pdomVersionRange;
-		this.compatibleFragmentUnavailable = new HashSet<String>();
+		this.compatibleFragmentUnavailable = new HashSet<>();
 	}
 
 	public void startup() {
-		List<IIndexFragmentProvider> providers = new ArrayList<IIndexFragmentProvider>();
-		List<IConfigurationElement[]> usageSpecifications = new ArrayList<IConfigurationElement[]>();
+		List<IIndexFragmentProvider> providers = new ArrayList<>();
+		List<IConfigurationElement[]> usageSpecifications = new ArrayList<>();
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint indexProviders = registry.getExtensionPoint(CCorePlugin.INDEX_UNIQ_ID);
 		for (IExtension extension : indexProviders.getExtensions()) {
@@ -189,7 +189,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 	 */
 	public IIndexFragment[] getProvidedIndexFragments(ICConfigurationDescription config, int usage)
 			throws CoreException {
-		Map<String, IIndexFragment> id2fragment = new HashMap<String, IIndexFragment>();
+		Map<String, IIndexFragment> id2fragment = new HashMap<>();
 
 		IProject project = config.getProjectDescription().getProject();
 		for (int i = 0; i < fragmentProviders.length; i++) {
@@ -215,7 +215,7 @@ public final class IndexProviderManager implements IElementChangedListener {
 		}
 
 		// Make log entries for any fragments which have no compatible equivalents
-		List<IIndexFragment> preresult = new ArrayList<IIndexFragment>();
+		List<IIndexFragment> preresult = new ArrayList<>();
 		for (Map.Entry<String, IIndexFragment> entry : id2fragment.entrySet()) {
 			if (entry.getValue() == null) {
 				String key = entry.getKey();

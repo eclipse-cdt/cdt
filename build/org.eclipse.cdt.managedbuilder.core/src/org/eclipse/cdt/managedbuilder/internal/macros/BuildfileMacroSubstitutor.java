@@ -95,7 +95,7 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 		protected String[] getConfigurationReservedNames(IConfiguration configuration) {
 			ITool tools[] = configuration.getFilteredTools();
 			if (tools != null) {
-				Set<String> set = new HashSet<String>();
+				Set<String> set = new HashSet<>();
 				for (int i = 0; i < tools.length; i++) {
 					IOutputType ots[] = tools[i].getOutputTypes();
 					if (ots != null) {
@@ -273,7 +273,7 @@ public class BuildfileMacroSubstitutor extends SupplierBasedCdtVariableSubstitut
 
 	protected Set<String> getCaseInsensitiveReferencedNames() {
 		if (fCaseInsensitiveReferencedNames == null)
-			fCaseInsensitiveReferencedNames = new HashSet<String>();
+			fCaseInsensitiveReferencedNames = new HashSet<>();
 		return fCaseInsensitiveReferencedNames;
 	}
 

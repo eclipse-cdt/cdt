@@ -245,7 +245,7 @@ public final class EvalFunctionCall extends CPPDependentEvaluation {
 				return args[0];
 			}
 
-			// For functions sets of member functions, EvalFunctionSet does not store 
+			// For functions sets of member functions, EvalFunctionSet does not store
 			// the value of the object on which the member function is called.
 			// If this value was previously elided (not stored explicitly in
 			// fImplicitThis to avoid duplication with the copy stored in fArguments[0]),

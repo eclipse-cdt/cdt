@@ -15,6 +15,17 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
 import java.lang.reflect.InvocationTargetException;
 
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.resources.IPathEntryStore;
+import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
+import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -33,19 +44,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
-
-import org.eclipse.cdt.core.CProjectNature;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.resources.IPathEntryStore;
-import org.eclipse.cdt.core.resources.IPathEntryStoreListener;
-import org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
-import org.eclipse.cdt.internal.ui.dialogs.StatusUtil;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 /**
  * @noreference This class is not intended to be referenced by clients.
@@ -124,7 +122,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
 	 */
 	@Override
@@ -227,7 +225,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see IStatusChangeListener#statusChanged
 	 */
 	@Override
@@ -238,7 +236,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.IPreferencePage#performCancel()
 	 */
 	@Override
@@ -251,7 +249,7 @@ public class IncludesSymbolsPropertyPage extends PropertyPage
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.core.resources.IPathEntryStoreListener#pathEntryStoreChanged(org.eclipse.cdt.core.resources.PathEntryStoreChangedEvent)
 	 */
 	@Override

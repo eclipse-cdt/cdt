@@ -126,7 +126,7 @@ public class Target extends BuildObject implements ITarget {
 		// Get the comma-separated list of valid OS
 		String os = element.getAttribute(OS_LIST);
 		if (os != null) {
-			targetOSList = new ArrayList<String>();
+			targetOSList = new ArrayList<>();
 			String[] osTokens = os.split(","); //$NON-NLS-1$
 			for (int i = 0; i < osTokens.length; ++i) {
 				targetOSList.add(SafeStringInterner.safeIntern(osTokens[i].trim()));
@@ -136,7 +136,7 @@ public class Target extends BuildObject implements ITarget {
 		// Get the comma-separated list of valid Architectures
 		String arch = element.getAttribute(ARCH_LIST);
 		if (arch != null) {
-			targetArchList = new ArrayList<String>();
+			targetArchList = new ArrayList<>();
 			String[] archTokens = arch.split(","); //$NON-NLS-1$
 			for (int j = 0; j < archTokens.length; ++j) {
 				targetArchList.add(SafeStringInterner.safeIntern(archTokens[j].trim()));
@@ -410,7 +410,7 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	private List<IConfigurationV2> getConfigurationList() {
 		if (configList == null) {
-			configList = new ArrayList<IConfigurationV2>();
+			configList = new ArrayList<>();
 		}
 		return configList;
 	}
@@ -420,7 +420,7 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	private Map<String, IConfigurationV2> getConfigurationMap() {
 		if (configMap == null) {
-			configMap = new HashMap<String, IConfigurationV2>();
+			configMap = new HashMap<>();
 		}
 		return configMap;
 	}
@@ -475,7 +475,7 @@ public class Target extends BuildObject implements ITarget {
 				errorParsers = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-				List<String> list = new ArrayList<String>(tok.countTokens());
+				List<String> list = new ArrayList<>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -498,7 +498,7 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	protected List<ToolReference> getLocalToolReferences() {
 		if (toolReferences == null) {
-			toolReferences = new ArrayList<ToolReference>();
+			toolReferences = new ArrayList<>();
 		}
 		return toolReferences;
 	}
@@ -557,7 +557,7 @@ public class Target extends BuildObject implements ITarget {
 	}
 
 	protected List<OptionReference> getOptionReferences(ITool tool) {
-		List<OptionReference> references = new ArrayList<OptionReference>();
+		List<OptionReference> references = new ArrayList<>();
 
 		// Get all the option references I add for this tool
 		ToolReference toolRef = getToolReference(tool);
@@ -658,7 +658,7 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	private List<ITool> getToolList() {
 		if (toolList == null) {
-			toolList = new ArrayList<ITool>();
+			toolList = new ArrayList<>();
 		}
 		return toolList;
 	}
@@ -669,7 +669,7 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	private Map<String, ITool> getToolMap() {
 		if (toolMap == null) {
-			toolMap = new HashMap<String, ITool>();
+			toolMap = new HashMap<>();
 		}
 		return toolMap;
 	}
@@ -698,7 +698,7 @@ public class Target extends BuildObject implements ITarget {
 	 */
 	@Override
 	public ITool[] getTools() {
-		Vector<ITool> toolArray = new Vector<ITool>();
+		Vector<ITool> toolArray = new Vector<>();
 		addToolsToArray(toolArray);
 		return toolArray.toArray(new ITool[toolArray.size()]);
 	}
@@ -1058,7 +1058,7 @@ public class Target extends BuildObject implements ITarget {
 			IToolReference[] configToolRefs = configV2.getToolReferences();
 			// Add the "local" tool references (they are direct children of the target and
 			//  its parent targets)
-			Vector<IToolReference> targetToolRefs = new Vector<IToolReference>();
+			Vector<IToolReference> targetToolRefs = new Vector<>();
 			addTargetToolReferences(targetToolRefs);
 			IToolReference[] toolRefs;
 			if (targetToolRefs.size() > 0) {

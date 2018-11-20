@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -181,7 +181,7 @@ public class SwitchStatementTests extends TestBase {
 	//		int x { 2 };
 	//		int y = 5;
 	//		constexpr Point p{4, 1};
-	//		
+	//
 	//		switch (x) {
 	//		case 1:
 	//			y = 10;

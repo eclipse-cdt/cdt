@@ -21,7 +21,7 @@ public interface IJSIdentifier extends IJSExpression, IJSPattern {
 	@Override
 	default public String getType() {
 		return "Identifier"; //$NON-NLS-1$
-	};
+	}
 
 	public String getName();
 }

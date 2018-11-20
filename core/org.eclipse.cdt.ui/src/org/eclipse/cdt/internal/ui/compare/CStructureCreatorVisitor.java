@@ -16,10 +16,6 @@ package org.eclipse.cdt.internal.ui.compare;
 
 import java.util.Stack;
 
-import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Position;
-
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.IASTASMDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
@@ -27,6 +23,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclSpecifier;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDeclarator;
 import org.eclipse.cdt.core.dom.ast.IASTFunctionDefinition;
@@ -38,7 +35,6 @@ import org.eclipse.cdt.core.dom.ast.IASTPreprocessorMacroDefinition;
 import org.eclipse.cdt.core.dom.ast.IASTProblemDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTSimpleDeclaration;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IASTEnumerationSpecifier.IASTEnumerator;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTCompositeTypeSpecifier;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTExplicitTemplateInstantiation;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLinkageSpecification;
@@ -50,11 +46,12 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDeclaration;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTUsingDirective;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTVisibilityLabel;
 import org.eclipse.cdt.core.model.ICElement;
-
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
 import org.eclipse.cdt.internal.core.model.CoreModelMessages;
-
 import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.compare.structuremergeviewer.DocumentRangeNode;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.Position;
 
 /**
  * AST visitor to create compare structure.
@@ -66,13 +63,13 @@ class CStructureCreatorVisitor extends ASTVisitor {
 	private static final String TRANSLATION_UNIT_NAME = CUIMessages.CStructureCreatorVisitor_translationUnitName;
 	private static final String ANONYMOUS_NAME = CoreModelMessages.getString("CElementLabels.anonymous"); //$NON-NLS-1$
 
-	private Stack<DocumentRangeNode> fStack = new Stack<DocumentRangeNode>();
+	private Stack<DocumentRangeNode> fStack = new Stack<>();
 	private IDocument fDocument;
 	private String fTranslationUnitFileName;
 
 	/**
 	 * Create visitor adding nodes to given root.
-	 * 
+	 *
 	 * @param root
 	 */
 	public CStructureCreatorVisitor(DocumentRangeNode root) {
@@ -95,7 +92,7 @@ class CStructureCreatorVisitor extends ASTVisitor {
 
 		push(ICElement.C_UNIT, TRANSLATION_UNIT_NAME, 0);
 
-		// TODO fix ordering of includes and macros 
+		// TODO fix ordering of includes and macros
 		// includes
 		final IASTPreprocessorIncludeStatement[] includeDirectives = tu.getIncludeDirectives();
 		for (int i = 0; i < includeDirectives.length; i++) {
@@ -121,9 +118,9 @@ class CStructureCreatorVisitor extends ASTVisitor {
 	}
 
 	/**
-	 * Test whether given AST node is local to the source file 
+	 * Test whether given AST node is local to the source file
 	 * and not part of an inclusion.
-	 * 
+	 *
 	 * @param node
 	 * @return <code>true</code> if the node is part of the source file.
 	 */
@@ -133,7 +130,7 @@ class CStructureCreatorVisitor extends ASTVisitor {
 
 	/**
 	 * Compute the start offset of given AST node.
-	 * 
+	 *
 	 * @param node
 	 * @return
 	 */
@@ -155,7 +152,7 @@ class CStructureCreatorVisitor extends ASTVisitor {
 
 	/**
 	 * Compute the end offset of give AST node.
-	 * 
+	 *
 	 * @param node
 	 * @return
 	 */
@@ -467,8 +464,8 @@ class CStructureCreatorVisitor extends ASTVisitor {
 
 	/**
 	 * Test whether the given declaration is a templated declaration.
-	 * 
-	 * @param node 
+	 *
+	 * @param node
 	 * @return <code>true</code> if the declaration is templated.
 	 */
 	private boolean isTemplateDecl(IASTDeclaration node) {

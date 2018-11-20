@@ -19,7 +19,7 @@ import org.eclipse.cdt.internal.core.pdom.db.IBTreeVisitor;
 import org.eclipse.core.runtime.CoreException;
 
 /**
- * Applies the specified visitor to the node being visited, and recursively to 
+ * Applies the specified visitor to the node being visited, and recursively to
  * any nodes which act as containers
  */
 public class ApplyVisitor implements IBTreeVisitor, IPDOMVisitor {

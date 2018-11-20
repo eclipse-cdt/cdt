@@ -101,7 +101,7 @@ public class RegisterGroupsPersistance {
 				Node node = DebugPlugin.parseDocument(fMemento);
 				Element element = (Element) node;
 
-				List<IRegisterDescriptor> list = new ArrayList<IRegisterDescriptor>();
+				List<IRegisterDescriptor> list = new ArrayList<>();
 				Node childNode = element.getFirstChild();
 				while (childNode != null) {
 					if (childNode.getNodeType() == Node.ELEMENT_NODE) {
@@ -167,7 +167,7 @@ public class RegisterGroupsPersistance {
 	 * whose container id matches given containerId
 	 */
 	public IRegisterGroupDescriptor[] parseGroups(String containerId) throws CoreException {
-		List<IRegisterGroupDescriptor> groups = new ArrayList<IRegisterGroupDescriptor>();
+		List<IRegisterGroupDescriptor> groups = new ArrayList<>();
 		String memento;
 
 		memento = fLaunchConfig.getAttribute(ICDTLaunchConfigurationConstants.ATTR_DEBUGGER_REGISTER_GROUPS,

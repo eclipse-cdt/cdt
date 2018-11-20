@@ -7,11 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
- *     Ericsson AB		  - Modified for additional functionality	
- *     Nokia - create and use backend service. 
+ *     Ericsson AB		  - Modified for additional functionality
+ *     Nokia - create and use backend service.
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *     Alvaro Sanchez-Leon (Ericsson AB) - Bug 415362
  *******************************************************************************/
@@ -379,7 +379,7 @@ public class GDBRunControl extends MIRunControl {
 	/**
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @noreference This method is not intended to be referenced by clients.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	@DsfServiceEventHandler
@@ -446,7 +446,7 @@ public class GDBRunControl extends MIRunControl {
 		}
 
 		// No event dispatched if RuntoLine or StepIntoSelection operations are active and a previous event is not a
-		// Suspended event, i.e. only one Running event distributed per operation	
+		// Suspended event, i.e. only one Running event distributed per operation
 	}
 
 	private boolean processRunToLineStoppedEvent(final MIStoppedEvent e) {
@@ -748,7 +748,7 @@ public class GDBRunControl extends MIRunControl {
 
 	/**
 	 * Help method used when the stopped event has not been broadcasted e.g. in the middle of step into selection
-	 * 
+	 *
 	 * @param dmc
 	 * @param rm
 	 */

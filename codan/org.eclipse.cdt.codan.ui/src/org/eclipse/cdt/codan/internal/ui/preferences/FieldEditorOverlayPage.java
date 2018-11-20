@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Berthold Daum
  *******************************************************************************/
@@ -51,7 +51,7 @@ import org.eclipse.ui.preferences.ScopedPreferenceStore;
  */
 public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 	// Stores all created field editors
-	private List<FieldEditor> editors = new ArrayList<FieldEditor>();
+	private List<FieldEditor> editors = new ArrayList<>();
 	// Stores owning element of properties
 	private IAdaptable element;
 	// Additional buttons for property pages
@@ -65,7 +65,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param style
 	 *        - layout style
 	 */
@@ -75,7 +75,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param title
 	 *        - title string
 	 * @param style
@@ -87,7 +87,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param title
 	 *        - title string
 	 * @param image
@@ -103,14 +103,14 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	/**
 	 * Returns the id of the current preference page as defined in plugin.xml
 	 * Subclasses must implement.
-	 * 
+	 *
 	 * @return - the qualifier
 	 */
 	protected abstract String getPageId();
 
 	/**
 	 * Receives the object that owns the properties shown in this property page.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#setElement(org.eclipse.core.runtime.IAdaptable)
 	 */
 	@Override
@@ -120,7 +120,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 
 	/**
 	 * Delivers the object that owns the properties shown in this property page.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPropertyPage#getElement()
 	 */
 	@Override
@@ -134,7 +134,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 
 	/**
 	 * Returns true if this instance represents a property page
-	 * 
+	 *
 	 * @return - true for property pages, false for preference pages
 	 */
 	public boolean isPropertyPage() {
@@ -144,7 +144,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	/**
 	 * We override the addField method. This allows us to store each field
 	 * editor added by subclasses in a list for later processing.
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#addField(org.eclipse.jface.preference.FieldEditor)
 	 */
 	@Override
@@ -157,7 +157,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	 * We override the createControl method. In case of property pages we create
 	 * a new PropertyStore as local preference store. After all control have
 	 * been create, we enable/disable these controls.
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.PreferencePage#createControl(Composite)
 	 */
 	@Override
@@ -185,7 +185,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	/**
 	 * We override the createContents method. In case of property pages we
 	 * insert two radio buttons at the top of the page.
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -198,7 +198,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	/**
 	 * Creates and initializes a selection group with two choice buttons and one
 	 * push button.
-	 * 
+	 *
 	 * @param parent
 	 *        - the parent composite
 	 */
@@ -239,7 +239,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 
 	/**
 	 * Convenience method creating a radio button
-	 * 
+	 *
 	 * @param parent
 	 *        - the parent composite
 	 * @param label
@@ -262,7 +262,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	/**
 	 * Returns in case of property pages the overlay store, in case of
 	 * preference pages the standard preference store
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.PreferencePage#getPreferenceStore()
 	 */
 	@Override
@@ -284,7 +284,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	/**
 	 * Enables or disables the field editors and buttons of this page Subclasses
 	 * may override.
-	 * 
+	 *
 	 * @param enabled
 	 *        - true if enabled
 	 */
@@ -299,7 +299,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	 * We override the performOk method. In case of property pages we copy
 	 * the values in the overlay store into the property values of the selected
 	 * project. We also save the state of the radio buttons.
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
 	 */
 	@Override
@@ -315,7 +315,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	/**
 	 * We override the performDefaults method. In case of property pages we
 	 * switch back to the workspace settings and disable the field editors.
-	 * 
+	 *
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	@Override
@@ -336,7 +336,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 	protected void configureWorkspaceSettings() {
 		try {
 			// create a new instance of the current class
-			IPreferencePage page = (IPreferencePage) this.getClass().newInstance();
+			IPreferencePage page = this.getClass().newInstance();
 			page.setTitle(getTitle());
 			page.setImageDescriptor(image);
 			// and show it
@@ -350,7 +350,7 @@ public abstract class FieldEditorOverlayPage extends FieldEditorPreferencePage i
 
 	/**
 	 * Show a single preference pages
-	 * 
+	 *
 	 * @param id
 	 *        - the preference page identification
 	 * @param page

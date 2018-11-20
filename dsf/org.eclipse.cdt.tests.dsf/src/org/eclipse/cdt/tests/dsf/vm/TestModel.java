@@ -7,11 +7,15 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.vm;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -34,16 +38,13 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.TreePath;
-
-import static org.junit.Assert.*;
-
 import org.osgi.framework.BundleContext;
 
 /**
- * Test model for the use in unit tests.  This test model contains a set of 
- * elements in a tree structure.  It contains utility methods for modifying the 
+ * Test model for the use in unit tests.  This test model contains a set of
+ * elements in a tree structure.  It contains utility methods for modifying the
  * model and for verifying that the viewer content matches the model.
- * 
+ *
  * @since 2.2
  */
 public class TestModel extends AbstractDsfService implements IFormattedValues {
@@ -193,7 +194,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
 	private IFormattedValuesListener fListener = NULL_LISTENER;
 
 	/**
-	 * Constructor private.  Use static factory methods instead. 
+	 * Constructor private.  Use static factory methods instead.
 	 */
 	public TestModel(DsfSession session) {
 		super(session);
@@ -460,7 +461,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
 		// Set the new children array
 		element.fChildren = children;
 
-		// Add the delta flag and update the child count in the parent delta.        
+		// Add the delta flag and update the child count in the parent delta.
 		delta.setFlags(delta.getFlags() | IModelDelta.CONTENT);
 		delta.setChildCount(children.length);
 
@@ -527,7 +528,7 @@ public class TestModel extends AbstractDsfService implements IFormattedValues {
 	}
 
 	private TestElement[] doInsertElementInArray(TestElement[] children, int index, TestElement newChild) {
-		// Create the new children array add the element to it and set it to 
+		// Create the new children array add the element to it and set it to
 		// the parent.
 		TestElement[] newChildren = new TestElement[children.length + 1];
 		System.arraycopy(children, 0, newChildren, 0, index);

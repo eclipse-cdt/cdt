@@ -42,7 +42,7 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	protected List<String> languageScope = null;
 
 	/** Provider-specific properties */
-	protected Map<String, String> properties = new HashMap<String, String>();
+	protected Map<String, String> properties = new HashMap<>();
 
 	/** List of entries defined by this provider. */
 	private List<ICLanguageSettingEntry> entries = null;
@@ -78,7 +78,7 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	public LanguageSettingsBaseProvider(String id, String name, List<String> languages,
 			List<ICLanguageSettingEntry> entries) {
 		super(id, name);
-		this.languageScope = languages != null ? new ArrayList<String>(languages) : null;
+		this.languageScope = languages != null ? new ArrayList<>(languages) : null;
 		this.entries = getPooledList(entries);
 	}
 
@@ -97,10 +97,10 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 	public LanguageSettingsBaseProvider(String id, String name, List<String> languages,
 			List<ICLanguageSettingEntry> entries, Map<String, String> properties) {
 		super(id, name);
-		this.languageScope = languages != null ? new ArrayList<String>(languages) : null;
+		this.languageScope = languages != null ? new ArrayList<>(languages) : null;
 		this.entries = getPooledList(entries);
 		if (properties != null)
-			this.properties = new HashMap<String, String>(properties);
+			this.properties = new HashMap<>(properties);
 	}
 
 	/**
@@ -130,10 +130,10 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 
 		setId(id);
 		setName(name);
-		this.languageScope = languages != null ? new ArrayList<String>(languages) : null;
+		this.languageScope = languages != null ? new ArrayList<>(languages) : null;
 		this.entries = getPooledList(entries);
 		if (properties != null)
-			this.properties = new HashMap<String, String>(properties);
+			this.properties = new HashMap<>(properties);
 	}
 
 	/**
@@ -272,7 +272,7 @@ public class LanguageSettingsBaseProvider extends AbstractExecutableExtensionBas
 			return false;
 		} else {
 			// The trouble to ensure default properties are equal to missing ones.
-			Set<String> keys = new HashSet<String>(properties.keySet());
+			Set<String> keys = new HashSet<>(properties.keySet());
 			keys.addAll(other.properties.keySet());
 			for (String key : keys) {
 				String value = properties.get(key);

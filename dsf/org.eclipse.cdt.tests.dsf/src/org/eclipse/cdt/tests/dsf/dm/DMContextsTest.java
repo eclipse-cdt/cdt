@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *******************************************************************************/
@@ -49,12 +49,12 @@ public class DMContextsTest {
 		//     SecondType4
 		//        |
 		//     FirstType3  SecondType7
-		//        |             |         
+		//        |             |
 		//     ThirdType2   ThirdType6
 		//        |       /     |
 		//     FirstType1   ThirdType5
 		//        |       /
-		//     FirstType0 
+		//     FirstType0
 		c[7] = new SecondType(new IDMContext[0], 7);
 		c[6] = new ThirdType(new IDMContext[] { c[7] }, 6);
 		c[5] = new ThirdType(new IDMContext[] { c[6] }, 5);

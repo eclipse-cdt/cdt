@@ -995,10 +995,10 @@ public class CPPTemplates {
 	/**
 	 * IMPORTANT: Do NOT call this method directly, at least when (owner instanceof ICPPClassSpecialization).
 	 *            Use ICPPClassSpecialization.specializeMember(decl) instead.
-	 *            
+	 *
 	 *            This ensures that the caching mechanism for member specializations implemented by
 	 *            ICPPClassSpecialization.specializeMember() is not bypassed.
-	 *            
+	 *
 	 * TODO: Implement a caching mechanism for non-class owners, too, and make specializeMember()
 	 *       a method of ICPPSpecialization itself.
 	 */
@@ -1464,10 +1464,10 @@ public class CPPTemplates {
 		// Which to instantiate, getOriginalTypeValue() or getTypeValue()?
 		//
 		// Using getOriginalTypeValue() is better for typedef preservation,
-		// and in the case of alias template instances, also necessary for 
-		// correctness (since an alias template instance could have dependent 
-		// arguments that don't appear in the resulting type, and these 
-		// arguments could SFINAE out during instantiation; the popular 
+		// and in the case of alias template instances, also necessary for
+		// correctness (since an alias template instance could have dependent
+		// arguments that don't appear in the resulting type, and these
+		// arguments could SFINAE out during instantiation; the popular
 		// "void_t" technique relies on this).
 		//
 		// However, caching of template instances is based on the normalized
@@ -1620,7 +1620,7 @@ public class CPPTemplates {
 				}
 			}
 
-			// An alias template instance may have dependent arguments that don't contribute 
+			// An alias template instance may have dependent arguments that don't contribute
 			// to the target type but can SFINAE out during instantiation, so it's not
 			// sufficient to handle it in the ITypeContainer case.
 			if (type instanceof ICPPAliasTemplateInstance) {
@@ -1630,7 +1630,7 @@ public class CPPTemplates {
 				// instantiateArgumentMap(), and if the argument appears in the aliased type, then
 				// a third time in instantiateType()), leading to exponential runtime in cases of
 				// nested alias template instances (which can be common in metaprogramming code
-				// implemented using alias templates). 
+				// implemented using alias templates).
 				IType result = getCachedInstantiation(instantiationRequest);
 				if (result != null) {
 					return result;
@@ -3321,7 +3321,7 @@ public class CPPTemplates {
 	 * Instantiate a plain name (simple-id).
 	 * Only destructor names require instantiation, e.g. the name "~T", when instantiated
 	 * with a parameter map that maps T to C, needs to become "~C".
-	 * 
+	 *
 	 * @param name the name to be instantiated
 	 * @param context the instantiation context
 	 * @param enclosingTemplate The enclosing template definition. This is required because the
@@ -3330,7 +3330,7 @@ public class CPPTemplates {
 	 *                          template parameter names.
 	 * @return The instantiated name. If the provided name is not a destructor name, or if
 	 *         the type named by the destructor name is not mapped to anything in the
-	 *         instantiation context's parameter map, the provided name is returned unchanged. 
+	 *         instantiation context's parameter map, the provided name is returned unchanged.
 	 */
 	public static char[] instantiateName(char[] name, InstantiationContext context, IBinding enclosingTemplate) {
 		String typename = unwrapDestructorName(name);

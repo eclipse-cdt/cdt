@@ -39,7 +39,7 @@ public class ExtensionElement {
 	/** Wraps list of raw extension declarations. */
 	public static List<ExtensionElement> wrapExtensionElements(IConfigurationElement[] elements) {
 		int count = (elements == null) ? 0 : elements.length;
-		List<ExtensionElement> result = new ArrayList<ExtensionElement>(count);
+		List<ExtensionElement> result = new ArrayList<>(count);
 		for (int i = 0; i < count; ++i) {
 			result.add(new ExtensionElement(elements[i]));
 		}
@@ -113,7 +113,7 @@ public class ExtensionElement {
 			for (int i = 0; i < argumentsLength; ++i) {
 				argumentTypes[i] = (arguments[i] == null) ? NullType.class : arguments[i].getClass();
 			}
-			Constructor<?> constructor = (Constructor<?>) instance.getConstructor(argumentTypes);
+			Constructor<?> constructor = instance.getConstructor(argumentTypes);
 
 			// Invoke the constructor.
 			result = (T) constructor.newInstance(arguments);

@@ -27,7 +27,7 @@ import org.eclipse.cdt.utils.envvar.StorableEnvironmentLoader.ISerializeInfo;
 /**
  * This class represents the set of environment variables that could be loaded
  * and stored in XML
- * 
+ *
  * @since 3.0
  */
 public class StorableEnvironment {
@@ -43,17 +43,17 @@ public class StorableEnvironment {
 	boolean fAppend = DEFAULT_APPEND;
 	boolean fAppendContributedEnv = DEFAULT_APPEND;
 
-	/** 
+	/**
 	 * @return the live {@link IEnvironmentVariable} map
 	 */
 	Map<String, IEnvironmentVariable> getMap() {
 		if (fVariables == null)
-			fVariables = new HashMap<String, IEnvironmentVariable>();
+			fVariables = new HashMap<>();
 		return fVariables;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param variables
 	 * @param isReadOnly
 	 */
@@ -74,9 +74,9 @@ public class StorableEnvironment {
 	 * Copy constructor.
 	 *
 	 * Creates a new StorableEnvironment from an existing StorableEnvironment. Settings
-	 * are copied wholesale from the previous enviornment. 
+	 * are copied wholesale from the previous enviornment.
 	 *
-	 * Note that the previous environment's {@link ISerializeInfo} isn't copied 
+	 * Note that the previous environment's {@link ISerializeInfo} isn't copied
 	 * over, as it's expected this environment's settings will be stored elsewhere
 	 *
 	 * @param env
@@ -126,7 +126,7 @@ public class StorableEnvironment {
 
 	/**
 	 * Serialize the Storable enviornment into the ICStorageElement
-	 * 
+	 *
 	 * NB assumes that any variables part of the ISerializeInfo will continue to be serialized
 	 * @param element
 	 */
@@ -204,12 +204,12 @@ public class StorableEnvironment {
 
 	/**
 	 * Returns the "dirty" state of the environment.
-	 * If the dirty state is <code>true</code>, that means that the environment 
+	 * If the dirty state is <code>true</code>, that means that the environment
 	 * is out of synch with the repository and the environment needs to be serialized.
 	 * <br><br>
 	 * The dirty state is automatically set to <code>false</code> when the environment is serialized
-	 * by calling the serialize() method  
-	 * @return boolean 
+	 * by calling the serialize() method
+	 * @return boolean
 	 */
 	public boolean isDirty() {
 		return fIsDirty;
@@ -228,7 +228,7 @@ public class StorableEnvironment {
 	 * The "change" state represents whether the environment was changed or not.
 	 * This state is not reset when the serialize() method is called
 	 * Users can use this state to monitor whether the environment was changed or not.
-	 * This state can be reset to <code>false</code> only by calling the setChanged(false) method 
+	 * This state can be reset to <code>false</code> only by calling the setChanged(false) method
 	 * @return boolean
 	 */
 	public boolean isChanged() {
@@ -294,7 +294,7 @@ public class StorableEnvironment {
 	 * @return cloned map of all variables set on this storable environment runtime variables + backing store vars
 	 */
 	Map<String, IEnvironmentVariable> getAllVariablesMap() {
-		Map<String, IEnvironmentVariable> vars = new HashMap<String, IEnvironmentVariable>();
+		Map<String, IEnvironmentVariable> vars = new HashMap<>();
 		vars.putAll(getMap());
 		return vars;
 	}

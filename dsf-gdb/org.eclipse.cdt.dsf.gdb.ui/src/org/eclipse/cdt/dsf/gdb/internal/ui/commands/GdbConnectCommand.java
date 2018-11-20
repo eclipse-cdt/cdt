@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Marc Khouzam (Ericsson) - Add support for multi-attach (Bug 293679)
@@ -90,7 +90,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 	// reset it by using a new debug session.
 	// This map is only needed for remote sessions, since we don't need to specify
 	// the binary location for a local attach session.
-	private Map<String, String> fProcessNameToBinaryMap = new HashMap<String, String>();
+	private Map<String, String> fProcessNameToBinaryMap = new HashMap<>();
 
 	public GdbConnectCommand(DsfSession session, ILaunch launch) {
 		fLaunch = launch;
@@ -108,7 +108,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 		return canConnect();
 	}
 
-	/* 
+	/*
 	 * This method should not be called from the UI thread.
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.gdb.actions.IConnect#canConnect()
@@ -188,12 +188,12 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
 			return Status.OK_STATUS;
 		}
-	};
+	}
 
 	/**
 	 * This job will prompt the user for a path to the binary to use,
 	 * and then will attach to the process.
-	 * We need a job to free the executor while we prompt the user for 
+	 * We need a job to free the executor while we prompt the user for
 	 * a binary path. Bug 344892
 	 */
 	private class PromptAndAttachToProcessJob extends UIJob {
@@ -253,7 +253,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 												fProcessNameToBinaryMap.put(fProcName, finalBinaryPath);
 											}
 											fRm.done();
-										};
+										}
 									});
 
 						} else {
@@ -306,7 +306,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 	 * "compatible" in current implementation means all sessions on local machine.
 	 *
 	 * @param currentCtx current session context
-	 * @param allSessions true if all session to be queried, false to return result only for current execution session context 
+	 * @param allSessions true if all session to be queried, false to return result only for current execution session context
 	 * @param drm where result to be returned
 	 */
 	private void getAllDebuggedProcesses(final IDMContext currentCtx, boolean allSessions,
@@ -320,14 +320,14 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 			sessions.addAll(Arrays.asList(DsfSession.getActiveSessions()));
 		} else {
 			// For remote session just query current context.
-			// 
+			//
 			// cannot reliably match two remote debug session that are connected to same target machine.
 			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=486408#c7
 
 			sessions.add(DsfSession.getSession(currentCtx.getSessionId()));
 		}
 
-		// Query each sessions for existing processes in a sequential fashion.  
+		// Query each sessions for existing processes in a sequential fashion.
 		// We must do this as each session will require different executor.
 		final class ProcessRequestMonitor extends DataRequestMonitor<IDMContext[]> {
 			public ProcessRequestMonitor(Executor executor) {
@@ -340,7 +340,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
 			@Override
 			protected void handleCompleted() {
-				// if succeeded and has data, add process ids to result, 
+				// if succeeded and has data, add process ids to result,
 				// otherwise proceed to next debug session (aka DsfSession)
 				if (isSuccess() && getData() != null) {
 					for (IDMContext dmc : getData()) {
@@ -380,12 +380,11 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 				}
 			}
 		}
-		;
 		// Trigger the first query
 		new ProcessRequestMonitor(ImmediateExecutor.getInstance()).done();
 	}
 
-	/* 
+	/*
 	 * This method should not be called from the UI thread.
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.dsf.gdb.actions.IConnect#canConnect()
@@ -408,7 +407,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 								@Override
 								protected void handleSuccess() {
 
-									final List<IProcessExtendedInfo> procInfoList = new ArrayList<IProcessExtendedInfo>();
+									final List<IProcessExtendedInfo> procInfoList = new ArrayList<>();
 
 									final CountingRequestMonitor countingRm = new CountingRequestMonitor(fExecutor,
 											rm) {
@@ -555,7 +554,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
 			// Create a list of all our processes so we can attach to one at a time.
 			// We need to create a new list so that we can remove elements from it.
-			final List<IProcessExtendedInfo> procList = new ArrayList<IProcessExtendedInfo>(Arrays.asList(processes));
+			final List<IProcessExtendedInfo> procList = new ArrayList<>(Arrays.asList(processes));
 			// Create a one element array to remember what process we are trying to attach to, so that we can
 			// use it in case of error.
 			final IProcessExtendedInfo[] previousProcAttempt = new IProcessExtendedInfo[1];
@@ -584,7 +583,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 								if (isSuccess() && getData()) {
 									// Can attach to process
 
-									// Remove process from list and attach to it. 
+									// Remove process from list and attach to it.
 									IProcessExtendedInfo process = procList.remove(0);
 									// Store process in case of error
 									previousProcAttempt[0] = process;
@@ -594,7 +593,7 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 										// For remote attach, we must set the binary first so we need to prompt the user.
 
 										// If this is the very first attach of a remote session, check if the user
-										// specified the binary in the launch.  If so, let's add it to our map to 
+										// specified the binary in the launch.  If so, let's add it to our map to
 										// avoid having to prompt the user for that binary.
 										// This would be particularly annoying since we didn't use to have
 										// to do that before we supported multi-process.
@@ -615,7 +614,8 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 										String processShortName = processPath.lastSegment();
 										new PromptAndAttachToProcessJob(pidStr,
 												LaunchUIMessages.getString("ProcessPrompterDialog.TitlePrefix") //$NON-NLS-1$
-														+ process.getName(), processShortName, new AttachToProcessRequestMonitor()).schedule();
+														+ process.getName(),
+												processShortName, new AttachToProcessRequestMonitor()).schedule();
 									} else {
 										// For a local attach, we can attach directly without looking for the binary
 										// since GDB will figure it out by itself
@@ -640,7 +640,6 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 					}
 				}
 			}
-			;
 
 			// Trigger the first attach.
 			new AttachToProcessRequestMonitor().done();
@@ -667,8 +666,8 @@ public class GdbConnectCommand extends RefreshableDebugCommand implements IConne
 
 	private void formatErrorMessage(StringBuilder errors, IProcessExtendedInfo process, String errorMsg) {
 		// Extract process name from full path.
-		// On windows host, paths of style "sendmail:", "udisk-daemon:" 
-		// is treated as device id with no path segments 
+		// On windows host, paths of style "sendmail:", "udisk-daemon:"
+		// is treated as device id with no path segments
 		String name;
 		IPath path = new Path(process.getName());
 		if (path.lastSegment() == null) {

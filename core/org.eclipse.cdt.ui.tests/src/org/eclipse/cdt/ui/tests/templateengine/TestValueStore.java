@@ -56,7 +56,7 @@ public class TestValueStore extends BaseTestCase {
 	}
 
 	/**
-	 * ValueStore is expected to consist all the IDs from 
+	 * ValueStore is expected to consist all the IDs from
 	 * FactoryDefaults. Test the same.
 	 */
 	public void testCompareValueStoreWithTemplateDefaluts() {

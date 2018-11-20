@@ -27,7 +27,7 @@ public class CLITrace extends CLICommand<CLITraceInfo> {
 		this(ctx, location, null);
 	}
 
-	// In this particular case, because of a GDB peculiarity, setParameters() is 
+	// In this particular case, because of a GDB peculiarity, setParameters() is
 	// not used and the whole command is formatted on the parent's constructor.
 	// See bug 213076 for more information.
 	public CLITrace(IBreakpointsTargetDMContext ctx, String location, String condition) {

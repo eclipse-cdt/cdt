@@ -27,7 +27,7 @@ public class DisassemblyContextService implements IDisassemblyContextService {
 	private Set<Object> fContexts;
 
 	public DisassemblyContextService() {
-		fContexts = new CopyOnWriteArraySet<Object>();
+		fContexts = new CopyOnWriteArraySet<>();
 		fListeners = new ListenerList<>();
 	}
 

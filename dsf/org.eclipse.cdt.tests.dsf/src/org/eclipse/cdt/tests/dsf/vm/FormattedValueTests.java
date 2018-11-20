@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Winnie Lai (Texas Instruments) - Individual Element Number Format test cases (Bug 202556)
@@ -17,9 +17,6 @@ package org.eclipse.cdt.tests.dsf.vm;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.DefaultDsfExecutor;
@@ -55,6 +52,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+
+import junit.framework.AssertionFailedError;
+import junit.framework.TestCase;
 
 /**
  * Tests to verify the operation of FormattedValuesVMUtil
@@ -240,7 +240,7 @@ abstract public class FormattedValueTests extends TestCase
 
 	/**
 	 * Depth (size) of the test model to be used in the tests.  This number allows
-	 * the jface based tests to use a small enough model to fit on the screen, and 
+	 * the jface based tests to use a small enough model to fit on the screen, and
 	 * for the virtual viewer to exercise the content provider to a greater extent.
 	 */
 	abstract protected int getTestModelDepth();
@@ -260,7 +260,7 @@ abstract public class FormattedValueTests extends TestCase
 		setInput(IFormattedValues.NATURAL_FORMAT);
 		setUpdatePolicy(ManualUpdatePolicy.MANUAL_UPDATE_POLICY_ID);
 
-		// Chenge to a new format, this does not cause the cache entries to be 
+		// Chenge to a new format, this does not cause the cache entries to be
 		// set to dirty.  Retrieving new format values should happen from the service.
 		setFormatAndValidate(IFormattedValues.HEX_FORMAT, true, false, false);
 
@@ -323,17 +323,17 @@ abstract public class FormattedValueTests extends TestCase
 		String preferenceFormat = IFormattedValues.NATURAL_FORMAT;
 		setInput(preferenceFormat);
 		// set each element to the same element format different than the preference format, and verify
-		HashMap<String, ElementFormatSetting> map = new HashMap<String, ElementFormatSetting>();
+		HashMap<String, ElementFormatSetting> map = new HashMap<>();
 		String[] format = { IFormattedValues.HEX_FORMAT };
 		makeElementFormatSetting(fViewer, TreePath.EMPTY, format, -1, 0, map);
-		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<ElementFormatSetting>(map.values());
+		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<>(map.values());
 		setFormatAndValidate(preferenceFormat, elementFormats, elementFormats, true, false, false);
 		// element of same level use the same format and different levels have different formats, and verify
 		map.clear();
 		format = new String[] { IFormattedValues.HEX_FORMAT, IFormattedValues.DECIMAL_FORMAT,
 				IFormattedValues.OCTAL_FORMAT, IFormattedValues.BINARY_FORMAT, IFormattedValues.NATURAL_FORMAT };
 		makeElementFormatSetting(fViewer, TreePath.EMPTY, format, -1, 0, map);
-		elementFormats = new ArrayList<ElementFormatSetting>(map.values());
+		elementFormats = new ArrayList<>(map.values());
 		setFormatAndValidate(preferenceFormat, elementFormats, elementFormats, false, false, false);
 	}
 
@@ -346,11 +346,11 @@ abstract public class FormattedValueTests extends TestCase
 		setInput(IFormattedValues.NATURAL_FORMAT);
 		setFormatAndValidate(preferenceFormat, false, false, false);
 		// set each element to a format, and verify
-		HashMap<String, ElementFormatSetting> map = new HashMap<String, ElementFormatSetting>();
+		HashMap<String, ElementFormatSetting> map = new HashMap<>();
 		String[] format = { IFormattedValues.HEX_FORMAT, IFormattedValues.DECIMAL_FORMAT, IFormattedValues.OCTAL_FORMAT,
 				IFormattedValues.BINARY_FORMAT, IFormattedValues.NATURAL_FORMAT };
 		makeElementFormatSetting(fViewer, TreePath.EMPTY, format, -1, 0, map);
-		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<ElementFormatSetting>(map.values());
+		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<>(map.values());
 		setFormatAndValidate(preferenceFormat, elementFormats, elementFormats, false, false, false);
 		// Restore each element to preference format, and verify
 		for (ElementFormatSetting e : elementFormats) {
@@ -362,7 +362,7 @@ abstract public class FormattedValueTests extends TestCase
 	/**
 	 * Test changing element to a format and then restore to preference format,
 	 * using a view model provider that applies a format to child elements
-	 * of a certain level of depth. 
+	 * of a certain level of depth.
 	 */
 	public void testChangeElementFormatApplyDepth() {
 		recreateViewModel();
@@ -379,12 +379,12 @@ abstract public class FormattedValueTests extends TestCase
 			// set top level element to a format, and verify top and child elements
 			// at certain levels have the correct format.
 			String[] format = { IFormattedValues.DECIMAL_FORMAT };
-			HashMap<String, ElementFormatSetting> map = new HashMap<String, ElementFormatSetting>();
+			HashMap<String, ElementFormatSetting> map = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format, 1, 0, map);
-			ArrayList<ElementFormatSetting> setElementFormats = new ArrayList<ElementFormatSetting>(map.values());
-			HashMap<String, ElementFormatSetting> expMap = new HashMap<String, ElementFormatSetting>();
+			ArrayList<ElementFormatSetting> setElementFormats = new ArrayList<>(map.values());
+			HashMap<String, ElementFormatSetting> expMap = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format, depth, 0, expMap);
-			ArrayList<ElementFormatSetting> expectElementFormats = new ArrayList<ElementFormatSetting>(expMap.values());
+			ArrayList<ElementFormatSetting> expectElementFormats = new ArrayList<>(expMap.values());
 			setFormatAndValidate(preferenceFormat, setElementFormats, expectElementFormats, false, false, false);
 			// Restore top level element to preference format, and verify.
 			for (ElementFormatSetting e : setElementFormats) {
@@ -400,7 +400,7 @@ abstract public class FormattedValueTests extends TestCase
 	/**
 	 * Test changing format of each element under manual update policy.
 	 * Formatted values should be retrieved from cache if available.
-	 * Changing to a format whose formatted value is not in cache should get a cache miss error. 
+	 * Changing to a format whose formatted value is not in cache should get a cache miss error.
 	 */
 	public void testChangeElementFormatManualUpdateMode() {
 		recreateViewModel();
@@ -408,19 +408,19 @@ abstract public class FormattedValueTests extends TestCase
 		setInput(IFormattedValues.NATURAL_FORMAT);
 		setUpdatePolicy(ManualUpdatePolicy.MANUAL_UPDATE_POLICY_ID);
 
-		// Change to a new format, this does not cause the cache entries to be 
+		// Change to a new format, this does not cause the cache entries to be
 		// set to dirty.  Retrieving new format values should happen from the service.
-		HashMap<String, ElementFormatSetting> map1 = new HashMap<String, ElementFormatSetting>();
+		HashMap<String, ElementFormatSetting> map1 = new HashMap<>();
 		String[] format1 = { IFormattedValues.HEX_FORMAT };
 		makeElementFormatSetting(fViewer, TreePath.EMPTY, format1, -1, 0, map1);
-		ArrayList<ElementFormatSetting> elementFormats1 = new ArrayList<ElementFormatSetting>(map1.values());
+		ArrayList<ElementFormatSetting> elementFormats1 = new ArrayList<>(map1.values());
 		setFormatAndValidate(preferenceFormat, elementFormats1, elementFormats1, true, false, false);
 
 		// Remove element format and so restore back to preference - natural format.  Values should be retrieved from cache.
-		HashMap<String, ElementFormatSetting> map2 = new HashMap<String, ElementFormatSetting>();
+		HashMap<String, ElementFormatSetting> map2 = new HashMap<>();
 		String[] format2 = { null };
 		makeElementFormatSetting(fViewer, TreePath.EMPTY, format2, -1, 0, map2);
-		ArrayList<ElementFormatSetting> elementFormats2 = new ArrayList<ElementFormatSetting>(map2.values());
+		ArrayList<ElementFormatSetting> elementFormats2 = new ArrayList<>(map2.values());
 		setFormatAndValidate(preferenceFormat, elementFormats2, elementFormats2, true, true, false);
 
 		// Generate an event which will cause all cache entries to be marked dirty.
@@ -430,17 +430,17 @@ abstract public class FormattedValueTests extends TestCase
 		setFormatAndValidate(preferenceFormat, elementFormats1, elementFormats1, true, true, false);
 
 		// Change to a decimal, which is not cached, values should come with an error.
-		HashMap<String, ElementFormatSetting> map3 = new HashMap<String, ElementFormatSetting>();
+		HashMap<String, ElementFormatSetting> map3 = new HashMap<>();
 		String[] format3 = { IFormattedValues.DECIMAL_FORMAT };
 		makeElementFormatSetting(fViewer, TreePath.EMPTY, format3, -1, 0, map3);
-		ArrayList<ElementFormatSetting> elementFormats3 = new ArrayList<ElementFormatSetting>(map3.values());
+		ArrayList<ElementFormatSetting> elementFormats3 = new ArrayList<>(map3.values());
 		setFormatAndValidate(preferenceFormat, elementFormats3, elementFormats3, true, true, true);
 	}
 
 	/**
 	 * Test changing element format under manual update policy,
 	 * using a view model provider that applies a format to child elements
-	 * of a certain level of depth. 
+	 * of a certain level of depth.
 	 */
 	public void testChangeElementFormatApplyDepthManualUpdateMode() {
 		int[] myDepths = new int[] { -1, 2 };
@@ -454,27 +454,27 @@ abstract public class FormattedValueTests extends TestCase
 			setInput(IFormattedValues.NATURAL_FORMAT);
 			setUpdatePolicy(ManualUpdatePolicy.MANUAL_UPDATE_POLICY_ID);
 			myVM.elementFormatApplyDepth = depth;
-			// Change top level to a new format, this does not cause the cache entries to be 
+			// Change top level to a new format, this does not cause the cache entries to be
 			// set to dirty.  Retrieving new format values should happen from the service.
 			String[] format1 = { IFormattedValues.HEX_FORMAT };
-			HashMap<String, ElementFormatSetting> map1 = new HashMap<String, ElementFormatSetting>();
+			HashMap<String, ElementFormatSetting> map1 = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format1, 1, 0, map1);
-			ArrayList<ElementFormatSetting> elementFormats1 = new ArrayList<ElementFormatSetting>(map1.values());
-			HashMap<String, ElementFormatSetting> expMap1 = new HashMap<String, ElementFormatSetting>();
+			ArrayList<ElementFormatSetting> elementFormats1 = new ArrayList<>(map1.values());
+			HashMap<String, ElementFormatSetting> expMap1 = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format1, depth, 0, expMap1);
-			ArrayList<ElementFormatSetting> expectElementFormats1 = new ArrayList<ElementFormatSetting>(
+			ArrayList<ElementFormatSetting> expectElementFormats1 = new ArrayList<>(
 					expMap1.values());
 			vmListenerLevel = depth;
 			setFormatAndValidate(preferenceFormat, elementFormats1, expectElementFormats1, true, false, false);
 
 			// Remove element format and so restore back to preference format - natural.  Values should be retrieved from cache.
 			String[] format2 = { null };
-			HashMap<String, ElementFormatSetting> map2 = new HashMap<String, ElementFormatSetting>();
+			HashMap<String, ElementFormatSetting> map2 = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format2, 1, 0, map2);
-			ArrayList<ElementFormatSetting> elementFormats2 = new ArrayList<ElementFormatSetting>(map2.values());
-			HashMap<String, ElementFormatSetting> expMap2 = new HashMap<String, ElementFormatSetting>();
+			ArrayList<ElementFormatSetting> elementFormats2 = new ArrayList<>(map2.values());
+			HashMap<String, ElementFormatSetting> expMap2 = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format2, depth, 0, expMap2);
-			ArrayList<ElementFormatSetting> expectElementFormats2 = new ArrayList<ElementFormatSetting>(
+			ArrayList<ElementFormatSetting> expectElementFormats2 = new ArrayList<>(
 					expMap2.values());
 			setFormatAndValidate(preferenceFormat, elementFormats2, expectElementFormats2, true, true, false);
 
@@ -486,12 +486,12 @@ abstract public class FormattedValueTests extends TestCase
 
 			// Change to a decimal, which is not cached, values should come with an error.
 			String[] format3 = { IFormattedValues.DECIMAL_FORMAT };
-			HashMap<String, ElementFormatSetting> map3 = new HashMap<String, ElementFormatSetting>();
+			HashMap<String, ElementFormatSetting> map3 = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format3, 1, 0, map3);
-			ArrayList<ElementFormatSetting> elementFormats3 = new ArrayList<ElementFormatSetting>(map3.values());
-			HashMap<String, ElementFormatSetting> expMap3 = new HashMap<String, ElementFormatSetting>();
+			ArrayList<ElementFormatSetting> elementFormats3 = new ArrayList<>(map3.values());
+			HashMap<String, ElementFormatSetting> expMap3 = new HashMap<>();
 			makeElementFormatSetting(fViewer, TreePath.EMPTY, format3, depth, 0, expMap3);
-			ArrayList<ElementFormatSetting> expectElementFormats3 = new ArrayList<ElementFormatSetting>(
+			ArrayList<ElementFormatSetting> expectElementFormats3 = new ArrayList<>(
 					expMap3.values());
 			setFormatAndValidate(preferenceFormat, elementFormats3, expectElementFormats3, true, true, true);
 		}
@@ -499,7 +499,7 @@ abstract public class FormattedValueTests extends TestCase
 
 	/**
 	 * Test that when the preference format is invalid, each element can still change to a format.
-	 * Also, each element can restore to the invalid preference format such that 
+	 * Also, each element can restore to the invalid preference format such that
 	 * the element uses first available format from service.
 	 */
 	public void testChangeElementFormatWithInvalidPreference() {
@@ -509,11 +509,11 @@ abstract public class FormattedValueTests extends TestCase
 		// set preference format to an invalid format and verify
 		setInvalidPreferenceAndVerify();
 		// set each element to a format, and verify
-		HashMap<String, ElementFormatSetting> map = new HashMap<String, ElementFormatSetting>();
+		HashMap<String, ElementFormatSetting> map = new HashMap<>();
 		String[] format = { IFormattedValues.HEX_FORMAT, IFormattedValues.DECIMAL_FORMAT, IFormattedValues.OCTAL_FORMAT,
 				IFormattedValues.BINARY_FORMAT, IFormattedValues.NATURAL_FORMAT };
 		makeElementFormatSetting(fViewer, TreePath.EMPTY, format, -1, 0, map);
-		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<ElementFormatSetting>(map.values());
+		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<>(map.values());
 		setFormatAndValidate("invalid format", elementFormats, elementFormats, false, false, false);
 		// Restore each element to preference format which is an invalid format
 		for (ElementFormatSetting e : elementFormats) {
@@ -584,11 +584,11 @@ abstract public class FormattedValueTests extends TestCase
 		setInput(IFormattedValues.NATURAL_FORMAT);
 		setFormatAndValidate(preferenceFormat, false, false, false);
 		// set each element to a format, and verify
-		HashMap<String, ElementFormatSetting> map = new HashMap<String, ElementFormatSetting>();
+		HashMap<String, ElementFormatSetting> map = new HashMap<>();
 		String[] format = { IFormattedValues.HEX_FORMAT, IFormattedValues.DECIMAL_FORMAT, IFormattedValues.OCTAL_FORMAT,
 				IFormattedValues.BINARY_FORMAT, IFormattedValues.NATURAL_FORMAT };
 		makeElementFormatSetting(fViewer, TreePath.EMPTY, format, -1, 0, map);
-		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<ElementFormatSetting>(map.values());
+		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<>(map.values());
 		setFormatAndValidate(preferenceFormat, elementFormats, elementFormats, false, false, false);
 		// save settings
 		XMLMemento memento = XMLMemento.createWriteRoot("TEST");
@@ -609,7 +609,7 @@ abstract public class FormattedValueTests extends TestCase
 	}
 
 	/**
-	 * helper class that stores some element paths and nodes using a certain format 
+	 * helper class that stores some element paths and nodes using a certain format
 	 */
 	class ElementFormatSetting {
 		ArrayList<IVMNode> nodes;
@@ -624,7 +624,7 @@ abstract public class FormattedValueTests extends TestCase
 	 * @param _viewer tree viewer
 	 * @param path given element path
 	 * @param formats formats to rotate for different levels of children tree paths
-	 * @param levelStop depth to stop recursively walk down the children.  
+	 * @param levelStop depth to stop recursively walk down the children.
 	 * @param levelIndex index to a format for a level of children
 	 * @param result store the created element format settings
 	 */
@@ -640,8 +640,8 @@ abstract public class FormattedValueTests extends TestCase
 		ElementFormatSetting setting = result.get(fmt);
 		if (setting == null) {
 			setting = new ElementFormatSetting();
-			setting.nodes = new ArrayList<IVMNode>(childCount);
-			setting.elementPaths = new ArrayList<TreePath>(childCount);
+			setting.nodes = new ArrayList<>(childCount);
+			setting.elementPaths = new ArrayList<>(childCount);
 			setting.formatId = fmt;
 			result.put(fmt, setting);
 		}
@@ -665,10 +665,10 @@ abstract public class FormattedValueTests extends TestCase
 				ALL_UPDATES_COMPLETE | PROPERTY_UPDATES);
 		fVMListener.reset();
 		fVMListener.addUpdates(TreePath.EMPTY, fModel.getRootElement(), -1, ALL_UPDATES_COMPLETE | PROPERTY_UPDATES);
-		HashMap<String, ElementFormatSetting> map = new HashMap<String, ElementFormatSetting>();
+		HashMap<String, ElementFormatSetting> map = new HashMap<>();
 		String[] format = { "invalid element format" };
 		makeElementFormatSetting(fViewer, TreePath.EMPTY, format, -1, 0, map);
-		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<ElementFormatSetting>(map.values());
+		ArrayList<ElementFormatSetting> elementFormats = new ArrayList<>(map.values());
 		if (fVMProvider instanceof IElementFormatProvider) {
 			IElementFormatProvider ep = ((IElementFormatProvider) fVMProvider);
 			for (ElementFormatSetting es : elementFormats) {

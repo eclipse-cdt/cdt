@@ -55,7 +55,7 @@ public class SimpleUIElementGroup extends GenericUIElementGroup {
 	/**
 	 * dispose the Widget, releasing any resources occupied by this widget. The
 	 * same is called on the child list.
-	 * 
+	 *
 	 * @see UIElement
 	 */
 	@Override

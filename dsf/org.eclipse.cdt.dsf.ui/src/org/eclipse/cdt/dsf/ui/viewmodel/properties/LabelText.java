@@ -7,13 +7,12 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel.properties;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Map;
 
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -21,16 +20,18 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
- * The text attribute of a label.  It uses a message format string in order to 
+ * The text attribute of a label.  It uses a message format string in order to
  * compose the text string.  The parameter names determine the array of objects
- * given to the message format. 
- * 
+ * given to the message format.
+ *
  * @see MessageFormat#format(Object[], StringBuffer, java.text.FieldPosition)
  * @see LabelAttribute
  * @see LabelColumnInfo
  * @see PropertiesBasedLabelProvider
- * 
+ *
  * @since 1.0
  */
 public class LabelText extends LabelAttribute {
@@ -40,14 +41,14 @@ public class LabelText extends LabelAttribute {
 
 	/**
 	 * Message format used to generate the label text.
-	 * 
+	 *
 	 */
 	private MessageFormat fMessageFormat;
 
 	/**
-	 * The property names needed for the message format.  The property values 
+	 * The property names needed for the message format.  The property values
 	 * corresponding to these names are given the the {@link MessageFormat#format(Object[], StringBuffer, java.text.FieldPosition)}
-	 * method.  
+	 * method.
 	 */
 	private String[] fPropertyNames;
 

@@ -17,9 +17,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -54,6 +51,9 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class CModelElementsTests extends BaseTestCase {
 	private ICProject fCProject;
@@ -104,8 +104,8 @@ public class CModelElementsTests extends BaseTestCase {
 		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(headerFile);
 		//ITranslationUnit included = (ITranslationUnit)CoreModel.getDefault().create(includedFile);
 
-		// parse the translation unit to get the elements tree		
-		//		tu.parse(); 
+		// parse the translation unit to get the elements tree
+		//		tu.parse();
 
 		// tu ---> include
 		checkInclude(tu);
@@ -215,7 +215,7 @@ public class CModelElementsTests extends BaseTestCase {
 	}
 
 	private void checkNestedNamespace(IParent classHello) throws CModelException {
-		// Hello ---> namespace: MyNestedPackage 
+		// Hello ---> namespace: MyNestedPackage
 		List helloNamespaces = classHello.getChildrenOfType(ICElement.C_NAMESPACE);
 		INamespace myNestedPackage = (INamespace) helloNamespaces.get(0);
 		assertEquals(myNestedPackage.getElementName(), "MyNestedPackage");
@@ -227,7 +227,7 @@ public class CModelElementsTests extends BaseTestCase {
 	}
 
 	private void checkParentNestedClass(IParent myNestedPackage) throws CModelException {
-		// MyNestedPackage ---> class: Y  
+		// MyNestedPackage ---> class: Y
 		List nestedClasses = myNestedPackage.getChildrenOfType(ICElement.C_CLASS);
 		IStructure classY = (IStructure) nestedClasses.get(0);
 		assertEquals(classY.getElementName(), "Y");
@@ -253,7 +253,7 @@ public class CModelElementsTests extends BaseTestCase {
 	}
 
 	private void checkDerivedNestedClass(IParent myNestedPackage) throws CModelException {
-		// MyNestedPackage ---> class: X public Y 
+		// MyNestedPackage ---> class: X public Y
 		List nestedClasses = myNestedPackage.getChildrenOfType(ICElement.C_CLASS);
 		IStructure classX = (IStructure) nestedClasses.get(1);
 		assertEquals(classX.getElementName(), "X");
@@ -272,7 +272,7 @@ public class CModelElementsTests extends BaseTestCase {
 		if (bVisibility != ASTAccessVisibility.PRIVATE)
 			fail("visibility should be private!");
 
-		// X ---> constructor chain: X 
+		// X ---> constructor chain: X
 		List xMethodChildren = classX.getChildrenOfType(ICElement.C_METHOD);
 		IMethod xconstructor = (IMethod) xMethodChildren.get(0);
 		assertEquals(xconstructor.getElementName(), "X");
@@ -398,7 +398,7 @@ public class CModelElementsTests extends BaseTestCase {
 		assertEquals(paramTypes[0], "int&");
 		assertEquals(paramTypes[1], "char**");
 
-		//	MyPackage ---> function: void boo() {}		
+		//	MyPackage ---> function: void boo() {}
 		List nsFunctions = namespace.getChildrenOfType(ICElement.C_FUNCTION);
 		IFunction f3 = (IFunction) nsFunctions.get(0);
 		assertEquals(f3.getElementName(), "boo");

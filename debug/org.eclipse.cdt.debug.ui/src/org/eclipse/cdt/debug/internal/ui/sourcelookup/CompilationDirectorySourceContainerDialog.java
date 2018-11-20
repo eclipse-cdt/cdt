@@ -58,7 +58,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 
 	/**
 	 * Creates a dialog to select a new file system folder.
-	 * 
+	 *
 	 * @param shell shell
 	 */
 	public CompilationDirectorySourceContainerDialog(Shell shell) {
@@ -69,12 +69,12 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 
 	/**
 	 * Creates a dialog to edit file system folder.
-	 *  
+	 *
 	 * @param shell shell
 	 * @param directory directory to edit or empty string
 	 * @param compilationSubfolders whether the 'Subdirectories are also used for compilation'
 	 * 		checkbox should be checked
-	 * @param newContainer 
+	 * @param newContainer
 	 */
 	public CompilationDirectorySourceContainerDialog(Shell shell, String directory, boolean compilationSubfolders) {
 		super(shell);
@@ -94,7 +94,7 @@ public class CompilationDirectorySourceContainerDialog extends TitleAreaDialog {
 
 	/**
 	 * Returns whether the 'Subdirectories are also used for compilation' option is selected.
-	 * 
+	 *
 	 * @return whether the 'Subdirectories are also used for compilation' option is selected
 	 */
 	public boolean isCompilationSubfolders() {

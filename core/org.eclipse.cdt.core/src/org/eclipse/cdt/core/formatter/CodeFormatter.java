@@ -21,7 +21,7 @@ import org.eclipse.text.edits.TextEdit;
 
 /**
  * Specification for a generic source code formatter.
- * 
+ *
  * @since 3.0
  */
 public abstract class CodeFormatter {
@@ -71,10 +71,10 @@ public abstract class CodeFormatter {
 	 * Formats <code>source</code>, and returns a text edit that correspond to the difference
 	 * between the given string and the formatted string. It returns null if the given string cannot
 	 * be formatted.
-	 * 
+	 *
 	 * If the offset position is matching a whitespace, the result can include whitespaces.
 	 * It would be up to the caller to get rid of preceding whitespaces.
-	 * 
+	 *
 	 * @param kind Use to specify the kind of the code snippet to format. It can be any of these:
 	 * 	   K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_TRANSLATION_UNIT, K_UNKNOWN
 	 * @param source the document to format
@@ -96,12 +96,12 @@ public abstract class CodeFormatter {
 	 * Formats one or more regions of <code>source</code>, and returns an array of edits, one edit
 	 * per region. If some of the regions cannot be formatted, the corresponding elements of
 	 * the returned array will be <code>null</code>.
-	 * 
+	 *
 	 * If the offset of a region is matching a whitespace, the result can include whitespaces.
 	 * It would be up to the caller to get rid of preceding whitespaces.
-	 * 
+	 *
 	 * Subclasses may override this method to provide a more efficient implementation.
-	 * 
+	 *
 	 * @param kind Use to specify the kind of the code snippet to format. It can be any of these:
 	 * 	   K_EXPRESSION, K_STATEMENTS, K_CLASS_BODY_DECLARATIONS, K_TRANSLATION_UNIT, K_UNKNOWN.
 	 * @param source the document to format.
@@ -130,9 +130,9 @@ public abstract class CodeFormatter {
 	 * Answers the string that corresponds to the indentation to the given indentation level,
 	 * or an empty string if the indentation cannot be computed.
 	 * <p>This method needs to be overridden in a subclass.</p>
-	 * 
+	 *
 	 * <p>The default implementation returns an empty string.</p>
-	 * 
+	 *
 	 * @param indentationLevel the given indentation level
 	 * @return the string corresponding to the right indentation level
 	 * @exception IllegalArgumentException if the given indentation level is lower than zero

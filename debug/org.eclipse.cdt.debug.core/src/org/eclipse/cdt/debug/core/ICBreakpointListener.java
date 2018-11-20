@@ -32,10 +32,10 @@ import org.eclipse.debug.core.model.IDebugTarget;
 public interface ICBreakpointListener {
 	/**
 	 * Notification that the given breakpoint is about to be installed in
-	 * the specified target. Returns whether the installation should proceed. 
-	 * If any registered listener returns <code>false</code> the breakpoint is 
+	 * the specified target. Returns whether the installation should proceed.
+	 * If any registered listener returns <code>false</code> the breakpoint is
 	 * not installed in the given target.
-	 * 
+	 *
 	 * @param target debug target
 	 * @param breakpoint breakpoint being installed
 	 * @return whether the the breakpoint should be installed in the given target
@@ -44,16 +44,16 @@ public interface ICBreakpointListener {
 
 	/**
 	 * Notification that the given breakpoint has been installed in the specified target.
-	 * 
+	 *
 	 * @param target debug target
 	 * @param breakpoint breakpoint being installed
 	 */
 	public void breakpointInstalled(IDebugTarget target, IBreakpoint breakpoint);
 
 	/**
-	 * Notification that the attributes of the given breakpoint have been changed 
+	 * Notification that the attributes of the given breakpoint have been changed
 	 * from the specified target.
-	 * 
+	 *
 	 * @param target debug target
 	 * @param breakpoint breakpoint
 	 * @param attributes a map of changed attributes
@@ -62,7 +62,7 @@ public interface ICBreakpointListener {
 
 	/**
 	 * Notification that the given breakpoints have been removed from the specified target.
-	 * 
+	 *
 	 * @param target debug target
 	 * @param breakpoints the breakpoints being removed
 	 */

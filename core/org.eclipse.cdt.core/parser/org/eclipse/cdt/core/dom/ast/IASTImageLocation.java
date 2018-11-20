@@ -14,9 +14,9 @@
 package org.eclipse.cdt.core.dom.ast;
 
 /**
- * An image location explains how a name made it into the translation unit. 
+ * An image location explains how a name made it into the translation unit.
  * @since 5.0
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -25,7 +25,7 @@ public interface IASTImageLocation extends IASTFileLocation {
 	 * The image is part of the code that has not been modified by the preprocessor.
 	 */
 	final int REGULAR_CODE = 1;
-	/** 
+	/**
 	 * The image is part of a macro definition and was introduced by some macro expansion.
 	 */
 	final int MACRO_DEFINITION = 2;

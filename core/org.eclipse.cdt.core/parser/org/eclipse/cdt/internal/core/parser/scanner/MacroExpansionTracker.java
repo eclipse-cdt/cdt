@@ -26,7 +26,7 @@ import org.eclipse.text.edits.ReplaceEdit;
 public class MacroExpansionTracker {
 	public class MacroInfo {
 		private TokenList fMacroCall = new TokenList();
-		private ArrayList<TokenList> fArguments = new ArrayList<TokenList>();
+		private ArrayList<TokenList> fArguments = new ArrayList<>();
 
 		public MacroInfo(Token identifier) {
 			fMacroCall.append(identifier);
@@ -46,7 +46,7 @@ public class MacroExpansionTracker {
 
 	private char[] fInput;
 	private String fReplacementText = ""; //$NON-NLS-1$
-	private LinkedList<MacroInfo> fMacroStack = new LinkedList<MacroInfo>();
+	private LinkedList<MacroInfo> fMacroStack = new LinkedList<>();
 
 	private IToken fReplaceFrom;
 	private IToken fReplaceTo;

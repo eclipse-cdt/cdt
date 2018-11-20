@@ -15,6 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.text.CIndenter;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -22,16 +29,6 @@ import org.eclipse.jface.text.ITypedRegion;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.LineRange;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.CIndenter;
 
 /**
  * Utility that indents a number of lines in a document.
@@ -74,7 +71,7 @@ public final class IndentUtil {
 	 * Indents the line range specified by <code>lines</code> in
 	 * <code>document</code>. The passed C project may be
 	 * <code>null</code>, it is used solely to obtain formatter preferences.
-	 * 
+	 *
 	 * @param document the document to be changed
 	 * @param lines the line range to be indented
 	 * @param project the C project to get the formatter preferences from, or
@@ -128,7 +125,7 @@ public final class IndentUtil {
 
 	/**
 	 * Returns <code>true</code> if line comments at column 0 should be indented inside, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param project  the project to get project specific options from
 	 * @return <code>true</code> if line comments at column 0 should be indented inside, <code>false</code> otherwise.
 	 */
@@ -140,7 +137,7 @@ public final class IndentUtil {
 	/**
 	 * Returns the possibly <code>project</code>-specific core preference
 	 * defined under <code>key</code>.
-	 * 
+	 *
 	 * @param project the project to get the preference from, or
 	 *        <code>null</code> to get the global preference
 	 * @param key the key of the preference
@@ -159,7 +156,7 @@ public final class IndentUtil {
 	 * lines are adjusted accordingly. The passed C project may be
 	 * <code>null</code>, it is used solely to obtain formatter
 	 * preferences.
-	 * 
+	 *
 	 * @param document the document to be changed
 	 * @param lines the line range to be shifted
 	 * @param project the C project to get the formatter preferences
@@ -438,7 +435,7 @@ public final class IndentUtil {
 	/**
 	 * Indents a single line using the heuristic scanner. Multiline comments are
 	 * indented as specified by the <code>CCommentAutoIndentStrategy</code>.
-	 * 
+	 *
 	 * @param document the document
 	 * @param line the line to be indented
 	 * @param indenter the C indenter
@@ -513,7 +510,7 @@ public final class IndentUtil {
 
 	/**
 	 * Computes and returns the indentation for a source line.
-	 * 
+	 *
 	 * @param document the document
 	 * @param line the line in document
 	 * @param indenter the C indenter
@@ -552,7 +549,7 @@ public final class IndentUtil {
 
 	/**
 	 * Computes and returns the indentation for a block comment line.
-	 * 
+	 *
 	 * @param document the document
 	 * @param line the line in document
 	 * @param scanner the scanner
@@ -608,7 +605,7 @@ public final class IndentUtil {
 
 	/**
 	 * Computes and returns the indentation for a preprocessor line.
-	 * 
+	 *
 	 * @param document the document
 	 * @param line the line in document
 	 * @param partition the comment partition

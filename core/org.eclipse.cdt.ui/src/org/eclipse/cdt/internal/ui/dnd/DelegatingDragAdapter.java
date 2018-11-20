@@ -52,8 +52,8 @@ public class DelegatingDragAdapter implements DragSourceListener {
 		boolean saveDoit = event.doit;
 		Object saveData = event.data;
 		boolean doIt = false;
-		List<Transfer> transfers = new ArrayList<Transfer>(fPossibleListeners.length);
-		fActiveListeners = new ArrayList<TransferDragSourceListener>(fPossibleListeners.length);
+		List<Transfer> transfers = new ArrayList<>(fPossibleListeners.length);
+		fActiveListeners = new ArrayList<>(fPossibleListeners.length);
 
 		for (TransferDragSourceListener listener : fPossibleListeners) {
 			event.doit = saveDoit;

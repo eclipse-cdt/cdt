@@ -14,6 +14,7 @@
 package org.eclipse.cdt.debug.internal.ui.sourcelookup;
 
 import java.util.Iterator;
+
 import org.eclipse.debug.core.sourcelookup.ISourceContainer;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
@@ -35,7 +36,7 @@ public class EditContainerAction extends SourceContainerAction {
 
 	/**
 	 * Prompts for a project to add.
-	 * 
+	 *
 	 * @see org.eclipse.jface.action.IAction#run()
 	 */
 	@Override

@@ -15,6 +15,7 @@
 package org.eclipse.cdt.core.parser.tests;
 
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPClassType;
+
 import junit.framework.Assert;
 
 public class VisibilityAsserts {

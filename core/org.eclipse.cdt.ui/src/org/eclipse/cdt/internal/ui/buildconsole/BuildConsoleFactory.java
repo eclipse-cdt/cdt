@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.buildconsole;
 
-import org.eclipse.ui.console.IConsoleFactory;
-
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.IBuildConsoleManager;
+import org.eclipse.ui.console.IConsoleFactory;
 
 /**
  * A console factory to allow the user to open the build console

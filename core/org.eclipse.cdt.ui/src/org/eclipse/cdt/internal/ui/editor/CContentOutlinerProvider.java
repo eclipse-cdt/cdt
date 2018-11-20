@@ -17,6 +17,18 @@ package org.eclipse.cdt.internal.ui.editor;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ElementChangedEvent;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICElementDelta;
+import org.eclipse.cdt.core.model.IElementChangedListener;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.CShiftData;
+import org.eclipse.cdt.internal.core.model.SourceManipulation;
+import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -27,21 +39,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.progress.PendingUpdateAdapter;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ElementChangedEvent;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICElementDelta;
-import org.eclipse.cdt.core.model.IElementChangedListener;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.core.model.CShiftData;
-import org.eclipse.cdt.internal.core.model.SourceManipulation;
-
-import org.eclipse.cdt.internal.ui.BaseCElementContentProvider;
 
 /**
  * Manages contents of the outliner.
@@ -69,7 +66,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 	/**
 	 * Creates new content provider for dialog.
-	 * 
+	 *
 	 * @param viewer
 	 *            Tree viewer.
 	 */
@@ -111,7 +108,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	/**
 	 * Called after CEditor contents is changed.
 	 * Existing elements can change their offset and length.
-	 * 
+	 *
 	 * @param sdata  delta information
 	 */
 	public void contentShift(CShiftData sdata) {
@@ -217,13 +214,13 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 	/**
 	 * Updates current selection.
-	 * 
+	 *
 	 * @param sel
 	 *            Selection to update.
 	 * @return Updated selection.
 	 */
 	protected ISelection updateSelection(ISelection sel) {
-		final ArrayList<ICElement> newSelection = new ArrayList<ICElement>();
+		final ArrayList<ICElement> newSelection = new ArrayList<>();
 		if (sel instanceof IStructuredSelection) {
 			final Iterator<?> iter = ((IStructuredSelection) sel).iterator();
 			while (iter.hasNext()) {
@@ -238,7 +235,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 	/**
 	 * The element change listener of the C outline viewer.
-	 * 
+	 *
 	 * @see IElementChangedListener
 	 */
 	class ElementChangedListener implements IElementChangedListener {
@@ -268,7 +265,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 		/**
 		 * Determines is structural change.
-		 * 
+		 *
 		 * @param cuDelta
 		 *            Delta to check.
 		 * @return <b>true</b> if structural change.
@@ -291,7 +288,7 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 
 		/**
 		 * Searches for element.
-		 * 
+		 *
 		 * @param unit
 		 *            Unit to search in.
 		 * @param delta
@@ -333,9 +330,9 @@ public class CContentOutlinerProvider extends BaseCElementContentProvider {
 	}
 
 	/**
-	 * 
+	 *
 	 * Property change listener.
-	 * 
+	 *
 	 * @author P.Tomaszewski
 	 */
 	class PropertyListener implements IPropertyChangeListener {

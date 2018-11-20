@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
@@ -94,12 +94,12 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.progress.UIJob;
 
 /**
- * A memory rendering displaying memory in a traditional 
+ * A memory rendering displaying memory in a traditional
  * memory view look and feel, optimized for minimal IO traffic.
  * <p>
  * requirements of the debug model implementation:
  *   - An IMemoryBlockExtension is required.
- *  
+ *
  *  Since it is not possible to size the memory block to match
  *  the size of the viewport, memory block change notification
  *  is not useful. Such events are ignored by this rendering.
@@ -125,10 +125,12 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 			implements IMemorySpaceAwareMemoryBlockRetrieval.GetMemorySpacesRequest {
 		String[] fMemorySpaces;
 
+		@Override
 		public String[] getMemorySpaces() {
 			return fMemorySpaces;
 		}
 
+		@Override
 		public void setMemorySpaces(String[] memorySpaceIds) {
 			fMemorySpaces = memorySpaceIds;
 		}
@@ -138,6 +140,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		super(id);
 
 		JFaceResources.getFontRegistry().addListener(new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(IInternalDebugUIConstants.FONT_NAME)) {
 					TraditionalRendering.this.fRendering
@@ -147,6 +150,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		});
 
 		this.addPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				IMemoryRendering sourceRendering = (IMemoryRendering) event.getSource();
 				if (!sourceRendering.getMemoryBlock().equals(getMemoryBlock()))
@@ -163,6 +167,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
 		TraditionalRenderingPlugin.getDefault().getPreferenceStore()
 				.addPropertyChangeListener(new IPropertyChangeListener() {
+					@Override
 					public void propertyChange(PropertyChangeEvent event) {
 						disposeColors();
 						allocateColors();
@@ -171,6 +176,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 				});
 
 		DebugUIPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(new IPropertyChangeListener() {
+			@Override
 			public void propertyChange(PropertyChangeEvent event) {
 				if (event.getProperty().equals(IDebugUIConstants.PREF_PADDED_STR)) {
 					if (TraditionalRendering.this.fRendering != null) {
@@ -204,10 +210,11 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	/*
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener#modelChanged(org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta, org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy)
 	 */
+	@Override
 	public void modelChanged(IModelDelta delta, IModelProxy proxy) {
 		/*
 		 * The event model in the traditional renderer is written to expect a suspend first
-		 * which will cause it to save its current  data set away in an archive.  Then when 
+		 * which will cause it to save its current  data set away in an archive.  Then when
 		 * the state change comes through it will compare and refresh showing a difference.
 		 */
 		int flags = delta.getFlags();
@@ -219,9 +226,9 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	}
 
 	/*
-	 * We use the model proxy which is supplied by the TCF implementation to provide the knowledge of memory 
+	 * We use the model proxy which is supplied by the TCF implementation to provide the knowledge of memory
 	 * change notifications. The older backends ( the reference model, Wind River Systems Inc. ) are written
-	 * to generate the Debug Model events. TCF follows the "ModelDelta/IModelProxy" implementation  that the 
+	 * to generate the Debug Model events. TCF follows the "ModelDelta/IModelProxy" implementation  that the
 	 * platform renderers use. So this implementation acts as a shim. If the older Debug Events come in then
 	 * fine. If the newer model deltas come in fine also.
 	 */
@@ -234,6 +241,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		 * dispose routine is always called in the UI dispatch thread. I am going to make sure.
 		 */
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				if (fModel != null) {
 					fModel.removeModelChangedListener(TraditionalRendering.this);
@@ -286,6 +294,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		final IModelProxyFactory factory = (IModelProxyFactory) DebugPlugin.getAdapter(block, IModelProxyFactory.class);
 		if (factory != null) {
 			Display.getDefault().asyncExec(new Runnable() {
+				@Override
 				public void run() {
 
 					/*
@@ -383,6 +392,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		return fAddressSize;
 	}
 
+	@Override
 	public Control createControl(Composite parent) {
 		allocateColors();
 
@@ -405,13 +415,14 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		super.activated();
 
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
+		ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
 
 		if (commandSupport != null) {
 			Command gotoCommand = commandSupport.getCommand(ID_GO_TO_ADDRESS_COMMAND);
 
 			if (fGoToAddressHandler == null) {
 				fGoToAddressHandler = new AbstractHandler() {
+					@Override
 					public Object execute(ExecutionEvent event) throws ExecutionException {
 						// TODO
 						return null;
@@ -438,7 +449,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	@Override
 	public void deactivated() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
-		ICommandService commandSupport = (ICommandService) workbench.getAdapter(ICommandService.class);
+		ICommandService commandSupport = workbench.getAdapter(ICommandService.class);
 
 		if (commandSupport != null) {
 			// 	remove handler
@@ -492,13 +503,13 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	private Color colorText;
 	private Color colorTextAlternate;
 
-	private Map<Integer, Font> fonts = new HashMap<Integer, Font>(3);
+	private Map<Integer, Font> fonts = new HashMap<>(3);
 
 	public void allocateColors() {
 
 		IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
 		colorBackground = null;
-		// has a memory-space-specific background color been set for the associated memory space? 
+		// has a memory-space-specific background color been set for the associated memory space?
 		if (fMemorySpaceId != null) {
 			String key = fMemSpacePreferenceHelper.getMemorySpaceKey(fMemorySpaceId);
 			if (store.getString(key) != "") {
@@ -705,6 +716,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	 * @since 1.4
 	 * @deprecated - use: {@link Rendering#isShowCrossReferenceInfo()}
 	 */
+	@Deprecated
 	public boolean isShowCrossRefInfoGlobalPref() {
 		IPreferenceStore store = TraditionalRenderingPlugin.getDefault().getPreferenceStore();
 		return store.getBoolean(TraditionalRenderingPreferenceConstants.MEM_CROSS_REFERENCE_INFO);
@@ -735,6 +747,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 			@Override
 			public void run() {
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						TraditionalRendering.this.fRendering
 								.gotoAddress(TraditionalRendering.this.fRendering.fBaseAddress);
@@ -750,6 +763,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 			@Override
 			public void run() {
 				Display.getDefault().asyncExec(new Runnable() {
+					@Override
 					public void run() {
 						// For compatibility with DSF update modes (hopefully this will either be replaced by an enhanced
 						// platform interface or the caching will move out of the data layer
@@ -1002,6 +1016,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 						"Please enter column count", //$NON-NLS-1$
 						"", //$NON-NLS-1$
 						new IInputValidator() {
+							@Override
 							public String isValid(String input) {
 								try {
 									int i = Integer.parseInt(input);
@@ -1067,6 +1082,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		};
 
 		getPopupMenuManager().addMenuListener(new IMenuListener() {
+			@Override
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(new Separator());
 
@@ -1196,11 +1212,13 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 
 	}
 
+	@Override
 	public Control getControl() {
 		return this.fRendering;
 	}
 
 	// selection is terminology for caret position
+	@Override
 	public BigInteger getSelectedAddress() {
 		IMemorySelection selection = fRendering.getSelection();
 		if (selection == null || selection.getStart() == null)
@@ -1209,6 +1227,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		return selection.getStartLow();
 	}
 
+	@Override
 	public MemoryByte[] getSelectedAsBytes() {
 		try {
 			// default to the caret address and the cell count size
@@ -1239,8 +1258,10 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		}
 	}
 
+	@Override
 	public void goToAddress(final BigInteger address) throws DebugException {
 		Display.getDefault().asyncExec(new Runnable() {
+			@Override
 			public void run() {
 				fRendering.gotoAddress(address);
 			}
@@ -1267,18 +1288,22 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		if (adapter == IWorkbenchAdapter.class) {
 			if (this.fWorkbenchAdapter == null) {
 				this.fWorkbenchAdapter = new IWorkbenchAdapter() {
+					@Override
 					public Object[] getChildren(Object o) {
 						return new Object[0];
 					}
 
+					@Override
 					public ImageDescriptor getImageDescriptor(Object object) {
 						return null;
 					}
 
+					@Override
 					public String getLabel(Object o) {
 						return TraditionalRenderingMessages.getString("TraditionalRendering.RENDERING_NAME"); //$NON-NLS-1$
 					}
 
+					@Override
 					public Object getParent(Object o) {
 						return null;
 					}
@@ -1290,10 +1315,12 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		if (adapter == IMemoryBlockConnection.class) {
 			if (fConnection == null) {
 				fConnection = new IMemoryBlockConnection() {
+					@Override
 					public void update() {
 						// update UI asynchronously
 						Display display = TraditionalRenderingPlugin.getDefault().getWorkbench().getDisplay();
 						display.asyncExec(new Runnable() {
+							@Override
 							public void run() {
 								try {
 									if (fBigBaseAddress != TraditionalRendering.this.fRendering.getMemoryBlock()
@@ -1316,6 +1343,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 		return super.getAdapter(adapter);
 	}
 
+	@Override
 	public void resetRendering() throws DebugException {
 		fRendering.gotoAddress(fRendering.fBaseAddress);
 	}
@@ -1323,6 +1351,7 @@ public class TraditionalRendering extends AbstractMemoryRendering implements IRe
 	/* (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.internal.core.model.provisional.IMemoryRenderingViewportProvider#getViewportAddress()
 	 */
+	@Override
 	public BigInteger getViewportAddress() {
 		return fRendering.getViewportStartAddress();
 	}
@@ -1377,7 +1406,7 @@ abstract class CopyAction extends Action {
 	// blocks on a Job.
 	public enum CopyType {
 		UNDEFINED, BINARY, TEXT, ADDRESS, ALL, DEFAULT
-	};
+	}
 
 	private Rendering fRendering;
 	private int fClipboardType = DND.CLIPBOARD;

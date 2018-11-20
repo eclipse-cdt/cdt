@@ -26,10 +26,10 @@ import org.eclipse.cdt.dsf.gdb.service.IReverseRunControl;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 
 /**
- * 
+ *
  * This class permits to enable, disable or toggle the reverse
  * debugging mode.
- *   
+ *
  * @since 4.2
  */
 public class MIReverseDebugEnabler implements IReverseDebugEnabler {
@@ -39,7 +39,7 @@ public class MIReverseDebugEnabler implements IReverseDebugEnabler {
 
 	private static enum REVERSE_DEBUG_MODE {
 		ENABLE, DISABLE, TOGGLE
-	};
+	}
 
 	/**
 	 * @param executor

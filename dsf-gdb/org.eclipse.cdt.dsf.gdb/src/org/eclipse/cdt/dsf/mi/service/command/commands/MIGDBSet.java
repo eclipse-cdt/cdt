@@ -20,9 +20,9 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *     -gdb-set
- * 
+ *
  */
 public class MIGDBSet extends MICommand<MIInfo> {
 	public MIGDBSet(IDMContext ctx, String[] params) {

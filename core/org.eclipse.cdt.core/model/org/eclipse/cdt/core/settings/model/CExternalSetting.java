@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 
 public final class CExternalSetting implements ICExternalSetting {
 	//	private EntryStore fEntryStore = new EntryStore();
-	private KindBasedStore<CEntriesSet> fStore = new KindBasedStore<CEntriesSet>(false);
+	private KindBasedStore<CEntriesSet> fStore = new KindBasedStore<>(false);
 	private String[] fContentTypeIds;
 	private String[] fLanguageIds;
 	private String[] fExtensions;
@@ -123,7 +123,7 @@ public final class CExternalSetting implements ICExternalSetting {
 
 	@Override
 	public ICSettingEntry[] getEntries() {
-		List<ICSettingEntry> result = new ArrayList<ICSettingEntry>();
+		List<ICSettingEntry> result = new ArrayList<>();
 		int kinds[] = KindBasedStore.getAllEntryKinds();
 		for (int i = 0; i < kinds.length; i++) {
 			CEntriesSet list = getEntriesSet(kinds[i], false);

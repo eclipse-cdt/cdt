@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Andy Jin (QNX) - Not output thread osId as a string when it is null (Bug 397039)
@@ -50,7 +50,7 @@ import org.eclipse.core.runtime.Status;
 /**
  * This class implements the IProcesses interface for GDB 7.1
  * which provides new information about cores for threads and processes.
- * 
+ *
  * @since 4.0
  */
 public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
@@ -99,7 +99,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The call-back object to notify when this service's
 	 *            initialization is done.
@@ -199,7 +199,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 								rm.setData(threadData);
 							} else {
 								rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
-										"Could not get thread info", null)); //$NON-NLS-1$        	        			
+										"Could not get thread info", null)); //$NON-NLS-1$
 							}
 							rm.done();
 						}
@@ -261,7 +261,7 @@ public class GDBProcesses_7_1 extends GDBProcesses_7_0 {
 		fCommandForCoresCache.reset();
 	}
 
-	// Event handler when a thread or threadGroup starts, core allocation 
+	// Event handler when a thread or threadGroup starts, core allocation
 	// could have changed
 	@DsfServiceEventHandler
 	public void eventDispatched_7_1(IStartedDMEvent e) {

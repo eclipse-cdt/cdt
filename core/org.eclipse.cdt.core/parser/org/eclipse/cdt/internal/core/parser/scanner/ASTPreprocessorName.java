@@ -246,7 +246,7 @@ class ASTMacroReferenceName extends ASTPreprocessorName {
 		// Macro reference names which are nested references rather than the name of the
 		// macro being expanded itself, have their node location set to the entire macro
 		// expansion (see LocationMap.pushMacroExpansion()), which doesn't produce a
-		// useful image location. 
+		// useful image location.
 		if (getParent() instanceof ASTMacroExpansion) {
 			if (((ASTMacroExpansion) getParent()).getContext().getMacroReference() == this) {
 				return super.getImageLocation();

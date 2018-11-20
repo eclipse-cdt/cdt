@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson AB		  - Modules implementation for GDB
@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.Status;
 import org.osgi.framework.BundleContext;
 
 /**
- * 
+ *
  */
 public class MIModules extends AbstractDsfService implements IModules2, ICachingService {
 
@@ -276,7 +276,7 @@ public class MIModules extends AbstractDsfService implements IModules2, ICaching
 												getProperties());
 									}
 									rm.done();
-								};
+								}
 							});
 						}
 					});

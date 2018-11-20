@@ -17,16 +17,16 @@ package org.eclipse.cdt.make.scannerdiscovery;
 
 import java.util.List;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoCollector;
 import org.eclipse.cdt.make.core.scannerconfig.IScannerInfoConsoleParser;
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 
+import junit.framework.TestSuite;
+
 /**
  * Scanner configuration console parser tests
- * 
+ *
  * @author vhirsl
  */
 public abstract class BaseBOPConsoleParserTests extends BaseTestCase {

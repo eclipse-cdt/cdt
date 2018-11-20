@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ public interface IMemoryExporter {
 	/**
 	 * @param parent
 	 * @param memBlock
-	 * @param properties This will contain initial values for TRANSFER_START and TRANSFER_END. 
+	 * @param properties This will contain initial values for TRANSFER_START and TRANSFER_END.
 	 * @param parentDialog
 	 * @return
 	 */

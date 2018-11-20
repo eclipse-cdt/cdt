@@ -38,7 +38,7 @@ public class PDOMInclude implements IIndexFragmentInclude {
 	// If the include name is the same as the end part of the path of the included file,
 	// we store the length of the name instead of the name itself, and indicate that
 	// by turning on FLAG_DEDUCIBLE_NAME flag. Notice that the length of include name
-	// can be different from the node length, if the name is defined by a macro. 
+	// can be different from the node length, if the name is defined by a macro.
 	private static final int INCLUDE_NAME_OR_LENGTH = 20; // TODO: assumes that int and stored pointers are the same size
 	private static final int NODE_OFFSET = 24; // 3-byte unsigned int (sufficient for files <= 16mb)
 	private static final int NODE_LENGTH = 27; // short (sufficient for names <= 32k)

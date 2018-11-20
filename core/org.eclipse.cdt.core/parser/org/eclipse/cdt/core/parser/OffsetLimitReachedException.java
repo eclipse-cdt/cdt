@@ -25,7 +25,7 @@ package org.eclipse.cdt.core.parser;
  * {@link #ORIGIN_INACTIVE_CODE}: within an inactive branch of conditional compilation.
  * <p>
  * {@link #ORIGIN_MACRO_EXPANSION}: within a macro-expansion.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

@@ -71,14 +71,14 @@ import org.eclipse.debug.core.sourcelookup.ISourceLookupParticipant;
  * The Executables Manager maintains a collection of executables built by all of
  * the projects in the workspace. Executables are contributed by instances of
  * IExecutablesProvider.
- * 
+ *
  * @author Ken Ryall
- * 
+ *
  */
 public class ExecutablesManager extends PlatformObject
 		implements ICProjectDescriptionListener, IElementChangedListener, IResourceChangeListener {
 
-	private Map<IProject, IProjectExecutablesProvider> executablesProviderMap = new HashMap<IProject, IProjectExecutablesProvider>();
+	private Map<IProject, IProjectExecutablesProvider> executablesProviderMap = new HashMap<>();
 	private List<IExecutablesChangeListener> changeListeners = Collections
 			.synchronizedList(new ArrayList<IExecutablesChangeListener>());
 	private List<IProjectExecutablesProvider> executableProviders;
@@ -92,11 +92,11 @@ public class ExecutablesManager extends PlatformObject
 	 * notification. We use this to ensure we flush source file mappings only
 	 * when the launch config change involves a change to the source locators.
 	 */
-	private Map<String, String> locatorMementos = new HashMap<String, String>();
+	private Map<String, String> locatorMementos = new HashMap<>();
 
 	/**
-	 * A cache of the executables in the workspace, categorized by project. 
-	 * 
+	 * A cache of the executables in the workspace, categorized by project.
+	 *
 	 * <p>
 	 * This cache is updated by scheduling an asynchronous search. SearchJob is
 	 * the only class that should <i>modify</i> this collection, including the
@@ -106,17 +106,17 @@ public class ExecutablesManager extends PlatformObject
 	 * <p>
 	 * The same Executable may appear more than once.
 	 */
-	private Map<IProject, List<Executable>> executablesMap = new HashMap<IProject, List<Executable>>();
+	private Map<IProject, List<Executable>> executablesMap = new HashMap<>();
 
 	/**
 	 * Provide a flat list of the executables in {@link #executablesMap}, with
 	 * duplicates removed. That is effectively the list of all executables in
 	 * the workspace that we know of as of now.
-	 * 
+	 *
 	 * @return
 	 */
 	private List<Executable> flattenExecutablesMap() {
-		List<Executable> result = new ArrayList<Executable>(executablesMap.size() * 5); // most projects will have less than five executables  
+		List<Executable> result = new ArrayList<>(executablesMap.size() * 5); // most projects will have less than five executables
 		synchronized (executablesMap) {
 			for (List<Executable> exes : executablesMap.values()) {
 				for (Executable exe : exes) {
@@ -156,10 +156,10 @@ public class ExecutablesManager extends PlatformObject
 			// to this and see if we need to notify change listeners
 			List<Executable> before = flattenExecutablesMap();
 
-			// Get the CDT projects in the workspace that we have no cached 
+			// Get the CDT projects in the workspace that we have no cached
 			// results for (are not in 'executablesMap'). Also, we may have been
 			// asked to refresh the cache for some projects we've search before
-			List<IProject> projects = new ArrayList<IProject>();
+			List<IProject> projects = new ArrayList<>();
 			synchronized (executablesMap) {
 				if (projectsToRefresh == null) {
 					executablesMap.clear();
@@ -209,7 +209,7 @@ public class ExecutablesManager extends PlatformObject
 			// executables list. If so, notify listeners.
 			List<Executable> after = flattenExecutablesMap();
 			List<Executable> removed = before;
-			List<Executable> added = new ArrayList<Executable>(after.size());
+			List<Executable> added = new ArrayList<>(after.size());
 			for (Executable a : after) {
 				if (!removed.remove(a)) {
 					added.add(a);
@@ -235,7 +235,7 @@ public class ExecutablesManager extends PlatformObject
 			}
 
 			if (Trace.DEBUG_EXECUTABLES)
-				Trace.getTrace().trace(null, "Search for executables finished"); //$NON-NLS-1$			
+				Trace.getTrace().trace(null, "Search for executables finished"); //$NON-NLS-1$
 
 			return status;
 		}
@@ -243,7 +243,7 @@ public class ExecutablesManager extends PlatformObject
 		/**
 		 * Schedules the search job. Use this, not the standard Job.schedule()
 		 * method.
-		 * 
+		 *
 		 * @param projectsToRefresh
 		 *            if null, all CDT projects in the workspace are searched.
 		 *            If not null, we search only newly present projects and the
@@ -254,7 +254,7 @@ public class ExecutablesManager extends PlatformObject
 			this.projectsToRefresh = projectsToRefresh;
 			super.schedule();
 		}
-	};
+	}
 
 	/** The search job. We only let one of these run at any one time */
 	private SearchJob searchJob = new SearchJob();
@@ -321,8 +321,8 @@ public class ExecutablesManager extends PlatformObject
 
 					@Override
 					public void sourceContainersChanged(ISourceLookupDirector director) {
-						// Unfortunately, it would be extremely difficult/costly to 
-						// determine which binaries are effected by the source locator 
+						// Unfortunately, it would be extremely difficult/costly to
+						// determine which binaries are effected by the source locator
 						// change, so we have to tell all Executables to flush
 						flushExecutablesSourceMappings();
 					}
@@ -334,13 +334,13 @@ public class ExecutablesManager extends PlatformObject
 		DebugPlugin.getDefault().getLaunchManager().addLaunchConfigurationListener(new ILaunchConfigurationListener() {
 			@Override
 			public void launchConfigurationChanged(ILaunchConfiguration configuration) {
-				// Expect lots of noise for working copies. We only care about 
+				// Expect lots of noise for working copies. We only care about
 				// changes to actual configs
 				if (configuration.isWorkingCopy()) {
 					return;
 				}
 
-				// If the source locators in the launch config were not modified, then no-op   
+				// If the source locators in the launch config were not modified, then no-op
 				try {
 					String configName = configuration.getName();
 					String mementoBefore = locatorMementos.get(configName);
@@ -354,8 +354,8 @@ public class ExecutablesManager extends PlatformObject
 					CDebugCorePlugin.log(e);
 				}
 
-				// TODO: For now, just tell all Executables to flush. Look 
-				// into identifying which binary the config is associated 
+				// TODO: For now, just tell all Executables to flush. Look
+				// into identifying which binary the config is associated
 				// with so we can flush only that Executable
 				flushExecutablesSourceMappings();
 			}
@@ -371,18 +371,18 @@ public class ExecutablesManager extends PlatformObject
 			}
 
 			private void configAddedOrRemoved(ILaunchConfiguration configuration) {
-				// Expect lots of noise for working copies. We only care about 
+				// Expect lots of noise for working copies. We only care about
 				// changes to actual configs
 				if (configuration.isWorkingCopy()) {
 					return;
 				}
 
-				// The addition or removal of a launch config could affect 
-				// how files are found. It would be extremely costly to 
-				// determine here whether it will or not, so assume it will. 
+				// The addition or removal of a launch config could affect
+				// how files are found. It would be extremely costly to
+				// determine here whether it will or not, so assume it will.
 
-				// TODO: For now, just tell all Executables to flush. Look 
-				// into identifying which binary the config is associated 
+				// TODO: For now, just tell all Executables to flush. Look
+				// into identifying which binary the config is associated
 				// with so we can flush only that Executable
 				flushExecutablesSourceMappings();
 			}
@@ -400,7 +400,7 @@ public class ExecutablesManager extends PlatformObject
 	 * information the Executable provided, that info can no longer be trusted.
 	 * The primary purpose of an Executable is to provide source file path
 	 * information--not only the compile paths burned into the executable but
-	 * also the local mappings of those paths. 
+	 * also the local mappings of those paths.
 	 */
 	private void flushExecutablesSourceMappings() {
 		List<Executable> exes = flattenExecutablesMap();
@@ -434,7 +434,7 @@ public class ExecutablesManager extends PlatformObject
 	 * Gets the list of executables in the workspace. This method doesn't
 	 * initiate a search. It returns the cached results of the most recent
 	 * search, or waits for the ongoing search to complete.
-	 * 
+	 *
 	 * @param wait
 	 *            Whether or not to wait if the cache is in the process of being
 	 *            updated when this method is called. When true, the call will
@@ -486,7 +486,7 @@ public class ExecutablesManager extends PlatformObject
 	 * @return collection of executables which may be empty
 	 */
 	public Collection<Executable> getExecutablesForProject(IProject project) {
-		List<Executable> executables = new ArrayList<Executable>();
+		List<Executable> executables = new ArrayList<>();
 
 		synchronized (executablesMap) {
 			List<Executable> exes = executablesMap.get(project);
@@ -608,7 +608,7 @@ public class ExecutablesManager extends PlatformObject
 	 * @param executables the array of executables to be removed
 	 * @param monitor progress monitor
 	 * @return IStatus of the operation
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	public IStatus removeExecutables(Executable[] executables, IProgressMonitor monitor) {
@@ -638,12 +638,12 @@ public class ExecutablesManager extends PlatformObject
 	 * Initiates an asynchronous search of workspace CDT projects for
 	 * executables. If a search is ongoing, it's cancelled and a new one is
 	 * started. In all cases, this method returns quickly (does not wait/block).
-	 * 
+	 *
 	 * <p>
 	 * Listeners are notified when the search is complete and there is a change
 	 * in the collection of found executables. The results of the search can be
 	 * obtained by calling {@link #getExecutables(boolean)}.
-	 * 
+	 *
 	 * @param projectsToRefresh
 	 *            if null, we discard our entire Executables cache and search
 	 *            all CDT projects in the workspace. If not null, we purge our
@@ -653,7 +653,7 @@ public class ExecutablesManager extends PlatformObject
 	 *            executables in any newly available projects. This parameter is
 	 *            simply a way to get us to <i>not</i> skip one or more projects
 	 *            we already have the executables list for.
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public void refresh(List<IProject> projectsToRefresh) {
@@ -920,7 +920,7 @@ public class ExecutablesManager extends PlatformObject
 	 * We listen to C model changes and see if they affect what executables are
 	 * in the workspace, and/or if the executables we already know of have
 	 * changed.
-	 * 
+	 *
 	 * @since 7.1
 	 */
 	@Override
@@ -928,12 +928,12 @@ public class ExecutablesManager extends PlatformObject
 		if (Trace.DEBUG_EXECUTABLES)
 			Trace.getTrace().traceEntry(null);
 		if (Trace.DEBUG_EXECUTABLES)
-			Trace.getTrace().trace(null, "event = \n" + event); // must be done separately because of traceEntry() limitation //$NON-NLS-1$ 
+			Trace.getTrace().trace(null, "event = \n" + event); // must be done separately because of traceEntry() limitation //$NON-NLS-1$
 
 		// Examine the event and figure out what needs to be done
-		Set<IProject> refreshProjects = new HashSet<IProject>(5);
-		Set<Executable> executablesChanged = new HashSet<Executable>(5);
-		Set<Executable> executablesRemoved = new HashSet<Executable>(5);
+		Set<IProject> refreshProjects = new HashSet<>(5);
+		Set<Executable> executablesChanged = new HashSet<>(5);
+		Set<Executable> executablesRemoved = new HashSet<>(5);
 		processDeltas(event.getDelta().getAddedChildren(), null, refreshProjects, executablesRemoved,
 				executablesChanged);
 		processDeltas(event.getDelta().getChangedChildren(), null, refreshProjects, executablesRemoved,
@@ -941,7 +941,7 @@ public class ExecutablesManager extends PlatformObject
 		processDeltas(event.getDelta().getRemovedChildren(), null, refreshProjects, executablesRemoved,
 				executablesChanged);
 
-		// Schedule executable searches in projects 
+		// Schedule executable searches in projects
 		if (refreshProjects.size() > 0) {
 			if (Trace.DEBUG_EXECUTABLES)
 				Trace.getTrace().trace(null, "One or more projects need to be re-searched"); //$NON-NLS-1$
@@ -952,7 +952,7 @@ public class ExecutablesManager extends PlatformObject
 		// listeners
 		if (executablesChanged.size() > 0) {
 			if (Trace.DEBUG_EXECUTABLES)
-				Trace.getTrace().trace(null, "One or more executables changed"); //$NON-NLS-1$			
+				Trace.getTrace().trace(null, "One or more executables changed"); //$NON-NLS-1$
 			for (Executable exec : executablesChanged) {
 				exec.setRefreshSourceFiles(true);
 			}
@@ -967,7 +967,7 @@ public class ExecutablesManager extends PlatformObject
 		if (executablesRemoved.size() > 0) {
 			// Update our model (i.e., our collection of Executables) and inform listeners
 			if (Trace.DEBUG_EXECUTABLES)
-				Trace.getTrace().trace(null, "One or more executables were removed"); //$NON-NLS-1$			
+				Trace.getTrace().trace(null, "One or more executables were removed"); //$NON-NLS-1$
 			synchronized (executablesMap) {
 				for (Executable executableRemoved : executablesRemoved) {
 					List<Executable> execs = executablesMap.get(executableRemoved.getProject());
@@ -996,7 +996,7 @@ public class ExecutablesManager extends PlatformObject
 	/**
 	 * Drills down a hierarchy of CDT model change events to determine the
 	 * course of action.
-	 * 
+	 *
 	 * @param deltas
 	 *            CDT model events received by the viewer
 	 * @param cproject
@@ -1023,7 +1023,7 @@ public class ExecutablesManager extends PlatformObject
 			ICElement element = delta.getElement();
 			if (element instanceof ICProject) {
 				// When a project is deleted, we get a REMOVED delta for the
-				// project only--none for the elements in the project.  
+				// project only--none for the elements in the project.
 				IProject project = ((ICProject) element).getProject();
 				if (delta.getKind() == ICElementDelta.REMOVED) {
 					projectsToRefresh.add(project);
@@ -1040,8 +1040,8 @@ public class ExecutablesManager extends PlatformObject
 						}
 
 					}
-					// Note that it's not our job to update 'executablesMap'. 
-					// The async exec search job will do that.					
+					// Note that it's not our job to update 'executablesMap'.
+					// The async exec search job will do that.
 				}
 			} else if (element instanceof IBinary) {
 				IProject project = cproject.getProject();
@@ -1056,13 +1056,13 @@ public class ExecutablesManager extends PlatformObject
 					synchronized (executablesMap) {
 						execs = executablesMap.get(project);
 						if (execs == null) {
-							// Somehow, we missed the addition of the project. 
-							// Request that the project be researched for 
+							// Somehow, we missed the addition of the project.
+							// Request that the project be researched for
 							// executables
 							projectsToRefresh.add(project);
 						} else {
 							// See if it's one of the executables we already know
-							// is in the project. If so, we'll update our 
+							// is in the project. If so, we'll update our
 							// executables map (if removed) and notifying
 							// listeners
 							for (Executable exec : execs) {

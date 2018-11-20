@@ -17,10 +17,9 @@
 
 package org.eclipse.cdt.ui.tests.text;
 
+import org.eclipse.cdt.ui.tests.text.doctools.DocCommentTestSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-
-import org.eclipse.cdt.ui.tests.text.doctools.DocCommentTestSuite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({

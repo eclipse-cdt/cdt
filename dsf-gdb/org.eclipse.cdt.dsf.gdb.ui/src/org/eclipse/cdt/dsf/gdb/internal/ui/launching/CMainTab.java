@@ -18,7 +18,7 @@ import org.eclipse.cdt.launch.ui.CMainTab2;
 /**
  * A launch configuration tab that displays and edits project and main type name launch
  * configuration attributes.
- * 
+ *
  * @deprecated Replaced with org.eclipse.cdt.launch.ui.CMainTab2
  */
 @Deprecated

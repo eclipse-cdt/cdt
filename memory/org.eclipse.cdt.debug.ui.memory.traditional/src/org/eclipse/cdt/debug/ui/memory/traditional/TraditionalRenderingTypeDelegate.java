@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -20,6 +20,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingTypeDelegate;
 
 public class TraditionalRenderingTypeDelegate implements IMemoryRenderingTypeDelegate {
 
+	@Override
 	public IMemoryRendering createRendering(String id) throws CoreException {
 		return new TraditionalRendering(id);
 	}

@@ -210,7 +210,7 @@ public class DefaultGCCDependencyCalculatorPreBuildCommands implements IManagedD
 		IManagedCommandLineInfo cmdLInfo = null;
 
 		//  Set up the command line options that will generate the dependency file
-		Vector<String> options = new Vector<String>();
+		Vector<String> options = new Vector<>();
 		// -w
 		options.add("-w"); //$NON-NLS-1$
 		// -MM

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /**
  * Expression VM Node which handles displaying disabled expressions.
- * 
+ *
  * @since 2.1
  */
 public class DisabledExpressionVMNode extends AbstractVMNode implements IExpressionVMNode, IElementEditor {

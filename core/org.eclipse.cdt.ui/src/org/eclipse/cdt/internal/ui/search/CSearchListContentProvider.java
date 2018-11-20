@@ -19,6 +19,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
@@ -27,10 +30,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * @author Doug Schaefer
@@ -46,12 +45,12 @@ public class CSearchListContentProvider implements IStructuredContentProvider, I
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		Set<String> uncoveredProjects = new HashSet<String>();
+		Set<String> uncoveredProjects = new HashSet<>();
 
 		CSearchResult result = (CSearchResult) inputElement;
 
 		Object[] results = result.getElements();
-		List<Object> resultList = new ArrayList<Object>();
+		List<Object> resultList = new ArrayList<>();
 
 		// see which projects returned results
 		for (int i = 0; i < results.length; i++) {

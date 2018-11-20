@@ -22,10 +22,10 @@ import org.eclipse.core.resources.IProject;
  * This interface is used by dynamic discovery pages
  * to refer to underlying tab (DiscoveryTab)
  * and get all object-specific data.
- * 
- * In previous code, reference to specific 
+ *
+ * In previous code, reference to specific
  * property page was used instead of interface.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

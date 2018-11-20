@@ -1,15 +1,15 @@
-/******************************************************************************* 
- * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others. 
+/*******************************************************************************
+ * Copyright (c) 2008, 2015 Wind River Systems, Inc. and others.
  *
- * This program and the accompanying materials  
- * are made available under the terms of the Eclipse Public License 2.0  
- * which accompanies this distribution, and is available at  
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *   
- * Contributors: 
- *     Wind River Systems - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.concurrent;
 
@@ -48,7 +48,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
 				}
 			});
 		}
-	};
+	}
 
 	private RequestCanceledListener fRequestCanceledListener = new RequestCanceledListener();
 
@@ -80,22 +80,22 @@ public abstract class AbstractCache<V> implements ICache<V> {
 	 * its source. The implementation should call {@link #set(Object, IStatus)}
 	 * to store the newly retrieved data when it arrives (or an error, if one
 	 * occurred retrieving the data)
-	 * 
+	 *
 	 * @param rm
 	 *            Request monitor for completion of data retrieval.
 	 */
 	abstract protected void retrieve();
 
 	/**
-	 * Called to cancel a retrieve request.  This method is called when 
+	 * Called to cancel a retrieve request.  This method is called when
 	 * clients of the cache no longer need data that was requested. <br>
-	 * Sub-classes should cancel and clean up requests to the asynchronous 
-	 * data source. 
-	 * 
+	 * Sub-classes should cancel and clean up requests to the asynchronous
+	 * data source.
+	 *
 	 * <p>
 	 * Note: Called while holding a lock to "this".  No new request will start until
-	 * this call returns. 
-	 * </p> 
+	 * this call returns.
+	 * </p>
 	 */
 	@ThreadSafe
 	abstract protected void canceled();
@@ -226,18 +226,18 @@ public abstract class AbstractCache<V> implements ICache<V> {
 	}
 
 	/**
-	 * Returns true if there are no clients waiting for this cache or if the 
-	 * clients that are waiting, have already canceled their requests.  
+	 * Returns true if there are no clients waiting for this cache or if the
+	 * clients that are waiting, have already canceled their requests.
 	 * <p>
 	 * Note: Calling this method may cause the client request monitors that were
 	 * canceled to be completed with a cancel status.  If all the client request
-	 * monitors were canceled, this method will also cause the {@link #canceled()} 
-	 * method to be called.  Both of these side effects will only happen 
+	 * monitors were canceled, this method will also cause the {@link #canceled()}
+	 * method to be called.  Both of these side effects will only happen
 	 * asynchronously after <code>isCanceled()</code> returns.
-	 * </p> 
-	 *  
-	 * @return <code>true</code> if all clients waiting on this cache have been 
-	 * canceled, or if there are no clients waiting at all. 
+	 * </p>
+	 *
+	 * @return <code>true</code> if all clients waiting on this cache have been
+	 * canceled, or if there are no clients waiting at all.
 	 */
 	@ThreadSafe
 	protected boolean isCanceled() {
@@ -246,7 +246,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
 		synchronized (this) {
 			if (fWaitingList instanceof RequestMonitor) {
 				if (((RequestMonitor) fWaitingList).isCanceled()) {
-					canceledRms = new ArrayList<RequestMonitor>(1);
+					canceledRms = new ArrayList<>(1);
 					canceledRms.add((RequestMonitor) fWaitingList);
 					canceled = true;
 				} else {
@@ -259,7 +259,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
 					if (waitingList[i] != null) {
 						if (waitingList[i].isCanceled()) {
 							if (canceledRms == null) {
-								canceledRms = new ArrayList<RequestMonitor>(1);
+								canceledRms = new ArrayList<>(1);
 							}
 							canceledRms.add(waitingList[i]);
 						} else {
@@ -307,13 +307,13 @@ public abstract class AbstractCache<V> implements ICache<V> {
 	 * means that our data is not stale. In other words, if the request to the
 	 * source encounters an error, the cache object becomes valid all the same.
 	 * The status indicates what error was encountered.
-	 * 
+	 *
 	 * <p>
 	 * This method is called internally, typically in response to having
 	 * obtained the result from the asynchronous request to the source. The
 	 * data/status will remain valid until the cache object receives an event
 	 * notification from the source indicating otherwise.
-	 * 
+	 *
 	 * @param data
 	 *            The data that should be returned to any clients waiting for
 	 *            cache data and for clients requesting data until the cache is
@@ -321,7 +321,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
 	 * @status The status that should be returned to any clients waiting for
 	 *         cache data and for clients requesting data until the cache is
 	 *         invalidated
-	 * 
+	 *
 	 * @see #reset(Object, IStatus)
 	 */
 	protected void set(V data, IStatus status) {
@@ -335,10 +335,10 @@ public abstract class AbstractCache<V> implements ICache<V> {
 	}
 
 	/**
-	 * Performs the set and reset operations in one step  This allows the cache to 
-	 * remain in invalid state, but to notify any waiting listeners that the state of 
-	 * the cache has changed.  
-	 * 
+	 * Performs the set and reset operations in one step  This allows the cache to
+	 * remain in invalid state, but to notify any waiting listeners that the state of
+	 * the cache has changed.
+	 *
 	 * @param data
 	 *            The data that should be returned to any clients waiting for
 	 *            cache data and for clients requesting data until the cache is
@@ -346,7 +346,7 @@ public abstract class AbstractCache<V> implements ICache<V> {
 	 * @status The status that should be returned to any clients waiting for
 	 *         cache data and for clients requesting data until the cache is
 	 *         invalidated
-	 * 
+	 *
 	 * @see #reset(Object, IStatus)
 	 * @since 2.3
 	 */

@@ -103,7 +103,7 @@ public class InternalBuildRunner extends AbstractBuildRunner {
 			ErrorParserManager epm = new ErrorParserManager(project, workingDirectoryURI, markerGenerator,
 					errorParsers);
 
-			List<IConsoleParser> parsers = new ArrayList<IConsoleParser>();
+			List<IConsoleParser> parsers = new ArrayList<>();
 			ManagedBuildManager.collectLanguageSettingsConsoleParsers(cfgDescription, epm, parsers);
 
 			buildRunnerHelper.prepareStreams(epm, parsers, console,

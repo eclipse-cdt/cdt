@@ -21,7 +21,7 @@ import java.util.EventListener;
  */
 public interface IPathEntryStoreListener extends EventListener {
 	/**
-	 * 
+	 *
 	 * @param event
 	 */
 	void pathEntryStoreChanged(PathEntryStoreChangedEvent event);

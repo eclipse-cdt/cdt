@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * Label attribute that fills in the formatted value text using the active
  * number format for the view.
- * 
+ *
  * @since 2.0
  */
 public class FormattedValueLabelText extends LabelText {

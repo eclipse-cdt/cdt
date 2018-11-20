@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     IBM Rational Software - Initial API and implementation 
+ *     IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
@@ -20,7 +20,6 @@ import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
 import org.eclipse.cdt.core.dom.ast.IASTPreprocessorStatement;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 
 /**
@@ -96,7 +95,7 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 	/**
 	 * Inserts obj into the array at position pos and if this is not possible (due to a bad offset)
 	 * then the obj is just appended to the end of the array.
-	 * 
+	 *
 	 * @param c
 	 * @param array
 	 * @param obj
@@ -190,7 +189,7 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 	 * Returns the DOMASTNodeParent whose IASTNode is the parent of the IASTNode.
 	 *
 	 * This function is an optimization function used to only search merged preprocessor nodes.
-	 * 
+	 *
 	 * @param node
 	 * @return
 	 */
@@ -244,7 +243,7 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 
 	/**
 	 * Returns the DOMASTNodeParent whose IASTNode is the parent of the IASTNode.
-	 * 
+	 *
 	 * @param node
 	 * @return
 	 */
@@ -328,7 +327,7 @@ public class DOMASTNodeParent extends DOMASTNodeLeaf {
 	/**
 	 * Returns the DOMASTNodeParent that corresponds to the IASTNode.  This is the DOMASTNodeParent
 	 * that represents the IASTNode in the DOM AST View.
-	 * 
+	 *
 	 * @param node
 	 * @return
 	 */

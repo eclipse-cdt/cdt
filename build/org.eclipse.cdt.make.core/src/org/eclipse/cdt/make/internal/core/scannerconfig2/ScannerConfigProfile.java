@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *  IBM - Initial API and implementation
  *******************************************************************************/
@@ -30,13 +30,13 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * SCD Profile extension point object model
- * 
+ *
  * @author vhirsl
  */
 public class ScannerConfigProfile {
 	/**
 	 * scannerInfoCollector element
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public class ScannerInfoCollector {
@@ -62,7 +62,7 @@ public class ScannerConfigProfile {
 
 	/**
 	 * scannerInfoConsoleParser element
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public final class ScannerInfoConsoleParser {
@@ -88,7 +88,7 @@ public class ScannerConfigProfile {
 
 	/**
 	 * tag interface, a placeholder for either run or open element
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	protected abstract class Action {
@@ -116,7 +116,7 @@ public class ScannerConfigProfile {
 
 	/**
 	 * run element
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public final class Run extends Action {
@@ -140,7 +140,7 @@ public class ScannerConfigProfile {
 
 	/**
 	 * open element
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public final class Open extends Action {
@@ -164,7 +164,7 @@ public class ScannerConfigProfile {
 
 	/**
 	 * buildOutputProvider element
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public final class BuildOutputProvider {
@@ -193,7 +193,7 @@ public class ScannerConfigProfile {
 
 	/**
 	 * scannerInfoProvider element
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public final class ScannerInfoProvider {
@@ -243,7 +243,7 @@ public class ScannerConfigProfile {
 
 	private ScannerInfoCollector scannerInfoCollector;
 	private BuildOutputProvider buildOutputProvider;
-	private Map<String, ScannerInfoProvider> scannerInfoProviders = new LinkedHashMap<String, ScannerInfoProvider>();
+	private Map<String, ScannerInfoProvider> scannerInfoProviders = new LinkedHashMap<>();
 
 	private Boolean supportsContext;
 
@@ -296,7 +296,7 @@ public class ScannerConfigProfile {
 	 * @return Returns the list of providerIds
 	 */
 	public List<String> getSIProviderIds() {
-		return new ArrayList<String>(scannerInfoProviders.keySet());
+		return new ArrayList<>(scannerInfoProviders.keySet());
 	}
 
 	/**

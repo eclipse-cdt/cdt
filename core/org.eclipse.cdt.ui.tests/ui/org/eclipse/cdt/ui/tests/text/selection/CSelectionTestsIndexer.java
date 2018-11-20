@@ -15,15 +15,6 @@ package org.eclipse.cdt.ui.tests.text.selection;
 
 import java.io.IOException;
 
-import junit.framework.Test;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.part.FileEditorInput;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.dom.ast.IASTFileLocation;
@@ -33,9 +24,16 @@ import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.part.FileEditorInput;
+
+import junit.framework.Test;
 
 public class CSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	private String sourceIndexerID;
@@ -98,7 +96,7 @@ public class CSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	// int MyInt;
 	// extern const int MyConst = 42;
 	// void MyFunc(int a) { cout << a << endl; }
-	// struct MyStruct;        
+	// struct MyStruct;
 	public void testBasicDefinition() throws Exception {
 		StringBuilder[] buffers = getContents(2);
 		String hcode = buffers[0].toString();
@@ -161,25 +159,25 @@ public class CSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 	}
 
 	// // the header
-	// extern int a; 				// declares 
-	// extern const int c = 1; 		// defines 
-	// struct S {int a; int b;}; 	// defines 
-	// struct X { 					// defines 
-	//    int x; 					// defines nonstatic data member 
+	// extern int a; 				// declares
+	// extern const int c = 1; 		// defines
+	// struct S {int a; int b;}; 	// defines
+	// struct X { 					// defines
+	//    int x; 					// defines nonstatic data member
 	// };
-	// enum E {up, down}; 			// defines 
-	// int f(int);  				// declares 
-	// extern struct X anotherX; 	// declares 
+	// enum E {up, down}; 			// defines
+	// int f(int);  				// declares
+	// extern struct X anotherX; 	// declares
 
 	// #include "testCPPSpecDeclsDefs.h"
-	// int a; 						// defines 
-	// struct X anX; 				// defines 
+	// int a; 						// defines
+	// struct X anX; 				// defines
 	// extern const int c; 			// declares
 	// int f(int x) {return x+a;}   // defines
 	// struct S; 					// declares
-	// typedef int Int; 			// declares 
+	// typedef int Int; 			// declares
 	// struct S s;
-	// Int lhs= s.a+s.b+up+down+anX+0;			
+	// Int lhs= s.a+s.b+up+down+anX+0;
 	public void testCPPSpecDeclsDefs() throws Exception {
 		StringBuilder[] buffers = getContents(2);
 		String hcode = buffers[0].toString();
@@ -527,15 +525,15 @@ public class CSelectionTestsIndexer extends BaseSelectionTestsIndexer {
 
 	// int myFunc();
 
-	// int myFunc(var) 
-	// int var; 
-	// { 
-	//     return var; 
-	// } 
+	// int myFunc(var)
+	// int var;
+	// {
+	//     return var;
+	// }
 	//
-	// int main(void) 
-	// { 
-	//     return myFunc(0); 
+	// int main(void)
+	// {
+	//     return myFunc(0);
 	// }
 	public void testKRstyleFunctions_Bug221635() throws Exception {
 		final StringBuilder[] contents = getContentsForTest(2);

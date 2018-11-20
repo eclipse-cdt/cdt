@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Base class for different types of location DynamicPrintf.
- * 
+ *
  * @since 7.5
  */
 public abstract class AbstractDynamicPrintf extends AbstractLineBreakpoint implements ICDynamicPrintf {
@@ -48,6 +48,7 @@ public abstract class AbstractDynamicPrintf extends AbstractLineBreakpoint imple
 	 * (non-Javadoc)
 	 * @see org.eclipse.cdt.debug.core.ICDynamicPrintf#setPrintfString(String)
 	 */
+	@Override
 	public void setPrintfString(String str) throws CoreException {
 		setAttribute(PRINTF_STRING, str);
 		setAttribute(IMarker.MESSAGE, getMarkerMessage());

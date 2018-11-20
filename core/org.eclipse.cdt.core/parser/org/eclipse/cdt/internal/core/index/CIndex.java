@@ -69,9 +69,9 @@ public class CIndex implements IIndex {
 
 	/**
 	 * Creates an index consisting of one or more fragments.
-	 * 
+	 *
 	 * @param fragments Fragments constituting the index. If there are extended fragments,
-	 * they are located in the array after the PDOM fragments for the same project. 
+	 * they are located in the array after the PDOM fragments for the same project.
 	 */
 	public CIndex(IIndexFragment[] fragments) {
 		fFragments = fragments;
@@ -182,7 +182,7 @@ public class CIndex implements IIndex {
 
 		// Collect the names from all fragments. Since the same file may be represented by multiple
 		// variants in one or more index fragments, we need to filter out duplicate names.
-		// See bug 192352. 
+		// See bug 192352.
 		// Read only fragments can be superseded by what the indexer writes into
 		// a writable fragment. Therefore names from a read-only fragment are
 		// ignored if there is a match in a writable fragment.
@@ -322,7 +322,7 @@ public class CIndex implements IIndex {
 		Collection<IIndexFile> in = Collections.singletonList(file);
 		Set<FileContentKey> handled = new HashSet<>();
 		while (true) {
-			Collection<IIndexFile> nextLevel = depth != 0 ? new ArrayDeque<IIndexFile>() : null;
+			Collection<IIndexFile> nextLevel = depth != 0 ? new ArrayDeque<>() : null;
 			for (IIndexFile indexFile : in) {
 				IIndexFragmentFile file1 = (IIndexFragmentFile) indexFile;
 				for (IIndexFragment fragment : fFragments) {
@@ -362,7 +362,7 @@ public class CIndex implements IIndex {
 		Collection<IIndexFile> in = Collections.singletonList(file);
 		Set<Object> handled = new HashSet<>();
 		while (true) {
-			Collection<IIndexFile> nextLevel = depth != 0 ? new ArrayDeque<IIndexFile>() : null;
+			Collection<IIndexFile> nextLevel = depth != 0 ? new ArrayDeque<>() : null;
 			for (IIndexFile indexFile : in) {
 				IIndexFragmentFile file1 = (IIndexFragmentFile) indexFile;
 				IIndexInclude[] includes = file1.getIncludes();

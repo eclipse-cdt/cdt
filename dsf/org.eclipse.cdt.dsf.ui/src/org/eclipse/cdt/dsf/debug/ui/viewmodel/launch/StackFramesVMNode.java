@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -83,7 +83,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 
 	/**
 	 * View model context representing the end of an incomplete stack.
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public class IncompleteStackVMContext extends AbstractVMContext {
@@ -118,12 +118,12 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	/**
 	 * Temporary stack frame limit to allow incremental stack updates.
 	 */
-	private Map<IExecutionDMContext, Integer> fTemporaryLimits = new HashMap<IExecutionDMContext, Integer>();
+	private Map<IExecutionDMContext, Integer> fTemporaryLimits = new HashMap<>();
 
 	/**
 	 * The label provider delegate.  This VM node will delegate label updates to this provider
-	 * which can be created by sub-classes. 
-	 *  
+	 * which can be created by sub-classes.
+	 *
 	 * @since 2.0
 	 */
 	private IElementLabelProvider fLabelProvider;
@@ -139,11 +139,11 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	}
 
 	/**
-	 * Creates the label provider delegate.  This VM node will delegate label 
-	 * updates to this provider which can be created by sub-classes.   
-	 *  
-	 * @return Returns the label provider for this node. 
-	 *  
+	 * Creates the label provider delegate.  This VM node will delegate label
+	 * updates to this provider which can be created by sub-classes.
+	 *
+	 * @return Returns the label provider for this node.
+	 *
 	 * @since 2.0
 	 */
 	protected IElementLabelProvider createLabelProvider() {
@@ -169,7 +169,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 						String function = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 						return line != null && line >= 0 && file != null && !file.isEmpty() && function != null
 								&& function.contains(")"); //$NON-NLS-1$
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__add_parens__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS, ILaunchVMConstants.PROP_FRAME_FUNCTION,
 								ILaunchVMConstants.PROP_FRAME_FILE, ILaunchVMConstants.PROP_FRAME_LINE,
@@ -181,7 +181,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 						String function = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 						return line != null && line >= 0 && file != null && !file.isEmpty()
 								&& (function == null || !function.contains(")")); //$NON-NLS-1$
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS, ILaunchVMConstants.PROP_FRAME_FUNCTION,
 								ILaunchVMConstants.PROP_FRAME_MODULE }) {
@@ -191,7 +191,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 						String module = (String) properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
 						return function != null && !function.isEmpty() && function.contains(")") && //$NON-NLS-1$
 						module != null && !module.isEmpty();
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_line__add_parens__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS, ILaunchVMConstants.PROP_FRAME_FUNCTION,
 								ILaunchVMConstants.PROP_FRAME_MODULE }) {
@@ -201,14 +201,14 @@ public class StackFramesVMNode extends AbstractDMVMNode
 						String module = (String) properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
 						return function != null && !function.isEmpty() && !function.contains(")") && //$NON-NLS-1$
 						module != null && !module.isEmpty();
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_function__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS, ILaunchVMConstants.PROP_FRAME_MODULE }) {
 					@Override
 					public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 						String module = (String) properties.get(ILaunchVMConstants.PROP_FRAME_MODULE);
 						return module != null && !module.isEmpty();
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS,
 								ILaunchVMConstants.PROP_FRAME_FUNCTION }) {
@@ -216,7 +216,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 					public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 						String function = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 						return function != null && !function.isEmpty() && function.contains(")"); //$NON-NLS-1$
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__No_module__add_parens__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS,
 								ILaunchVMConstants.PROP_FRAME_FUNCTION }) {
@@ -224,7 +224,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 					public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 						String function = (String) properties.get(ILaunchVMConstants.PROP_FRAME_FUNCTION);
 						return function != null && !function.isEmpty() && !function.contains(")"); //$NON-NLS-1$
-					};
+					}
 				}, new LabelText(MessagesForLaunchVM.StackFramesVMNode_No_columns__Address_only__text_format,
 						new String[] { ILaunchVMConstants.PROP_FRAME_ADDRESS }),
 						new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME_RUNNING)) {
@@ -235,7 +235,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 							@Override
 							public boolean isEnabled(IStatus status, java.util.Map<String, Object> properties) {
 								return Boolean.FALSE.equals(properties.get(ILaunchVMConstants.PROP_IS_SUSPENDED));
-							};
+							}
 						}, new LabelImage(DebugUITools.getImageDescriptor(IDebugUIConstants.IMG_OBJS_STACKFRAME)) }));
 
 		return provider;
@@ -377,7 +377,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 
 	/**
 	 * @see IElementPropertiesProvider#update(IPropertiesUpdate[])
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	@Override
@@ -429,7 +429,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 				update.setProperty(ILaunchVMConstants.PROP_IS_STEPPING, runControlService.isStepping(execDmc));
 			} else {
 				update.setStatus(DsfUIPlugin.newErrorStatus(IDsfStatusConstants.INVALID_HANDLE,
-						"Invalid context or service not available", null)); //$NON-NLS-1$                
+						"Invalid context or service not available", null)); //$NON-NLS-1$
 			}
 
 			service.getFrameData(dmc, new ViewerDataRequestMonitor<IFrameDMData>(getSession().getExecutor(), update) {
@@ -508,14 +508,14 @@ public class StackFramesVMNode extends AbstractDMVMNode
 			label.append(dmData.getFile());
 		}
 
-		// Add line number 
+		// Add line number
 		if (dmData.getLine() >= 0) {
 			label.append(":"); //$NON-NLS-1$
 			label.append(dmData.getLine());
 			label.append(" "); //$NON-NLS-1$
 		}
 
-		// Add module 
+		// Add module
 		if (!hasFileName && (dmData.getModule() != null && dmData.getModule().length() != 0)) {
 			label.append(" "); //$NON-NLS-1$
 			label.append(dmData.getModule());
@@ -538,7 +538,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	@Override
 	public void getContextsForEvent(final VMDelta parentDelta, Object e, final DataRequestMonitor<IVMContext[]> rm) {
 		if (e instanceof ModelProxyInstalledEvent || e instanceof DataModelInitializedEvent) {
-			// Retrieve the list of stack frames, and mark the top frame to be selected.  
+			// Retrieve the list of stack frames, and mark the top frame to be selected.
 			getVMProvider().updateNode(this, new VMChildrenUpdate(parentDelta, getVMProvider().getPresentationContext(),
 					0, 1, new DataRequestMonitor<List<Object>>(getExecutor(), rm) {
 						@Override
@@ -563,7 +563,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	 */
 	@Override
 	public int getDeltaFlags(Object e) {
-		// This node generates delta if the timers have changed, or if the 
+		// This node generates delta if the timers have changed, or if the
 		// label has changed.
 		if (e instanceof ISuspendedDMEvent) {
 			return IModelDelta.CONTENT | IModelDelta.EXPAND | IModelDelta.SELECT;
@@ -658,10 +658,10 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	/**
 	 * Builds the delta in response to a suspended event.
 	 * <p>
-	 * Default behavior is to expand the thread, repaint <strong>only</strong> 
-	 * the top stack frame and select it.  The rest of the frames will be 
-	 * repainted after a short delay. 
-	 *   
+	 * Default behavior is to expand the thread, repaint <strong>only</strong>
+	 * the top stack frame and select it.  The rest of the frames will be
+	 * repainted after a short delay.
+	 *
 	 * @since 2.1
 	 */
 	protected void buildDeltaForSuspendedEvent(final IExecutionDMContext executionCtx,
@@ -692,12 +692,12 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	}
 
 	/**
-	 * Builds a delta in response to automatic refresh event generated after 
-	 * every suspend event.  
+	 * Builds a delta in response to automatic refresh event generated after
+	 * every suspend event.
 	 * <p>
 	 * The default behavior is to check if the thread is
 	 * still stepping or suspended and refresh the stack trace.
-	 *   
+	 *
 	 * @since 2.1
 	 */
 	protected void buildDeltaForFullStackRefreshEvent(final IExecutionDMContext executionCtx,
@@ -715,7 +715,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 						return;
 					}
 
-					// Refresh the whole list of stack frames unless the target is already stepping the next command.  In 
+					// Refresh the whole list of stack frames unless the target is already stepping the next command.  In
 					// which case, the refresh will occur when the stepping sequence slows down or stops.  Trying to
 					// refresh the whole stack trace with every step would slow down stepping too much.
 					if (triggeringCtx == null || !runControlService.isStepping(triggeringCtx)) {
@@ -732,12 +732,12 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	}
 
 	/**
-	 * Builds the delta in response to a time-out after stepping over a long 
-	 * executing function. 
+	 * Builds the delta in response to a time-out after stepping over a long
+	 * executing function.
 	 * <p>
-	 * The default behavior is to repainting the stack frame images to 
+	 * The default behavior is to repainting the stack frame images to
 	 * show the running symbol.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void buildDeltaForSteppingTimedOutEvent(final SteppingTimedOutEvent e, final VMDelta parentDelta,
@@ -752,7 +752,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	 * <p>
 	 * The default behavior is to retrieve the list of stack frames,
 	 * and mark the top frame to be selected.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void buildDeltaForModelProxyInstalledEvent(final VMDelta parentDelta, final int nodeOffset,
@@ -770,12 +770,12 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	}
 
 	/**
-	 * Builds the delta in response to the user requesting to retrieve 
+	 * Builds the delta in response to the user requesting to retrieve
 	 * additional stack frames (changing the current stack frames limit).
 	 * <p>
 	 * The default behavior is to refresh the stack frames, and to select the
 	 * first frame of the new frames that are retrieved.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void buildDeltaForExpandStackEvent(IExecutionDMContext execDmc, final VMDelta parentDelta,
@@ -800,7 +800,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	 * Builds the delta in response to the stack frame limit preference changing.
 	 * <p>
 	 * Default behavior is to refresh the stack frames.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void buildDeltaForStackFrameLimitPreferenceChangedEvent(final VMDelta parentDelta,
@@ -819,7 +819,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 		 *  We are addressing Bugzilla 211490 which wants the Register View  to keep the same expanded
 		 *  state for registers for stack frames within the same thread. Different  threads could have
 		 *  different register sets ( e.g. one thread may have floating point & another may not ). But
-		 *  within a thread we are enforcing  the assumption that the register  sets will be the same.  
+		 *  within a thread we are enforcing  the assumption that the register  sets will be the same.
 		 *  So we make a more convenient work flow by keeping the same expansion when selecting amount
 		 *  stack frames within the same thread. We accomplish this by only differentiating by  adding
 		 *  the level for the Expression/Variables view. Otherwise we do not delineate based on  which
@@ -892,9 +892,9 @@ public class StackFramesVMNode extends AbstractDMVMNode
 
 	/**
 	 * Get the current active stack frame limit. If no limit is applicable {@link Integer.MAX_VALUE} is returned.
-	 * 
+	 *
 	 * @return the current stack frame limit
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public int getStackFrameLimit(IExecutionDMContext execCtx) {
@@ -910,11 +910,11 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	}
 
 	/**
-	 * Resets the temporary stack frame limit for the given execution context.  
+	 * Resets the temporary stack frame limit for the given execution context.
 	 * The stack frame limit should be reset when the a thread is suspended.
-	 * 
+	 *
 	 * @param execCtx
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	protected void resetStackFrameLimit(IExecutionDMContext execCtx) {
@@ -933,7 +933,7 @@ public class StackFramesVMNode extends AbstractDMVMNode
 	/**
 	 * Increment the stack frame limit by the default increment.
 	 * This implementation doubles the current limit.
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	public void incrementStackFrameLimit(IExecutionDMContext execCtx) {

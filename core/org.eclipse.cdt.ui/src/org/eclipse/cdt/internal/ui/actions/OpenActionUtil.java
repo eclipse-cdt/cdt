@@ -18,6 +18,15 @@ package org.eclipse.cdt.internal.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.ui.CElementLabelProvider;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -26,17 +35,6 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.ui.CElementLabelProvider;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.ElementListSelectionDialog;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
 
 public class OpenActionUtil {
 
@@ -65,11 +63,11 @@ public class OpenActionUtil {
 
 	/**
 	 * Filters out source references from the given code resolve results.
-	 * A utility method that can be called by subclassers. 
+	 * A utility method that can be called by subclassers.
 	 */
 	public static List<ISourceReference> filterResolveResults(ICElement[] codeResolveResults) {
 		int nResults = codeResolveResults.length;
-		List<ISourceReference> refs = new ArrayList<ISourceReference>(nResults);
+		List<ISourceReference> refs = new ArrayList<>(nResults);
 		for (int i = 0; i < nResults; i++) {
 			if (codeResolveResults[i] instanceof ISourceReference)
 				refs.add((ISourceReference) codeResolveResults[i]);
@@ -92,8 +90,8 @@ public class OpenActionUtil {
 	 * @param shell parent shell for showing the dialog
 	 * @param title title of the dialog
 	 * @param message message to be shown in the dialog
-	 * @param textFlags text flags to change the label provider 
-	 * @param imageFlags image flags to change the label provider 
+	 * @param textFlags text flags to change the label provider
+	 * @param imageFlags image flags to change the label provider
 	 * @return the selected element or <code>null</code>
 	 * @since 4.0
 	 */

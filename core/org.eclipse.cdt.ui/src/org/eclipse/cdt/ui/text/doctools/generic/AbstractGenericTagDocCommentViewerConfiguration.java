@@ -13,14 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.text.doctools.generic;
 
-import org.eclipse.jface.text.ITextDoubleClickStrategy;
-
 import org.eclipse.cdt.ui.text.ICTokenScanner;
 import org.eclipse.cdt.ui.text.ITokenStoreFactory;
 import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentDictionary;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentSimpleDictionary;
 import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
+import org.eclipse.jface.text.ITextDoubleClickStrategy;
 
 /**
  * An abstract base-class for documentation tool contributions using the 'generic tag' framework
@@ -37,7 +36,7 @@ public abstract class AbstractGenericTagDocCommentViewerConfiguration implements
 	protected IDocCommentSimpleDictionary fDictionary;
 
 	/**
-	 * 
+	 *
 	 * @param tags a non-null array of tags this configuration should recognize
 	 * @param tagMarkers a non-null array of characters used to prefix the tags (e.g. @ or \)
 	 * @param defaultToken the default scanner token id

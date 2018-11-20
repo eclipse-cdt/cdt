@@ -130,7 +130,7 @@ public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigureProper
 				super.doLoad();
 				isLoaded = true;
 			}
-		};
+		}
 
 		public void setToolTipText(String toolTip) {
 			this.getLabelControl().setToolTipText(toolTip);
@@ -154,7 +154,7 @@ public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigureProper
 			protected void configureShell(Shell newShell) {
 				super.configureShell(newShell);
 				newShell.setText(AutotoolsPropertyMessages.getString("NewEnvVarDialog.title"));
-			};
+			}
 
 			@Override
 			protected Control createDialogArea(Composite parent) {
@@ -195,7 +195,7 @@ public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigureProper
 				gd.widthHint = fieldWidthHint;
 				fTextValue.setLayoutData(gd);
 				return composite;
-			};
+			}
 
 			// Obtain instance of OK button and set disabled.
 			@Override
@@ -225,7 +225,7 @@ public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigureProper
 			public String getValue() {
 				return value;
 			}
-		};
+		}
 
 		@Override
 		protected String getNewInputObject() {
@@ -309,7 +309,7 @@ public class AutotoolsCategoryPropertyOptionPage extends AbstractConfigureProper
 			}
 			return sb.toString().trim();
 		}
-	};
+	}
 
 	private List<FieldEditor> fieldEditors;
 

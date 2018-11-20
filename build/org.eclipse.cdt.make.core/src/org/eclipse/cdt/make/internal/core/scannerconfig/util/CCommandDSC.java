@@ -33,8 +33,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 /**
- * Class that represents a compiler command and related scanner configuration 
- * 
+ * Class that represents a compiler command and related scanner configuration
+ *
  * @author vhirsl
  */
 public class CCommandDSC {
@@ -63,13 +63,13 @@ public class CCommandDSC {
 	}
 
 	public CCommandDSC(boolean cppFileType, IProject project) {
-		compilerCommand = new ArrayList<KVStringPair>();
+		compilerCommand = new ArrayList<>();
 		discovered = false;
 		this.cppFileType = cppFileType;
 
-		symbols = new ArrayList<String>();
-		includes = new ArrayList<String>();
-		quoteIncludes = new ArrayList<String>();
+		symbols = new ArrayList<>();
+		includes = new ArrayList<>();
+		quoteIncludes = new ArrayList<>();
 		this.project = project;
 	}
 
@@ -181,7 +181,7 @@ public class CCommandDSC {
 	 * @return list of strings
 	 */
 	public List<String> getImacrosFile() {
-		List<String> imacrosFiles = new ArrayList<String>();
+		List<String> imacrosFiles = new ArrayList<>();
 		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext();) {
 			KVStringPair optionPair = i.next();
 			if (optionPair.getKey().equals(SCDOptionsEnum.IMACROS_FILE.toString())) {
@@ -195,7 +195,7 @@ public class CCommandDSC {
 	 * @return list of strings
 	 */
 	public List<String> getIncludeFile() {
-		List<String> includeFiles = new ArrayList<String>();
+		List<String> includeFiles = new ArrayList<>();
 		for (Iterator<KVStringPair> i = compilerCommand.iterator(); i.hasNext();) {
 			KVStringPair optionPair = i.next();
 			if (optionPair.getKey().equals(SCDOptionsEnum.INCLUDE_FILE.toString())) {
@@ -362,9 +362,9 @@ public class CCommandDSC {
 	public void resolveOptions(IProject project) {
 		if (!isDiscovered()) {
 			// that's wrong for sure, options cannot be resolved fron the optionPairs??
-			ArrayList<String> symbols = new ArrayList<String>();
-			ArrayList<String> includes = new ArrayList<String>();
-			ArrayList<String> quoteincludes = new ArrayList<String>();
+			ArrayList<String> symbols = new ArrayList<>();
+			ArrayList<String> includes = new ArrayList<>();
+			ArrayList<String> quoteincludes = new ArrayList<>();
 			for (Iterator<KVStringPair> options = compilerCommand.iterator(); options.hasNext();) {
 				KVStringPair optionPair = options.next();
 				String key = optionPair.getKey();
@@ -410,7 +410,7 @@ public class CCommandDSC {
 	}
 
 	public static List<String> makeRelative(IProject project, List<String> paths) {
-		List<String> list = new ArrayList<String>(paths.size());
+		List<String> list = new ArrayList<>(paths.size());
 		for (Iterator<String> iter = paths.iterator(); iter.hasNext();) {
 			String path = iter.next();
 			path = makeRelative(project, new Path(path)).toOSString();
@@ -439,7 +439,7 @@ public class CCommandDSC {
 	}
 
 	public static List<String> makeAbsolute(IProject project, List<String> paths) {
-		List<String> list = new ArrayList<String>(paths.size());
+		List<String> list = new ArrayList<>(paths.size());
 		for (Iterator<String> iter = paths.iterator(); iter.hasNext();) {
 			String path = iter.next();
 			path = makeAbsolute(project, path);

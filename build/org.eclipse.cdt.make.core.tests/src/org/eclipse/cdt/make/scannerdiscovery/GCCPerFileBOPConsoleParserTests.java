@@ -17,8 +17,6 @@ package org.eclipse.cdt.make.scannerdiscovery;
 import java.io.File;
 import java.util.List;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.IMarkerGenerator;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.cdt.core.model.ICProject;
@@ -32,6 +30,8 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestSuite;
 
 public class GCCPerFileBOPConsoleParserTests extends BaseBOPConsoleParserTests {
 	private final static IMarkerGenerator MARKER_GENERATOR = new IMarkerGenerator() {

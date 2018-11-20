@@ -17,7 +17,7 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * This interface is used to represent file context data
- *  
+ *
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -38,7 +38,7 @@ public interface IFileContextData {
 
 	/**
 	 * Returns the option context data
-	 * 
+	 *
 	 * @return IOptionContextData
 	 */
 	public IOptionContextData getOptionContextData();

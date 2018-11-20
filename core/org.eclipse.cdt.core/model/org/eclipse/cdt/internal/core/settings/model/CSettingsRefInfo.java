@@ -30,9 +30,9 @@ import org.eclipse.cdt.internal.core.settings.model.CExternalSettingsManager.CCo
 
 class CSettingsRefInfo {
 
-	/** External Settings Holder Map 
+	/** External Settings Holder Map
 	 *  From references container -> to concrete held settings */
-	private HashMap<CContainerRef, CRefSettingsHolder> fESHolderMap = new LinkedHashMap<CContainerRef, CRefSettingsHolder>();
+	private HashMap<CContainerRef, CRefSettingsHolder> fESHolderMap = new LinkedHashMap<>();
 
 	CSettingsRefInfo() {
 	}
@@ -59,7 +59,7 @@ class CSettingsRefInfo {
 	}
 
 	CContainerRef[] getReferences(String factoryId) {
-		List<CContainerRef> list = new ArrayList<CContainerRef>();
+		List<CContainerRef> list = new ArrayList<>();
 		for (CContainerRef r : fESHolderMap.keySet()) {
 			if (r.getFactoryId().equals(factoryId))
 				list.add(r);
@@ -104,7 +104,7 @@ class CSettingsRefInfo {
 	}
 
 	ICSettingEntry[] getAllEntries(int kind) {
-		Map<EntryNameKey, ICSettingEntry> map = new LinkedHashMap<EntryNameKey, ICSettingEntry>();
+		Map<EntryNameKey, ICSettingEntry> map = new LinkedHashMap<>();
 		for (CRefSettingsHolder h : fESHolderMap.values()) {
 			CExternalSetting[] settings = h.getExternalSettings();
 			for (int i = 0; i < settings.length; i++) {

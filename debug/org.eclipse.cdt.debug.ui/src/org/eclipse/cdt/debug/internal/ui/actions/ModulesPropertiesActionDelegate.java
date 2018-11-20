@@ -34,8 +34,8 @@ public class ModulesPropertiesActionDelegate extends ActionDelegate implements I
 
 	private IWorkbenchPart fTargetPart;
 
-	/** 
-	 * Constructor for ModulesPropertiesActionDelegate. 
+	/**
+	 * Constructor for ModulesPropertiesActionDelegate.
 	 */
 	public ModulesPropertiesActionDelegate() {
 		super();

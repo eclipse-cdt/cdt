@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.testsrunner.internal.ui.view;
 
+import java.text.MessageFormat;
+
 import org.eclipse.cdt.testsrunner.internal.TestsRunnerPlugin;
 import org.eclipse.cdt.testsrunner.model.ITestItem;
 import org.eclipse.cdt.testsrunner.model.ITestingSession;
@@ -22,7 +24,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-import java.text.MessageFormat;
 
 /**
  * Shows a simple tests count statics information (run/error/failed).
@@ -66,7 +67,7 @@ public class CounterPanel extends Composite {
 
 	/**
 	 * Creates counter label widget.
-	 * 
+	 *
 	 * @param name widget text prefix
 	 * @param image widget image or <code>null</code>
 	 * @return created label
@@ -90,7 +91,7 @@ public class CounterPanel extends Composite {
 
 	/**
 	 * Sets the testing session to show information about.
-	 * 
+	 *
 	 * @param testingSession testing session (null is not acceptable)
 	 */
 	public void setTestingSession(ITestingSession testingSession) {
@@ -112,7 +113,7 @@ public class CounterPanel extends Composite {
 
 	/**
 	 * Sets a new value for the failed tests counter.
-	 * 
+	 *
 	 * @param newValue new counter value
 	 */
 	private void setFailedCounter(int newValue) {
@@ -121,7 +122,7 @@ public class CounterPanel extends Composite {
 
 	/**
 	 * Sets a new value for the error tests counter.
-	 * 
+	 *
 	 * @param newValue new counter value
 	 */
 	private void setAbortedCounter(int newValue) {
@@ -130,7 +131,7 @@ public class CounterPanel extends Composite {
 
 	/**
 	 * Sets a new value for the run tests counter.
-	 * 
+	 *
 	 * @param currentValue new counter value
 	 * @param skippedValue skipped tests counter
 	 */

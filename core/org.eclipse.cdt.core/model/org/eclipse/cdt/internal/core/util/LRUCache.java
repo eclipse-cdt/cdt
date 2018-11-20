@@ -17,12 +17,12 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 /**
- * The <code>LRUCache</code> is a hash table that stores a finite number of elements.  
+ * The <code>LRUCache</code> is a hash table that stores a finite number of elements.
  * When an attempt is made to add values to a full cache, the least recently used values
  * in the cache are discarded to make room for the new values as necessary.
- * 
+ *
  * <p>The data structure is based on the LRU virtual memory paging scheme.
- * 
+ *
  * <p>Objects can take up a variable amount of cache space by implementing
  * the <code>ILRUCacheable</code> interface.
  *
@@ -30,13 +30,13 @@ import java.util.Hashtable;
  * have to be added to ensure atomic insertions and deletions from the cache.
  *
  * @see ILRUCacheable
- * 
+ *
  * This class is similar to the JDT LRUCache class.
  */
 public class LRUCache<K, T> implements Cloneable {
 
 	/**
-	 * This type is used internally by the LRUCache to represent entries 
+	 * This type is used internally by the LRUCache to represent entries
 	 * stored in the cache.
 	 * It is static because it does not require a pointer to the cache
 	 * which contains it.
@@ -114,7 +114,7 @@ public class LRUCache<K, T> implements Cloneable {
 	protected Hashtable<K, LRUCacheEntry<K, T>> fEntryTable;
 
 	/**
-	 * Start of queue (most recently used entry) 
+	 * Start of queue (most recently used entry)
 	 */
 	protected LRUCacheEntry<K, T> fEntryQueue;
 
@@ -129,7 +129,7 @@ public class LRUCache<K, T> implements Cloneable {
 	protected static final int DEFAULT_SPACELIMIT = 100;
 
 	/**
-	 * Creates a new cache.  Size of cache is defined by 
+	 * Creates a new cache.  Size of cache is defined by
 	 * <code>DEFAULT_SPACELIMIT</code>.
 	 */
 	public LRUCache() {
@@ -143,7 +143,7 @@ public class LRUCache<K, T> implements Cloneable {
 	public LRUCache(int size) {
 		fTimestampCounter = fCurrentSpace = 0;
 		fEntryQueue = fEntryQueueTail = null;
-		fEntryTable = new Hashtable<K, LRUCacheEntry<K, T>>(size);
+		fEntryTable = new Hashtable<>(size);
 		fSpaceLimit = size;
 	}
 
@@ -172,7 +172,7 @@ public class LRUCache<K, T> implements Cloneable {
 	public void flush() {
 		fCurrentSpace = 0;
 		LRUCacheEntry<K, T> entry = fEntryQueueTail; // Remember last entry
-		fEntryTable = new Hashtable<K, LRUCacheEntry<K, T>>(); // Clear it out
+		fEntryTable = new Hashtable<>(); // Clear it out
 		fEntryQueue = fEntryQueueTail = null;
 		while (entry != null) { // send deletion notifications in LRU order
 			privateNotifyDeletionFromCache(entry);
@@ -272,20 +272,20 @@ public class LRUCache<K, T> implements Cloneable {
 	 * Returns a new LRUCache instance
 	 */
 	protected LRUCache<K, T> newInstance(int size) {
-		return new LRUCache<K, T>(size);
+		return new LRUCache<>(size);
 	}
 
 	/**
 	 * Adds an entry for the given key/value/space.
 	 */
 	protected void privateAdd(K key, T value, int space) {
-		LRUCacheEntry<K, T> entry = new LRUCacheEntry<K, T>(key, value, space);
+		LRUCacheEntry<K, T> entry = new LRUCacheEntry<>(key, value, space);
 		this.privateAddEntry(entry, false);
 	}
 
 	/**
 	 * Adds the given entry from the receiver.
-	 * @param shuffle Indicates whether we are just shuffling the queue 
+	 * @param shuffle Indicates whether we are just shuffling the queue
 	 * (i.e., the entry table is left alone).
 	 */
 	protected void privateAddEntry(LRUCacheEntry<K, T> entry, boolean shuffle) {
@@ -309,8 +309,8 @@ public class LRUCache<K, T> implements Cloneable {
 	}
 
 	/**
-	 * An entry has been removed from the cache, for example because it has 
-	 * fallen off the bottom of the LRU queue.  
+	 * An entry has been removed from the cache, for example because it has
+	 * fallen off the bottom of the LRU queue.
 	 * Subclasses could over-ride this to implement a persistent cache below the LRU cache.
 	 */
 	protected void privateNotifyDeletionFromCache(LRUCacheEntry<K, T> entry) {
@@ -318,8 +318,8 @@ public class LRUCache<K, T> implements Cloneable {
 	}
 
 	/**
-	 * Removes the entry from the entry queue.  
-	 * @param shuffle indicates whether we are just shuffling the queue 
+	 * Removes the entry from the entry queue.
+	 * @param shuffle indicates whether we are just shuffling the queue
 	 * (i.e., the entry table is left alone).
 	 */
 	protected void privateRemoveEntry(LRUCacheEntry<K, T> entry, boolean shuffle) {
@@ -364,7 +364,7 @@ public class LRUCache<K, T> implements Cloneable {
 		if (entry != null) {
 			/*
 			 * Replace the entry in the cache if it would not overflow
-			 * the cache.  Otherwise flush the entry and re-add it so as 
+			 * the cache.  Otherwise flush the entry and re-add it so as
 			 * to keep cache within budget
 			 */
 			oldSpace = entry._fSpace;
@@ -464,7 +464,7 @@ public class LRUCache<K, T> implements Cloneable {
 	}
 
 	/**
-	 * Updates the timestamp for the given entry, ensuring that the queue is 
+	 * Updates the timestamp for the given entry, ensuring that the queue is
 	 * kept in correct order.  The entry must exist
 	 */
 	protected void updateTimestamp(LRUCacheEntry<K, T> entry) {

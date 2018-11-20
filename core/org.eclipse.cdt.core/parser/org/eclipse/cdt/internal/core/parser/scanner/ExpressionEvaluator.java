@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial implementation
  *     Markus Schorn (Wind River Systems)
@@ -377,7 +377,7 @@ public class ExpressionEvaluator {
 	}
 
 	public static long getNumber(char[] image) throws EvalException {
-		// Integer constants written in binary are a non-standard extension 
+		// Integer constants written in binary are a non-standard extension
 		// supported by GCC since 4.3 and by some other C compilers
 		// They consist of a prefix 0b or 0B, followed by a sequence of 0 and 1 digits
 		// see http://gcc.gnu.org/onlinedocs/gcc/Binary-constants.html

@@ -398,7 +398,7 @@ public class CPPASTQualifiedName extends CPPASTNameBase implements ICPPASTQualif
 
 	private List<IBinding> filterClassScopeBindings(ICPPClassType classType, IBinding[] bindings,
 			final boolean isDeclaration) {
-		List<IBinding> filtered = new ArrayList<IBinding>();
+		List<IBinding> filtered = new ArrayList<>();
 		final boolean allowNonstatic = canBeFieldAccess(classType) || isAddressOf() || inUsingDecl();
 		final IBinding templateDefinition = (classType instanceof ICPPTemplateInstance)
 				? ((ICPPTemplateInstance) classType).getTemplateDefinition()

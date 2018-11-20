@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.filters;
 
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
-
 import org.eclipse.cdt.internal.core.model.CElement;
 import org.eclipse.cdt.internal.core.model.Enumeration;
 import org.eclipse.cdt.internal.core.model.Structure;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * Filters out anonymous structs and enums.

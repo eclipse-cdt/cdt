@@ -87,7 +87,7 @@ public class CDefaultFileData extends CFileData {
 	//	public void setExcluded(boolean excluded) {
 	//		if(excluded == fIsExcluded)
 	//			return;
-	//		
+	//
 	//		fIsExcluded = excluded;
 	//	}
 

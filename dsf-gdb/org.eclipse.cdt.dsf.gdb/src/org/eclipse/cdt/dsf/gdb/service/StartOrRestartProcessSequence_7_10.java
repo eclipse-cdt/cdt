@@ -57,7 +57,7 @@ public class StartOrRestartProcessSequence_7_10 extends StartOrRestartProcessSeq
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Insert the new stepSetReverseMode after stepSetReverseOff
 			orderList.add(orderList.indexOf("stepSetReverseOff") + 1, "stepSetReverseMode"); //$NON-NLS-1$ //$NON-NLS-2$

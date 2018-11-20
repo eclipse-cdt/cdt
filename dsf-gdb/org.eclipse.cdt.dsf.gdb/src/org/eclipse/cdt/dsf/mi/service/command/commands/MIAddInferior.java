@@ -18,15 +18,15 @@ import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommand
 import org.eclipse.cdt.dsf.mi.service.command.output.MIAddInferiorInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
-/**	
+/**
  *   -add-inferior
  *   ^done,inferior="i2"
- *   
- *   Creates a new inferior. The created inferior is not associated with any executable. 
+ *
+ *   Creates a new inferior. The created inferior is not associated with any executable.
  *   Such association may be established with the '-file-exec-and-symbols' command.
- *   The command response has a single field, 'thread-group', whose value is the 
+ *   The command response has a single field, 'thread-group', whose value is the
  *   identifier of the thread group corresponding to the new inferior.
- *   
+ *
  *   @since 4.0
  */
 public class MIAddInferior extends MICommand<MIAddInferiorInfo> {

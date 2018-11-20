@@ -1360,7 +1360,7 @@ public abstract class AbstractIndexerTask extends PDOMWriter {
 	 * Parses comments to extract replacement headers from <code>@headername{header}</code> and
 	 * {@code IWYU pragma: private}.
 	 *
-	 * @return replacement headers keyed by file paths 
+	 * @return replacement headers keyed by file paths
 	 */
 	private Map<String, String> extractReplacementHeaders(IASTComment[] comments, IProgressMonitor monitor) {
 		Map<String, String> replacementHeaders = new HashMap<>();

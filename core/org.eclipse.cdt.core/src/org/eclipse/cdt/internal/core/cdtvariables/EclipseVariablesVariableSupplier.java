@@ -176,7 +176,7 @@ public class EclipseVariablesVariableSupplier implements ICdtVariableSupplier {
 
 		IStringVariableManager mngr = VariablesPlugin.getDefault().getStringVariableManager();
 		IDynamicVariable vars[] = mngr.getDynamicVariables();
-		Map<String, IStringVariable> map = new HashMap<String, IStringVariable>();
+		Map<String, IStringVariable> map = new HashMap<>();
 		for (IDynamicVariable var : vars) {
 			final String name = var.getName();
 			if (!isDeadlockProneVariable(name)) {

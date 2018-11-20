@@ -37,7 +37,7 @@ public interface IIndexFragmentFile extends IIndexFile {
 	void setSourceReadTime(long time) throws CoreException;
 
 	/**
-	 * Sets the hash of the file content. 
+	 * Sets the hash of the file content.
 	 */
 	void setContentsHash(long hash) throws CoreException;
 
@@ -86,13 +86,13 @@ public interface IIndexFragmentFile extends IIndexFile {
 	int getLinkageID() throws CoreException;
 
 	/**
-	 * Changes the inclusions pointing to 'source' to point to this file, instead. 
+	 * Changes the inclusions pointing to 'source' to point to this file, instead.
 	 * The file 'source' must belong to the same fragment as this file.
 	 */
 	void transferIncluders(IIndexFragmentFile source) throws CoreException;
 
 	/**
-	 * Changes the inclusion from the context of 'source' to point to this file, instead. 
+	 * Changes the inclusion from the context of 'source' to point to this file, instead.
 	 * The file 'source' must belong to the same fragment as this file.
 	 */
 	void transferContext(IIndexFragmentFile source) throws CoreException;

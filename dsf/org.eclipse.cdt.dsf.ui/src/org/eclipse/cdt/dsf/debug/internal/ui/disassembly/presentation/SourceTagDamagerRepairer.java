@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -45,11 +45,11 @@ import org.eclipse.swt.graphics.RGB;
 public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements ISourceTagListener {
 
 	private ISourceTagProvider fSourceTagProvider;
-	private Map<String, ITokenScanner> fScannerMap = new HashMap<String, ITokenScanner>();
-	private List<ISourceTag> fSourceTags = new ArrayList<ISourceTag>();
+	private Map<String, ITokenScanner> fScannerMap = new HashMap<>();
+	private List<ISourceTag> fSourceTags = new ArrayList<>();
 	private IColorManager fColorManager;
 	private IPreferenceStore fPreferenceStore;
-	private Map<String, TextAttribute> fAttributeMap = new HashMap<String, TextAttribute>();
+	private Map<String, TextAttribute> fAttributeMap = new HashMap<>();
 
 	private final static String[] KEYS = { SemanticHighlightings.CLASS, SemanticHighlightings.METHOD_DECLARATION,
 			SemanticHighlightings.FUNCTION_DECLARATION, SemanticHighlightings.FIELD,
@@ -356,7 +356,7 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 
 	/**
 	 * Test whether the given preference change affects us.
-	 * 
+	 *
 	 * @param event
 	 * @return <code>true</code> if the given event affects the behavior.
 	 */
@@ -366,7 +366,7 @@ public class SourceTagDamagerRepairer extends DefaultDamagerRepairer implements 
 
 	/**
 	 * Adapt to changes in the preferences.
-	 * 
+	 *
 	 * @param event
 	 */
 	public void handlePropertyChangeEvent(PropertyChangeEvent event) {

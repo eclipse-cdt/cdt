@@ -15,14 +15,12 @@ package org.eclipse.cdt.internal.ui.refactoring.extractfunction;
 
 import java.util.List;
 
-import org.eclipse.text.edits.TextEditGroup;
-
 import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.core.dom.rewrite.ASTRewrite;
-
 import org.eclipse.cdt.internal.ui.refactoring.ModificationCollector;
 import org.eclipse.cdt.internal.ui.refactoring.NodeContainer;
+import org.eclipse.text.edits.TextEditGroup;
 
 final class SimilarReplacerVisitor extends SimilarFinderVisitor {
 	private final IASTName name;

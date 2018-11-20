@@ -10,9 +10,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.wizards.project;
 
-import org.eclipse.tools.templates.ui.NewWizard;
-
 import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.tools.templates.ui.NewWizard;
 
 public class NewCDTProjectWizard extends NewWizard {
 

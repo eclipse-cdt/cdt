@@ -101,7 +101,7 @@ public class LaunchUtils {
 
 	/**
 	 * Verify that program name of the configuration can be found as a file.
-	 * 
+	 *
 	 * @return Absolute path of the program location
 	 */
 	public static IPath verifyProgramPath(ILaunchConfiguration configuration, ICProject cproject) throws CoreException {
@@ -128,7 +128,7 @@ public class LaunchUtils {
 		if (!programPath.toFile().exists()) {
 			abort(LaunchMessages.getString("AbstractCLaunchDelegate.Program_file_does_not_exist"), //$NON-NLS-1$
 					new FileNotFoundException(
-							LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", //$NON-NLS-1$ 
+							LaunchMessages.getFormattedString("AbstractCLaunchDelegate.PROGRAM_PATH_not_found", //$NON-NLS-1$
 									programPath.toOSString())),
 					ICDTLaunchConfigurationConstants.ERR_PROGRAM_NOT_EXIST);
 		}
@@ -138,8 +138,8 @@ public class LaunchUtils {
 
 	/**
 	 * Verify that the executable path points to a valid binary file.
-	 * 
-	 * @return An object representing the binary file. 
+	 *
+	 * @return An object representing the binary file.
 	 */
 	public static IBinaryObject verifyBinary(ILaunchConfiguration configuration, IPath exePath) throws CoreException {
 		ICProject cproject = getCProject(configuration);
@@ -178,7 +178,7 @@ public class LaunchUtils {
 	/**
 	 * Throws a core exception with an error status object built from the given
 	 * message, lower level exception, and error code.
-	 * 
+	 *
 	 * @param message
 	 *            the status message
 	 * @param exception
@@ -237,10 +237,10 @@ public class LaunchUtils {
 	/**
 	 * Find gdb version info from a string object which is supposed to
 	 * contain output text of "gdb --version" command.
-	 *   
-	 * @param versionOutput 
+	 *
+	 * @param versionOutput
 	 * 		output text from "gdb --version" command .
-	 * @return 
+	 * @return
 	 * 		String representation of version of gdb such as "6.8" on success;
 	 *      empty string otherwise.
 	 * @since 2.0
@@ -277,9 +277,9 @@ public class LaunchUtils {
 	 * This method actually launches 'gdb --version' to determine the version
 	 * of the GDB that is being used.  This method should ideally be called
 	 * only once per session and the resulting version string stored for future uses.
-	 * 
+	 *
 	 * A timeout is scheduled which will kill the process if it takes too long.
-	 * 
+	 *
 	 * @deprecated Replaced with {@link GdbLaunch#getGDBVersion()}
 	 */
 	@Deprecated
@@ -305,7 +305,7 @@ public class LaunchUtils {
 
 				@Override
 				protected IStatus run(IProgressMonitor arg) {
-					// Took too long.  Kill the gdb process and 
+					// Took too long.  Kill the gdb process and
 					// let things clean up.
 					finalProc.destroy();
 					return Status.OK_STATUS;
@@ -320,7 +320,7 @@ public class LaunchUtils {
 				Exception detailedException = null;
 				if (!streamOutput.isEmpty()) {
 					// We got some output but couldn't parse it.  Make that output visible to the user in the error dialog.
-					detailedException = new Exception("Unexpected output format: \n\n" + streamOutput); //$NON-NLS-1$        		
+					detailedException = new Exception("Unexpected output format: \n\n" + streamOutput); //$NON-NLS-1$
 				} else {
 					// We got no output.  Check if we got something on the error stream.
 					streamOutput = readStream(process.getErrorStream());
@@ -330,7 +330,7 @@ public class LaunchUtils {
 				}
 
 				throw new DebugException(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
-						"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$ 
+						"Could not determine GDB version using command: " + StringUtil.join(args, " "), //$NON-NLS-1$ //$NON-NLS-2$
 						detailedException));
 			}
 			return gdbVersion;
@@ -417,7 +417,7 @@ public class LaunchUtils {
 
 	/**
 	 * Read from the specified stream and return what was read.
-	 * 
+	 *
 	 * @param stream The input stream to be used to read the data.  This method will close the stream.
 	 * @return The data read from the stream
 	 * @throws IOException If an IOException happens when reading the stream
@@ -529,7 +529,7 @@ public class LaunchUtils {
 		}
 
 		// Environment variables and inherited vars
-		HashMap<String, String> envMap = new HashMap<String, String>();
+		HashMap<String, String> envMap = new HashMap<>();
 		IEnvironmentVariable[] vars = CCorePlugin.getDefault().getBuildEnvironmentManager().getVariables(cfg, true);
 		for (IEnvironmentVariable var : vars) {
 			envMap.put(var.getName(), var.getValue());
@@ -551,7 +551,7 @@ public class LaunchUtils {
 		}
 
 		// Turn it into an envp format
-		List<String> strings = new ArrayList<String>(envMap.size());
+		List<String> strings = new ArrayList<>(envMap.size());
 		for (Entry<String, String> entry : envMap.entrySet()) {
 			StringBuilder buffer = new StringBuilder(entry.getKey());
 			buffer.append('=').append(entry.getValue());
@@ -564,7 +564,7 @@ public class LaunchUtils {
 	/**
 	 * Returns <code>true</code> if the launch is meant to be in Non-Stop mode.
 	 * Returns <code>false</code> otherwise.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static boolean getIsNonStopMode(ILaunchConfiguration config) {
@@ -578,7 +578,7 @@ public class LaunchUtils {
 
 	/**
 	 * Returns workspace-level default for the Non-Stop mode.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static boolean getIsNonStopModeDefault() {
@@ -589,7 +589,7 @@ public class LaunchUtils {
 
 	/**
 	 * Returns workspace-level default for the stop at main option.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static boolean getStopAtMainDefault() {
@@ -600,7 +600,7 @@ public class LaunchUtils {
 
 	/**
 	 * Returns workspace-level default for the stop at main symbol.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static String getStopAtMainSymbolDefault() {
@@ -612,7 +612,7 @@ public class LaunchUtils {
 	/**
 	 * Returns <code>true</code> if the launch is meant to be for post-mortem
 	 * tracing.  Returns <code>false</code> otherwise.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static boolean getIsPostMortemTracing(ILaunchConfiguration config) {

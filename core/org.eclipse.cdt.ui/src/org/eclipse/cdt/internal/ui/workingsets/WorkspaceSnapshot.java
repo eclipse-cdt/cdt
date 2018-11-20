@@ -19,6 +19,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
@@ -31,11 +35,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IWorkingSet;
-
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * <p>
@@ -51,15 +50,15 @@ import org.eclipse.cdt.ui.CUIPlugin;
  * {@link WorkingSetConfigurationManager}. Then make edits to the various snapshots of the configuration
  * elements and {@linkplain #save() save} the snapshot
  * </p>
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public class WorkspaceSnapshot {
-	private Map<String, IWorkingSetProxy.ISnapshot> workingSets = new java.util.HashMap<String, IWorkingSetProxy.ISnapshot>();
-	private Map<IProject, ProjectState> projectStates = new java.util.HashMap<IProject, ProjectState>();
+	private Map<String, IWorkingSetProxy.ISnapshot> workingSets = new java.util.HashMap<>();
+	private Map<IProject, ProjectState> projectStates = new java.util.HashMap<>();
 
 	/**
 	 * Initializes me. I capture the current C/C++ active configuration state of the projects in the
@@ -79,12 +78,12 @@ public class WorkspaceSnapshot {
 
 	/**
 	 * Creates a project state using the registered factory, if possible.
-	 * 
+	 *
 	 * @param project
 	 *            a workspace project
 	 * @param desc
 	 *            its CDT project description
-	 * 
+	 *
 	 * @return its state capture (will never be <code>null</code>)
 	 */
 	private static ProjectState createProjectState(IProject project, ICProjectDescription desc) {
@@ -106,7 +105,7 @@ public class WorkspaceSnapshot {
 
 	/**
 	 * Initializes me with the specified working sets to copy for editing.
-	 * 
+	 *
 	 * @param workingSets
 	 *            the working sets to copy
 	 * @return myself
@@ -130,12 +129,12 @@ public class WorkspaceSnapshot {
 
 	/**
 	 * Obtains a mutable snapshot of the named working set.
-	 * 
+	 *
 	 * @param name
 	 *            the working set to retrieve
-	 * 
+	 *
 	 * @return the working set snapshot, or <code>null</code> if there is no working set by this name
-	 * 
+	 *
 	 * @see #getWorkingSets()
 	 */
 	public IWorkingSetProxy.ISnapshot getWorkingSet(String name) {
@@ -144,9 +143,9 @@ public class WorkspaceSnapshot {
 
 	/**
 	 * Obtains snapshots of all of the working sets currently defined by the workbench.
-	 * 
+	 *
 	 * @return the working set snapshots
-	 * 
+	 *
 	 * @see #getWorkingSet(String)
 	 */
 	public Collection<IWorkingSetProxy.ISnapshot> getWorkingSets() {
@@ -156,7 +155,7 @@ public class WorkspaceSnapshot {
 	/**
 	 * Obtains the project state recording the initial configuration of the specified <tt>project</tt> at the
 	 * time that this snapshot was taken.
-	 * 
+	 *
 	 * @param project
 	 *            a project
 	 * @return its snapshot/delta state
@@ -168,7 +167,7 @@ public class WorkspaceSnapshot {
 	/**
 	 * Queries the ID of the configuration of the specified project that was active when the workspace
 	 * snapshot was taken.
-	 * 
+	 *
 	 * @param project
 	 *            a project
 	 * @return its active configuration ID at the time of the snapshot
@@ -186,10 +185,10 @@ public class WorkspaceSnapshot {
 
 	/**
 	 * Queries the ID of the currently active configuration of the specified project.
-	 * 
+	 *
 	 * @param project
 	 *            a project
-	 * 
+	 *
 	 * @return the current active configuration ID
 	 */
 	String getActiveConfigurationID(IProject project) {
@@ -206,12 +205,12 @@ public class WorkspaceSnapshot {
 	/**
 	 * Queries whether the configuration selected by the given project in a working set configuration is
 	 * currently active in the workspace.
-	 * 
+	 *
 	 * @param project
 	 *            a project configuration element in a working set configuration
-	 * 
+	 *
 	 * @return whether the project's selected configuration is active
-	 * 
+	 *
 	 * @see #activate(IProject, String)
 	 */
 	boolean isActive(IWorkingSetProjectConfiguration project) {
@@ -228,12 +227,12 @@ public class WorkspaceSnapshot {
 	/**
 	 * Activates, in the workspace, the specified configuration of a project. This method has no effect if the
 	 * given configuration is already active.
-	 * 
+	 *
 	 * @param project
 	 *            the project for which to set the active configuration
 	 * @param configID
 	 *            the ID of the configuration to activate
-	 * 
+	 *
 	 * @see #isActive(IWorkingSetProjectConfiguration)
 	 */
 	void activate(IProject project, String configID) {
@@ -257,10 +256,10 @@ public class WorkspaceSnapshot {
 
 	/**
 	 * Obtains the configurations of the specified project, as known at the time that this snapshot was taken.
-	 * 
+	 *
 	 * @param project
 	 *            a project
-	 * 
+	 *
 	 * @return its configurations, which may be an empty collection if the project is not a C/C++ project
 	 */
 	public Collection<ICConfigurationDescription> getConfigurations(IProject project) {
@@ -278,12 +277,12 @@ public class WorkspaceSnapshot {
 
 	/**
 	 * Obtains the specified configuration of a project, as known at the time that this snapshot was taken.
-	 * 
+	 *
 	 * @param project
 	 *            a project
 	 * @param id
 	 *            the ID of a configuration
-	 * 
+	 *
 	 * @return the configuration, or <code>null</code> if there is none such by this ID
 	 */
 	public ICConfigurationDescription getConfiguration(IProject project, String id) {
@@ -294,11 +293,11 @@ public class WorkspaceSnapshot {
 	/**
 	 * Queries the projects that need to be built because their active configurations have been changed since
 	 * this snapshot was taken.
-	 * 
+	 *
 	 * @return the projects needing to be re-built
 	 */
 	public Collection<IProject> getProjectsToBuild() {
-		Collection<IProject> result = new java.util.ArrayList<IProject>();
+		Collection<IProject> result = new java.util.ArrayList<>();
 
 		for (ProjectState next : projectStates.values()) {
 			if (next.needsBuild()) {
@@ -325,9 +324,9 @@ public class WorkspaceSnapshot {
 	 * snapshot} was taken, and its delta from that original state. This tracks at least the C/C++ project
 	 * description (if any) and the original active configuration. Subclasses may track additional
 	 * configuration details.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	public static class ProjectState {
@@ -339,7 +338,7 @@ public class WorkspaceSnapshot {
 
 		/**
 		 * Initializes me with a project and its description.
-		 * 
+		 *
 		 * @param project
 		 *            the project whose state I track
 		 * @param desc
@@ -361,7 +360,7 @@ public class WorkspaceSnapshot {
 
 		/**
 		 * Obtains the project that I track.
-		 * 
+		 *
 		 * @return my project
 		 */
 		public final IProject getProject() {
@@ -370,7 +369,7 @@ public class WorkspaceSnapshot {
 
 		/**
 		 * Obtains the project description that was current when the snapshot was taken.
-		 * 
+		 *
 		 * @return my project description
 		 */
 		protected final ICProjectDescription getProjectDescription() {
@@ -380,7 +379,7 @@ public class WorkspaceSnapshot {
 		/**
 		 * Queries whether my project needs to be re-built because its active configuration has been changed
 		 * since the snapshot was taken, and it hasn't been built already.
-		 * 
+		 *
 		 * @return whether I need to be re-built
 		 */
 		public boolean needsBuild() {
@@ -389,7 +388,7 @@ public class WorkspaceSnapshot {
 
 		/**
 		 * Queries whether the specified configuration is currently active in the workspace for my project.
-		 * 
+		 *
 		 * @param configID
 		 *            the ID of a project build configuration
 		 * @return whether it is my project's active configuration
@@ -400,7 +399,7 @@ public class WorkspaceSnapshot {
 
 		/**
 		 * Queries the ID of the currently active configuration.
-		 * 
+		 *
 		 * @return the current active configuration ID
 		 */
 		protected String getActiveConfigurationID() {
@@ -410,7 +409,7 @@ public class WorkspaceSnapshot {
 		/**
 		 * Queries the ID of the configuration of my project that was active when the workspace snapshot was
 		 * taken.
-		 * 
+		 *
 		 * @return its active configuration ID at the time of the snapshot
 		 */
 		protected String getBaselineConfigurationID() {
@@ -420,7 +419,7 @@ public class WorkspaceSnapshot {
 		/**
 		 * Sets my project's active configuration to the specified configuration. This method has no effect if
 		 * this configuration is already active.
-		 * 
+		 *
 		 * @param configID
 		 *            the ID of the configuration to activate
 		 */
@@ -440,12 +439,12 @@ public class WorkspaceSnapshot {
 		/**
 		 * Builds the specified configuration of my project. I update myself to record a new build baseline if
 		 * the build succeeds.
-		 * 
+		 *
 		 * @param configID
 		 *            the configuration to build
 		 * @param monitor
 		 *            a monitor to report build progress
-		 * 
+		 *
 		 * @return the status of the build
 		 */
 		protected IStatus build(String configID, IProgressMonitor monitor) {
@@ -487,7 +486,7 @@ public class WorkspaceSnapshot {
 		/**
 		 * Records that we built the specified configuration ID. I will not {@linkplain #needsBuild() need a
 		 * build} if the last build configuration is my active configuration.
-		 * 
+		 *
 		 * @param configID
 		 *            the configuration that was built (not <code>null</code>)
 		 */
@@ -497,7 +496,7 @@ public class WorkspaceSnapshot {
 
 		/**
 		 * Obtains the configurations of my project that were defined at the time that the snapshot was taken.
-		 * 
+		 *
 		 * @return my project's configurations, which may be empty if it is not a C/C++ project
 		 */
 		protected Collection<ICConfigurationDescription> getConfigurations() {
@@ -515,7 +514,7 @@ public class WorkspaceSnapshot {
 		/**
 		 * Obtains the specified configuration of my project as it was defined at the time that the snapshot
 		 * was taken.
-		 * 
+		 *
 		 * @param id
 		 *            a configuration ID
 		 * @return the matching configuration, or <code>null</code> if it did not exist

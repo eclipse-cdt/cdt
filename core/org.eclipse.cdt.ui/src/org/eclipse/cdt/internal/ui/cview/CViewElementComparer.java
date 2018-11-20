@@ -7,17 +7,16 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.cview;
 
-import org.eclipse.jface.viewers.IElementComparer;
-
 import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.jface.viewers.IElementComparer;
 
 public class CViewElementComparer implements IElementComparer {
 
@@ -26,7 +25,7 @@ public class CViewElementComparer implements IElementComparer {
 		if (o1 == o2) // this handles also the case that both are null
 			return true;
 		if (o1 == null)
-			return false; // o2 != null if we reach this point 
+			return false; // o2 != null if we reach this point
 		if (o1.equals(o2))
 			return true;
 

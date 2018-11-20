@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,8 +22,8 @@ import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.core.runtime.PlatformObject;
 
 /**
- * Top-level Data Model context for the PDA debugger representing the while PDA 
- * virtual machine.  
+ * Top-level Data Model context for the PDA debugger representing the while PDA
+ * virtual machine.
  * <p>
  * The PDA debugger is a single-threaded application.  Therefore this
  * top level context implements IExecutionDMContext directly, hence this
@@ -31,14 +31,14 @@ import org.eclipse.core.runtime.PlatformObject;
  * control opreations.
  * </p>
  * <p>
- * Also, the PDA debugger allows setting breakpoints in scope of the 
- * whole program only, so this context can be used with the breakpoints 
+ * Also, the PDA debugger allows setting breakpoints in scope of the
+ * whole program only, so this context can be used with the breakpoints
  * service to install/remove breakpoints.
  * </p>
  * <p>
- * Note: There should only be one instance of PDAVirtualMachineDMContext 
- * created by each PDA command control, so its equals method defaults to using 
- * instance comparison. 
+ * Note: There should only be one instance of PDAVirtualMachineDMContext
+ * created by each PDA command control, so its equals method defaults to using
+ * instance comparison.
  * </p>
  */
 public class PDAVirtualMachineDMContext extends PlatformObject

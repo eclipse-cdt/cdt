@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAStack;
 /**
  * The initialization sequence for PDA debugger services.  This sequence contains
  * the series of steps that are executed to properly initialize the PDA-DSF debug
- * session.  If any of the individual steps fail, the initialization will abort.   
+ * session.  If any of the individual steps fail, the initialization will abort.
  * <p>
  * The order in which services are initialized is important.  Some services depend
  * on other services and they assume that they will be initialized only if those
@@ -63,7 +63,7 @@ public class PDAServicesInitSequence extends Sequence {
 	}, new Step() {
 		@Override
 		public void execute(final RequestMonitor requestMonitor) {
-			// Start the low-level breakpoint service 
+			// Start the low-level breakpoint service
 			new PDABreakpoints(fSession).initialize(new RequestMonitor(getExecutor(), requestMonitor));
 		}
 	}, new Step() {

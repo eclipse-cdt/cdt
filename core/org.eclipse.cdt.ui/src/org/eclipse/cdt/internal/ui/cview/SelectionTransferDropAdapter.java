@@ -20,6 +20,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.dnd.CDTViewerDropAdapter;
+import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
@@ -32,16 +40,6 @@ import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
-import org.eclipse.cdt.internal.ui.dnd.CDTViewerDropAdapter;
-import org.eclipse.cdt.internal.ui.dnd.TransferDropTargetListener;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
 
 public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implements TransferDropTargetListener {
 
@@ -340,7 +338,7 @@ public class SelectionTransferDropAdapter extends CDTViewerDropAdapter implement
 	}
 
 	public static ICElement[] getCElements(List<?> elements) {
-		List<ICElement> resources = new ArrayList<ICElement>(elements.size());
+		List<ICElement> resources = new ArrayList<>(elements.size());
 		for (Iterator<?> iter = elements.iterator(); iter.hasNext();) {
 			Object element = iter.next();
 			if (element instanceof ITranslationUnit) {

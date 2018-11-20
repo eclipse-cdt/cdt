@@ -40,7 +40,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionDelegate;
 
 /**
- * The superclass for action delegates of views different than the Debug view and 
+ * The superclass for action delegates of views different than the Debug view and
  * driven by the selection in the Debug view.
  */
 public abstract class AbstractViewActionDelegate extends ActionDelegate

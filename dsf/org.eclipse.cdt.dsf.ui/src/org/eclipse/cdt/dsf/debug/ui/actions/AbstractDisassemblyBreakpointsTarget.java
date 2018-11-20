@@ -286,7 +286,7 @@ public abstract class AbstractDisassemblyBreakpointsTarget
 	}
 
 	private IBreakpoint[] getBreakpointsAtLine(IDisassemblyPart part, int line) {
-		List<IBreakpoint> breakpoints = new ArrayList<IBreakpoint>();
+		List<IBreakpoint> breakpoints = new ArrayList<>();
 		IAnnotationModel annotationModel = part.getTextViewer().getAnnotationModel();
 		IDocument document = part.getTextViewer().getDocument();
 		if (annotationModel != null) {
@@ -358,7 +358,7 @@ public abstract class AbstractDisassemblyBreakpointsTarget
 	 * Opens the properties dialog for the given breakpoint. This method can be
 	 * used on an existing breakpoint or on a blank breakpoint which doesn't
 	 * have an associated marker yet.
-	 * 
+	 *
 	 * @param bp
 	 *            The breakpoint to edit. This breakpoint may not have an
 	 *            associated marker yet.

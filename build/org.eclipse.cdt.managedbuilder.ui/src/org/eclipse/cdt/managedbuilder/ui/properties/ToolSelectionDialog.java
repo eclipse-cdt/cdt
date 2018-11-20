@@ -98,10 +98,10 @@ public class ToolSelectionDialog extends Dialog {
 		gd.heightHint = 300;
 		composite.setLayoutData(gd);
 
-		added = new ArrayList<ITool>();
-		removed = new ArrayList<ITool>();
-		left = new ArrayList<ITool>();
-		right = new ArrayList<ITool>();
+		added = new ArrayList<>();
+		removed = new ArrayList<>();
+		left = new ArrayList<>();
+		right = new ArrayList<>();
 
 		Composite c1 = new Composite(composite, SWT.NONE);
 		c1.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -476,7 +476,7 @@ public class ToolSelectionDialog extends Dialog {
 			if ((c & IModificationStatus.TOOLS_CONFLICT) != 0) {
 				s = s + Messages.ToolSelectionDialog_7;
 				ITool[][] tools = st.getToolsConflicts();
-				List<String> conflictTools = new ArrayList<String>();
+				List<String> conflictTools = new ArrayList<>();
 				for (int k = 0; k < t2.getItemCount(); k++) {
 					TableItem ti = t2.getItem(k);
 					ITool t = (ITool) ti.getData();

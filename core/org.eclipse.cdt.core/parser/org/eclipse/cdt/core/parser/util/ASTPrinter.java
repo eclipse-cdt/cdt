@@ -36,7 +36,7 @@ import org.eclipse.cdt.internal.core.dom.parser.ITypeContainer;
 
 /**
  * A utility that prints an AST to the console or any print stream, useful for debugging purposes.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -48,7 +48,7 @@ public class ASTPrinter {
 
 	/**
 	 * Prints the AST to the given PrintStream.
-	 * 
+	 *
 	 * @return Always returns false, boolean return type allows this method
 	 * to be called from a conditional breakpoint during debugging.
 	 */
@@ -86,7 +86,7 @@ public class ASTPrinter {
 
 	/**
 	 * Prints the AST to stdout.
-	 * 
+	 *
 	 * @return Always returns false, boolean return type allows this method
 	 * to be called from a conditional breakpoint during debugging.
 	 */
@@ -96,7 +96,7 @@ public class ASTPrinter {
 
 	/**
 	 * Prints problem nodes in the AST to the given printstream.
-	 * 
+	 *
 	 * @return Always returns false, boolean return type allows this method
 	 * to be called from a conditional breakpoint during debugging.
 	 */
@@ -122,7 +122,7 @@ public class ASTPrinter {
 
 	/**
 	 * Prints problem nodes in the AST to stdout.
-	 * 
+	 *
 	 * @return Always returns false, boolean return type allows this method
 	 * to be called from a conditional breakpoint during debugging.
 	 */

@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIBreakListInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  *   -break-list
  *
  *   Displays the list of inserted breakpoints, showing the following

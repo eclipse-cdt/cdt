@@ -294,7 +294,7 @@ public final class ASTRewrite {
 
 	/**
 	 * Removes all comments of a node.
-	 * 
+	 *
 	 * @param node the node.
 	 * @since 6.6
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -219,10 +219,10 @@ public class IntegralValueTests extends TestBase {
 		assertEvaluationEquals(7);
 	}
 
-	//  constexpr int f() { 
-	//		int y = 0, x = 5; 
-	//		x++; 
-	//		return x; 
+	//  constexpr int f() {
+	//		int y = 0, x = 5;
+	//		x++;
+	//		return x;
 	//	}
 
 	//	constexpr auto x = f();

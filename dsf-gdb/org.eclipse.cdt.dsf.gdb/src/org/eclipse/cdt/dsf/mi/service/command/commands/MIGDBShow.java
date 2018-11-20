@@ -17,11 +17,11 @@ import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *     -gdb-show
- *     
+ *
  * @since 4.3
- * 
+ *
  */
 public class MIGDBShow<V extends MIInfo> extends MICommand<V> {
 	public MIGDBShow(IDMContext ctx, String[] params) {

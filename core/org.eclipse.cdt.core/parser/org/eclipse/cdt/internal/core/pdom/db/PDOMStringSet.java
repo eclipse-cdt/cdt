@@ -99,7 +99,7 @@ public class PDOMStringSet {
 		NodeType.Item.put(db, new_node, record);
 
 		if (lazyCache == null)
-			lazyCache = new HashMap<String, Long>();
+			lazyCache = new HashMap<>();
 		lazyCache.put(str, record);
 
 		// If the Database has already been partially searched, then the loaded pointer will be after the
@@ -131,7 +131,7 @@ public class PDOMStringSet {
 
 		// otherwise prepare the cache for the data that is about to be loaded
 		if (lazyCache == null)
-			lazyCache = new HashMap<String, Long>();
+			lazyCache = new HashMap<>();
 
 		// if nothing has been loaded, then start loading with the head node, otherwise continue
 		// loading from whatever is after the last loaded node

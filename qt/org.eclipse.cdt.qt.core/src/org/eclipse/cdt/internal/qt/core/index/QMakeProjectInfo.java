@@ -42,7 +42,7 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 	private final State STATE_INVALID = new State();
 
 	// listeners
-	private final List<IQMakeProjectInfoListener> listeners = new CopyOnWriteArrayList<IQMakeProjectInfoListener>();
+	private final List<IQMakeProjectInfoListener> listeners = new CopyOnWriteArrayList<>();
 
 	private final IProject project;
 
@@ -190,7 +190,7 @@ public final class QMakeProjectInfo implements IQMakeProjectInfo {
 			// retrieves qmake executable path
 			String qmakeFilePath = qmakeEnvInfo != null ? qmakeEnvInfo.getQMakeFilePath() : null;
 			// retries environment
-			List<String> envList = new ArrayList<String>();
+			List<String> envList = new ArrayList<>();
 			Map<String, String> envMap = qmakeEnvInfo != null ? qmakeEnvInfo.getEnvironment()
 					: Collections.<String, String>emptyMap();
 			for (Map.Entry<String, String> entry : envMap.entrySet()) {

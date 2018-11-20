@@ -33,23 +33,23 @@ public interface IFolderInfo extends IResourceInfo {
 	CFolderData getFolderData();
 
 	/**
-	 * Returns a <code>ITool</code> for the tool associated with the 
+	 * Returns a <code>ITool</code> for the tool associated with the
 	 * output extension.
-	 * 
+	 *
 	 * @param extension the file extension of the output file
 	 * @return ITool
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	ITool getToolFromOutputExtension(String extension);
 
 	/**
-	 * Returns a <code>ITool</code> for the tool associated with the 
+	 * Returns a <code>ITool</code> for the tool associated with the
 	 * input extension.
-	 * 
+	 *
 	 * @param sourceExtension the file extension of the input file
 	 * @return ITool
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	ITool getToolFromInputExtension(String sourceExtension);

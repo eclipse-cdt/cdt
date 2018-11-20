@@ -22,6 +22,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -60,13 +65,6 @@ import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-
-import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
-import org.eclipse.cdt.internal.ui.util.Messages;
-
 /**
  * A content assist processor that aggregates the proposals of the
  * {@link org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer}s contributed via
@@ -81,7 +79,7 @@ import org.eclipse.cdt.internal.ui.util.Messages;
  * contexts are provided)</li>
  * <li>{@code getErrorMessage} to change error reporting</li>
  * </ul>
- * 
+ *
  * @since 4.0
  */
 public class ContentAssistProcessor implements IContentAssistProcessor {
@@ -242,7 +240,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 * Verifies that auto activation is allowed.
 	 * <p>
 	 * The default implementation always returns {@code true}.
-	 * 
+	 *
 	 * @param viewer  the text viewer
 	 * @param offset  the offset where content assist was invoked on
 	 * @return {@code true} if auto activation is allowed
@@ -274,7 +272,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * Filters and sorts the proposals. The passed list may be modified
 	 * and returned, or a new list may be created and returned.
-	 * 
+	 *
 	 * @param proposals the list of collected proposals (element type: {@link ICompletionProposal})
 	 * @param monitor a progress monitor
 	 * @param context TODO
@@ -330,7 +328,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	/**
 	 * Filters and sorts the context information objects. The passed list may be modified
 	 * and returned, or a new list may be created and returned.
-	 * 
+	 *
 	 * @param contexts the list of collected proposals (element type: {@link IContextInformation})
 	 * @param monitor a progress monitor
 	 * @return the list of filtered and sorted proposals, ready for
@@ -379,7 +377,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 	 * Creates a progress monitor.
 	 * <p>
 	 * The default implementation creates a {@code NullProgressMonitor}.
-	 * 
+	 *
 	 * @return a progress monitor
 	 */
 	protected IProgressMonitor createProgressMonitor() {
@@ -388,7 +386,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
 	/**
 	 * Creates the context that is passed to the completion proposal computers.
-	 * 
+	 *
 	 * @param viewer the viewer that content assist is invoked on
 	 * @param offset the content assist offset
 	 * @return the context to be passed to the computers,
@@ -400,7 +398,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 
 	/**
 	 * Test whether the current session was auto-activated.
-	 * 
+	 *
 	 * @return  {@code true} if the current session was auto-activated.
 	 */
 	protected boolean isAutoActivated() {
@@ -417,7 +415,7 @@ public class ContentAssistProcessor implements IContentAssistProcessor {
 		fRepetition++;
 
 		//		fAssistant.setShowMessage(fRepetition % 2 != 0);
-		//		
+		//
 		return fCategoryIteration.get(iteration);
 	}
 

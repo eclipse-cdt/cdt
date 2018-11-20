@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.editor.asm;
 
+import org.eclipse.cdt.ui.CDTUITools;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.filebuffers.IDocumentSetupParticipant;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -20,9 +22,6 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension3;
 import org.eclipse.jface.text.IDocumentPartitioner;
-
-import org.eclipse.cdt.ui.CDTUITools;
-import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Document setup participant for asesembly content.

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.cdt.dsf.mi.service.command.MIInferiorProcess_7_3;
 import org.eclipse.cdt.utils.pty.PTY;
 
 /**
- * Specialization for GDB >= 7.3 
+ * Specialization for GDB >= 7.3
  * @since 4.7
  */
 public class StartOrRestartProcessSequence_7_3 extends StartOrRestartProcessSequence_7_0 {

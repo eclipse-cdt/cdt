@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Sergey Prigogin (Google)
@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
@@ -50,7 +49,7 @@ public class CombinedWordRule implements IRule {
 	 */
 	public static class WordMatcher {
 		/** The table of predefined words and token for this matcher */
-		private Map<CharacterBuffer, IToken> fWords = new HashMap<CharacterBuffer, IToken>();
+		private Map<CharacterBuffer, IToken> fWords = new HashMap<>();
 
 		/**
 		 * Adds a word and the token to be returned if it is detected.
@@ -237,7 +236,7 @@ public class CombinedWordRule implements IRule {
 	private CharacterBuffer fBuffer = new CharacterBuffer(16);
 
 	/** List of word matchers */
-	private List<WordMatcher> fMatchers = new ArrayList<WordMatcher>();
+	private List<WordMatcher> fMatchers = new ArrayList<>();
 
 	/**
 	 * Creates a rule which, with the help of an word detector, will return the token

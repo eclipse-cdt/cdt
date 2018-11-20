@@ -20,13 +20,13 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.doctools.generic.GenericDocTag;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.doctools.generic.GenericDocTag;
 
 /**
  * Makes available information for Doxygen support.
@@ -61,7 +61,7 @@ public class DoxygenHelper extends AbstractPreferenceInitializer {
 		if (fTags == null) {
 			InputStream is = null;
 			try {
-				List<GenericDocTag> temp = new ArrayList<GenericDocTag>();
+				List<GenericDocTag> temp = new ArrayList<>();
 				is = FileLocator.openStream(CUIPlugin.getDefault().getBundle(), TAGS_CSV, false);
 				BufferedReader br = new BufferedReader(new InputStreamReader(is));
 				StringBuilder content = new StringBuilder(2000);

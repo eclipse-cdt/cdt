@@ -16,14 +16,13 @@ package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 import java.util.Map;
 import java.util.Vector;
 
+import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
+import org.eclipse.cdt.ui.templateengine.event.PatternEventListener;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-
-import org.eclipse.cdt.ui.templateengine.event.PatternEvent;
-import org.eclipse.cdt.ui.templateengine.event.PatternEventListener;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
 /**
  * By extending Composite we can create our own Container. UIComposite can act
@@ -46,14 +45,14 @@ public class UIComposite extends Composite {
 
 	/**
 	 * parent Composite, and The UIElement corresponding to this page.
-	 * 
+	 *
 	 * @param parent
 	 * @param uiElement
 	 */
 	public UIComposite(Composite parent, UIElement uiElement, Map<String, String> valueStore) {
 		super(parent, SWT.NONE);
 
-		vector = new Vector<PatternEventListener>();
+		vector = new Vector<>();
 		GridLayout layout = new GridLayout(2, false);
 		layout.marginWidth = 10;
 		layout.marginHeight = 5;
@@ -65,7 +64,7 @@ public class UIComposite extends Composite {
 
 	/**
 	 * add a PatternListener to the list.
-	 * 
+	 *
 	 * @param patternListener
 	 */
 	public void addPatternListener(PatternEventListener patternListener) {
@@ -74,7 +73,7 @@ public class UIComposite extends Composite {
 
 	/**
 	 * remove the PatternListener from the list.
-	 * 
+	 *
 	 * @param patternListener
 	 */
 	public void removePatternListener(PatternEventListener patternListener) {
@@ -104,7 +103,7 @@ public class UIComposite extends Composite {
 
 	/**
 	 * return the UIElement(group UI Element) represented by this UIComposite.
-	 * 
+	 *
 	 * @return UIElement.
 	 */
 	public UIElement getUIElement() {

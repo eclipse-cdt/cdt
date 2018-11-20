@@ -49,7 +49,7 @@ import junit.framework.TestSuite;
 /**
  * @author Alena Laskavaia
  *
- * Tests for ErrorParser manager and different parsers 
+ * Tests for ErrorParser manager and different parsers
  */
 public class ErrorParserManagerTest extends TestCase {
 	IWorkspace workspace;
@@ -73,15 +73,15 @@ public class ErrorParserManagerTest extends TestCase {
 	 * Sets up the test fixture.
 	 *
 	 * Called before every test case method.
-	 * 
-	 * Example code test the packages in the project 
+	 *
+	 * Example code test the packages in the project
 	 *  "com.qnx.tools.ide.cdt.core"
 	 */
 	@Override
 	protected void setUp() throws Exception {
 		/***
 		 * The test of the tests assume that they have a working workspace
-		 * and workspace root object to use to create projects/files in, 
+		 * and workspace root object to use to create projects/files in,
 		 * so we need to get them setup first.
 		 */
 		IWorkspaceDescription desc;
@@ -96,7 +96,7 @@ public class ErrorParserManagerTest extends TestCase {
 		desc.setAutoBuilding(false);
 		workspace.setDescription(desc);
 
-		errorList = new ArrayList<ProblemMarkerInfo>();
+		errorList = new ArrayList<>();
 		cProject = createProject("errorparsersanity");
 		markerGenerator = new IMarkerGenerator() {
 			@Override

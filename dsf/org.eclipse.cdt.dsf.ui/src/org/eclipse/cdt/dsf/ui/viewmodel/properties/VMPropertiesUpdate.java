@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -31,15 +31,15 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * Properties update used as to collect property data from the provider.  
+ * Properties update used as to collect property data from the provider.
  * <p>
  * The status returned by the VMPropertiesUpdate is always going to be of type
  * PropertiesUpdateStatus, which allows for setting status for individual
  * properties.
  * </p>
- * 
+ *
  * @see PropertiesUpdateStatus
- * 
+ *
  * @since 2.0
  */
 public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpdate {
@@ -50,7 +50,7 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
 	private final Set<String> fProperties;
 
 	/**
-	 * Flag indicating that the update has created a new map, as opposed to 
+	 * Flag indicating that the update has created a new map, as opposed to
 	 * using directly a map that was created using setAllProperties() call.
 	 */
 	private boolean fCreatedOwnMap = false;
@@ -91,7 +91,7 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
 		if (!fCreatedOwnMap) {
 			fCreatedOwnMap = true;
 			Map<String, Object> curValues = fValues;
-			fValues = new HashMap<String, Object>(fProperties.size() * 4 / 3, 0.75f);
+			fValues = new HashMap<>(fProperties.size() * 4 / 3, 0.75f);
 			if (curValues != null) {
 				fValues.putAll(curValues);
 			}
@@ -109,11 +109,11 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
 	}
 
 	/**
-	 * Overrides the base class to implement special handling of 
-	 * {@link PropertiesUpdateStatus}.  If the given status is an instance of 
+	 * Overrides the base class to implement special handling of
+	 * {@link PropertiesUpdateStatus}.  If the given status is an instance of
 	 * properties status, this new status will be set to the update.  Otherwise, the
 	 * given status will be merged into the updates existing properties status.
-	 * This way {@link #getStatus()} should always return an instance of 
+	 * This way {@link #getStatus()} should always return an instance of
 	 * <code>PropertiesUpdateStatus</code>.
 	 */
 	@Override
@@ -129,8 +129,8 @@ public class VMPropertiesUpdate extends VMViewerUpdate implements IPropertiesUpd
 	}
 
 	/**
-	 * Overrides the standard done in order to store the retrieved values 
-	 * in the client's request monitor. 
+	 * Overrides the standard done in order to store the retrieved values
+	 * in the client's request monitor.
 	 */
 	@Override
 	public void done() {

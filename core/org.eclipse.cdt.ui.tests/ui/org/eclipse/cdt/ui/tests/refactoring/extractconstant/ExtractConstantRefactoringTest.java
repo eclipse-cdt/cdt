@@ -1,35 +1,34 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2016 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *     Sergey Prigogin (Google)
  *     Thomas Corbat (IFS)
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.extractconstant;
 
-import junit.framework.Test;
-
 import java.util.Arrays;
 import java.util.function.Predicate;
-import org.eclipse.core.runtime.CoreException;
-import org.junit.Before;
-
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantInfo;
 import org.eclipse.cdt.internal.ui.refactoring.extractconstant.ExtractConstantRefactoring;
 import org.eclipse.cdt.internal.ui.refactoring.utils.VisibilityEnum;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
+import org.eclipse.core.runtime.CoreException;
+import org.junit.Before;
+
+import junit.framework.Test;
 
 /**
  * Tests for Extract Constant refactoring.
@@ -52,6 +51,7 @@ public class ExtractConstantRefactoringTest extends RefactoringTestBase {
 		return suite(ExtractConstantRefactoringTest.class);
 	}
 
+	@Override
 	@Before
 	public void setUp() throws Exception {
 		extractedConstantName = "EXTRACTED";

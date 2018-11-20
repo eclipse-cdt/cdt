@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ package org.eclipse.cdt.dsf.service;
 
 /**
  *  Utility class containing status methods to use with DSF services.
- * 
+ *
  * @since 1.0
  */
 public class DsfServices {
@@ -26,7 +26,7 @@ public class DsfServices {
 	 * on service class and session ID.
 	 * @param serviceClass Class of the service to create the filter for.
 	 * @param sessionId Session ID of the session that the service belongs to.
-	 * @return Filter string to identify the given service. 
+	 * @return Filter string to identify the given service.
 	 */
 	public static String createServiceFilter(Class<?> serviceClass, String sessionId) {
 		String serviceId = "(&" + //$NON-NLS-1$

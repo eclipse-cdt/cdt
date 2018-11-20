@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * Root of the External Settings Provider Factory hierarchy. These
  * are responsible for creating {@link CExternalSettingsContainer}s
  * for a given settings provider id.  The container
- * is a simple container for external settings accessible via: 
+ * is a simple container for external settings accessible via:
  * {@link CExternalSettingsContainer#getExternalSettings()}
  *
  * There are two concrete implementation of this in CDT:
@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.CoreException;
  * referenced configurations.</li>
  * <li>{@link ExtensionContainerFactory} responsible for settings contributed
  * using the external settings extension point.</li>
- * </ul>  
+ * </ul>
  */
 public abstract class CExternalSettingContainerFactory {
 

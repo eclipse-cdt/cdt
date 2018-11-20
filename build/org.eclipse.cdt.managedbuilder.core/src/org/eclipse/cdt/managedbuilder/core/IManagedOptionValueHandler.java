@@ -17,7 +17,7 @@ package org.eclipse.cdt.managedbuilder.core;
  * This interface represents an option value handler in the managed build
  * system. It is used to enable a tool integrator to use the MBS configuration
  * GUI, while linking to an alternative back-end.
- * 
+ *
  * @since 3.0
  */
 public interface IManagedOptionValueHandler {
@@ -61,7 +61,7 @@ public interface IManagedOptionValueHandler {
 	/**
 	 * Handles transfer between values between UI element and back-end in
 	 * different circumstances.
-	 * 
+	 *
 	 * @param configuration
 	 *            build configuration of option (may be IConfiguration or
 	 *            IResourceConfiguration)
@@ -73,7 +73,7 @@ public interface IManagedOptionValueHandler {
 	 *            extra argument for handler
 	 * @param event
 	 *            event to be handled
-	 * 
+	 *
 	 * @return True when the event was handled, false otherwise. This enables
 	 *         default event handling can take place.
 	 */
@@ -82,7 +82,7 @@ public interface IManagedOptionValueHandler {
 
 	/**
 	 * Checks whether the value of an option is its default value.
-	 * 
+	 *
 	 * @param configuration
 	 *            build configuration of option (may be IConfiguration or
 	 *            IResourceConfiguration)
@@ -92,11 +92,11 @@ public interface IManagedOptionValueHandler {
 	 *            the option that is handled
 	 * @param extraArgument
 	 *            extra argument for handler
-	 * 
+	 *
 	 *            The additional options besides configuration are supplied to
 	 *            provide enough information for querying the default value from
 	 *            a potential data storage back-end.
-	 * 
+	 *
 	 * @return True if the options value is its default value and False
 	 *         otherwise. This enables that default event handling can take
 	 *         place.
@@ -108,7 +108,7 @@ public interface IManagedOptionValueHandler {
 	 * choice. The use-case for this method is the case, where the set of valid
 	 * enumerations in the plugin.xml file changes. The UI will remove entries
 	 * from selection lists if the value returns false.
-	 * 
+	 *
 	 * @param configuration
 	 *            build configuration of option (may be IConfiguration or
 	 *            IResourceConfiguration)
@@ -120,11 +120,11 @@ public interface IManagedOptionValueHandler {
 	 *            extra argument for handler
 	 * @param enumValue
 	 *            enumeration value that is to be checked
-	 * 
+	 *
 	 *            The additional options besides configuration are supplied to
 	 *            provide enough information for querying information from a a
 	 *            potential data storage back-end.
-	 * 
+	 *
 	 * @return True if the enumeration value is valid and False otherwise.
 	 */
 	boolean isEnumValueAppropriate(IBuildObject configuration, IHoldsOptions holder, IOption option,

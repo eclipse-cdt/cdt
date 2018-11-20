@@ -17,7 +17,7 @@ package org.eclipse.cdt.autotools.ui.editors.parser;
 /**
  * A call to a macro.
  * <p>
- * Macro element now stores arguments as AutoconfMacroElement or AutoconfMacroArgument children 
+ * Macro element now stores arguments as AutoconfMacroElement or AutoconfMacroArgument children
  *
  */
 public class AutoconfMacroElement extends AutoconfElement {
@@ -47,7 +47,7 @@ public class AutoconfMacroElement extends AutoconfElement {
 	 * Children of his class should overwrite this and perform proper
 	 * validation.
 	 * @param verions Autoconf to be used to validate this macro.
-	 * @throws InvalidMacroException 
+	 * @throws InvalidMacroException
 	 */
 	public void validate(String version) throws InvalidMacroException {
 	}

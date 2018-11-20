@@ -17,6 +17,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
+import org.eclipse.cdt.ui.testplugin.util.StringAsserts;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -45,15 +53,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPartReference;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
-import org.eclipse.cdt.ui.testplugin.util.StringAsserts;
 
 public class BaseUITestCase extends BaseTestCase {
 	public BaseUITestCase() {
@@ -235,7 +234,7 @@ public class BaseUITestCase extends BaseTestCase {
 	}
 
 	private Control[] findControls(Control w, Class<?> clazz) {
-		ArrayList<Control> result = new ArrayList<Control>();
+		ArrayList<Control> result = new ArrayList<>();
 		findControls(w, clazz, result);
 		return result.toArray(new Control[result.size()]);
 	}

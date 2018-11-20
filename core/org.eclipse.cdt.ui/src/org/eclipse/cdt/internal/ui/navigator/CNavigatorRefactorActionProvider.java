@@ -14,6 +14,8 @@
 
 package org.eclipse.cdt.internal.ui.navigator;
 
+import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.IMenuManager;
@@ -26,10 +28,6 @@ import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 import org.eclipse.ui.operations.UndoRedoActionGroup;
-
-import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
-
-import org.eclipse.cdt.internal.ui.actions.SelectionConverter;
 
 /**
  * A clone of org.eclipse.ui.internal.navigator.resources.actions.RefactorActionProvider.

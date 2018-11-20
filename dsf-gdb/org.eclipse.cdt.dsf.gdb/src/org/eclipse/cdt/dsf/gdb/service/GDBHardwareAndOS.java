@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Marc Khouzam (Ericsson) - Updated to use /proc/cpuinfo for remote targets (Bug 374024)
@@ -15,7 +15,7 @@
  *     Marc Dumais (Ericsson) - Bug 434889
  *     Teodor Madan (Freescale) - Activate multicore visualizer on non-linux hosts for remote case
  *     Marc Dumais (Ericsson) - Bug 464184
- *     
+ *
  *******************************************************************************/
 package org.eclipse.cdt.dsf.gdb.service;
 
@@ -79,7 +79,7 @@ import org.osgi.framework.BundleContext;
 /**
  * This class implements the {@link IGDBHardwareAndOS} interface which gives access
  * to hardware information about the target.
- * 
+ *
  * @since 4.1
  */
 public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardwareAndOS2, ICachingService {
@@ -254,7 +254,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 
 	/**
 	 * This method initializes this service.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The request monitor indicating the operation is finished
 	 */
@@ -271,7 +271,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The call-back object to notify when this service's
 	 *            initialization is done.
@@ -289,7 +289,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		// handle getting the required cpu info
 		fFetchCPUInfoCache = new CommandCache(getSession(), new CPUInfoManager());
 		fFetchCPUInfoCache.setContextAvailable(fCommandControl.getContext(), true);
-		fLoadInfoRequestCache = new HashMap<IDMContext, DataRequestMonitor<ILoadInfo>>();
+		fLoadInfoRequestCache = new HashMap<>();
 
 		getSession().addServiceEventListener(this, null);
 
@@ -304,7 +304,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 * This method shuts down this service. It unregisters the service, stops
 	 * receiving service events, and calls the superclass shutdown() method to
 	 * finish the shutdown process.
-	 * 
+	 *
 	 * @return void
 	 */
 	@Override
@@ -358,7 +358,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		if (Platform.getOS().equals(Platform.OS_LINUX))
 			return true;
 
-		// for non-linux platform, support only remote (linux? ) targets 
+		// for non-linux platform, support only remote (linux? ) targets
 		if (SessionType.REMOTE == fBackend.getSessionType()) {
 			return true;
 		}
@@ -400,7 +400,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 * Parse the CoreInfo and create the CPU Contexts for the hardwareTarget context.
 	 */
 	ICPUDMContext[] parseCoresInfoForCPUs(IHardwareTargetDMContext dmc, ICoreInfo[] coresInfo) {
-		Set<String> cpuIds = new HashSet<String>();
+		Set<String> cpuIds = new HashSet<>();
 		ICPUDMContext[] CPUs;
 
 		for (ICoreInfo core : coresInfo) {
@@ -420,7 +420,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 */
 	ICoreDMContext[] parseCoresInfoForCores(ICPUDMContext cpuDmc, ICoreInfo[] coresInfo) {
 
-		Vector<ICoreDMContext> coreDmcs = new Vector<ICoreDMContext>();
+		Vector<ICoreDMContext> coreDmcs = new Vector<>();
 		for (ICoreInfo core : coresInfo) {
 			if (core.getPhysicalId().equals(cpuDmc.getId())) {
 				// This core belongs to the right CPU
@@ -476,7 +476,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 * information we need.
 	 */
 	private class CPUInfoManager implements ICommandControl {
-		private final List<ICommandListener> fCommandProcessors = new ArrayList<ICommandListener>();
+		private final List<ICommandListener> fCommandProcessors = new ArrayList<>();
 
 		@Override
 		public <V extends ICommandResult> ICommandToken queueCommand(final ICommand<V> command,
@@ -533,7 +533,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 												@Override
 												protected void handleSuccess() {
 													// First extract the string id for every core GDB reports
-													Set<String> coreIds = new HashSet<String>();
+													Set<String> coreIds = new HashSet<>();
 													IThreadGroupInfo[] groups = getData().getGroupList();
 													for (IThreadGroupInfo group : groups) {
 														coreIds.addAll(Arrays.asList(group.getCores()));
@@ -637,23 +637,23 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	 * This method processes "load info" requests.  The load is computed using a
 	 * sampling method; two readings of a local or remote /proc/stat file are done
 	 * with a delay in between.  Then the load is computed from the two samples,
-	 * for all CPUs/cores known in the system.  
-	 * 
+	 * for all CPUs/cores known in the system.
+	 *
 	 * Because of the method used, it's possible that fast variations in CPU usage will
-	 * be missed.  However longer load trends should be reflected in the results.   
-	 * 
-	 * To avoid generating too much load in the remote case, there is a cache that will 
-	 * return the already computed load, if requested multiple times in a short period. 
-	 * There is also a mechanism to queue subsequent requests if one is ongoing.  Upon 
-	 * completion of the ongoing request, any queued request is answered with the load 
+	 * be missed.  However longer load trends should be reflected in the results.
+	 *
+	 * To avoid generating too much load in the remote case, there is a cache that will
+	 * return the already computed load, if requested multiple times in a short period.
+	 * There is also a mechanism to queue subsequent requests if one is ongoing.  Upon
+	 * completion of the ongoing request, any queued request is answered with the load
 	 * that was just computed.
-	 *  
+	 *
 	 * @since 4.2
 	 */
 	@Override
 	public void getLoadInfo(final IDMContext context, final DataRequestMonitor<ILoadInfo> rm) {
 		if (!(context instanceof ICoreDMContext) && !(context instanceof ICPUDMContext)) {
-			// we only support getting the load for a CPU or a core 
+			// we only support getting the load for a CPU or a core
 			rm.done(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
 					"Load information not supported for this context type", null)); //$NON-NLS-1$
 			return;
@@ -670,7 +670,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 			return;
 		}
 
-		// Is a request is already ongoing?  
+		// Is a request is already ongoing?
 		if (fLoadRequestOngoing) {
 			// queue current new request
 			fLoadInfoRequestCache.put(context, rm);
@@ -679,8 +679,8 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 		// no request ongoing, so proceed
 		fLoadRequestOngoing = true;
 
-		// caching mechanism to keep things sane, even if the views(s) 
-		// request load information very often.   
+		// caching mechanism to keep things sane, even if the views(s)
+		// request load information very often.
 		long currentTime = System.currentTimeMillis();
 
 		// time to fetch fresh load information?
@@ -768,7 +768,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 							}, LOAD_SAMPLE_DELAY, TimeUnit.MILLISECONDS);
 						}
 					});
-			// Local debugging?  Then we can read /proc/stat directly 
+			// Local debugging?  Then we can read /proc/stat directly
 		} else {
 			// Read /proc/stat file for the first time
 			try {
@@ -809,7 +809,7 @@ public class GDBHardwareAndOS extends AbstractDsfService implements IGDBHardware
 	}
 
 	/**
-	 * For a given "load info" request, this method processes the load obtained from the 
+	 * For a given "load info" request, this method processes the load obtained from the
 	 * proc stat parser and creates/sends the response.
 	 * @param context
 	 * @param rm

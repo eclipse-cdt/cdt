@@ -25,7 +25,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
 
 /**
  * A GDB CLI console.
- * This console actually runs a GDB process in CLI mode to achieve a 
+ * This console actually runs a GDB process in CLI mode to achieve a
  * full-featured CLI interface.  This is only supported with GDB >= 7.12
  * and if IGDBBackend.isFullGdbConsoleSupported() returns true.
  */

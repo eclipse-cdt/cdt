@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 
 /**
- * This class extends the existing "Terminate" command by adding a popup 
+ * This class extends the existing "Terminate" command by adding a popup
  * confirmation before terminating the session.
  */
 public class DsfExtendedTerminateCommand extends DsfTerminateCommand {

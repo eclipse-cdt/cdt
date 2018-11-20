@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Patrick Chuong (Texas Instruments) - 
+ *     Patrick Chuong (Texas Instruments) -
  *     	Update CDT ToggleBreakpointTargetFactory enablement (340177)
  *     Patrick Chuong (Texas Instruments) - Bug 375871
  *****************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.core.resources.IResource;
 
 /**
  * Toggle breakpoint factor enablement tester for editors and IDeclaration.
- * 
+ *
  * @since 7.1
  */
 public class ToggleCBreakpointTester extends PropertyTester {

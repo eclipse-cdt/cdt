@@ -30,7 +30,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.Wizard;
 
 /**
- * This wizard provides a method by which the user can 
+ * This wizard provides a method by which the user can
  * add a C nature to a project that previously had no nature associated with it.
  */
 public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
@@ -61,7 +61,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 
 	/**
 	 * ConvertToAutotoolsConversionWizard Wizard constructor
-	 * 
+	 *
 	 * @param title
 	 * @param desc
 	 */
@@ -72,7 +72,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	/**
 	 * Method getWzDescriptionResource,  allows Wizard description label value
 	 * to be changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWzDescriptionResource() {
@@ -82,7 +82,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	/**
 	 * Method getWzTitleResource,  allows Wizard description label value
 	 * to be changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWzTitleResource() {
@@ -92,7 +92,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 	/**
 	 * Method getWindowTitleResource, allows Wizard Title label value to be
 	 * changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWindowTitleResource() {
@@ -101,7 +101,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 
 	/**
 	  * Method getPrefix,  allows prefix value to be changed by subclasses
-	  * 
+	  *
 	  * @return String
 	  */
 	protected static String getPrefix() {
@@ -110,7 +110,7 @@ public class ConvertToAutotoolsProjectWizard extends ConversionWizard {
 
 	/**
 	 * Method addPages adds our Simple to C conversion Wizard page.
-	 * 
+	 *
 	 * @see Wizard#createPages
 	 */
 	@Override

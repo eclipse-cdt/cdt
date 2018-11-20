@@ -15,6 +15,15 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.IInclude;
+import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfo;
+import org.eclipse.cdt.core.parser.IScannerInfoProvider;
+import org.eclipse.cdt.internal.core.resources.ResourceLookup;
+import org.eclipse.cdt.utils.PathUtil;
+import org.eclipse.cdt.utils.UNCPathConverter;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IContainer;
@@ -30,24 +39,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.IInclude;
-import org.eclipse.cdt.core.parser.ExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IExtendedScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfo;
-import org.eclipse.cdt.core.parser.IScannerInfoProvider;
-import org.eclipse.cdt.utils.PathUtil;
-import org.eclipse.cdt.utils.UNCPathConverter;
-
-import org.eclipse.cdt.internal.core.resources.ResourceLookup;
-
 /**
  * Handles resolution of an include represented as a CElement (IInclude).
  */
 public class CElementIncludeResolver {
 	public static List<IPath> resolveInclude(IInclude include) throws CoreException {
 		IResource res = include.getUnderlyingResource();
-		ArrayList<IPath> filesFound = new ArrayList<IPath>(4);
+		ArrayList<IPath> filesFound = new ArrayList<>(4);
 		String fullFileName = include.getFullFileName();
 		if (fullFileName != null) {
 			IPath fullPath = new Path(fullFileName);
@@ -116,7 +114,7 @@ public class CElementIncludeResolver {
 				return;
 			}
 		}
-		HashSet<IPath> foundSet = new HashSet<IPath>();
+		HashSet<IPath> foundSet = new HashSet<>();
 		for (String includePath : includePaths) {
 			IPath path = PathUtil.getCanonicalPathWindows(new Path(includePath).append(includeFile));
 			File file = path.toFile();
@@ -167,7 +165,7 @@ public class CElementIncludeResolver {
 	 * Returns the path as is, if it points to a workspace resource. If the path
 	 * does not point to a workspace resource, but there are linked workspace
 	 * resources pointing to it, returns the paths of these resources.
-	 * Otherwise, returns the path as is. 
+	 * Otherwise, returns the path as is.
 	 */
 	private static IPath[] resolveIncludeLink(IPath path) {
 		if (!isInProject(path)) {

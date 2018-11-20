@@ -19,12 +19,12 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *   -break-disable ( BREAKPOINT )+
  *
  * Disable the named BREAKPOINT(s).  The field `enabled' in the break
  * list is now set to `n' for the named BREAKPOINT(s).
- * 
+ *
  * Result:
  *  ^done
  */

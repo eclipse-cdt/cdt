@@ -20,6 +20,7 @@ import static org.eclipse.cdt.internal.ui.workingsets.WorkingSetConfigurationMan
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -30,17 +31,15 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
 /**
  * Default implementation of the {@link IWorkingSetConfiguration} interface.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	private final IWorkingSetProxy workingSet;
@@ -50,7 +49,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	/**
 	 * Initializes me with my parent working set.
-	 * 
+	 *
 	 * @param workingSet
 	 *            my parent working set
 	 */
@@ -60,7 +59,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	/**
 	 * Obtains my parent working set.
-	 * 
+	 *
 	 * @return my parent
 	 */
 	@Override
@@ -70,7 +69,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	/**
 	 * Obtains my name.
-	 * 
+	 *
 	 * @return my name
 	 */
 	@Override
@@ -80,10 +79,10 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	/**
 	 * Sets my name.
-	 * 
+	 *
 	 * @param name
 	 *            my new name
-	 * 
+	 *
 	 * @throws IllegalArgumentException
 	 *             if the specified name is <code>null</code> or empty, or if it is already used by another
 	 *             configuration in my warking set
@@ -104,7 +103,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	/**
 	 * Provides simple access to the name for setting it.
-	 * 
+	 *
 	 * @param name
 	 *            my new name
 	 */
@@ -114,7 +113,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	private Map<String, IWorkingSetProjectConfiguration> getProjects() {
 		if (projects == null) {
-			projects = new java.util.HashMap<String, IWorkingSetProjectConfiguration>();
+			projects = new java.util.HashMap<>();
 
 			for (IProject next : workingSet.resolveProjects()) {
 				IWorkingSetProjectConfiguration child = createProjectConfiguration(next);
@@ -131,7 +130,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	protected void basicAddProjectConfiguration(IWorkingSetProjectConfiguration projectConfig) {
 		if (projects == null) {
-			projects = new java.util.HashMap<String, IWorkingSetProjectConfiguration>();
+			projects = new java.util.HashMap<>();
 		}
 
 		projects.put(projectConfig.getProjectName(), projectConfig);
@@ -182,7 +181,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	public IStatus build(IProgressMonitor monitor) {
 		MultiStatus result = new MultiStatus(CUIPlugin.PLUGIN_ID, 0, WorkingSetMessages.WSConfig_build_problems, null);
 
-		List<IWorkingSetProjectConfiguration> toBuild = new java.util.ArrayList<IWorkingSetProjectConfiguration>(
+		List<IWorkingSetProjectConfiguration> toBuild = new java.util.ArrayList<>(
 				getProjectConfigurations().size());
 		for (IWorkingSetProjectConfiguration next : getProjectConfigurations()) {
 			IProject project = next.resolveProject();
@@ -230,7 +229,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	public void loadState(IMemento memento) {
 		setName(memento.getString(ATTR_NAME));
 
-		Map<String, IMemento> projectMementos = new java.util.HashMap<String, IMemento>();
+		Map<String, IMemento> projectMementos = new java.util.HashMap<>();
 		for (IMemento next : memento.getChildren(KEY_PROJECT)) {
 			projectMementos.put(next.getString(ATTR_NAME), next);
 		}
@@ -246,7 +245,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 	/**
 	 * Creates a new project configuration for the specified project. May be overridden by subclasses to
 	 * create a different implementation.
-	 * 
+	 *
 	 * @param project
 	 *            a workspace project
 	 * @return a new project configuration element for it
@@ -271,11 +270,11 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	/**
 	 * Utility method to query whether the specified configuration is a read-only snapshot.
-	 * 
+	 *
 	 * @param config
 	 *            a working set configuration
 	 * @return whether it is a read-only snapshot
-	 * 
+	 *
 	 * @see IWorkingSetConfiguration.ISnapshot#isReadOnly()
 	 */
 	static boolean isReadOnly(IWorkingSetConfiguration config) {
@@ -289,11 +288,11 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 	/**
 	 * Default implementation of the mutable working set configuration snapshot.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @noextend This class is not intended to be subclassed by clients.
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	public static class Snapshot extends WorkingSetConfiguration implements IWorkingSetConfiguration.ISnapshot {
@@ -303,7 +302,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 		/**
 		 * Initializes me with the current workspace snapshot.
-		 * 
+		 *
 		 * @param workingSet
 		 *            my parent working set
 		 * @param workspace
@@ -316,7 +315,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		/**
 		 * Initializes me as a special read-only configuration that shows what is the current active
 		 * configuration of the projects in a working set when none of its named configurations is active.
-		 * 
+		 *
 		 * @param workingSet
 		 *            my parent working set
 		 * @param workspace
@@ -333,7 +332,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 
 		/**
 		 * Initializes me with the current workspace snapshot.
-		 * 
+		 *
 		 * @param workingSet
 		 *            my parent working set
 		 * @param config
@@ -364,7 +363,7 @@ public class WorkingSetConfiguration implements IWorkingSetConfiguration {
 		/**
 		 * Queries whether I am a read-only view of the current active configurations of my working set's
 		 * projects.
-		 * 
+		 *
 		 * @return whether I am read-only
 		 */
 		@Override

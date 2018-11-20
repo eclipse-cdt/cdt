@@ -107,7 +107,7 @@ public class ManagedBuilderCorePlugin extends Plugin {
 		BuildStateManager.getInstance().startup();
 		/*		try {
 					jobManager.beginRule(root, null);
-		
+
 					startResourceChangeHandling();
 				} catch (Throwable e) {
 					//either an IllegalArgumentException is thrown by the jobManager.beginRule

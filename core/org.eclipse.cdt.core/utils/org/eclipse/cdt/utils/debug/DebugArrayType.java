@@ -16,14 +16,14 @@ package org.eclipse.cdt.utils.debug;
 
 /**
  * DebugArrayType
- *  
+ *
  */
 public class DebugArrayType extends DebugDerivedType {
 
 	int size;
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugArrayType(DebugType type, int arraySize) {
 		super(type);

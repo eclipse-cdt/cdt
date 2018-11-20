@@ -72,7 +72,7 @@ public class UserAndDiscoveredEntryDataSerializer extends CDataSerializer {
 					if (tmp != null) {
 						Set<String> set = lData.getDisabledSet(kind);
 						if (set == null)
-							set = new HashSet<String>();
+							set = new HashSet<>();
 						set.add(tmp);
 						lData.setDisabledSet(kind, set);
 					}

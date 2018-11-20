@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import java.io.OutputStream;
 
 /**
  * Output stream which storing the console output
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class ConsoleOutputStream extends OutputStream {

@@ -12,6 +12,7 @@ package org.eclipse.cdt.internal.ui.wizards;
 
 import java.net.URI;
 
+import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -22,8 +23,6 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.tools.templates.core.IGenerator;
 import org.eclipse.tools.templates.ui.TemplateWizard;
 import org.eclipse.ui.IWorkbench;
-
-import org.eclipse.cdt.ui.wizards.CDTCommonProjectWizard;
 
 public class CDTProjectWizard2 extends TemplateWizard implements IGenerator, ICDTCommonProjectWizard {
 

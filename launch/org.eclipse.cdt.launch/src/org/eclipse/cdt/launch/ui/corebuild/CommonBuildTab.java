@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Group;
 
 /**
  * Common utilities for Core Build launch configuration tabs.
- * 
+ *
  * @since 9.1
  */
 public abstract class CommonBuildTab extends AbstractLaunchConfigurationTab {

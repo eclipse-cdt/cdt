@@ -172,7 +172,7 @@ public abstract class CElement extends PlatformObject implements ICElement {
 	 */
 	protected ICElement[] getSourceElementsAtOffset(int offset) throws CModelException {
 		if (this instanceof ISourceReference && this instanceof Parent) {
-			ArrayList<Object> list = new ArrayList<Object>();
+			ArrayList<Object> list = new ArrayList<>();
 			ICElement[] children = ((Parent) this).getChildren();
 			for (ICElement aChild : children) {
 				if (aChild instanceof ISourceReference) {

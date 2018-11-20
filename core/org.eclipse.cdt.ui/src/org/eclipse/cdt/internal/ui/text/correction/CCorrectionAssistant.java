@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  * 	   Sergey Prigogin (Google)
@@ -19,6 +19,16 @@ package org.eclipse.cdt.internal.ui.text.correction;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.core.model.ASTCache;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.IColorManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -46,19 +56,6 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
-
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.IColorManager;
-
-import org.eclipse.cdt.internal.core.model.ASTCache;
-
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
 
 public class CCorrectionAssistant extends QuickAssistAssistant {
 	private ITextViewer fViewer;
@@ -156,7 +153,7 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 			// Let superclass deal with this
 			return super.showPossibleQuickAssists();
 
-		ArrayList<Annotation> resultingAnnotations = new ArrayList<Annotation>(20);
+		ArrayList<Annotation> resultingAnnotations = new ArrayList<>(20);
 		try {
 			Point selectedRange = fViewer.getSelectedRange();
 			int currOffset = selectedRange.x;
@@ -208,8 +205,8 @@ public class CCorrectionAssistant extends QuickAssistAssistant {
 			int rangeStart = lineInfo.getOffset();
 			int rangeEnd = rangeStart + lineInfo.getLength();
 
-			ArrayList<Annotation> allAnnotations = new ArrayList<Annotation>();
-			ArrayList<Position> allPositions = new ArrayList<Position>();
+			ArrayList<Annotation> allAnnotations = new ArrayList<>();
+			ArrayList<Position> allPositions = new ArrayList<>();
 			int bestOffset = Integer.MAX_VALUE;
 			while (iter.hasNext()) {
 				Annotation annot = (Annotation) iter.next();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -122,7 +122,7 @@ public class HistoryDropDownAction extends Action {
 			String[] buttonLabels = new String[] { ActionsMessages.HistoryAction_dialog_button_remove,
 					ActionsMessages.HistoryAction_dialog_button_remove_all };
 			LabelProvider labelProvider = new TestRunLabelProvider();
-			historyList = new ListDialogField<ITestingSession>(adapter, buttonLabels, labelProvider);
+			historyList = new ListDialogField<>(adapter, buttonLabels, labelProvider);
 			historyList.setLabelText(ActionsMessages.HistoryAction_dialog_list_title);
 
 			historyList.setElements(testingSessionsManager.getSessions());
@@ -184,8 +184,8 @@ public class HistoryDropDownAction extends Action {
 		}
 
 		/**
-		 * Processes dialog custom button pressing. 
-		 * 
+		 * Processes dialog custom button pressing.
+		 *
 		 * @param index index of the button
 		 */
 		private void doCustomButtonPressed(int index) {
@@ -225,7 +225,7 @@ public class HistoryDropDownAction extends Action {
 
 		/**
 		 * Provides access to the active session currently selected by user.
-		 * 
+		 *
 		 * @return testing session
 		 */
 		public ITestingSession getResultActiveSession() {
@@ -234,7 +234,7 @@ public class HistoryDropDownAction extends Action {
 
 		/**
 		 * Provides access to the testing sessions history list edited by user.
-		 * 
+		 *
 		 * @return list of testing sessions
 		 */
 		public List<ITestingSession> getResultSessions() {
@@ -243,7 +243,7 @@ public class HistoryDropDownAction extends Action {
 
 		/**
 		 * Provides access to value of history size limit specified by user.
-		 * 
+		 *
 		 * @return history size limit
 		 */
 		public int getResultHistorySizeLimit() {
@@ -252,7 +252,7 @@ public class HistoryDropDownAction extends Action {
 	}
 
 	/**
-	 * Represents a testing sessions history item. 
+	 * Represents a testing sessions history item.
 	 */
 	private class HistoryAction extends Action {
 
@@ -318,7 +318,7 @@ public class HistoryDropDownAction extends Action {
 
 		@Override
 		public void run() {
-			List<ITestingSession> remainingSessions = new ArrayList<ITestingSession>();
+			List<ITestingSession> remainingSessions = new ArrayList<>();
 			for (ITestingSession testingSession : testingSessionsManager.getSessions()) {
 				if (!testingSession.isFinished()) {
 					remainingSessions.add(testingSession);

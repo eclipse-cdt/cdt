@@ -1,23 +1,21 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring.utils;
 
 import java.util.Arrays;
 import java.util.regex.Pattern;
-
-import org.eclipse.core.runtime.CoreException;
 
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
 import org.eclipse.cdt.core.dom.ast.IASTName;
@@ -31,14 +29,13 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTQualifiedName;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.CharArrayIntMap;
-
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTQualifiedName;
-
 import org.eclipse.cdt.internal.ui.refactoring.CRefactoringContext;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Helps with IASTNames.
- * 
+ *
  * @author Mirko Stocker
  */
 public class NameHelper {
@@ -60,15 +57,15 @@ public class NameHelper {
 	 * Constructs the fully qualified name from the given parameters. The file and offset parameters
 	 * are used to determine the namespace at the declaration position and the target namespace at
 	 * the target position.
-	 * 
+	 *
 	 * @param declaratorName of the method or function
 	 * @param declarationTu translation unit of the method or function declaration
 	 * @param insertFileTu translation unit of the file where the implementation is being inserted
 	 * @param selectionOffset the offset in the declarationFile, usually the position or selection
 	 * 		of the declaration
-	 * @param insertLocation 
+	 * @param insertLocation
 	 * @return the correct name for the target
-	 * @throws CoreException 
+	 * @throws CoreException
 	 */
 	public static ICPPASTQualifiedName createQualifiedNameFor(IASTName declaratorName, ITranslationUnit declarationTu,
 			int selectionOffset, ITranslationUnit insertFileTu, int insertLocation, CRefactoringContext astCache)

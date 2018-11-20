@@ -151,7 +151,7 @@ public class CDefaultLanguageData extends CLanguageData {
 		public ICLanguageSettingEntry[] getSettingEntries(int kind) {
 			return fStore.getEntries(kind);
 			List list = new ArrayList();
-	
+
 			if((kinds & ICLanguageSettingEntry.INCLUDE_PATH) != 0) {
 				addLanguageEntries(ICLanguageSettingEntry.INCLUDE_PATH, list);
 			} else if((kinds & ICLanguageSettingEntry.INCLUDE_FILE) != 0) {
@@ -165,11 +165,11 @@ public class CDefaultLanguageData extends CLanguageData {
 			} else if((kinds & ICLanguageSettingEntry.LIBRARY_FILE) != 0) {
 				addLanguageEntries(ICLanguageSettingEntry.LIBRARY_FILE, list);
 			}
-	
+
 			return (ICLanguageSettingEntry[])list.toArray(new ICLanguageSettingEntry[list.size()]);
-	
+
 		}
-	
+
 		private List addLanguageEntries(int kind, List list){
 			ICLanguageSettingEntry entries[] = fStore.getEntries(kind);
 			for(int i = 0; i < entries.length; i++){

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Texas Instruments, Freescale Semiconductor - initial API and implementation
  *     Alvaro Sanchez-Leon (Ericsson AB) - [Memory] Support 16 bit addressable size (Bug 426730)
@@ -40,7 +40,7 @@ import org.eclipse.debug.core.DebugPlugin;
 /**
  * A specialization of the DSF memory block implementation supporting memory
  * spaces. The memory space support is provisional, thus this class is internal.
- * 
+ *
  * @author Alain Lee and John Cortell
  */
 public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareMemoryBlock {
@@ -56,7 +56,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 		fMemorySpaceID = (memorySpaceID != null && !memorySpaceID.isEmpty()) ? memorySpaceID : null;
 		assert memorySpaceID == null || !memorySpaceID.isEmpty(); // callers shouldn't be passing in an empty string
 
-		//TODO: remove the memorySpaceID parameter from this method 
+		//TODO: remove the memorySpaceID parameter from this method
 		//after making sure it's not used in earlier implementations
 		//in the mean time check for consistency
 		if (memorySpaceID != null) {
@@ -134,7 +134,7 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 	/**
 	 * Override this method to qualify the expression with the memory space, if
 	 * applicable.
-	 * 
+	 *
 	 * @see org.eclipse.cdt.dsf.debug.model.DsfMemoryBlock#getExpression()
 	 */
 	@Override
@@ -166,9 +166,9 @@ public class GdbMemoryBlock extends DsfMemoryBlock implements IMemorySpaceAwareM
 		super.eventDispatched(e);
 		if (e.getReason() == StateChangeReason.BREAKPOINT || e.getReason() == StateChangeReason.EVENT_BREAKPOINT
 				|| e.getReason() == StateChangeReason.WATCHPOINT) {
-			// If the session is suspended because of a breakpoint we need to 
+			// If the session is suspended because of a breakpoint we need to
 			// fire DebugEvent.SUSPEND to force update for the "On Breakpoint" update mode.
-			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=406999. 
+			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=406999.
 			DebugEvent debugEvent = new DebugEvent(this, DebugEvent.SUSPEND, DebugEvent.BREAKPOINT);
 			DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] { debugEvent });
 		}

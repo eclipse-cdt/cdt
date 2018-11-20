@@ -17,16 +17,16 @@ package org.eclipse.cdt.managedbuilder.core;
 /**
  * This interface can be implemented by clients to contribute custom defaultValue-generator for a
  * build-option.
- * 
+ *
  * The custom defaultValue-generator class should be referenced in the <option>/defaultValueGenerator
  * attribute of the org.eclipse.cdt.managedbuilder.core.buildDefinitions extension-point.
- * 
+ *
  * @since 8.5
  */
 public interface IOptionDefaultValueGenerator {
 	/**
 	 * Generate the defaultValue for the given option.
-	 * 
+	 *
 	 * @param option
 	 *            the underlying build-option
 	 * @return the generated build-option defaultValue. May return {@code null} to fall back to the default

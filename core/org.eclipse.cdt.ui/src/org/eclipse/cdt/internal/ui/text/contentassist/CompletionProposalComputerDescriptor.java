@@ -20,6 +20,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
+import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -36,19 +42,11 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.osgi.framework.Bundle;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.contentassist.ContentAssistInvocationContext;
-import org.eclipse.cdt.ui.text.contentassist.ICompletionProposalComputer;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
-
 /**
  * The description of an extension to the
  * <code>org.eclipse.cdt.ui.completionProposalComputer</code> extension point. Instances are
  * immutable. Instances can be obtained from a {@link CompletionProposalComputerRegistry}.
- * 
+ *
  * @see CompletionProposalComputerRegistry
  * @since 4.0
  */
@@ -82,7 +80,7 @@ final class CompletionProposalComputerDescriptor {
 	private static final String SESSION_ENDED = "sessionEnded()"; //$NON-NLS-1$
 
 	static {
-		Set<String> partitions = new HashSet<String>();
+		Set<String> partitions = new HashSet<>();
 		partitions.add(IDocument.DEFAULT_CONTENT_TYPE);
 		partitions.addAll(Arrays.asList(ICPartitions.ALL_CPARTITIONS));
 
@@ -120,7 +118,7 @@ final class CompletionProposalComputerDescriptor {
 
 	/**
 	 * Creates a new descriptor.
-	 * 
+	 *
 	 * @param element the configuration element to read
 	 * @param registry the computer registry creating this descriptor
 	 * @param categories the categories
@@ -144,7 +142,7 @@ final class CompletionProposalComputerDescriptor {
 		else
 			fName = name;
 
-		Set<String> partitions = new HashSet<String>();
+		Set<String> partitions = new HashSet<>();
 		IConfigurationElement[] children = element.getChildren(PARTITION);
 		if (children.length == 0) {
 			fPartitions = PARTITION_SET; // add to all partition types if no partition is configured
@@ -211,7 +209,7 @@ final class CompletionProposalComputerDescriptor {
 
 	/**
 	 * Returns the name of the described extension.
-	 * 
+	 *
 	 * @return Returns the name
 	 */
 	public String getName() {
@@ -220,7 +218,7 @@ final class CompletionProposalComputerDescriptor {
 
 	/**
 	 * Returns the partition types of the described extension.
-	 * 
+	 *
 	 * @return the set of partition types (element type: {@link String})
 	 */
 	public Set<String> getPartitions() {
@@ -232,7 +230,7 @@ final class CompletionProposalComputerDescriptor {
 	 * extension's xml. The computer is
 	 * {@link #createComputer() created} the first time that this method
 	 * is called and then cached.
-	 * 
+	 *
 	 * @return a new instance of the completion proposal computer as
 	 *         described by this descriptor
 	 * @throws CoreException if the creation fails
@@ -264,7 +262,7 @@ final class CompletionProposalComputerDescriptor {
 	 * and {@linkplain #computeContextInformation}
 	 * methods. These delegate the functionality to the contributed
 	 * computer, but handle instance creation and any exceptions thrown.
-	 * 
+	 *
 	 * @return a new instance of the completion proposal computer as
 	 *         described by this descriptor
 	 * @throws CoreException if the creation fails
@@ -279,7 +277,7 @@ final class CompletionProposalComputerDescriptor {
 	 * Safely computes completion proposals through the described extension. If the extension
 	 * is disabled, throws an exception or otherwise does not adhere to the contract described in
 	 * {@link ICompletionProposalComputer}, an empty list is returned.
-	 * 
+	 *
 	 * @param context the invocation context passed on to the extension
 	 * @param monitor the progress monitor passed on to the extension
 	 * @return the list of computed completion proposals (element type:
@@ -328,7 +326,7 @@ final class CompletionProposalComputerDescriptor {
 	 * Safely computes context information objects through the described extension. If the extension
 	 * is disabled, throws an exception or otherwise does not adhere to the contract described in
 	 * {@link ICompletionProposalComputer}, an empty list is returned.
-	 * 
+	 *
 	 * @param context the invocation context passed on to the extension
 	 * @param monitor the progress monitor passed on to the extension
 	 * @return the list of computed context information objects (element type:
@@ -474,12 +472,12 @@ final class CompletionProposalComputerDescriptor {
 	/**
 	 * Independently of the {@link PerformanceStats} service, any operation that takes longer than
 	 * the milliseconds returned by this method will be flagged as an violation. This timeout does
-	 * not apply to the first invocation, as it may take longer due to plug-in initialization etc. 
+	 * not apply to the first invocation, as it may take longer due to plug-in initialization etc.
 	 * See also {@link #fIsReportingDelay}.
 	 * <p>
 	 * The max duration is stored in the preference {@link ContentAssistPreference#PROPOSALS_TIMEOUT}
-	 * 
-	 * @return the max duration (ms) a proposal computer is allowed to compute until it is 
+	 *
+	 * @return the max duration (ms) a proposal computer is allowed to compute until it is
 	 *         assumed to be buggy and will be disabled.<br>
 	 *         Is always > 0
 	 */
@@ -536,7 +534,7 @@ final class CompletionProposalComputerDescriptor {
 
 	/**
 	 * Returns the enablement state of the described extension.
-	 * 
+	 *
 	 * @return the enablement state of the described extension
 	 */
 	private boolean isEnabled() {
@@ -549,7 +547,7 @@ final class CompletionProposalComputerDescriptor {
 
 	/**
 	 * Returns the error message from the described extension.
-	 * 
+	 *
 	 * @return the error message from the described extension
 	 */
 	public String getErrorMessage() {
@@ -558,7 +556,7 @@ final class CompletionProposalComputerDescriptor {
 
 	/**
 	 * Returns the contributor of the described extension.
-	 * 
+	 *
 	 * @return the contributor of the described extension
 	 */
 	IContributor getContributor() {

@@ -18,11 +18,11 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
-/**	
+/**
  *   -file-symbol-file [FILE]
- *   
- *   Read symbol table info from the specified file argument. When used without 
- *   arguments, clears GDB's symbol table info. No output is produced, except 
+ *
+ *   Read symbol table info from the specified file argument. When used without
+ *   arguments, clears GDB's symbol table info. No output is produced, except
  *   for a completion notification.
  */
 public class MIFileSymbolFile extends MICommand<MIInfo> {

@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  * Interns Strings in a safe manner, checking for nulls first.
  * Does not guard against interning a String that has already been interned.
- * 
+ *
  * @author crecoskie
  *
  */
@@ -28,7 +28,7 @@ public class SafeStringInterner {
 
 	/**
 	 * Interns the given String, safely checking for null first.
-	 * 
+	 *
 	 * @param string
 	 * @return String
 	 */
@@ -41,7 +41,7 @@ public class SafeStringInterner {
 
 	/**
 	 * Interns the Strings in the given array, safely checking for null first.
-	 * 
+	 *
 	 * @param strArray
 	 * @return String[]
 	 */
@@ -66,7 +66,7 @@ public class SafeStringInterner {
 			return map;
 		}
 
-		HashMap<String, T> tempMap = new HashMap<String, T>(map);
+		HashMap<String, T> tempMap = new HashMap<>(map);
 		map.clear();
 		for (String string : tempMap.keySet()) {
 			T value = tempMap.get(string);
@@ -83,7 +83,7 @@ public class SafeStringInterner {
 
 	/**
 	 * Returns a new version of the map such that all string keys and values are interned.
-	 * 
+	 *
 	 * @param <T>
 	 * @param map
 	 * @return The map, after modification.
@@ -94,7 +94,7 @@ public class SafeStringInterner {
 			return map;
 		}
 
-		LinkedHashMap<String, T> tempMap = new LinkedHashMap<String, T>(map);
+		LinkedHashMap<String, T> tempMap = new LinkedHashMap<>(map);
 		map.clear();
 		for (String string : tempMap.keySet()) {
 			T value = tempMap.get(string);
@@ -111,7 +111,7 @@ public class SafeStringInterner {
 
 	/**
 	 * Returns a new version of the map such that all string keys and values are interned.
-	 * 
+	 *
 	 * @param <T>
 	 * @param map
 	 * @return The map, after modification.
@@ -122,7 +122,7 @@ public class SafeStringInterner {
 			return map;
 		}
 
-		HashMap<String, T> tempMap = new HashMap<String, T>(map);
+		HashMap<String, T> tempMap = new HashMap<>(map);
 		map.clear();
 		for (String string : tempMap.keySet()) {
 			T value = tempMap.get(string);

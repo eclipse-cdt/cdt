@@ -18,6 +18,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.util.SWTUtil;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.runtime.CoreException;
@@ -50,11 +53,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-
-import org.eclipse.cdt.core.model.CoreModel;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.util.SWTUtil;
 
 /*
  * Preference block that encapsulates the controls used
@@ -183,8 +181,8 @@ public class CFileTypesPreferenceBlock {
 	}
 
 	public CFileTypesPreferenceBlock(IProject input) {
-		fAddAssoc = new ArrayList<CFileTypeAssociation>();
-		fRemoveAssoc = new ArrayList<CFileTypeAssociation>();
+		fAddAssoc = new ArrayList<>();
+		fRemoveAssoc = new ArrayList<>();
 		fInput = input;
 		setDirty(false);
 	}
@@ -329,7 +327,7 @@ public class CFileTypesPreferenceBlock {
 	}
 
 	private CFileTypeAssociation[] getCFileTypeAssociations() {
-		ArrayList<CFileTypeAssociation> list = new ArrayList<CFileTypeAssociation>();
+		ArrayList<CFileTypeAssociation> list = new ArrayList<>();
 		if (fInput == null) {
 			fillWithUserDefinedCFileTypeAssociations(list);
 			fillWithPredefinedCFileTypeAssociations(list);

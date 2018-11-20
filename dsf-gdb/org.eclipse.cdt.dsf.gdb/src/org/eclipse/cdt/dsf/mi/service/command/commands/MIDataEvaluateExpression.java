@@ -23,7 +23,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataEvaluateExpressionInf
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  *      -data-evaluate-expression EXPR
  *
  *   Evaluate EXPR as an expression.  The expression could contain an

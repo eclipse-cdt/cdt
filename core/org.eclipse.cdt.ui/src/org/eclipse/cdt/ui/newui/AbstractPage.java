@@ -30,6 +30,24 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.util.CDTListComparator;
+import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICFolderDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
+import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -84,26 +102,6 @@ import org.eclipse.ui.actions.WorkspaceModifyDelegatingOperation;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.util.CDTListComparator;
-import org.eclipse.cdt.core.settings.model.CConfigurationStatus;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICFolderDescription;
-import org.eclipse.cdt.core.settings.model.ICMultiItemsHolder;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.dialogs.OptionalMessageDialog;
-import org.eclipse.cdt.internal.ui.newui.Messages;
-
 /**
  * It is a parent for all standard CDT property pages
  * in new CDT model.
@@ -153,8 +151,8 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 
 	private static final String PREF_ASK_REINDEX = "askReindex"; //$NON-NLS-1$
 
-	private Map<URL, Image> loadedIcons = new HashMap<URL, Image>();
-	private static Map<Class<? extends AbstractPage>, Class<? extends ICPropertyTab>> recentTabs = new HashMap<Class<? extends AbstractPage>, Class<? extends ICPropertyTab>>();
+	private Map<URL, Image> loadedIcons = new HashMap<>();
+	private static Map<Class<? extends AbstractPage>, Class<? extends ICPropertyTab>> recentTabs = new HashMap<>();
 
 	private final Image IMG_WARN = CDTSharedImages.getImage(CDTSharedImages.IMG_OBJS_REFACTORING_WARNING);
 	/*
@@ -179,7 +177,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 
 	// tabs
 	protected TabFolder folder;
-	protected ArrayList<InternalTab> itabs = new ArrayList<InternalTab>();
+	protected ArrayList<InternalTab> itabs = new ArrayList<>();
 	protected ICPropertyTab currentTab;
 
 	private static boolean isNewOpening = true;
@@ -569,7 +567,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 	 *   which do not share ICProjectDescription instance.
 	 *   But some changes may be saved wrong if they are affected
 	 *   by data from another property pages (Discovery options etc).
-	
+
 	 *   To enable 2nd mode, just create the following file:
 	 *   <workspace>/.metadata/.plugins/org.eclipse.cdt.ui/apply_mode
 	 */
@@ -1126,7 +1124,7 @@ public abstract class AbstractPage extends PropertyPage implements IPreferencePa
 		if (extensions == null)
 			return;
 
-		List<IConfigurationElement> elements = new ArrayList<IConfigurationElement>();
+		List<IConfigurationElement> elements = new ArrayList<>();
 		for (IExtension ext : extensions)
 			elements.addAll(Arrays.asList(ext.getConfigurationElements()));
 		Collections.sort(elements, CDTUIListComparator.getInstance());

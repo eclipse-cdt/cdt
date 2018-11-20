@@ -17,10 +17,16 @@ package org.eclipse.cdt.ui.tests.text.doctools;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.Assert;
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.ui.editor.CEditor;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.testplugin.Accessor;
+import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
+import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
@@ -39,17 +45,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.testplugin.Accessor;
-import org.eclipse.cdt.ui.testplugin.EditorTestHelper;
-import org.eclipse.cdt.ui.testplugin.ResourceTestHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
-import org.eclipse.cdt.internal.ui.editor.CEditor;
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import junit.framework.Assert;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 public class DocCommentHighlightingTest extends BaseUITestCase {
 	private static final DocCommentOwnerManager DCMAN = DocCommentOwnerManager.getInstance();
@@ -123,7 +121,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 
 	/**
 	 * Makes the document use the given line separator.
-	 * 
+	 *
 	 * @param document
 	 * @param lineSeparator
 	 */
@@ -138,7 +136,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	}
 
 	protected List<Position> findRangesColored(RGB rgb) {
-		List<Position> result = new ArrayList<Position>();
+		List<Position> result = new ArrayList<>();
 		IEditorPart p = get();
 		ISourceViewer vw = ((CEditor) p).getViewer();
 		Accessor a = new Accessor(vw, TextViewer.class);
@@ -168,7 +166,7 @@ public class DocCommentHighlightingTest extends BaseUITestCase {
 	}
 
 	private List<Position> mkPositions(int[][] raw) {
-		List<Position> result = new ArrayList<Position>();
+		List<Position> result = new ArrayList<>();
 		for (int i = 0; i < raw.length; i++) {
 			Assert.assertEquals(2, raw[i].length);
 			result.add(new Position(raw[i][0], raw[i][1]));

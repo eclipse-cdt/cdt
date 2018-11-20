@@ -284,7 +284,7 @@ public class ControlFlowGraphBuilder {
 	/**
 	 * labeled statement consists of connector for jumps,
 	 * branch for label and statement
-	 * 
+	 *
 	 * @param prev
 	 * @param labelName
 	 * @return

@@ -30,25 +30,25 @@ public interface ICPropertyTab {
 	public static final int DEFAULTS = 3; // set defaults (null)
 	public static final int UPDATE = 4; // re-read cfg (IConfiguration)
 	public static final int VISIBLE = 5; // set visible (not-null means true)
-	public static final int DISPOSE = 6; // dispose (null)    
-	public static final int SET_ICON = 7; // inform tab about its icon (Image)    
+	public static final int DISPOSE = 6; // dispose (null)
+	public static final int SET_ICON = 7; // inform tab about its icon (Image)
 
 	public static final int MAXCOMMON = 100; // values below are common
 												// values above are private
 												// Informs other tabs about changes in managed build settings.
-												// It may result in hiding/showing some tabs or changing their 
-												// contents. Data field is not used (null). 
+												// It may result in hiding/showing some tabs or changing their
+												// contents. Data field is not used (null).
 	public static final int MANAGEDBUILDSTATE = MAXCOMMON + 1;
 
 	/**
 	 * Creation of all visible elements
 	 * @param parent   - composite where widgets should be created
-	 * @param provider - underlying page 
+	 * @param provider - underlying page
 	 */
 	public void createControls(Composite parent, ICPropertyProvider provider);
 
 	/**
-	 * Handle events sent by another tabs or pages 
+	 * Handle events sent by another tabs or pages
 	 * Most of them are processed in <link>AbstractCPropertyTab</link>
 	 * but this functionality can be overridden partially or fully.
 	 * @param kind - message ID (see <link>AbstractCPropertyTab</link>)

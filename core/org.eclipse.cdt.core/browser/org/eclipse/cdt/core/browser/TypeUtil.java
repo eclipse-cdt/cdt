@@ -48,7 +48,7 @@ public class TypeUtil {
 	 * Returns the type in which this member is declared, or <code>null</code>
 	 * if this member is not declared in a type (for example, a top-level type).
 	 * This is a handle-only method.
-	 * 
+	 *
 	 * @return the type in which this member is declared, or <code>null</code>
 	 * if this member is not declared in a type (for example, a top-level type)
 	 */
@@ -110,7 +110,7 @@ public class TypeUtil {
 	 *		exception occurs while accessing its corresponding resource
 	 */
 	public static ICElement[] getTypes(ITranslationUnit tu) throws CModelException {
-		List<ICElement> typeList = new ArrayList<ICElement>();
+		List<ICElement> typeList = new ArrayList<>();
 		ICElement[] children = tu.getChildren();
 		for (int i = 0; i < children.length; ++i) {
 			if (isDeclaringType(children[i]))
@@ -121,7 +121,7 @@ public class TypeUtil {
 
 	/**
 	 * Returns all types declared in the given translation unit in the order
-	 * in which they appear in the source. 
+	 * in which they appear in the source.
 	 * This includes all top-level types and nested member types.
 	 * It does NOT include local types (types defined in methods).
 	 *
@@ -131,8 +131,8 @@ public class TypeUtil {
 	 */
 	public static ICElement[] getAllTypes(ITranslationUnit tu) throws CModelException {
 		ICElement[] types = getTypes(tu);
-		ArrayList<ICElement> allTypes = new ArrayList<ICElement>(types.length);
-		ArrayList<ICElement> typesToTraverse = new ArrayList<ICElement>(types.length);
+		ArrayList<ICElement> allTypes = new ArrayList<>(types.length);
+		ArrayList<ICElement> typesToTraverse = new ArrayList<>(types.length);
 		for (ICElement type : types) {
 			typesToTraverse.add(type);
 		}
@@ -158,7 +158,7 @@ public class TypeUtil {
 	 * @return the immediate member types declared by this type
 	 */
 	public static ICElement[] getTypes(ICElement elem) throws CModelException {
-		List<ICElement> typeList = new ArrayList<ICElement>();
+		List<ICElement> typeList = new ArrayList<>();
 		if (isDeclaringType(elem) && elem instanceof IParent) {
 			ICElement[] children = ((IParent) elem).getChildren();
 			for (int i = 0; i < children.length; ++i) {

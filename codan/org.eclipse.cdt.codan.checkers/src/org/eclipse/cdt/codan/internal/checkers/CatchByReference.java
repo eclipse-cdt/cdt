@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2012 Alena Laskavaia 
+ * Copyright (c) 2009, 2012 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -41,7 +41,7 @@ import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTTryBlockStatement;
  * Sutter/Andrei Alexandresscu "C++ Coding Standards", Rule 73
  * "Throw by value, catch by reference".
  * For one thing, this avoids copying and potentially slicing the exception.
- * 
+ *
  */
 public class CatchByReference extends AbstractIndexAstChecker {
 	public static final String ER_ID = "org.eclipse.cdt.codan.internal.checkers.CatchByReference"; //$NON-NLS-1$
@@ -99,7 +99,7 @@ public class CatchByReference extends AbstractIndexAstChecker {
 
 		/**
 		 * If it uses reference or pointer
-		 * 
+		 *
 		 * @param catchHandler
 		 * @return
 		 */

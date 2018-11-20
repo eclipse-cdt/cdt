@@ -177,7 +177,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	protected void putEntriesToLevel(int levelNum, SettingLevel level) {
 		switch (levelNum) {
 		case USER_ENTRIES_LEVEL:
-			List<EmptyEntryInfo> emptyEntryInfos = new ArrayList<EmptyEntryInfo>();
+			List<EmptyEntryInfo> emptyEntryInfos = new ArrayList<>();
 			for (UserEntryInfo userEntry : getUserEntries(level.getFlags(0), true, emptyEntryInfos)) {
 				level.addEntry(userEntry.fEntry, userEntry);
 			}
@@ -233,7 +233,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 	private UserEntryInfo[] getUserEntries(int flags, boolean usr, List<EmptyEntryInfo> emptyValuesInfos) {
 		IOption options[] = fLangData.getOptionsForKind(getKind());
 		if (options.length > 0) {
-			List<UserEntryInfo> entryList = new ArrayList<UserEntryInfo>();
+			List<UserEntryInfo> entryList = new ArrayList<>();
 			for (IOption opt : options) {
 				Option option = (Option) opt;
 				try {
@@ -254,7 +254,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 							} else {
 								// If resolved, add each resolved entry as a separate UserEntryInfo
 								boolean isMultiple = rVes.length > 1;
-								List<UserEntryInfo> sequense = isMultiple ? new ArrayList<UserEntryInfo>(rVes.length)
+								List<UserEntryInfo> sequense = isMultiple ? new ArrayList<>(rVes.length)
 										: null;
 								for (OptionStringValue rVe : rVes) {
 									ICLanguageSettingEntry entry = createUserEntry(option, rVe, flags, subst);
@@ -303,7 +303,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 			List<String> list = (List<String>) option.getValue();
 			if (list.size() != 0) {
 				if (set == null)
-					set = new HashSet<String>();
+					set = new HashSet<>();
 				set.addAll(list);
 			}
 		}
@@ -709,7 +709,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		if (emptyEntryInfos == null || emptyEntryInfos.size() == 0)
 			return infos;
 
-		LinkedList<UserEntryInfo> list = new LinkedList<UserEntryInfo>();
+		LinkedList<UserEntryInfo> list = new LinkedList<>();
 		list.addAll(Arrays.asList(infos));
 		for (int i = 0; i < emptyEntryInfos.size(); i++) {
 			EmptyEntryInfo ei = emptyEntryInfos.get(i);
@@ -735,7 +735,7 @@ public class BuildEntryStorage extends AbstractEntryStorage {
 		if (infos.length == 0)
 			return infos;
 
-		List<UserEntryInfo> list = new ArrayList<UserEntryInfo>(infos.length);
+		List<UserEntryInfo> list = new ArrayList<>(infos.length);
 
 		for (int i = 0; i < infos.length; i++) {
 			UserEntryInfo info = infos[i];

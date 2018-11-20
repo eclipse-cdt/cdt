@@ -22,10 +22,10 @@ import org.eclipse.cdt.dsf.service.IDsfService;
  * <strong>EXPERIMENTAL</strong>.  This class or interface has been added as part
  * of a work in progress. There is no guarantee that this API will work or that
  * it will remain the same.
- * 
+ *
  * The IGDBHardware service provides access to information about the target
  * hardware, such as the number of cores.
- * 
+ *
  * @since 4.1
  */
 public interface IGDBHardwareAndOS extends IDsfService {
@@ -46,8 +46,8 @@ public interface IGDBHardwareAndOS extends IDsfService {
 	/**
 	 * A logical core.  Without SMT (Simultaneous Multi-Threading),
 	 * a logical core is a physical core.  However, with SMT, each
-	 * physical core will have two logical cores.  
-	 * This context represents each logical core.   
+	 * physical core will have two logical cores.
+	 * This context represents each logical core.
 	 */
 	public interface ICoreDMContext extends IDMContext {
 		String getId();
@@ -78,14 +78,14 @@ public interface IGDBHardwareAndOS extends IDsfService {
 
 	/**
 	 * Returns an array of CPUs, based on the specified context.
-	 * 
+	 *
 	 * @param context The context to which this method applies.
 	 */
 	public void getCPUs(IHardwareTargetDMContext context, DataRequestMonitor<ICPUDMContext[]> rm);
 
 	/**
 	 * Returns an array of cores, based on the specified context.
-	 * 
+	 *
 	 * @param context The context to which this method applies.
 	 *                For an IHardwareTargetDMContext, all cores will be returned;
 	 *                for an ICPUDMContext, the cores on that CPU will be returned.
@@ -99,7 +99,7 @@ public interface IGDBHardwareAndOS extends IDsfService {
 
 	/**
 	 * Create a CPU context.
-	 * 
+	 *
 	 * @param targetDmc The parent context of this context
 	 * @param CPUId The id of the CPU
 	 */
@@ -107,7 +107,7 @@ public interface IGDBHardwareAndOS extends IDsfService {
 
 	/**
 	 * Create a core context.
-	 * 
+	 *
 	 * @param cpuDmc The parent CPU context of this context
 	 * @param coreId The id of the core
 	 */

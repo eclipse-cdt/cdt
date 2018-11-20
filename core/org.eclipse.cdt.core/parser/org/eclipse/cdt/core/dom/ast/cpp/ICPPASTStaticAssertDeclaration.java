@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTExpression;
 
 /**
  * Models static assertions: <code> static_assert(false, "message");</code>
- * 
+ *
  * @since 5.2
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -36,7 +36,7 @@ public interface ICPPASTStaticAssertDeclaration extends IASTDeclaration {
 	IASTExpression getCondition();
 
 	/**
-	 * Returns the message of the assertion. Potentially <code>null</code> when message is omitted 
+	 * Returns the message of the assertion. Potentially <code>null</code> when message is omitted
 	 * or using content assist.
 	 */
 	ICPPASTLiteralExpression getMessage();

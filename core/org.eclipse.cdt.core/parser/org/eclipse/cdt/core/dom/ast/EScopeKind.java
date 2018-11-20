@@ -19,7 +19,7 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public enum EScopeKind {
 	/**
-	 * Used for local scope, but also for function-scope (labels) and 
+	 * Used for local scope, but also for function-scope (labels) and
 	 * function-prototype scope (parameters in function prototypes).
 	 */
 	eLocal,

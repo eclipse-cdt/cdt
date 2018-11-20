@@ -18,8 +18,8 @@ import org.eclipse.cdt.dsf.ui.viewmodel.datamodel.IDMVMContext;
 import org.eclipse.core.expressions.PropertyTester;
 
 /**
- * Property tester for debug view related commands - group, ungroup, hide, etc. 
- * 
+ * Property tester for debug view related commands - group, ungroup, hide, etc.
+ *
  * @since 2.2
  */
 

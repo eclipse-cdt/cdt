@@ -283,7 +283,7 @@ public class Binary extends Openable implements IBinary {
 	boolean computeChildren(OpenableInfo info, IResource res) throws CModelException {
 		boolean ok = false;
 		if (isObject() || isExecutable() || isSharedLib()) {
-			Map<IPath, BinaryModule> hash = new HashMap<IPath, BinaryModule>();
+			Map<IPath, BinaryModule> hash = new HashMap<>();
 			IBinaryObject obj = getBinaryObject();
 			if (obj != null) {
 				// First check if we can get the list of source

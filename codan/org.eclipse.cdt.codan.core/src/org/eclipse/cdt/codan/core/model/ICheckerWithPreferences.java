@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2010 Alena Laskavaia 
+ * Copyright (c) 2009, 2010 Alena Laskavaia
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,14 +23,14 @@ package org.eclipse.cdt.codan.core.model;
  * of a work in progress. There is no guarantee that this API will work or that
  * it will remain the same.
  * </p>
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  */
 public interface ICheckerWithPreferences {
 	/**
 	 * Implement this method to set default parameters for checkers with
 	 * parameters.
-	 * 
+	 *
 	 * @param problem
 	 *        - instance of problem working copy
 	 */

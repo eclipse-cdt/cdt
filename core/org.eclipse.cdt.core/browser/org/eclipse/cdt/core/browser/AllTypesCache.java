@@ -43,7 +43,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
  * If <code>getTypes</code> is called in response to a user action, a progress
  * dialog is shown. If called before the background job has finished, getTypes
  * waits for the completion of the background job.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -116,7 +116,7 @@ public class AllTypesCache {
 
 	/**
 	 * Returns all types in the given scope.
-	 * 
+	 *
 	 * @param scope The search scope
 	 * @param kinds Array containing CElement types: C_NAMESPACE, C_CLASS,
 	 *              C_UNION, C_ENUMERATION, C_TYPEDEF
@@ -132,7 +132,7 @@ public class AllTypesCache {
 
 	/**
 	 * Returns all namespaces in the given scope.
-	 * 
+	 *
 	 * @param scope The search scope
 	 * @param includeGlobalNamespace <code>true</code> if the global (default) namespace should be returned
 	 */

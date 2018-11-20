@@ -18,6 +18,9 @@ package org.eclipse.cdt.internal.ui.text.c.hover;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
@@ -84,11 +87,6 @@ import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
 
 import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.editor.CAnnotationIterator;
-
 /**
  * AbstractAnnotationHover
  * Abstract super class for annotation hovers.
@@ -97,7 +95,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 
 	/**
 	 * An annotation info contains information about an {@link Annotation}
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	protected static class AnnotationInfo {
@@ -114,7 +112,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 		/**
 		 * Create completion proposals which can resolve the given annotation at
 		 * the given position. Returns an empty array if no such proposals exist.
-		 * 
+		 *
 		 * @return the proposals or an empty array
 		 */
 		public ICompletionProposal[] getCompletionProposals() {
@@ -123,7 +121,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 
 		/**
 		 * Adds actions to the given toolbar.
-		 * 
+		 *
 		 * @param manager the toolbar manager to add actions to
 		 * @param infoControl the information control
 		 */
@@ -138,7 +136,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 	 * The annotation information control shows informations about a given
 	 * {@link AbstractAnnotationHover.AnnotationInfo}. It can also show a toolbar
 	 * and a list of {@link ICompletionProposal}s.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	private static class AnnotationInformationControl extends AbstractInformationControl
@@ -592,7 +590,7 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 
 	/**
 	 * Action to configure the annotation preferences.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	private static final class ConfigureAnnotationsAction extends Action {
@@ -634,13 +632,13 @@ public class AbstractAnnotationHover extends AbstractCEditorTextHover {
 
 	/**
 	 * The hover control creator.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	private IInformationControlCreator fHoverControlCreator;
 	/**
 	 * The presentation control creator.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	private IInformationControlCreator fPresenterControlCreator;

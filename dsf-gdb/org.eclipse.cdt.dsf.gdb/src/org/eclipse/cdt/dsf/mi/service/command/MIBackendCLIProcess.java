@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -45,7 +45,7 @@ import org.eclipse.core.runtime.Status;
  * this process is no longer used.  Instead, the real GDB process,
  * along with its console will be used directly.  A second PTY
  * will be used to communicate using MI.
- * 
+ *
  * @since 1.1
  */
 public class MIBackendCLIProcess extends AbstractCLIProcess {
@@ -66,7 +66,7 @@ public class MIBackendCLIProcess extends AbstractCLIProcess {
 	}
 
 	public class BackedExitedEventListener {
-		private final List<RequestMonitor> fWaitForRMs = new ArrayList<RequestMonitor>();
+		private final List<RequestMonitor> fWaitForRMs = new ArrayList<>();
 
 		@DsfServiceEventHandler
 		public void eventDispatched(BackendStateChangedEvent event) {

@@ -13,10 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.core.tests;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.settings.model.ICProjectDescription;
 import org.eclipse.cdt.managedbuilder.core.BuildException;
@@ -37,6 +33,10 @@ import org.eclipse.cdt.managedbuilder.testplugin.ManagedBuildTestHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 public class OptionEnablementTests extends TestCase implements IManagedOptionValueHandler, IOptionApplicability {
 	private static final String PROJECT_TYPE = "test.four.dot.zero.cdt.managedbuild.target.gnu.exe";

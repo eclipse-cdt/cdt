@@ -39,7 +39,7 @@ import org.eclipse.cdt.managedbuilder.internal.core.ResourceConfiguration;
 
 /**
  * This class holds the language data for managed build tool
- * 
+ *
  * It current holds both the main kind => BuildEntryStorage
  * mapping as well as mappings on the currently undef'd kinds
  * (e.g. a language setting entry defined by scanner discovery
@@ -52,15 +52,15 @@ public class BuildLanguageData extends CLanguageData {
 	private ITool fTool;
 	private IInputType fInputType;
 
-	/** The main kind => BuildEntryStorage store 
+	/** The main kind => BuildEntryStorage store
 	 * The BuildEntryStorage calls back to this BuildLanguageData
 	 * to work out which entries are actually (un)defined. */
-	private KindBasedStore<BuildEntryStorage> fKindToEntryStore = new KindBasedStore<BuildEntryStorage>();
+	private KindBasedStore<BuildEntryStorage> fKindToEntryStore = new KindBasedStore<>();
 
 	/** Indicates that the option array stores have been inited */
 	private volatile boolean fOptionStoreInited;
-	private KindBasedStore<IOption[]> fKindToOptionArrayStore = new KindBasedStore<IOption[]>();
-	private KindBasedStore<IOption[]> fKindToUndefOptionArrayStore = new KindBasedStore<IOption[]>();
+	private KindBasedStore<IOption[]> fKindToOptionArrayStore = new KindBasedStore<>();
+	private KindBasedStore<IOption[]> fKindToUndefOptionArrayStore = new KindBasedStore<>();
 
 	//	private Map fKindToEntryArrayMap = new HashMap();
 	//	private ProfileInfoProvider fDiscoveredInfo;
@@ -136,7 +136,7 @@ public class BuildLanguageData extends CLanguageData {
 	//	private ProfileInfoProvider getDiscoveredInfoProvider(){
 	//		return fDiscoveredInfo;
 	//	}
-	/*	
+	/*
 		private String getOptionValueFromEntry(ICLanguageSettingEntry entry){
 			String optValue = entry.getName();
 			if(entry.getKind() == ICLanguageSettingEntry.MACRO){
@@ -145,7 +145,7 @@ public class BuildLanguageData extends CLanguageData {
 				optValue = buf.toString();
 			}
 			return optValue;
-			
+
 		}
 	*/
 	@Override
@@ -155,7 +155,7 @@ public class BuildLanguageData extends CLanguageData {
 
 	@Override
 	public ICLanguageSettingEntry[] getEntries(int kinds) {
-		List<ICLanguageSettingEntry> list = new ArrayList<ICLanguageSettingEntry>();
+		List<ICLanguageSettingEntry> list = new ArrayList<>();
 
 		if ((kinds & ICLanguageSettingEntry.INCLUDE_PATH) != 0) {
 			BuildEntryStorage storage = getEntryStorage(ICLanguageSettingEntry.INCLUDE_PATH);
@@ -239,7 +239,7 @@ public class BuildLanguageData extends CLanguageData {
 
 	private void calculateKindToOptionArrayStore() {
 		fKindToOptionArrayStore.clear();
-		Map<Integer, List<IOption>> kindToOptionList = new HashMap<Integer, List<IOption>>();
+		Map<Integer, List<IOption>> kindToOptionList = new HashMap<>();
 		IOption options[] = fTool.getOptions();
 		for (final IOption option : options) {
 			try {
@@ -272,7 +272,7 @@ public class BuildLanguageData extends CLanguageData {
 
 	private void calculateKindToUndefOptionArrayStore() {
 		fKindToUndefOptionArrayStore.clear();
-		Map<Integer, List<IOption>> kindToOptionList = new HashMap<Integer, List<IOption>>();
+		Map<Integer, List<IOption>> kindToOptionList = new HashMap<>();
 		IOption options[] = fTool.getOptions();
 		for (final IOption option : options) {
 			try {
@@ -316,7 +316,7 @@ public class BuildLanguageData extends CLanguageData {
 	/*	private IOption[] getOptionsForType(int type){
 			Map map = getTypeToOptionArrayMap();
 			return (IOption[])map.get(Integer.valueOf(type));
-			
+
 		}
 	*/
 
@@ -397,8 +397,8 @@ public class BuildLanguageData extends CLanguageData {
 	public void setSourceContentTypeIds(String[] ids) {
 		String[] headerIds = fInputType.getHeaderContentTypeIds();
 
-		List<String> newSrc = new ArrayList<String>(ids.length);
-		List<String> newHeaders = new ArrayList<String>(ids.length);
+		List<String> newSrc = new ArrayList<>(ids.length);
+		List<String> newHeaders = new ArrayList<>(ids.length);
 		for (int i = 0; i < ids.length; i++) {
 			String id = ids[i];
 			int j = 0;

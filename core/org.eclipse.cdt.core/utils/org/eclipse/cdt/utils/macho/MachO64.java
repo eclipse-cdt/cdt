@@ -26,8 +26,8 @@ import java.util.Set;
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ISymbolReader;
 import org.eclipse.cdt.utils.CPPFilt;
-import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 import org.eclipse.cdt.utils.debug.stabs.StabConstant;
+import org.eclipse.cdt.utils.debug.stabs.StabsReader;
 
 /**
  * @since 5.2
@@ -46,7 +46,7 @@ public class MachO64 {
 	private Symbol[] local_symbols; /* local symbols from DySymtabCommand */
 	private boolean dynsym = false; /* set if DynSymtabCommand is present */
 	Line[] lines; /* line table */
-	private ArrayList<Section> sections = new ArrayList<Section>(); /* sections from SegmentCommand */
+	private ArrayList<Section> sections = new ArrayList<>(); /* sections from SegmentCommand */
 	SymtabCommand symtab; /* SymtabCommand that contains the symbol table */
 
 	protected static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -874,7 +874,7 @@ public class MachO64 {
 
 		/**
 		 * If the function is available from the symbol information,
-		 * this will return the function name. May return null if 
+		 * this will return the function name. May return null if
 		 * the function can't be determined.
 		 */
 		public String getFunction() {
@@ -919,7 +919,7 @@ public class MachO64 {
 		/**
 		 * Returns the line number of the file if it is available
 		 * from the symbol information.  If it is not available,
-		 * then -1 is returned.  
+		 * then -1 is returned.
 		 */
 		public int getLineNumber(long vma) {
 			Line l = getLine(vma);
@@ -1219,7 +1219,7 @@ public class MachO64 {
 			case LoadCommand.LC_SYMTAB:
 				symtab = (SymtabCommand) loadcommand;
 				efile.seek(symtab.symoff);
-				ArrayList<Symbol> symList = new ArrayList<Symbol>(symtab.nsyms);
+				ArrayList<Symbol> symList = new ArrayList<>(symtab.nsyms);
 				for (int s = 0; s < symtab.nsyms; s++) {
 					Symbol symbol = new Symbol();
 					symbol.is64 = b64;
@@ -1246,7 +1246,7 @@ public class MachO64 {
 			}
 		}
 		if (dysymtab != null) {
-			ArrayList<Symbol> symList = new ArrayList<Symbol>(dysymtab.nlocalsym);
+			ArrayList<Symbol> symList = new ArrayList<>(dysymtab.nlocalsym);
 			for (int s = dysymtab.ilocalsym; s < dysymtab.nlocalsym; s++) {
 				symList.add(symbols[s]);
 			}
@@ -1270,7 +1270,7 @@ public class MachO64 {
 		}
 
 		/* now create line table, sorted on address */
-		Map<Line, Line> lineList = new HashMap<Line, Line>(nlines);
+		Map<Line, Line> lineList = new HashMap<>(nlines);
 		for (Symbol sym : symbols) {
 			if (sym.n_type == Symbol.N_SLINE || sym.n_type == Symbol.N_FUN) {
 				Line lentry = new Line();
@@ -1315,9 +1315,9 @@ public class MachO64 {
 
 	private ArrayList<Section> getSections(SegmentCommand seg) throws IOException {
 		if (seg.nsects == 0) {
-			return new ArrayList<Section>();
+			return new ArrayList<>();
 		}
-		ArrayList<Section> sections = new ArrayList<Section>();
+		ArrayList<Section> sections = new ArrayList<>();
 		for (int i = 0; i < seg.nsects; i++) {
 			Section section = new Section();
 			byte[] sectname = new byte[16];
@@ -1350,7 +1350,7 @@ public class MachO64 {
 
 	//	private TwoLevelHint[] getTwoLevelHints(int nhints) throws IOException {
 	//		if (nhints == 0 ) {
-	//			return new TwoLevelHint[0];			
+	//			return new TwoLevelHint[0];
 	//		}
 	//		TwoLevelHint[] tlhints = new TwoLevelHint[nhints];
 	//		for (int i = 0; i < nhints; i++ ) {
@@ -1729,7 +1729,7 @@ public class MachO64 {
 	}
 
 	public DyLib[] getDyLibs(int type) {
-		ArrayList<DyLib> v = new ArrayList<DyLib>();
+		ArrayList<DyLib> v = new ArrayList<>();
 		for (LoadCommand loadcommand : loadcommands) {
 			if (loadcommand.cmd == type) {
 				DyLibCommand dl = (DyLibCommand) loadcommand;

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 /**
  * This interface provides methods for RunControl that are not
  * part of the standard DSF IRunControl
- * 
+ *
  * @since 2.0
  */
 public interface IMIRunControl extends IRunControl2 {
@@ -36,11 +36,11 @@ public interface IMIRunControl extends IRunControl2 {
 	 * Request that the specified steps be executed by first ensuring the target is available
 	 * to receive commands.  Once the specified steps are executed, the target should be
 	 * returned to its original availability.
-	 * 
+	 *
 	 * This is of value for breakpoints commands; e.g., breakpoints need to be inserted
 	 * even when the target is running, so this call would suspend the target, insert the
 	 * breakpoint, and resume the target again.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public void executeWithTargetAvailable(IDMContext ctx, Sequence.Step[] stepsToExecute, RequestMonitor rm);
@@ -48,25 +48,25 @@ public interface IMIRunControl extends IRunControl2 {
 	/**
 	 * Generic interface for different possible Run modes such as Non-Stop or All-Stop.
 	 * Using this interface allows to extend the list of RunModes.
-	 *  
-	 * @since 4.0 
+	 *
+	 * @since 4.0
 	 */
 	public interface IRunMode {
-	};
+	}
 
-	/** 
+	/**
 	 * The run-modes supported by GDB.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public enum MIRunMode implements IRunMode {
 		ALL_STOP, NON_STOP
-	};
+	}
 
 	/**
 	 * Returns the RunMode that is currently being used by this RunControl service.
 	 * @returns The current RunMode used by this service.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public IRunMode getRunMode();

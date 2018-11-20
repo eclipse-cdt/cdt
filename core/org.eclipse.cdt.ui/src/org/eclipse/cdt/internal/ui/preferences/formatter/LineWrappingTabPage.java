@@ -24,6 +24,9 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.internal.corext.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -49,11 +52,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.corext.util.Messages;
-
 /**
  * The line wrapping tab page.
  */
@@ -77,7 +75,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 			this.prologue = prologue;
 			this.previewText = previewText != null ? createPreviewHeader(name) + previewText : null;
 			this.description = description;
-			children = new ArrayList<Category>();
+			children = new ArrayList<>();
 		}
 
 		public Category(String key, String previewText, String name, String description) {
@@ -98,14 +96,14 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	}
 
 	private final static String PREF_CATEGORY_INDEX = CUIPlugin.PLUGIN_ID
-			+ "formatter_page.line_wrapping_tab_page.last_category_index"; //$NON-NLS-1$ 
+			+ "formatter_page.line_wrapping_tab_page.last_category_index"; //$NON-NLS-1$
 
 	private final class CategoryListener implements ISelectionChangedListener, IDoubleClickListener {
 		private final List<Category> fCategoriesList;
 		private int fIndex = 0;
 
 		public CategoryListener(List<Category> categoriesTree) {
-			fCategoriesList = new ArrayList<Category>();
+			fCategoriesList = new ArrayList<>();
 			flatten(fCategoriesList, categoriesTree);
 		}
 
@@ -192,12 +190,12 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	}
 
 	private class SelectionState {
-		private List<Category> fElements = new ArrayList<Category>();
+		private List<Category> fElements = new ArrayList<>();
 
 		public void refreshState(IStructuredSelection selection) {
-			Map<Object, Integer> wrappingStyleMap = new HashMap<Object, Integer>();
-			Map<Object, Integer> indentStyleMap = new HashMap<Object, Integer>();
-			Map<Object, Integer> forceWrappingMap = new HashMap<Object, Integer>();
+			Map<Object, Integer> wrappingStyleMap = new HashMap<>();
+			Map<Object, Integer> indentStyleMap = new HashMap<>();
+			Map<Object, Integer> forceWrappingMap = new HashMap<>();
 			fElements.clear();
 			evaluateElements(selection.iterator());
 			evaluateMaps(wrappingStyleMap, indentStyleMap, forceWrappingMap);
@@ -364,17 +362,17 @@ public class LineWrappingTabPage extends FormatterTabPage {
 			FormatterMessages.LineWrappingTabPage_indentation_by_one };
 
 	protected static final String[] WRAPPING_NAMES = { FormatterMessages.LineWrappingTabPage_splitting_do_not_split,
-			FormatterMessages.LineWrappingTabPage_splitting_wrap_when_necessary, // COMPACT_SPLIT 
-			FormatterMessages.LineWrappingTabPage_splitting_always_wrap_first_others_when_necessary, // COMPACT_FIRST_BREAK_SPLIT  
-			FormatterMessages.LineWrappingTabPage_splitting_wrap_always, // ONE_PER_LINE_SPLIT  
-			FormatterMessages.LineWrappingTabPage_splitting_wrap_always_indent_all_but_first, // NEXT_SHIFTED_SPLIT  
+			FormatterMessages.LineWrappingTabPage_splitting_wrap_when_necessary, // COMPACT_SPLIT
+			FormatterMessages.LineWrappingTabPage_splitting_always_wrap_first_others_when_necessary, // COMPACT_FIRST_BREAK_SPLIT
+			FormatterMessages.LineWrappingTabPage_splitting_wrap_always, // ONE_PER_LINE_SPLIT
+			FormatterMessages.LineWrappingTabPage_splitting_wrap_always_indent_all_but_first, // NEXT_SHIFTED_SPLIT
 			FormatterMessages.LineWrappingTabPage_splitting_wrap_always_except_first_only_if_necessary };
 
 	//	private final Category fCompactIfCategory= new Category(
 	//		    DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_COMPACT_IF,
 	//		    "int foo(int argument) {" + //$NON-NLS-1$
 	//		    "  if (argument==0) return 0;" + //$NON-NLS-1$
-	//		    "  if (argument==1) return 42; else return 43;" + //$NON-NLS-1$	
+	//		    "  if (argument==1) return 42; else return 43;" + //$NON-NLS-1$
 	//		    "}", //$NON-NLS-1$
 	//		    FormatterMessages.LineWrappingTabPage_compact_if_else,
 	//			FormatterMessages.LineWrappingTabPage_compact_if_else_lowercase
@@ -403,7 +401,8 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	private final Category fMessageSendArgumentsCategory = new Category(
 			DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_ARGUMENTS_IN_METHOD_INVOCATION,
 			"class Other {static void bar(int arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9) {}};" //$NON-NLS-1$
-					+ "void foo() {Other::bar(100, 200, 300, 400, 500, 600, 700, 800, 900);}", FormatterMessages.LineWrappingTabPage_arguments, FormatterMessages.LineWrappingTabPage_arguments_lowercase);
+					+ "void foo() {Other::bar(100, 200, 300, 400, 500, 600, 700, 800, 900);}",
+			FormatterMessages.LineWrappingTabPage_arguments, FormatterMessages.LineWrappingTabPage_arguments_lowercase);
 
 	private final Category fMethodThrowsClauseCategory = new Category(
 			DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_METHOD_DECLARATION,
@@ -426,7 +425,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 			FormatterMessages.LineWrappingTabPage_constructor_initializer_list_lowercase);
 
 	//	private final Category fConstructorThrowsClauseCategory= new Category(
-	//	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_CONSTRUCTOR_DECLARATION, 
+	//	    	DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_THROWS_CLAUSE_IN_CONSTRUCTOR_DECLARATION,
 	//	    	"class Example {" + //$NON-NLS-1$
 	//	    	"Example() throws FirstException, SecondException, ThirdException {" + //$NON-NLS-1$
 	//	    	"  return Other.doSomething();}}", //$NON-NLS-1$
@@ -484,7 +483,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 
 	private final Category fStreamOutputExpressionCategory = new Category(
 			DefaultCodeFormatterConstants.FORMATTER_ALIGNMENT_FOR_OVERLOADED_LEFT_SHIFT_CHAIN,
-			// Invisible code 
+			// Invisible code
 			"namespace std {\n" + //$NON-NLS-1$
 					"class ostream {\n" + //$NON-NLS-1$
 					"    ostream& operator<<(int);\n" + //$NON-NLS-1$
@@ -581,7 +580,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 	protected final CategoryListener fCategoryListener;
 
 	/**
-	 * The current selection of elements. 
+	 * The current selection of elements.
 	 */
 	protected IStructuredSelection fSelection;
 
@@ -612,7 +611,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 
 		final String previewLineWidth = fDialogSettings.get(PREF_PREVIEW_LINE_WIDTH);
 
-		fPreviewPreferences = new HashMap<String, String>();
+		fPreviewPreferences = new HashMap<>();
 		fPreviewPreferences.put(LINE_SPLIT,
 				previewLineWidth != null ? previewLineWidth : String.valueOf(DEFAULT_PREVIEW_WINDOW_LINE_WIDTH));
 
@@ -628,7 +627,7 @@ public class LineWrappingTabPage extends FormatterTabPage {
 				FormatterMessages.LineWrappingTabPage_class_decls_lowercase);
 		classDeclarations.children.add(fTypeDeclarationBaseClauseCategory);
 
-		//		final Category constructorDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_constructor_decls); 
+		//		final Category constructorDeclarations= new Category(null, null, FormatterMessages.LineWrappingTabPage_constructor_decls);
 		//		constructorDeclarations.children.add(fConstructorDeclarationsParametersCategory);
 		//		constructorDeclarations.children.add(fConstructorThrowsClauseCategory);
 		//		constructorDeclarations.children.add(fConstructorInitializerListCategory);
@@ -663,10 +662,10 @@ public class LineWrappingTabPage extends FormatterTabPage {
 		expressions.children.add(fStreamOutputExpressionCategory);
 		expressions.children.add(fMemberAccessExpressionCategory);
 
-		//		final Category statements= new Category(FormatterMessages.LineWrappingTabPage_statements); 
+		//		final Category statements= new Category(FormatterMessages.LineWrappingTabPage_statements);
 		//		statements.children.add(fCompactIfCategory);
 
-		final List<Category> root = new ArrayList<Category>();
+		final List<Category> root = new ArrayList<>();
 		root.add(classDeclarations);
 		//		root.add(constructorDeclarations);
 		root.add(methodDeclarations);

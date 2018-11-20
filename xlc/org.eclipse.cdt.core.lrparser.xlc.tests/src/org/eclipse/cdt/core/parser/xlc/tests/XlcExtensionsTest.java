@@ -150,7 +150,7 @@ public class XlcExtensionsTest extends XlcTestBase {
 	/**
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=228826
 	 * http://publib.boulder.ibm.com/infocenter/comphelp/v101v121/index.jsp?topic=/com.ibm.xlcpp101.aix.doc/language_ref/restrict_type_qualifier.html
-	 * 
+	 *
 	 * TODO Need a properties page so that things like this can be configured by the user.
 	 */
 	public void testRestrictC() {

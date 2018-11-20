@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,14 +21,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation indicating that given package, class, method, or field can be 
- * access safely from any thread.  If declared on package or type, a field 
+ * Annotation indicating that given package, class, method, or field can be
+ * access safely from any thread.  If declared on package or type, a field
  * or method could still be declared with an annotation indicating that it's
  * not thread-safe.
  * <p>
- * Note: the runtime retention policy is there to allow automated testing 
+ * Note: the runtime retention policy is there to allow automated testing
  * and validation code.
- * 
+ *
  * @since 1.0
  */
 @Retention(RetentionPolicy.RUNTIME)

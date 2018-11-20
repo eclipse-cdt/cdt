@@ -40,7 +40,7 @@ public class XmlStorage implements ICSettingsStorage {
 	// Lock to prevent concurrent access to XML DOM which isn't thread-safe for read (Bug 319245)
 	final Object fLock;
 	public Element fElement;
-	private Map<String, InternalXmlStorageElement> fStorageElementMap = new HashMap<String, InternalXmlStorageElement>();
+	private Map<String, InternalXmlStorageElement> fStorageElementMap = new HashMap<>();
 	private volatile boolean fChildrenInited;
 	private boolean fIsReadOnly;
 	private boolean fIsDirty;

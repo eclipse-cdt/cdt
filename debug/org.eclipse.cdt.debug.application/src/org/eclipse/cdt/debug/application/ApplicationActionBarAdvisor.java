@@ -347,7 +347,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	}
 
 	/**
-	 * Workbench action (id: "corefile", commandId: "org.eclipse.cdt.debug.application.command.debugCore"): 
+	 * Workbench action (id: "corefile", commandId: "org.eclipse.cdt.debug.application.command.debugCore"):
 	 * Debug an executable with a core file.  This action maintains its enablement state.
 	 */
 	private static final ActionFactory COREFILE = new ActionFactory("corefile", //$NON-NLS-1$
@@ -370,7 +370,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	};
 
 	/**
-	 * Workbench action (id: "newexecutable", commandId: "org.eclipse.cdt.debug.application.command.debugNewExecutable"): 
+	 * Workbench action (id: "newexecutable", commandId: "org.eclipse.cdt.debug.application.command.debugNewExecutable"):
 	 * Debug an executable.  This action maintains its enablement state.
 	 */
 	private static final ActionFactory NEW_EXECUTABLE = new ActionFactory("newexecutable", //$NON-NLS-1$
@@ -393,7 +393,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	};
 
 	/**
-	 * Workbench action (id: "remoteexecutable", commandId: "org.eclipse.cdt.debug.application.command.debugRemoteExecutable"): 
+	 * Workbench action (id: "remoteexecutable", commandId: "org.eclipse.cdt.debug.application.command.debugRemoteExecutable"):
 	 * Debug a remote executable.  This action maintains its enablement state.
 	 */
 	private static final ActionFactory REMOTE_EXECUTABLE = new ActionFactory("remoteexecutable", //$NON-NLS-1$
@@ -416,7 +416,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 	};
 
 	/**
-	 * Workbench action (id: "attachexecutable", commandId: "org.eclipse.cdt.debug.application.command.debugAttachedExecutable"): 
+	 * Workbench action (id: "attachexecutable", commandId: "org.eclipse.cdt.debug.application.command.debugAttachedExecutable"):
 	 * Attach and debug an existing executable.  This action maintains its enablement state.
 	 */
 	private static final ActionFactory ATTACH_EXECUTABLE = new ActionFactory("attachexecutable", //$NON-NLS-1$

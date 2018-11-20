@@ -177,7 +177,7 @@ public class ExpansionExplorerTests extends BaseTestCase {
 		performTest(3);
 	}
 
-	// #define m !(m)+n 
+	// #define m !(m)+n
 	// #define n(n) n(m)
 
 	// m(m)

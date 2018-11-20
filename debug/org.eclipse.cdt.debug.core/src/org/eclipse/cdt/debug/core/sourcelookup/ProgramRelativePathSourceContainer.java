@@ -14,6 +14,7 @@
 package org.eclipse.cdt.debug.core.sourcelookup;
 
 import java.io.File;
+
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.IBinary;
 import org.eclipse.cdt.core.model.ICProject;
@@ -21,20 +22,20 @@ import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICDTLaunchConfigurationConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
-import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
-import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
-import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
+import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
+import org.eclipse.debug.core.sourcelookup.ISourceLookupDirector;
+import org.eclipse.debug.core.sourcelookup.containers.AbstractSourceContainer;
+import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
 
 /**
  * A source container that converts relative paths to absolute ones using the
  * program (executable) location as the reference point. The conversion is
  * successful only if such a file actually exists.
- * 
+ *
  * @since 7.0
  */
 public class ProgramRelativePathSourceContainer extends AbstractSourceContainer {
@@ -66,7 +67,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer 
 	 * launch/launch-configuration context, it can explicitly create an instance
 	 * using this constructor and call our {@link #findSourceElements(String)}
 	 * method.
-	 * 
+	 *
 	 * @param program
 	 *            the executable context. Calling this with null is equivalent
 	 *            to calling the default constructor.
@@ -82,7 +83,7 @@ public class ProgramRelativePathSourceContainer extends AbstractSourceContainer 
 	 * the program (executable) produces an absolute path that points to an
 	 * actual file, then we return a LocalFileStorage for that file. Otherwise
 	 * we return an empty array. We always return at most one element.
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.sourcelookup.ISourceContainer#findSourceElements(java.lang.String)
 	 */
 	@Override

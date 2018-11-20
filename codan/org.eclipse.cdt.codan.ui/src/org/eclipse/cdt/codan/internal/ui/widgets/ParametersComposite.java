@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * Composite to show problem preferences
- * 
+ *
  */
 public class ParametersComposite extends Composite {
 	private static final String PREF_ENABLED = "enabled"; //$NON-NLS-1$

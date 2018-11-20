@@ -36,7 +36,7 @@ public class MakeUITestBase {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param srcRoot - project folder where the test package is rooted.
 	 */
 	protected MakeUITestBase(String srcRoot) {
@@ -46,7 +46,7 @@ public class MakeUITestBase {
 
 	/**
 	 * Get name of the current test method.
-	 * 
+	 *
 	 * @return Name of the current test method.
 	 */
 	public String getName() {
@@ -55,7 +55,7 @@ public class MakeUITestBase {
 
 	/**
 	 * Retrieve comments above the current test method.
-	 * 
+	 *
 	 * @return First section of comments above the current test method.
 	 *    A sections is defined as a block of comments starting with "//". Sections are separated by empty lines.
 	 * @throws IOException

@@ -16,23 +16,21 @@ package org.eclipse.cdt.internal.ui.editor;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-
 /**
  * Editor action to toggle between source and header files.
- * 
+ *
  * @since 4.0
  */
 public class ToggleSourceAndHeaderAction extends TextEditorAction {
@@ -41,7 +39,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 
 	/**
 	 * Create a toggle source/header action for the given editor.
-	 * 
+	 *
 	 * @param bundle  the resource bundle to take the label, tooltip and description from.
 	 * @param prefix  the prefix to be prepended to the resource bundle keys
 	 * @param editor  the text editor this action is associated with
@@ -88,7 +86,7 @@ public class ToggleSourceAndHeaderAction extends TextEditorAction {
 
 	/**
 	 * Compute the corresponding translation unit for the given unit.
-	 * 
+	 *
 	 * @param tUnit  the current source/header translation unit
 	 * @return the partner translation unit
 	 */

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -93,7 +93,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -151,7 +151,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	@Override
@@ -251,7 +251,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
@@ -286,7 +286,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
 	/**
 	 * Defaults are empty.
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
@@ -297,7 +297,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	@Override
@@ -323,7 +323,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
 	 */
 	@Override
@@ -337,7 +337,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
 	/**
 	 * Retuns the string in the text widget, or <code>null</code> if empty.
-	 * 
+	 *
 	 * @return text or <code>null</code>
 	 */
 	protected String getAttributeValueFrom(Text text) {
@@ -350,7 +350,7 @@ public class WorkingDirectoryBlock extends CLaunchConfigurationTab {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
 	 */
 	@Override

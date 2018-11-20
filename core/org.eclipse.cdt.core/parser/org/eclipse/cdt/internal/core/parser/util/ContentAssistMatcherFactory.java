@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.parser.util.SegmentMatcher;
 
 /**
  * The facade to the pattern matching algorithms of content assist.
- *  
+ *
  * @author Jens Elmenthaler
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @since 5.3
  */
@@ -96,7 +96,7 @@ public class ContentAssistMatcherFactory {
 	/**
 	 * This function is not supposed to be called from any functions except
 	 * for ContentAssistMatcherPreference.updateOnPreferences.
-	 *  
+	 *
 	 * @param showCamelCaseMatches
 	 */
 	public synchronized void setShowCamelCaseMatches(boolean showCamelCaseMatches) {
@@ -104,7 +104,7 @@ public class ContentAssistMatcherFactory {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code> if showCamelCaseMatches is set from the content assist preference page.
 	 */
 	public boolean getShowCamelCaseMatches() {
@@ -131,11 +131,11 @@ public class ContentAssistMatcherFactory {
 	/**
 	 * A helper method to match a name against the pattern typed by the user.
 	 * If you need to match many names at once against the same pattern, use
-	 * {@link #createMatcher(char[])} and re-use the returned matcher instead.  
-	 * 
+	 * {@link #createMatcher(char[])} and re-use the returned matcher instead.
+	 *
 	 * @param pattern The user provided pattern.
 	 * @param name The name to match against the pattern.
-	 * 
+	 *
 	 * @return <code>true</code> if the name matches the given pattern.
 	 */
 	public boolean match(char[] pattern, char[] name) {

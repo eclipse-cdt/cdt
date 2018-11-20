@@ -7,13 +7,11 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.tests;
-
-import junit.framework.TestSuite;
 
 import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
 import org.eclipse.cdt.core.dom.ast.IBinding;
@@ -25,6 +23,8 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.parser.ParserLanguage;
 import org.eclipse.cdt.core.parser.tests.prefix.BasicCompletionTest;
 import org.eclipse.cdt.internal.core.parser.ParserException;
+
+import junit.framework.TestSuite;
 
 @SuppressWarnings({ "restriction", "nls" })
 public class LRCompletionBasicTest extends BasicCompletionTest {
@@ -41,7 +41,7 @@ public class LRCompletionBasicTest extends BasicCompletionTest {
 	public void testCompletionInSizeof340664() throws Exception {
 	}
 
-	//override some failed test cases 
+	//override some failed test cases
 	@Override
 	public void testBug279931() throws Exception {
 	}

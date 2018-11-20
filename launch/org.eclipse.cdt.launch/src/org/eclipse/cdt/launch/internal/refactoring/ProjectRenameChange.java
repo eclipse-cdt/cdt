@@ -36,9 +36,9 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * A change to update a launch configuration with a new project name.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 class ProjectRenameChange extends AbstractLaunchConfigChange {
@@ -56,7 +56,7 @@ class ProjectRenameChange extends AbstractLaunchConfigChange {
 
 	/**
 	 * Initializes me.
-	 * 
+	 *
 	 * @param launchConfig
 	 *            the launch configuration that I change
 	 * @param oldName

@@ -19,8 +19,8 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * Interface for strings stored in the database. There is more than one string
- * format. This interface hides that fact. 
- * 
+ * format. This interface hides that fact.
+ *
  * @author Doug Schaefer
  */
 public interface IString {

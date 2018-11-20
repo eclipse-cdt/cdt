@@ -300,7 +300,7 @@ public class FileListControlFieldEditor extends FieldEditor {
 	 */
 	private String[] parseString(String stringList) {
 		StringTokenizer tokenizer = new StringTokenizer(stringList, DEFAULT_SEPARATOR);
-		ArrayList<String> list = new ArrayList<String>();
+		ArrayList<String> list = new ArrayList<>();
 		while (tokenizer.hasMoreElements()) {
 			list.add((String) tokenizer.nextElement());
 		}

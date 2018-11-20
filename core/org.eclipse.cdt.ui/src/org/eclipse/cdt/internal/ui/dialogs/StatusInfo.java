@@ -14,9 +14,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs;
 
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * A settable IStatus
@@ -150,7 +149,7 @@ public class StatusInfo implements IStatus {
 	}
 
 	/**
-	 * Returns a string representation of the status, suitable 
+	 * Returns a string representation of the status, suitable
 	 * for debugging purposes only.
 	 */
 	@Override

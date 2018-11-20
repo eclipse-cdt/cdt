@@ -125,14 +125,17 @@ public class AutotoolsConfiguration implements IAConfiguration {
 			new Option(AutotoolsOptionConstants.OPT_PROGRAM_PREFIX, "program_prefix", IConfigureOption.STRING), //$NON-NLS-1$
 			new Option(AutotoolsOptionConstants.OPT_PROGRAM_SUFFIX, "program_suffix", IConfigureOption.STRING), //$NON-NLS-1$
 			new Option(AutotoolsOptionConstants.OPT_PROGRAM_TRANSFORM_NAME, "program_transform_name", //$NON-NLS-1$
-					IConfigureOption.STRING), new Option(AutotoolsOptionConstants.CATEGORY_ENVVAR, IConfigureOption.CATEGORY),
+					IConfigureOption.STRING),
+			new Option(AutotoolsOptionConstants.CATEGORY_ENVVAR, IConfigureOption.CATEGORY),
 			new Option(AutotoolsOptionConstants.OPT_ENVVAR, IConfigureOption.ENVVAR),
 			new Option(AutotoolsOptionConstants.CATEGORY_FEATURES, IConfigureOption.CATEGORY),
 			new Option(AutotoolsOptionConstants.OPT_ENABLE_MAINTAINER_MODE, "enable_maintainer_mode", //$NON-NLS-1$
-					IConfigureOption.BIN), new Option(AutotoolsOptionConstants.FLAG_CFLAGS, "cflags", AutotoolsOptionConstants.FLAG_CFLAGS_FLAGS, //$NON-NLS-1$
-					IConfigureOption.FLAG), new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$
-			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$ 
-			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), //$NON-NLS-1$ //$NON-NLS-2$ 
+					IConfigureOption.BIN),
+			new Option(AutotoolsOptionConstants.FLAG_CFLAGS, "cflags", AutotoolsOptionConstants.FLAG_CFLAGS_FLAGS, //$NON-NLS-1$
+					IConfigureOption.FLAG),
+			new Option(AutotoolsOptionConstants.OPT_CFLAGS_DEBUG, "cflags_debug", IConfigureOption.FLAGVALUE), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GPROF, "cflags_gprof", IConfigureOption.FLAGVALUE), //$NON-NLS-1$
+			new Option(AutotoolsOptionConstants.OPT_CFLAGS_GCOV, "cflags_gcov", IConfigureOption.FLAGVALUE), //$NON-NLS-1$
 			new Option(AutotoolsOptionConstants.OPT_USER, IConfigureOption.MULTIARG),
 			new Option(AutotoolsOptionConstants.TOOL_AUTOGEN, "autogen", "autogen.sh", IConfigureOption.TOOL), //$NON-NLS-1$
 			new Option(AutotoolsOptionConstants.CATEGORY_OPTIONS, IConfigureOption.CATEGORY),

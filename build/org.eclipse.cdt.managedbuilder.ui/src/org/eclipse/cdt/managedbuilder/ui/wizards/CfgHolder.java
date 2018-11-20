@@ -23,11 +23,11 @@ import org.eclipse.cdt.managedbuilder.core.ManagedBuildManager;
 import org.eclipse.cdt.managedbuilder.internal.ui.Messages;
 
 /**
- * This class is intended for data exchange between 
- * Configuration page and Handlers. 
- * It may hold configuration in case of managed project 
- * or to be a placeholder in case of make project  
- * 
+ * This class is intended for data exchange between
+ * Configuration page and Handlers.
+ * It may hold configuration in case of managed project
+ * or to be a placeholder in case of make project
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -73,7 +73,7 @@ public class CfgHolder {
 
 	/**
 	 * Checks whether names are unique
-	 * 
+	 *
 	 * @param its array of CfgHolders
 	 * @return boolean if CfgHolder name appears more than once
 	 */
@@ -93,7 +93,7 @@ public class CfgHolder {
 	/**
 	 * Creates array of {@link CfgHolder}s based on the passed in
 	 * {@link IConfiguration}s
-	 * 
+	 *
 	 * @param cfgs {@link IConfiguration}s to turn to CfgHolders
 	 * @return CfgHolder[]
 	 */
@@ -107,11 +107,11 @@ public class CfgHolder {
 
 	/**
 	 * Makes configuration's names unique.
-	 * Adds either version number or toolchain name. 
+	 * Adds either version number or toolchain name.
 	 * If it does not help, simply adds index.
-	 * 
+	 *
 	 * @param its - list of items.
-	 * @return the same list with unique names. 
+	 * @return the same list with unique names.
 	 */
 
 	public static CfgHolder[] unique(CfgHolder[] its) {
@@ -151,8 +151,8 @@ public class CfgHolder {
 	/**
 	 * Returns corresponding project type
 	 * obtained either from configuration
-	 * (if any) or from toolchain. 
-	 * 
+	 * (if any) or from toolchain.
+	 *
 	 * @return projectType
 	 */
 
@@ -166,17 +166,17 @@ public class CfgHolder {
 
 	/**
 	 * Reorders selected configurations in "physical" order.
-	 * Although toolchains are displayed in alphabetical 
+	 * Although toolchains are displayed in alphabetical
 	 * order in Wizard, it's required to create corresponding
 	 * configurations in the same order as they are listed
-	 * in xml file, inside of single project type.   
-	 * 
+	 * in xml file, inside of single project type.
+	 *
 	 * @param its - items in initial order.
 	 * @return - items in "physical" order.
 	 */
 
 	public static CfgHolder[] reorder(CfgHolder[] its) {
-		ArrayList<CfgHolder> ls = new ArrayList<CfgHolder>(its.length);
+		ArrayList<CfgHolder> ls = new ArrayList<>(its.length);
 		boolean found = true;
 		while (found) {
 			found = false;
@@ -210,7 +210,7 @@ public class CfgHolder {
 	 * Note that null configurations are ignored !
 	 */
 	public static IConfiguration[] items2cfgs(CfgHolder[] its) {
-		ArrayList<IConfiguration> lst = new ArrayList<IConfiguration>(its.length);
+		ArrayList<IConfiguration> lst = new ArrayList<>(its.length);
 		for (CfgHolder h : its)
 			if (h.cfg != null)
 				lst.add(h.cfg);

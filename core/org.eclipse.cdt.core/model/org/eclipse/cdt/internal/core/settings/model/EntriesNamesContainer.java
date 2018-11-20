@@ -21,7 +21,7 @@ import org.eclipse.cdt.core.settings.model.util.KindBasedStore;
 
 class EntriesNamesContainer {
 	//	private String fLanguageSettingsId;
-	private KindBasedStore<Set<String>> fRemovedEntryNamesStore = new KindBasedStore<Set<String>>();
+	private KindBasedStore<Set<String>> fRemovedEntryNamesStore = new KindBasedStore<>();
 
 	//	EntriesNamesContainer(ICLanguageSetting setting) {
 	//		fLanguageSettingsId = setting.getId();
@@ -37,7 +37,7 @@ class EntriesNamesContainer {
 		for (int i = 0; i < infos.length; i++) {
 			Set<String> set = infos[i].getInfo();
 			if (set != null)
-				fRemovedEntryNamesStore.put(infos[i].getKind(), new HashSet<String>(set));
+				fRemovedEntryNamesStore.put(infos[i].getKind(), new HashSet<>(set));
 		}
 	}
 
@@ -48,7 +48,7 @@ class EntriesNamesContainer {
 	private Set<String> getRemovedNamesSet(int kind, boolean create) {
 		Set<String> set = fRemovedEntryNamesStore.get(kind);
 		if (set == null && create) {
-			set = new HashSet<String>();
+			set = new HashSet<>();
 			fRemovedEntryNamesStore.put(kind, set);
 		}
 		return set;

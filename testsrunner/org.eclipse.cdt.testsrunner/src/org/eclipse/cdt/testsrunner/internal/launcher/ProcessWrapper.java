@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -21,7 +21,7 @@ import java.io.OutputStream;
  * Wraps the underline process and prevent accessing to its output or error stream.
  * This wrapping is necessary to prevent handling the test module output by Console
  * because we want to handle it here.
- * 
+ *
  */
 class ProcessWrapper extends Process {
 
@@ -55,7 +55,7 @@ class ProcessWrapper extends Process {
 
 	/**
 	 * The constructor
-	 * 
+	 *
 	 * @param wrappedProcess underlying process
 	 * @param hideInputStream process input stream should be hidden
 	 * @param hideErrorStream process error stream should be hidden

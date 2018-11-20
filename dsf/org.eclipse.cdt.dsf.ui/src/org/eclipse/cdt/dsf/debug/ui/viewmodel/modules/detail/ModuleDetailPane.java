@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
@@ -73,7 +73,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
- * 
+ *
  */
 public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdaptable, IPropertyChangeListener {
 
@@ -207,7 +207,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
 
 	/**
 	 * Creates the source viewer in the given parent composite
-	 * 
+	 *
 	 * @param parent Parent composite to create the source viewer in
 	 */
 	private void createSourceViewer(Composite parent) {
@@ -322,7 +322,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
 	/**
 	 * Adds items to the detail pane's context menu including any extension defined
 	 * actions.
-	 * 
+	 *
 	 * @param menu The menu to add the item to.
 	 */
 	protected void fillDetailContextMenu(IMenuManager menu) {
@@ -341,7 +341,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
 	 */
 	private void createActions() {
 		TextViewerAction textAction = new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
-		textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$ 
+		textAction.configureAction(MessagesForDetailPane.DetailPane_Select_All, "", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction,
 				IDsfDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
@@ -441,7 +441,7 @@ public class ModuleDetailPane extends ModulesAbstractDetailPane implements IAdap
 	}
 
 	/**
-	 * To get the details of the given module selected in Modules View 
+	 * To get the details of the given module selected in Modules View
 	 * @param module
 	 * @return
 	 */

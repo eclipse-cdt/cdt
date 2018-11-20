@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *    IBM Rational Software - Initial API and implementation 
+ *    IBM Rational Software - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.DOMAST;
 
@@ -20,11 +20,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.ui.views.properties.IPropertyDescriptor;
-import org.eclipse.ui.views.properties.IPropertySource;
-import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTTypeUtil;
@@ -60,9 +55,12 @@ import org.eclipse.cdt.core.dom.ast.c.ICASTFieldDesignator;
 import org.eclipse.cdt.core.dom.ast.gnu.c.IGCCASTArrayRangeDesignator;
 import org.eclipse.cdt.core.parser.Keywords;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.model.ASTStringUtil;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.ui.views.properties.IPropertyDescriptor;
+import org.eclipse.ui.views.properties.IPropertySource;
+import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 /**
  * @author dsteffle
@@ -92,7 +90,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 	// used for applying filters to the tree, since it is lazily populated
 	// all parents of the desired tree object to display need to have a flag as well
 	private int filterFlag = 0;
-	private static Set<String> ignoreInterfaces = new HashSet<String>();
+	private static Set<String> ignoreInterfaces = new HashSet<>();
 	public static final int FLAG_PROBLEM = 1 << 0;
 	public static final int FLAG_PREPROCESSOR = 1 << 1;
 	public static final int FLAG_INCLUDE_STATEMENTS = 1 << 2;
@@ -133,7 +131,7 @@ public class DOMASTNodeLeaf implements IAdaptable {
 		if (node == null)
 			return BLANK_STRING;
 		StringBuilder buffer = new StringBuilder();
-		List<Class<?>> search = new LinkedList<Class<?>>();
+		List<Class<?>> search = new LinkedList<>();
 		boolean done = false;
 		boolean needComma = false;
 

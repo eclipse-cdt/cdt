@@ -11,7 +11,7 @@
  * Contributors:
  *     Alena Laskavaia - initial API and implementation,
  *     inspired by work of Erik Johansson <erik.johansson.979@gmail.com>
- *     Dominic Scharfe (COSEDA Technologies GmbH) - Fix for bug 507148 
+ *     Dominic Scharfe (COSEDA Technologies GmbH) - Fix for bug 507148
  *
  *******************************************************************************/
 package org.eclipse.cdt.codan.internal.checkers.ui.quickfix;

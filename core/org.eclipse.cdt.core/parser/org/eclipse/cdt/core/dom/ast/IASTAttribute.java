@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * Represents a C++11 (ISO/IEC 14882:2011 7.6)
  * or a GCC attribute (http://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html).
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.4

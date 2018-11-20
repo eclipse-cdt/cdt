@@ -25,7 +25,7 @@ import org.eclipse.ui.preferences.IWorkingCopyManager;
 import org.osgi.service.prefs.BackingStoreException;
 
 /**
- * 
+ *
  */
 public class PreferencesAccess {
 

@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Macro_Reference, with no prefix
  * Bug#50487 :Wrong completion kind and prefix after "#ifdef"
  *

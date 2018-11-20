@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Nokia - initial implementation. Oct. 2008
  *******************************************************************************/
@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-
-import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.dsf.concurrent.DsfRunnable;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
@@ -34,8 +32,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import junit.framework.AssertionFailedError;
+
 /**
- * Test whether a step in a sequence can control the progress monitor. 
+ * Test whether a step in a sequence can control the progress monitor.
  */
 public class DsfSequenceProgressTests {
 	private List<Throwable> fExceptions = Collections.synchronizedList(new ArrayList<Throwable>());
@@ -61,7 +61,7 @@ public class DsfSequenceProgressTests {
 		fExecutor = null;
 	}
 
-	// Create a counter for tracking number of steps performed and steps 
+	// Create a counter for tracking number of steps performed and steps
 	// rolled back.
 	class IntegerHolder {
 		int fInteger;
@@ -144,7 +144,7 @@ public class DsfSequenceProgressTests {
 	 * step.<br>
 	 * <br>
 	 * Also watch that when you cancel the progress bar during the execution of
-	 * the sequence, you should see that "Rollback.." appears in the progress bar 
+	 * the sequence, you should see that "Rollback.." appears in the progress bar
 	 * label.<br>
 	 */
 	public void sequenceProgressTest() throws InterruptedException, ExecutionException {
@@ -198,9 +198,9 @@ public class DsfSequenceProgressTests {
 				try {
 					sequence.get();
 				} catch (InterruptedException e) {
-					// ignore here. 
+					// ignore here.
 				} catch (ExecutionException e) {
-					// Expected exception, ignore here. 
+					// Expected exception, ignore here.
 				} finally {
 					try {
 						System.out.println("StepCounter: " + stepCounter.fInteger);

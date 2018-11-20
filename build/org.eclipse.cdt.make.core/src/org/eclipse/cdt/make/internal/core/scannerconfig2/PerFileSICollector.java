@@ -75,9 +75,9 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		protected final Map<Integer, CCommandDSC> commandIdCommandMap; // map of all commands
 
 		public ScannerInfoData() {
-			commandIdCommandMap = new LinkedHashMap<Integer, CCommandDSC>(); // [commandId, command]
-			fileToCommandIdMap = new HashMap<IFile, Integer>(); // [file, commandId]
-			commandIdToFilesMap = new HashMap<Integer, Set<IFile>>(); // [commandId, set of files]
+			commandIdCommandMap = new LinkedHashMap<>(); // [commandId, command]
+			fileToCommandIdMap = new HashMap<>(); // [file, commandId]
+			commandIdToFilesMap = new HashMap<>(); // [commandId, set of files]
 		}
 
 		/* (non-Javadoc)
@@ -88,7 +88,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 			synchronized (PerFileSICollector.this.fLock) {
 				Document doc = collectorElem.getOwnerDocument();
 
-				List<Integer> commandIds = new ArrayList<Integer>(commandIdCommandMap.keySet());
+				List<Integer> commandIds = new ArrayList<>(commandIdCommandMap.keySet());
 				Collections.sort(commandIds);
 				for (Integer commandId : commandIds) {
 					CCommandDSC command = commandIdCommandMap.get(commandId);
@@ -201,10 +201,10 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		sid = new ScannerInfoData();
 
 		//        siChangedForFileList = new ArrayList();
-		siChangedForFileMap = new HashMap<IFile, Integer>();
-		siChangedForCommandIdList = new ArrayList<Integer>();
+		siChangedForFileMap = new HashMap<>();
+		siChangedForCommandIdList = new ArrayList<>();
 
-		freeCommandIdPool = new TreeSet<Integer>();
+		freeCommandIdPool = new TreeSet<>();
 	}
 
 	/* (non-Javadoc)
@@ -300,7 +300,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 
 	protected void addCompilerCommand(IFile file, CCommandDSC cmd) {
 		assert Thread.holdsLock(fLock);
-		List<CCommandDSC> existingCommands = new ArrayList<CCommandDSC>(sid.commandIdCommandMap.values());
+		List<CCommandDSC> existingCommands = new ArrayList<>(sid.commandIdCommandMap.values());
 		int index = existingCommands.indexOf(cmd);
 		if (index != -1) {
 			cmd = existingCommands.get(index);
@@ -344,7 +344,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 				// update sid.commandIdToFilesMap
 				Set<IFile> fileSet = sid.commandIdToFilesMap.get(commandId);
 				if (fileSet == null) {
-					fileSet = new HashSet<IFile>();
+					fileSet = new HashSet<>();
 					sid.commandIdToFilesMap.put(commandId, fileSet);
 					CCommandDSC cmd = sid.commandIdCommandMap.get(commandId);
 					if (cmd != null) {
@@ -435,7 +435,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 			if (scannerInfoChanged()) {
 				applyFileDeltas();
 				removeUnusedCommands();
-				changedResources = new ArrayList<IResource>(siChangedForFileMap.keySet());
+				changedResources = new ArrayList<>(siChangedForFileMap.keySet());
 				siChangedForFileMap.clear();
 			}
 			siChangedForCommandIdList.clear();
@@ -480,7 +480,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 	 */
 	@Override
 	public List<CCommandDSC> getCollectedScannerInfo(Object resource, ScannerInfoTypes type) {
-		List<CCommandDSC> rv = new ArrayList<CCommandDSC>();
+		List<CCommandDSC> rv = new ArrayList<>();
 		// check the resource
 		String errorMessage = null;
 		if (resource == null) {
@@ -628,7 +628,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 			if (includepaths == null || includepaths.length == 0) {
 				return quotepaths;
 			}
-			ArrayList<IPath> result = new ArrayList<IPath>(includepaths.length + quotepaths.length);
+			ArrayList<IPath> result = new ArrayList<>(includepaths.length + quotepaths.length);
 			result.addAll(Arrays.asList(includepaths));
 			result.addAll(Arrays.asList(quotepaths));
 			return result.toArray(new IPath[result.size()]);
@@ -693,7 +693,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 				CCommandDSC cmd = getCommand(path);
 				if (cmd != null && cmd.isDiscovered()) {
 					List<String> symbols = cmd.getSymbols();
-					Map<String, String> definedSymbols = new HashMap<String, String>(symbols.size());
+					Map<String, String> definedSymbols = new HashMap<>(symbols.size());
 					for (String symbol : symbols) {
 						String key = SafeStringInterner.safeIntern(ScannerConfigUtil.getSymbolKey(symbol));
 						String value = SafeStringInterner.safeIntern(ScannerConfigUtil.getSymbolValue(symbol));
@@ -789,7 +789,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 	protected Map<IResource, PathInfo> calculatePathInfoMap() {
 		assert Thread.holdsLock(fLock);
 
-		Map<IResource, PathInfo> map = new HashMap<IResource, PathInfo>(sid.fileToCommandIdMap.size() + 1);
+		Map<IResource, PathInfo> map = new HashMap<>(sid.fileToCommandIdMap.size() + 1);
 		Set<Entry<IFile, Integer>> entrySet = sid.fileToCommandIdMap.entrySet();
 		for (Entry<IFile, Integer> entry : entrySet) {
 			IFile file = entry.getKey();
@@ -821,7 +821,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 		IPath[] incFiles = stringListToPathArray(cmd.getIncludeFile());
 		IPath[] macroFiles = stringListToPathArray(cmd.getImacrosFile());
 		List<String> symbols = cmd.getSymbols();
-		Map<String, String> definedSymbols = new HashMap<String, String>(symbols.size());
+		Map<String, String> definedSymbols = new HashMap<>(symbols.size());
 		for (String symbol : symbols) {
 			String key = ScannerConfigUtil.getSymbolKey(symbol);
 			String value = ScannerConfigUtil.getSymbolValue(symbol);
@@ -862,7 +862,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 	 * @return list of IPath(s).
 	 */
 	protected IPath[] getAllIncludePaths(int type) {
-		List<String> allIncludes = new ArrayList<String>();
+		List<String> allIncludes = new ArrayList<>();
 		Set<Integer> cmdIds = sid.commandIdCommandMap.keySet();
 		for (Integer cmdId : cmdIds) {
 			CCommandDSC cmd = sid.commandIdCommandMap.get(cmdId);
@@ -882,7 +882,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 					discovered = cmd.getImacrosFile();
 					break;
 				default:
-					discovered = new ArrayList<String>(0);
+					discovered = new ArrayList<>(0);
 				}
 				for (String include : discovered) {
 					// the following line degrades perfomance
@@ -899,7 +899,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 	}
 
 	protected static IPath[] stringListToPathArray(List<String> discovered) {
-		List<Path> allIncludes = new ArrayList<Path>(discovered.size());
+		List<Path> allIncludes = new ArrayList<>(discovered.size());
 		for (String include : discovered) {
 			if (!allIncludes.contains(include)) {
 				allIncludes.add(new Path(include));
@@ -910,7 +910,7 @@ public class PerFileSICollector implements IScannerInfoCollector3, IScannerInfoC
 
 	protected Map<String, String> getAllSymbols() {
 		assert Thread.holdsLock(fLock);
-		Map<String, String> symbols = new HashMap<String, String>();
+		Map<String, String> symbols = new HashMap<>();
 		Set<Integer> cmdIds = sid.commandIdCommandMap.keySet();
 		for (Integer cmdId : cmdIds) {
 			CCommandDSC cmd = sid.commandIdCommandMap.get(cmdId);

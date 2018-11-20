@@ -18,6 +18,7 @@ package org.eclipse.cdt.internal.ui.text;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.CProposalContextInformation;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -29,12 +30,10 @@ import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 
-import org.eclipse.cdt.internal.ui.text.contentassist.CProposalContextInformation;
-
 /**
  * This class provides the function parameter parsing for the C/C++ Editor hover.
  * It is based heavily on the Java class JavaParameterListValidator.
- * 
+ *
  * @author thomasf
  */
 public class CParameterListValidator implements IContextInformationValidator, IContextInformationPresenter {
@@ -104,7 +103,7 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 						// A comment starts, advance to the comment end.
 						start = getCommentEnd(document, start + 1, end);
 					} else if (next == '/') {
-						// '//'-comment: nothing to do anymore on this line 
+						// '//'-comment: nothing to do anymore on this line
 						start = end;
 					}
 				}
@@ -202,8 +201,8 @@ public class CParameterListValidator implements IContextInformationValidator, IC
 
 		// Context information objects of type CProposalContextInformation can have
 		// an optional prefix before and suffix after the parameter list.
-		// In such a case, query the indices that bound the parameter list part of 
-		// the string, so we can parse the comma positions accurately. 
+		// In such a case, query the indices that bound the parameter list part of
+		// the string, so we can parse the comma positions accurately.
 		int paramlistStartIndex = 0;
 		int paramlistEndIndex = s.length();
 		if (fInformation instanceof CProposalContextInformation) {

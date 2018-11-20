@@ -57,14 +57,14 @@ public class BuilderFactory {
 	static final String BUILD_AUTO_ENABLED = PREFIX + ".enableAutoBuild"; //$NON-NLS-1$
 	static final String BUILD_ARGUMENTS = PREFIX + ".buildArguments"; //$NON-NLS-1$
 	static final String ENVIRONMENT = PREFIX + ".environment"; //$NON-NLS-1$
-	static final String BUILD_APPEND_ENVIRONMENT = PREFIX + ".append_environment"; //$NON-NLS-1$ 
+	static final String BUILD_APPEND_ENVIRONMENT = PREFIX + ".append_environment"; //$NON-NLS-1$
 
-	static final String CONTENTS = PREFIX + ".contents"; //$NON-NLS-1$ 
-	static final String CONTENTS_BUILDER = PREFIX + ".builder"; //$NON-NLS-1$ 
-	static final String CONTENTS_BUILDER_CUSTOMIZATION = PREFIX + ".builderCustomization"; //$NON-NLS-1$ 
-	static final String CONTENTS_CONFIGURATION_IDS = PREFIX + ".configurationIds"; //$NON-NLS-1$ 
+	static final String CONTENTS = PREFIX + ".contents"; //$NON-NLS-1$
+	static final String CONTENTS_BUILDER = PREFIX + ".builder"; //$NON-NLS-1$
+	static final String CONTENTS_BUILDER_CUSTOMIZATION = PREFIX + ".builderCustomization"; //$NON-NLS-1$
+	static final String CONTENTS_CONFIGURATION_IDS = PREFIX + ".configurationIds"; //$NON-NLS-1$
 
-	//	static final String IDS = PREFIX + ".ids"; //$NON-NLS-1$ 
+	//	static final String IDS = PREFIX + ".ids"; //$NON-NLS-1$
 	static final String CONFIGURATION_IDS = PREFIX + ".configurationIds"; //$NON-NLS-1$
 
 	static final IBuilder[] EMPTY_BUILDERS_ARRAY = new IBuilder[0];
@@ -127,16 +127,16 @@ public class BuilderFactory {
 	/*	public static IMakeBuilderInfo create(Preferences prefs, String builderID, boolean useDefaults) {
 			return new BuildInfoPreference(prefs, builderID, useDefaults);
 		}
-	
+
 		public static IMakeBuilderInfo create(IProject project, String builderID) throws CoreException {
 			return new BuildInfoProject(project, builderID);
 		}
-	
+
 		public static IMakeBuilderInfo create(Map args, String builderID) {
 			return new BuildInfoMap(args, builderID);
 		}
 		*/
-	/*	
+	/*
 		private static IBuilder customizeBuilder(IBuilder builder, Map args){
 			if(args.get(IBuilder.ID) == null){
 				args = new HashMap(args);
@@ -145,10 +145,10 @@ public class BuilderFactory {
 				args.put(IBuilder.ID, id);
 			}
 			MapStorageElement el = new MapStorageElement(args, null);
-			
+
 			Builder builder = new Builder(builder.getParent(), )
-			
-			
+
+
 		}
 	*/
 
@@ -160,7 +160,7 @@ public class BuilderFactory {
 	}
 
 	public static Map<String, String> createBuildArgs(IConfiguration cfgs[]) {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		cfgsToMap(cfgs, map);
 		map.put(CONTENTS, CONTENTS_CONFIGURATION_IDS);
 		return map;
@@ -195,7 +195,7 @@ public class BuilderFactory {
 	}
 
 	private static IConfiguration[] idsToConfigurations(String ids[], IConfiguration allCfgs[]) {
-		List<IConfiguration> list = new ArrayList<IConfiguration>(ids.length);
+		List<IConfiguration> list = new ArrayList<>(ids.length);
 		for (int i = 0; i < ids.length; i++) {
 			String id = ids[i];
 			for (int j = 0; j < allCfgs.length; j++) {
@@ -277,7 +277,7 @@ public class BuilderFactory {
 		//		if(!args.containsKey(IBuilder.ID)){
 		//			args.put(IBuilder.ID, ManagedBuildManager.calculateChildId(eclipseBuilderID, null));
 		//		}
-		//		
+		//
 		//		return createBuilder(cfg, args);
 	}
 
@@ -379,7 +379,7 @@ public class BuilderFactory {
 				} else if (CONTENTS_BUILDER.equals(type)) {
 					IConfiguration cfgs[] = configsFromMap(args, info);
 					if (cfgs.length != 0) {
-						List<IBuilder> list = new ArrayList<IBuilder>(cfgs.length);
+						List<IBuilder> list = new ArrayList<>(cfgs.length);
 						for (int i = 0; i < cfgs.length; i++) {
 							IBuilder builder = createBuilder(cfgs[i], args, false);
 							if (builder != null)
@@ -391,7 +391,7 @@ public class BuilderFactory {
 				} else if (CONTENTS_CONFIGURATION_IDS.equals(type)) {
 					IConfiguration cfgs[] = configsFromMap(args, info);
 					if (cfgs.length != 0) {
-						List<IBuilder> list = new ArrayList<IBuilder>(cfgs.length);
+						List<IBuilder> list = new ArrayList<>(cfgs.length);
 						for (int i = 0; i < cfgs.length; i++) {
 							list.add(cfgs[i].getEditableBuilder());
 						}

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -61,7 +61,7 @@ public class TraditionalRenderingPlugin extends AbstractUIPlugin {
 	/**
 	 * Returns the currently active workbench window shell or <code>null</code>
 	 * if none.
-	 * 
+	 *
 	 * @return the currently active workbench window shell or <code>null</code>
 	 */
 	public static Shell getShell() {

@@ -19,14 +19,14 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIThreadInfoInfo;
 
 /**
- * 
+ *
  * -thread-info [ thread-id ]
  *
  * Reports information about either a specific thread, if [thread-id] is present,
  * or about all threads. When printing information about all threads, also reports
  * the current thread.
  * @since 1.1
- * 
+ *
  */
 public class MIThreadInfo extends MICommand<MIThreadInfoInfo> {
 

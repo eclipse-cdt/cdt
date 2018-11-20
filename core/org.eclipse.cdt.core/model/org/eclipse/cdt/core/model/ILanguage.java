@@ -32,7 +32,7 @@ import org.eclipse.core.runtime.IAdaptable;
 /**
  * Models differences between languages. The interface is not supposed to be implemented directly.
  * Rather than that clients may subclass {@link AbstractLanguage}.
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
@@ -52,7 +52,7 @@ public interface ILanguage extends IAdaptable {
 
 	/**
 	 * Option for {@link #getASTTranslationUnit(FileContent, IScannerInfo, IncludeFileContentProvider, IIndex, int, IParserLogService)}
-	 * Performance optimization, allows the parser not to create image-locations. 
+	 * Performance optimization, allows the parser not to create image-locations.
 	 * When using this option {@link IASTName#getImageLocation()} will always return <code>null</code>.
 	 */
 	public final static int OPTION_NO_IMAGE_LOCATIONS = 0x4;
@@ -79,7 +79,7 @@ public interface ILanguage extends IAdaptable {
 	 * <p>
 	 * The inactive nodes can be accessed via {@link IASTDeclarationListOwner#getDeclarations(boolean)} or
 	 * by using a visitor with {@link ASTVisitor#includeInactiveNodes} set to <code>true</code>.
-	 * 
+	 *
 	 * @since 5.1
 	 */
 	public final static int OPTION_PARSE_INACTIVE_CODE = 0x20;
@@ -106,7 +106,7 @@ public interface ILanguage extends IAdaptable {
 
 	/**
 	 * Constructs an AST for the source code provided by <code>reader</code>.
-	 * 
+	 *
 	 * @param content source code to be parsed.
 	 * @param scanInfo provides include paths and defined symbols.
 	 * @param fileCreator factory that provides file content for files included
@@ -132,7 +132,7 @@ public interface ILanguage extends IAdaptable {
 
 	/**
 	 * Used to override the default model building behavior for a translation unit.
-	 * 
+	 *
 	 * @param  tu  the <code>ITranslationUnit</code> to be parsed (non-<code>null</code>)
 	 * @return an <code>IModelBuilder</code>, which parses the given translation unit and
 	 *         returns the <code>ICElement</code>s of its model, or <code>null</code>
@@ -148,7 +148,7 @@ public interface ILanguage extends IAdaptable {
 	IASTName[] getSelectedNames(IASTTranslationUnit ast, int start, int length);
 
 	/**
-	 * @deprecated replaced by {@link #getASTTranslationUnit(FileContent, IScannerInfo, 
+	 * @deprecated replaced by {@link #getASTTranslationUnit(FileContent, IScannerInfo,
 	 * IncludeFileContentProvider, IIndex, int, IParserLogService)}
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -158,7 +158,7 @@ public interface ILanguage extends IAdaptable {
 			throws CoreException;
 
 	/**
-	 * @deprecated replaced by {@link #getASTTranslationUnit(FileContent, IScannerInfo, 
+	 * @deprecated replaced by {@link #getASTTranslationUnit(FileContent, IScannerInfo,
 	 * IncludeFileContentProvider, IIndex, int, IParserLogService)}
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -168,7 +168,7 @@ public interface ILanguage extends IAdaptable {
 			throws CoreException;
 
 	/**
-	 * @deprecated replaced by {@link #getCompletionNode(FileContent, IScannerInfo, 
+	 * @deprecated replaced by {@link #getCompletionNode(FileContent, IScannerInfo,
 	 * IncludeFileContentProvider, IIndex, IParserLogService, int)}.
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

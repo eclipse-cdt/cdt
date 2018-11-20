@@ -17,14 +17,14 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.TreeSet;
 
-import junit.framework.TestCase;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.runtime.content.IContentTypeManager;
+
+import junit.framework.TestCase;
 
 public class Preconditions extends TestCase {
 	@Override
@@ -49,7 +49,7 @@ public class Preconditions extends TestCase {
 	 * changed when the tests are run.
 	 */
 	public void testContentTypes() {
-		Set<String> fileExts = new TreeSet<String>();
+		Set<String> fileExts = new TreeSet<>();
 		IContentTypeManager manager = Platform.getContentTypeManager();
 
 		IContentType contentTypeCpp = manager.getContentType(CCorePlugin.CONTENT_TYPE_CXXSOURCE);
@@ -58,7 +58,7 @@ public class Preconditions extends TestCase {
 		IContentType contentTypeC = manager.getContentType(CCorePlugin.CONTENT_TYPE_CSOURCE);
 		fileExts.addAll(Arrays.asList(contentTypeC.getFileSpecs(IContentType.FILE_EXTENSION_SPEC)));
 
-		Set<String> expectedExts = new TreeSet<String>(
+		Set<String> expectedExts = new TreeSet<>(
 				Arrays.asList(new String[] { "C", "c", "c++", "cc", "cpp", "cxx" }));
 		assertEquals("Precodition FAILED - Content Types do not match expected defaults.", expectedExts.toString(),
 				fileExts.toString());

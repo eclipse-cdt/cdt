@@ -31,7 +31,7 @@ public abstract class NewElementWizardPage extends WizardPage {
 
 	/**
 	 * Creates a <code>NewElementWizardPage</code>.
-	 * 
+	 *
 	 * @param name the wizard page's name
 	 */
 	public NewElementWizardPage(String name) {
@@ -60,7 +60,7 @@ public abstract class NewElementWizardPage extends WizardPage {
 
 	/**
 	 * Updates the status line and the ok button according to the given status
-	 * 
+	 *
 	 * @param status status to apply
 	 */
 	protected void updateStatus(IStatus status) {
@@ -73,9 +73,9 @@ public abstract class NewElementWizardPage extends WizardPage {
 
 	/**
 	 * Updates the status line and the ok button according to the status evaluate from
-	 * an array of status. The most severe error is taken.  In case that two status with 
+	 * an array of status. The most severe error is taken.  In case that two status with
 	 * the same severity exists, the status with lower index is taken.
-	 * 
+	 *
 	 * @param status the array of status
 	 */
 	protected void updateStatus(IStatus[] status) {

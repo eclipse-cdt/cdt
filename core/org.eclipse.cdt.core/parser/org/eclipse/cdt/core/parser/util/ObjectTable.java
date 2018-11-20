@@ -47,7 +47,7 @@ public abstract class ObjectTable<T> extends HashTable implements Iterable<T> {
 
 	public List<T> toList() {
 		int size = size();
-		List<T> list = new ArrayList<T>(size);
+		List<T> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			list.add(keyAt(i));
 		}

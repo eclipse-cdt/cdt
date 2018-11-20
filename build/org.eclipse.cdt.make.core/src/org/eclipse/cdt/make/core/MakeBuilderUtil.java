@@ -72,7 +72,7 @@ public class MakeBuilderUtil {
 	}
 
 	/**
-	 * @param builderID 
+	 * @param builderID
 	 * @return URI of the build directory, or the Project's URI if one couldn't be found
 	 * @since 7.1
 	 */

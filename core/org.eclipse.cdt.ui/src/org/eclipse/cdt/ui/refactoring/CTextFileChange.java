@@ -15,6 +15,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.refactoring;
 
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.internal.ui.refactoring.DocumentAdapter;
+import org.eclipse.cdt.internal.ui.refactoring.changes.UndoCTextFileChange;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,19 +31,9 @@ import org.eclipse.ltk.core.refactoring.ContentStamp;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.text.edits.UndoEdit;
 
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-
-import org.eclipse.cdt.internal.ui.refactoring.DocumentAdapter;
-import org.eclipse.cdt.internal.ui.refactoring.changes.UndoCTextFileChange;
-
 /**
  * A TextFileChange that uses a working copy in order to generate CModel events.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CTextFileChange extends TextFileChange {

@@ -35,12 +35,12 @@ public interface IDiscoveredPathManager {
 		IProject getProject();
 
 		/**
-		 * Get include paths for the whole project 
+		 * Get include paths for the whole project
 		 */
 		IPath[] getIncludePaths();
 
 		/**
-		 * Get defined symbols for the whole project 
+		 * Get defined symbols for the whole project
 		 */
 		Map<String, String> getSymbols();
 
@@ -59,7 +59,7 @@ public interface IDiscoveredPathManager {
 
 	interface IPerFileDiscoveredPathInfo extends IDiscoveredPathInfo {
 		/**
-		 * Get include paths for the specific path (file) 
+		 * Get include paths for the specific path (file)
 		 */
 		IPath[] getIncludePaths(IPath path);
 
@@ -69,7 +69,7 @@ public interface IDiscoveredPathManager {
 		IPath[] getQuoteIncludePaths(IPath path);
 
 		/**
-		 * Get defined symbols for the specific path (file) 
+		 * Get defined symbols for the specific path (file)
 		 */
 		Map<String, String> getSymbols(IPath path);
 
@@ -91,9 +91,9 @@ public interface IDiscoveredPathManager {
 
 	interface IPerFileDiscoveredPathInfo2 extends IPerFileDiscoveredPathInfo {
 		/**
-		 * returns the map containing {@link IResource} - to - {@link PathInfo} pairs representing 
+		 * returns the map containing {@link IResource} - to - {@link PathInfo} pairs representing
 		 * complete set of discovered information for the whole project
-		 * 
+		 *
 		 * @return Map
 		 */
 		Map<IResource, PathInfo> getPathInfoMap();

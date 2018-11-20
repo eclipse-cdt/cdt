@@ -18,10 +18,10 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 /**
  * Represents an asynchronous OOB record from gdb that provides status on an
  * ongoing time consuming operation.
- * 
+ *
  * <p>
  * All such output is prefixed by `+'.
- * 
+ *
  * @see MIAsyncRecord
  */
 public class MIStatusAsyncOutput extends MIAsyncRecord {

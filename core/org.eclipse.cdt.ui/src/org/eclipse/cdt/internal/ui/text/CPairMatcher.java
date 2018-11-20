@@ -15,6 +15,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text;
 
+import org.eclipse.cdt.core.dom.ILinkage;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -22,10 +25,6 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.source.DefaultCharacterPairMatcher;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
-
-import org.eclipse.cdt.core.dom.ILinkage;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.ui.text.ICPartitions;
 
 /**
  * Helper class to match pairs of characters.
@@ -98,11 +97,11 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 
 	/**
 	 * Returns the region enclosing the matching angle brackets.
-	 * 
+	 *
 	 * @param document a document
 	 * @param offset an offset within the document pointing after the closing angle bracket
 	 * @return the matching region or {@link NullPointerException} if no match could be found
-	 * @throws BadLocationException 
+	 * @throws BadLocationException
 	 */
 	private IRegion findOpeningAngleBracket(IDocument document, int offset) throws BadLocationException {
 		if (offset < 0)
@@ -120,11 +119,11 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 
 	/**
 	 * Returns the region enclosing the matching angle brackets.
-	 * 
+	 *
 	 * @param document a document
 	 * @param offset an offset within the document pointing after the opening angle bracket
 	 * @return the matching region or {@link NullPointerException} if no match could be found
-	 * @throws BadLocationException 
+	 * @throws BadLocationException
 	 */
 	private IRegion findClosingAngleBracket(IDocument document, int offset) throws BadLocationException {
 		if (offset < 0)
@@ -145,7 +144,7 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 * Returns true if the character at the specified offset is a
 	 * less-than sign, rather than an template parameter list open
 	 * angle bracket.
-	 * 
+	 *
 	 * @param document a document
 	 * @param offset an offset within the document
 	 * @return true if the character at the specified offset is not
@@ -164,7 +163,7 @@ public class CPairMatcher extends DefaultCharacterPairMatcher {
 	 * Returns true if the character at the specified offset is a
 	 * greater-than sign, rather than an template parameter list close
 	 * angle bracket.
-	 * 
+	 *
 	 * @param document a document
 	 * @param offset an offset within the document
 	 * @return true if the character at the specified offset is not

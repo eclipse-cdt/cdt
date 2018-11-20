@@ -20,6 +20,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -40,11 +43,6 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.part.IPage;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
 
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
-
 /**
  * Once registered as windows listener, observes all part activations. Whenever the
  * CDT outline view is brought to the front, the CDT context is set.
@@ -52,9 +50,9 @@ import org.eclipse.cdt.internal.ui.editor.CContentOutlinePage;
 public class CDTContextActivator implements IWindowListener, IPartListener2 {
 	private static CDTContextActivator sInstance = new CDTContextActivator();
 
-	private Map<ContentOutline, IContextActivation> fActivationPerOutline = new HashMap<ContentOutline, IContextActivation>();
-	private Map<CommonNavigator, SelectionListener> fActivationPerNavigator = new HashMap<CommonNavigator, SelectionListener>();
-	private Collection<IWorkbenchWindow> fWindows = new HashSet<IWorkbenchWindow>();
+	private Map<ContentOutline, IContextActivation> fActivationPerOutline = new HashMap<>();
+	private Map<CommonNavigator, SelectionListener> fActivationPerNavigator = new HashMap<>();
+	private Collection<IWorkbenchWindow> fWindows = new HashSet<>();
 
 	private CDTContextActivator() {
 	}

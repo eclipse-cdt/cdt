@@ -17,7 +17,7 @@ public interface IQmlPropertyDeclaration extends IQmlObjectMember {
 	@Override
 	default public String getType() {
 		return "QMLPropertyDeclaration"; //$NON-NLS-1$
-	};
+	}
 
 	public boolean isReadonly();
 

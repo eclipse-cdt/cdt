@@ -36,7 +36,7 @@ public class CygwinPEParser extends PEParser {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.coff.parser.PEParser#createBinaryArchive(org.eclipse.core.runtime.IPath)
 	 */
 	@Override

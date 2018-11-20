@@ -23,6 +23,30 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.eclipse.cdt.core.CConventions;
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.IBuffer;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContext;
+import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContext;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
+import org.eclipse.cdt.internal.corext.util.Strings;
+import org.eclipse.cdt.internal.ui.text.CBreakIterator;
+import org.eclipse.cdt.internal.ui.util.NameComposer;
+import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.utils.PathUtil;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -51,33 +75,6 @@ import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
 
 import com.ibm.icu.text.BreakIterator;
-
-import org.eclipse.cdt.core.CConventions;
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.dom.parser.AbstractCLikeLanguage;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.IBuffer;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.utils.PathUtil;
-
-import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContext;
-import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
-import org.eclipse.cdt.internal.corext.template.c.FileTemplateContext;
-import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
-import org.eclipse.cdt.internal.corext.util.Strings;
-
-import org.eclipse.cdt.internal.ui.text.CBreakIterator;
-import org.eclipse.cdt.internal.ui.util.NameComposer;
-import org.eclipse.cdt.internal.ui.viewsupport.ProjectTemplateStore;
 
 public class StubUtility {
 	private static final String[] EMPTY = {};
@@ -216,7 +213,7 @@ public class StubUtility {
 			if (len < text.length()) {
 				text = text.substring(0, len);
 			} else if (!text.endsWith(lineDelimiter)) {
-				text += lineDelimiter; // Add a line delimiter at the end. 
+				text += lineDelimiter; // Add a line delimiter at the end.
 			}
 		}
 		return text;
@@ -442,7 +439,7 @@ public class StubUtility {
 		IDocument doc = new Document(buffer.getString());
 		int nLines = doc.getNumberOfLines();
 		MultiTextEdit edit = new MultiTextEdit();
-		HashSet<Integer> removedLines = new HashSet<Integer>();
+		HashSet<Integer> removedLines = new HashSet<>();
 		for (int i = 0; i < variables.length; i++) {
 			TemplateVariable position = findVariable(buffer, variables[i]);
 			if (position == null) {
@@ -537,7 +534,7 @@ public class StubUtility {
 
 	/**
 	 * Returns the line delimiter which is used in the specified project.
-	 * 
+	 *
 	 * @param project the C project, or <code>null</code>
 	 * @return the used line delimiter
 	 */
@@ -604,7 +601,7 @@ public class StubUtility {
 
 	/**
 	 * Get the default task tag for the given project.
-	 * 
+	 *
 	 * @param project
 	 * @return the default task tag
 	 */
@@ -722,7 +719,7 @@ public class StubUtility {
 
 		// 1) Make sure the guard always starts with a letter.
 		// 2) Convert to upper case and remove invalid characters
-		// 
+		//
 		// e.g. convert
 		//         067e6162-3b6f-4ae2-a171-2470b63dff00 to
 		//        H067E6162-3b6F-4AE2-A171-2470B63DFF00
@@ -744,7 +741,7 @@ public class StubUtility {
 
 	/**
 	 * Get a set of file templates for the given content types.
-	 * 
+	 *
 	 * @param contentTypes  the list of content types
 	 * @param project  the project or <code>null</code>
 	 * @return an array of templates
@@ -765,7 +762,7 @@ public class StubUtility {
 			}
 			templateDatas = projectStore.getTemplateData();
 		}
-		List<Template> result = new ArrayList<Template>();
+		List<Template> result = new ArrayList<>();
 		for (int j = 0; j < contentTypes.length; j++) {
 			for (int i = 0; i < templateDatas.length; i++) {
 				Template template = templateDatas[i].getTemplate();
@@ -781,7 +778,7 @@ public class StubUtility {
 	/**
 	 * Returns a suggested name for a getter that is guaranteed to be a valid identifier
 	 * and not collide with a set of given names.
-	 *  
+	 *
 	 * @param baseName the name used as an inspiration
 	 * @param bool <code>true</code> if the getter is for a boolean field
 	 * @param excluded the set of excluded names, can be {@code null}
@@ -809,7 +806,7 @@ public class StubUtility {
 	/**
 	 * Returns a suggested name for a setter that is guaranteed to be a valid identifier
 	 * and not collide with a set of given names.
-	 *  
+	 *
 	 * @param baseName the name used as an inspiration
 	 * @param excluded the set of excluded names, can be {@code null}
 	 * @param context the translation unit for which the code is intended, can be {@code null}
@@ -833,7 +830,7 @@ public class StubUtility {
 	/**
 	 * Returns a suggested name for a function parameter that is guaranteed to be a valid identifier
 	 * and not collide with a set of given names.
-	 *  
+	 *
 	 * @param baseName the name used as an inspiration
 	 * @param excluded the set of excluded names, can be {@code null}
 	 * @param context the translation unit for which the code is intended, can be {@code null}
@@ -857,7 +854,7 @@ public class StubUtility {
 	/**
 	 * Returns a suggested name for a method that is guaranteed to be a valid identifier
 	 * and not collide with a set of given names.
-	 *  
+	 *
 	 * @param baseName the name used as an inspiration
 	 * @param excluded the set of excluded names, can be {@code null}
 	 * @param context the translation unit for which the code is intended, can be {@code null}
@@ -881,11 +878,11 @@ public class StubUtility {
 	/**
 	 * Checks is the given name is valid and, if not, tries to adjust it by adding a numeric suffix
 	 * to it.
-	 * 
+	 *
 	 * @param name the name to check and, possibly, adjust
 	 * @param namesToAvoid the set of names to avoid
 	 * @param context the translation unit, can be {@code null}
-	 * @return the adjusted name, or <code>null</code> if a valid name could not be generated. 
+	 * @return the adjusted name, or <code>null</code> if a valid name could not be generated.
 	 */
 	private static String adjustName(String name, Set<String> namesToAvoid, ITranslationUnit context) {
 		ILanguage language = null;
@@ -901,11 +898,11 @@ public class StubUtility {
 	/**
 	 * Checks is the given name is valid and, if not, tries to adjust it by adding a numeric suffix
 	 * to it.
-	 * 
+	 *
 	 * @param name the name to check and, possibly, adjust
 	 * @param namesToAvoid the set of names to avoid
 	 * @param language the language of the translation unit, can be {@code null}
-	 * @return the adjusted name, or <code>null</code> if a valid name could not be generated. 
+	 * @return the adjusted name, or <code>null</code> if a valid name could not be generated.
 	 */
 	private static String adjustName(String name, Set<String> namesToAvoid, ILanguage language) {
 		if (language == null) {
@@ -940,7 +937,7 @@ public class StubUtility {
 	 * Returns the trimmed field name. Leading and trailing non-alphanumeric characters are trimmed.
 	 * If the first word of the name consists of a single letter and the name contains more than
 	 * one word, the first word is removed.
-	 * 
+	 *
 	 * @param fieldName a field name to trim
 	 * @return the trimmed field name
 	 */

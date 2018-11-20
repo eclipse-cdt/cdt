@@ -16,6 +16,7 @@ package org.eclipse.cdt.internal.ui.cview;
 
 import java.util.Iterator;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -32,8 +33,6 @@ import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.actions.OpenResourceAction;
 import org.eclipse.ui.actions.RefreshAction;
 import org.eclipse.ui.ide.IDEActionFactory;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * This is the action group for actions such as Refresh Local, and Open/Close
@@ -69,7 +68,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 	 * <p>
 	 * No disabled action should be on the context menu.
 	 * </p>
-	 * 
+	 *
 	 * @param menu
 	 *            context menu to add actions to
 	 */
@@ -146,7 +145,7 @@ public class OpenProjectGroup extends CViewActionGroup {
 		refreshAction = new RefreshAction(site);
 		refreshAction.setDisabledImageDescriptor(getImageDescriptor("dlcl16/refresh_nav.gif"));//$NON-NLS-1$
 		refreshAction.setImageDescriptor(getImageDescriptor("elcl16/refresh_nav.gif"));//$NON-NLS-1$
-		//		refreshAction.setHoverImageDescriptor(getImageDescriptor("clcl16/refresh_nav.gif"));//$NON-NLS-1$		
+		//		refreshAction.setHoverImageDescriptor(getImageDescriptor("clcl16/refresh_nav.gif"));//$NON-NLS-1$
 	}
 
 	@Override

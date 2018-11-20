@@ -89,7 +89,7 @@ public class MakefileCodeScanner extends AbstractMakefileCodeScanner {
 		IToken macroDefToken = getToken(ColorManager.MAKE_MACRO_DEF_COLOR);
 		IToken defaultToken = getToken(ColorManager.MAKE_DEFAULT_COLOR);
 
-		List<IRule> rules = new ArrayList<IRule>();
+		List<IRule> rules = new ArrayList<>();
 
 		// Add generic whitespace rule.
 		rules.add(new WhitespaceRule(new IWhitespaceDetector() {

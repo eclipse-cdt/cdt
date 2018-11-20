@@ -17,12 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.cdt.core.model.CoreModelUtil;
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.ui.dialogs.AbstractCOptionPage;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * Abstract Option Page for C/C++ Project Paths page for 3.X projects.
@@ -39,7 +38,7 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 
 	protected void fixNestingConflicts(List<CPElement> newEntries, List<CPElement> existingList,
 			Set<CPElement> modifiedSourceEntries) {
-		ArrayList<CPElement> existing = new ArrayList<CPElement>(existingList);
+		ArrayList<CPElement> existing = new ArrayList<>(existingList);
 		for (int i = 0; i < newEntries.size(); i++) {
 			CPElement curr = newEntries.get(i);
 			addExclusionPatterns(curr, existing, modifiedSourceEntries);
@@ -77,7 +76,7 @@ public abstract class CPathBasePage extends AbstractCOptionPage {
 	public abstract boolean isEntryKind(int kind);
 
 	protected List<CPElement> filterList(List<CPElement> cpelements) {
-		ArrayList<CPElement> filtered = new ArrayList<CPElement>();
+		ArrayList<CPElement> filtered = new ArrayList<>();
 
 		for (int i = 0; i < cpelements.size(); i++) {
 			CPElement cpe = cpelements.get(i);

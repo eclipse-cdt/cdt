@@ -19,10 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ICDescriptor;
 import org.eclipse.cdt.core.testplugin.ResourceHelper;
@@ -50,6 +46,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 public class ManagedBuildMacrosTests extends TestCase {
 	static IProject proj = null;
 	static IManagedProject mproj = null;
@@ -60,7 +60,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	boolean windows = false;
 
 	boolean print = false; // allows to print most of macros on console
-	boolean flag = false; // uplevel flag for getMacro/getMacros methods 
+	boolean flag = false; // uplevel flag for getMacro/getMacros methods
 	IBuildMacroSupplier[] ms = null;
 	public static int functionCalled = 0;
 	public static final int GET_ONE_PROJECT = 1;
@@ -102,7 +102,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 		//		suite.addTest(new ManagedBuildMacrosTests("testMacroOptL"));//$NON-NLS-1$
 		//		suite.addTest(new ManagedBuildMacrosTests("testMacroFile"));//$NON-NLS-1$
 		//		suite.addTest(new ManagedBuildMacrosTests("testMacroContext"));//$NON-NLS-1$
-		//		
+		//
 		//		suite.addTest(new ManagedBuildMacrosTests("testMacroResolve"));//$NON-NLS-1$
 		//		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveExceptions"));//$NON-NLS-1$
 		//		suite.addTest(new ManagedBuildMacrosTests("testMacroResolveLoop"));//$NON-NLS-1$
@@ -136,7 +136,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			String[] b = {"ConfigName", "BuildArtifactFileExt", //$NON-NLS-1$ //$NON-NLS-2$
 					"BuildArtifactFileBaseName", "TargetArchList", //$NON-NLS-1$ //$NON-NLS-2$
 					"TargetOsList", "BuildArtifactFileName", //$NON-NLS-1$ //$NON-NLS-2$
-					"PWD", "CWD", "ConfigDescription", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
+					"PWD", "CWD", "ConfigDescription", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					TEST, "NEW_FOR_CFG" }; //$NON-NLS-1$
 			assertTrue(arrayContains(b, a));
 		}
@@ -151,7 +151,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			assertEquals(ms.length, 1);
 			assertFalse(addMacro(TEST, IBuildMacro.VALUE_TEXT, TST[IBuildMacroProvider.CONTEXT_ECLIPSEENV],
 					IBuildMacroProvider.CONTEXT_ECLIPSEENV, null));
-			String[] a = printMacros(mp.getMacros(IBuildMacroProvider.CONTEXT_ECLIPSEENV, null, flag), "EclipseEnv"); //$NON-NLS-1$		
+			String[] a = printMacros(mp.getMacros(IBuildMacroProvider.CONTEXT_ECLIPSEENV, null, flag), "EclipseEnv"); //$NON-NLS-1$
 	//		String[] b = {"PATH", "USERNAME"}; //$NON-NLS-1$ //$NON-NLS-2$
 	//		assertTrue(arrayContains(b, a));
 		}
@@ -167,7 +167,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			assertFalse(addMacro(TEST, IBuildMacro.VALUE_TEXT, TST[IBuildMacroProvider.CONTEXT_INSTALLATIONS],
 					IBuildMacroProvider.CONTEXT_INSTALLATIONS, null));
 			String[] a = printMacros(mp.getMacros(IBuildMacroProvider.CONTEXT_INSTALLATIONS, null, flag), "Installations "); //$NON-NLS-1$
-			String[] b = {"HostArchName", "MBSVersion", //$NON-NLS-1$ //$NON-NLS-2$ 
+			String[] b = {"HostArchName", "MBSVersion", //$NON-NLS-1$ //$NON-NLS-2$
 					"EclipseVersion", "HostOsName", "CDTVersion"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			assertTrue(arrayContains(b, a));
 		}
@@ -185,7 +185,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//		functionCalled = 0;
 	//		String[] a = printMacros(mp.getMacros(IBuildMacroProvider.CONTEXT_PROJECT, mproj, flag), "Project "); //$NON-NLS-1$
 	//		assertEquals(GET_MANY_PROJECT, functionCalled);
-	//		String[] b = {"ProjDirPath", "ProjName", //$NON-NLS-1$ //$NON-NLS-2$ 
+	//		String[] b = {"ProjDirPath", "ProjName", //$NON-NLS-1$ //$NON-NLS-2$
 	//				TEST, "NEW_FOR_PRJ"};          //$NON-NLS-1$
 	//		assertTrue(arrayContains(b, a));
 	//	}
@@ -201,7 +201,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//		assertTrue(addMacro(TEST, IBuildMacro.VALUE_TEXT, TST[IBuildMacroProvider.CONTEXT_WORKSPACE],
 	//				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));
 	//		String[] a = printMacros(mp.getMacros(IBuildMacroProvider.CONTEXT_WORKSPACE, worksp, flag), "Workspace "); //$NON-NLS-1$
-	//		String[] b = {"DirectoryDelimiter", "WorkspaceDirPath", //$NON-NLS-1$ //$NON-NLS-2$ 
+	//		String[] b = {"DirectoryDelimiter", "WorkspaceDirPath", //$NON-NLS-1$ //$NON-NLS-2$
 	//				"PathDelimiter", TEST};                       //$NON-NLS-1$
 	//		assertTrue(arrayContains(b, a));
 	//	}
@@ -216,20 +216,20 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//		IOption   opt = t.getOptionById(OPT_IDS);
 	//		assertNotNull(opt);
 	//
-	//		// standard check of suppliers # and attempt to add macro (should fail) 
+	//		// standard check of suppliers # and attempt to add macro (should fail)
 	//		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t));
 	//		assertNotNull(ms);
 	//		assertEquals(ms.length, 1);
 	//		assertFalse(addMacro(TEST, IBuildMacro.VALUE_TEXT, TST[IBuildMacroProvider.CONTEXT_OPTION], IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t)));
 	//
-	//		// modify value and check that macros is resolved 
+	//		// modify value and check that macros is resolved
 	//		try {
 	//			opt = cfgs[0].setOption(t, opt, "222 " + INC_DEF);  //$NON-NLS-1$
 	//			String a = mp.resolveValue(opt.getStringValue(), UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION, new OptionContextData(opt,t));
 	//			assertEquals(a, "222 111");  //$NON-NLS-1$
 	//		} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); }
 	//		  catch (BuildException e) { fail(e.getLocalizedMessage()); }
-	//		  
+	//
 	//		// Create resource configuration
 	//		IResourceConfiguration rc = cfgs[0].createResourceConfiguration(getFile());
 	//		assertNotNull(rc);
@@ -258,7 +258,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 					PATH_ENV_VAR };
 			String[] resArr1 = { "new a", /*"test=CFGTEST",*/ "x", "y", "z", "PRJ=NewMacrosForProjectContext",
 					"LIST=x|y|z" };
-			List<String> res1 = new ArrayList<String>(Arrays.asList(resArr1));
+			List<String> res1 = new ArrayList<>(Arrays.asList(resArr1));
 			try {
 				// Add split ${PATH} to res1
 				String strList = mp.resolveValue(PATH_ENV_VAR, UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_OPTION,
@@ -272,7 +272,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			opt = cfgs[0].setOption(t, opt, set1);
 			assertNotNull(opt);
 
-			ArrayList<String> res2 = new ArrayList<String>(res1.size());
+			ArrayList<String> res2 = new ArrayList<>(res1.size());
 			for (int i = 0; i < set1.length; i++) {
 				try {
 					String[] aus = mp.resolveStringListValue(set1[i], UNKNOWN, LISTSEP,
@@ -302,76 +302,76 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//		final String UP2W = "..\\..\\"; //$NON-NLS-1$
 	//		final String UP2U = "../../";   //$NON-NLS-1$
 	//		final String KLMN = "\\k\\l\\m\\n\\o\\p\\";  //$NON-NLS-1$
-	//		final String[] names = 
+	//		final String[] names =
 	//		{"InputFileName", "InputFileExt", "InputFileBaseName",   //$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
-	//		 "InputFileRelPath", "InputDirRelPath",                  //$NON-NLS-1$ //$NON-NLS-2$ 
-	//		 "OutputFileName", "OutputFileExt", "OutputFileBaseName",//$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$  
+	//		 "InputFileRelPath", "InputDirRelPath",                  //$NON-NLS-1$ //$NON-NLS-2$
+	//		 "OutputFileName", "OutputFileExt", "OutputFileBaseName",//$NON-NLS-1$ //$NON-NLS-2$  //$NON-NLS-3$
 	//		 "OutputFileRelPath", "OutputDirRelPath"};               //$NON-NLS-1$ //$NON-NLS-2$
-	//		String[] values0wAbs = 
+	//		String[] values0wAbs =
 	//		{"a.f77", "f77", "a", "\\xz\\a.f77", "\\xz\\",    //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	//		 "b.exe", "exe", "b", "\\tmp\\b.exe", "\\tmp\\"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-	//		final String[] values0wRel = 
+	//		final String[] values0wRel =
 	//		{EIN, "c", "ein", UP2W+EIN, UP2W,  //$NON-NLS-1$ //$NON-NLS-2$
 	//		 AUS, "o", "aus", UP2W+AUS, UP2W}; //$NON-NLS-1$ //$NON-NLS-2$
-	//		
-	//		final String[] values0u = 
+	//
+	//		final String[] values0u =
 	//		{EIN, "c", "ein", UP2U+EIN, UP2U,  //$NON-NLS-1$ //$NON-NLS-2$
 	//		 AUS, "o", "aus", UP2U+AUS, UP2U}; //$NON-NLS-1$ //$NON-NLS-2$
-	//		
-	//		final String[] values1 = 
+	//
+	//		final String[] values1 =
 	//		{"$(notdir $<)", "$(suffix $(notdir $<))",       //$NON-NLS-1$ //$NON-NLS-2$
 	//		 "$(basename $(notdir $<))", "$<", "$(dir $<)",  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	//		 "$(notdir $@)", "$(suffix $(notdir $@))",       //$NON-NLS-1$ //$NON-NLS-2$
 	//		 "$(basename $(notdir $@))", "$@", "$(dir $@)"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	//		
+	//
 	//		FileContextData fd = null;
-	//		
+	//
 	//		doInit();
 	//		ITool t = cfgs[0].getTools()[0];
 	//		assertNotNull(t);
 	//		IOption opt = t.getOptionById(OPT_IDS);
-	//			
+	//
 	//		String dir=null;
 	//		try {
 	//			dir = mp.getMacro("WorkspaceDirPath", IBuildMacroProvider.CONTEXT_WORKSPACE, worksp, flag).getStringValue(); //$NON-NLS-1$
 	//		} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); }
 	//		IPath p = (new Path(dir)).addTrailingSeparator();
-	//		
+	//
 	//		if (windows) {
 	//			// check behaviour in case of different disks usage
-	//			
+	//
 	//			// config #4 has changed BuilderMakeFileGenerator, #0 has standard one
 	//			IBuildEnvironmentVariable cwdvar = ManagedBuildManager.getEnvironmentVariableProvider().getVariable("CWD", cfgs[0], false, true); //$NON-NLS-1$
 	//			String dev0 = Path.fromOSString(cwdvar.getValue()).getDevice().toUpperCase();
-	//			String dev1 = (dev0.startsWith("C")) ? "D:" : "C:";  //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$  
-	//			values0wAbs[3] = dev1 + values0wAbs[3];		
-	//			values0wAbs[4] = dev1 + values0wAbs[4];		
+	//			String dev1 = (dev0.startsWith("C")) ? "D:" : "C:";  //$NON-NLS-1$  //$NON-NLS-2$  //$NON-NLS-3$
+	//			values0wAbs[3] = dev1 + values0wAbs[3];
+	//			values0wAbs[4] = dev1 + values0wAbs[4];
 	//			values0wAbs[8] = dev1 + values0wAbs[8];
 	//			values0wAbs[9] = dev1 + values0wAbs[9];
-	//			
+	//
 	//			fd = new FileContextData(new Path(values0wAbs[3]), new Path(values0wAbs[8]),opt,t);
-	//			for (int i=0; i<names.length; i++) 
-	//			try {	
+	//			for (int i=0; i<names.length; i++)
+	//			try {
 	//				assertEquals(values0wAbs[i], mp.getMacro(names[i], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
 	//			} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); }
-	//			
+	//
 	//			// check that relative path are reported OK
 	//			fd = new FileContextData(p.append(EIN), p.append(AUS),opt,t);
-	//			for (int i=0; i<names.length; i++) 
+	//			for (int i=0; i<names.length; i++)
 	//			try {
 	//				assertEquals(values0wRel[i], mp.getMacro(names[i], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
 	//			} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); }
 	//
 	////			//TODO:
 	////			// check paths using changed BuilderMakeFileGenerator in cfg "Five"
-	/////*			
+	/////*
 	////			int index = 4;
 	////			ManagedBuildManager.setDefaultConfiguration(proj, cfgs[index]);
 	////			OptionContextData op = new OptionContextData(cfgs[index].getTools()[0].getOptions()[0], cfgs[index].getToolChain());
 	////			String p0 = dev0 + KLMN;
 	////			fd = new FileContextData(new Path(p0+EIN), new Path(p0+AUS), op);
 	////			assertNotNull(fd);
-	////			//TODO: the same dir, upper dir, lower dir 
+	////			//TODO: the same dir, upper dir, lower dir
 	////			try {
 	////				TestMacro.topBuildDir = Path.fromOSString(p0);
 	////				assertEquals(p0+EIN, mp.getMacro(names[3], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
@@ -386,30 +386,30 @@ public class ManagedBuildMacrosTests extends TestCase {
 	////				assertEquals(p0+AUS, mp.getMacro(names[8], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
 	////				assertEquals(p0,     mp.getMacro(names[9], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
 	////			} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); }
-	//////				*/				
-	//			
-	//			
+	//////				*/
+	//
+	//
 	//		} else {
 	//			// check relative path only
 	//			fd = new FileContextData(p.append(EIN), p.append(AUS),opt,t);
-	//			for (int i=0; i<names.length; i++) 
-	//			try {	
+	//			for (int i=0; i<names.length; i++)
+	//			try {
 	//				assertEquals(values0u[i], mp.getMacro(names[i], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
 	//			} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); }
 	//		}
-	//		
+	//
 	//		// check supplier's parameters
 	//		assertNotNull(fd);
 	//		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_FILE, fd);
 	//		assertNotNull(ms);
 	//		assertEquals(ms.length, 1);
-	//		assertFalse(addMacro(TEST, IBuildMacro.VALUE_TEXT, 
+	//		assertFalse(addMacro(TEST, IBuildMacro.VALUE_TEXT,
 	//				TST[IBuildMacroProvider.CONTEXT_FILE], IBuildMacroProvider.CONTEXT_FILE, fd));
 	//
 	//		// For config #3, macros should contain lines specified in plugin.xml
-	//		opt = cfgs[1].getTools()[0].getOptions()[0];		
+	//		opt = cfgs[1].getTools()[0].getOptions()[0];
 	//		fd = new FileContextData(p.append(EIN), p.append(AUS),opt,cfgs[1].getTools()[0]);
-	//		for (int i=0; i<names.length; i++) 
+	//		for (int i=0; i<names.length; i++)
 	//		try {
 	//			assertEquals(values1[i], mp.getMacro(names[i], IBuildMacroProvider.CONTEXT_FILE, fd, flag).getStringValue());
 	//		} catch (BuildMacroException e) { fail(e.getLocalizedMessage()); }
@@ -439,24 +439,24 @@ public class ManagedBuildMacrosTests extends TestCase {
 	 * testMacroResolve()
 	 */
 	//	public void testMacroResolve(){
-	//		doInit();		
+	//		doInit();
 	//		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_WORKSPACE, worksp);
 	//		assertNotNull(ms);
 	//		String[] lst = {"AAA", "BBB", "CCC"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	//		assertTrue(addMacro("LST", IBuildMacro.VALUE_TEXT_LIST, lst, //$NON-NLS-1$
-	//				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));		
+	//				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));
 	//		 assertTrue(addMacro("ONE", IBuildMacro.VALUE_TEXT, "EIN", //$NON-NLS-1$ //$NON-NLS-2$
 	//				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));
-	//		// 
+	//		//
 	//		assertTrue(addMacro("L1", IBuildMacro.VALUE_TEXT, "nested L1-${L2}-L1", //$NON-NLS-1$ //$NON-NLS-2$
 	//				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));
 	//		assertTrue(addMacro("L2", IBuildMacro.VALUE_TEXT, "L2-${L3}-L2", //$NON-NLS-1$ //$NON-NLS-2$
 	//				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));
 	//		assertTrue(addMacro("L3", IBuildMacro.VALUE_TEXT, "L3-${L4}-L3", //$NON-NLS-1$ //$NON-NLS-2$
-	//				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp)); 
+	//				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));
 	//		assertTrue(addMacro("L4", IBuildMacro.VALUE_TEXT, "L4", //$NON-NLS-1$ //$NON-NLS-2$
 	//				IBuildMacroProvider.CONTEXT_WORKSPACE, worksp));
-	//				
+	//
 	//		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_PROJECT, mproj);
 	//		assertNotNull(ms);
 	//		assertTrue(addMacro("TWO", IBuildMacro.VALUE_TEXT, "ZWEI", //$NON-NLS-1$ //$NON-NLS-2$
@@ -464,9 +464,9 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0]);
 	//		assertNotNull(ms);
 	//		assertTrue(addMacro("three", IBuildMacro.VALUE_TEXT, "DREI", //$NON-NLS-1$ //$NON-NLS-2$
-	//				IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0])); 
-	//		
-	//		
+	//				IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0]));
+	//
+	//
 	//		// check normal workflow
 	//		try {
 	//			final String pattern = "${ONE} - ${TWO} - ${three} -> ${LST}"; //$NON-NLS-1$
@@ -480,12 +480,12 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//					IBuildMacroProvider.CONTEXT_WORKSPACE, worksp);
 	//			String e = mp.resolveValue("${one} - ${Two} - ${THREE} -> ${lst}", UNKNOWN, LISTSEP, //$NON-NLS-1$
 	//					IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0]);
-	//			
+	//
 	//			assertEquals(a, "EIN - ZWEI - DREI -> AAA|BBB|CCC"); //$NON-NLS-1$
 	//			assertEquals(b, "EIN - ZWEI - <HZ> -> AAA|BBB|CCC"); //$NON-NLS-1$
 	//			assertEquals(c, "EIN - <HZ> - <HZ> -> AAA|BBB|CCC"); //$NON-NLS-1$
 	//			assertEquals(d, "nested L1-L2-L3-L4-L3-L2-L1"); //$NON-NLS-1$
-	//			assertEquals(e, "<HZ> - <HZ> - <HZ> -> <HZ>");  //$NON-NLS-1$  
+	//			assertEquals(e, "<HZ> - <HZ> - <HZ> -> <HZ>");  //$NON-NLS-1$
 	//		} catch (BuildMacroException e) {
 	//			fail("Exception while resolving: " + e.getLocalizedMessage()); //$NON-NLS-1$
 	//		}
@@ -525,7 +525,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//		Object obj = worksp;
 	//		ms = mp.getSuppliers(ctx, obj);
 	//		assertNotNull(ms);
-	//		
+	//
 	//		// check state before macros added (should be OK)
 	//		try {
 	//			mp.checkIntegrity(ctx, obj);
@@ -533,7 +533,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//			fail("Macros integrity check is failed");  //$NON-NLS-1$
 	//		}
 	//
-	//		// create macro which references to undefined macro 	
+	//		// create macro which references to undefined macro
 	//		assertTrue(addMacro("B1", IBuildMacro.VALUE_TEXT, "B1-${B2}", ctx, obj)); //$NON-NLS-1$ //$NON-NLS-2$
 	//		rmMacro("B2", ctx, obj); // usually it does not exist, but to be sure...  //$NON-NLS-1$
 	//
@@ -542,22 +542,22 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//			mp.checkIntegrity(ctx, obj);
 	//			fail("Macros misintegrity (ref to undefined) is not detected");  //$NON-NLS-1$
 	//		} catch (BuildMacroException e) {}
-	//		
+	//
 	//		// create "dead loop" of nested macros
 	//		assertTrue(addMacro("B2", IBuildMacro.VALUE_TEXT, "B2-${B3}", ctx, obj));  //$NON-NLS-1$ //$NON-NLS-2$
 	//		assertTrue(addMacro("B3", IBuildMacro.VALUE_TEXT, "B3-${B1}", ctx, obj));  //$NON-NLS-1$ //$NON-NLS-2$
-	//		
+	//
 	//		// check state after macros added (should be exception)
 	//		try {
 	//			mp.checkIntegrity(ctx, obj);
 	//			fail("Macros misintegrity (dead loop) is not detected");  //$NON-NLS-1$
 	//		} catch (BuildMacroException e) {}
-	//		
+	//
 	//		// remove "dead loop" of nested macros
 	//		assertTrue(rmMacro("B1", ctx, obj)); //$NON-NLS-1$
 	//		assertTrue(rmMacro("B2", ctx, obj)); //$NON-NLS-1$
 	//		assertTrue(rmMacro("B3", ctx, obj)); //$NON-NLS-1$
-	//		
+	//
 	//		// check state after macros removed (should be OK)
 	//		try {
 	//			mp.checkIntegrity(ctx, obj);
@@ -572,16 +572,16 @@ public class ManagedBuildMacrosTests extends TestCase {
 	public void testMacroResolveMake(){
 		final String p1 = "USERNAME: ";    //$NON-NLS-1$
 		final String p2 = "${USERNAME} ";  //$NON-NLS-1$
-		final String p3 = "PATH: ";        //$NON-NLS-1$  
+		final String p3 = "PATH: ";        //$NON-NLS-1$
 		final String p4 = "${PATH} ";      //$NON-NLS-1$
-		final String p5 = "HostOsName: ${HostOsName} WorkspaceDirPath: ${WorkspaceDirPath}";  //$NON-NLS-1$ 
+		final String p5 = "HostOsName: ${HostOsName} WorkspaceDirPath: ${WorkspaceDirPath}";  //$NON-NLS-1$
 		final String ein1 = p1 + p2 + p3;
 		final String ein2 = p4 + p5;
 		final String ein = ein1 + ein2;
 		final String aus1 = "@USERNAME ";  //$NON-NLS-1$
 		final String aus2 = "@PATH ";      //$NON-NLS-1$
 		doInit();
-		// Config #0 contains "variableFormat" macro = "@=". Result: 2 first macros NOT resolved 
+		// Config #0 contains "variableFormat" macro = "@=". Result: 2 first macros NOT resolved
 		try {
 			UserDefinedEnvironmentSupplier env = EnvironmentVariableProvider.fUserSupplier;
 			env.createVariable("PATH","",IBuildEnvironmentVariable.ENVVAR_PREPEND,null,worksp);
@@ -589,7 +589,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 			functionCalled = 0;
 			String a = mp.resolveValueToMakefileFormat(ein, UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0]);
 			String b = p1 + aus1 + p3 + mp.resolveValue(ein2, UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[0]);
-			assertEquals(a, b); // Env var names should not be resolved but converted to Makefile format			
+			assertEquals(a, b); // Env var names should not be resolved but converted to Makefile format
 			a = mp.resolveValueToMakefileFormat(ein, UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_PROJECT, mproj);
 			assertEquals(a, b); // Project context should return the same as default configuration
 		} catch (BuildMacroException e) {
@@ -605,7 +605,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 		}
 		// check that "isReservedName" was not called before
 		assertEquals(functionCalled & RESERVED_NAME, 0);
-	
+
 		// Config #2 contains "...Supplier" macro. Result: PATH unresolved, USERNAME resolved.
 		try {
 			String a = mp.resolveValue(p1 + p2, UNKNOWN, LISTSEP, IBuildMacroProvider.CONTEXT_CONFIGURATION, cfgs[2]);
@@ -629,15 +629,15 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//		addVars();
 	//		final String winOut1 = "@CASETEST uppercase uppercase uppercase";   //$NON-NLS-1$
 	//		final String winOut2 = "@CASETEST @CASETEST @CASETEST @CASETEST";   //$NON-NLS-1$
-	//		
+	//
 	//		final String unixOut1 = "@CASETEST capitalize lowercase upper2low"; //$NON-NLS-1$
 	//		final String unixOut2 = "@CASETEST @CaseTest @casetest @CaSeTeSt";  //$NON-NLS-1$
-	//		
+	//
 	//		final String ein = "${CASETEST} ${CaseTest} ${casetest} ${CaSeTeSt}"; //$NON-NLS-1$
 	//		final int ctx = IBuildMacroProvider.CONTEXT_CONFIGURATION;
-	//		String a=null, b=null; 
+	//		String a=null, b=null;
 	//		try {
-	//			// Config #0 contains isVariableCaseSensitive = false  
+	//			// Config #0 contains isVariableCaseSensitive = false
 	//			a = mp.resolveValueToMakefileFormat(ein, UNKNOWN, LISTSEP, ctx, cfgs[0]);
 	//			// Config #3 contains isVariableCaseSensitive = true
 	//			b = mp.resolveValueToMakefileFormat(ein, UNKNOWN, LISTSEP, ctx, cfgs[3]);
@@ -660,7 +660,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//	public void testMacroSave(){
 	//		final String TO_SAVE_P = "TO_SAVE_P";  //$NON-NLS-1$
 	//		final String TO_SAVE_W = "TO_SAVE_W";  //$NON-NLS-1$
-	//		doInit();		
+	//		doInit();
 	//		ms = mp.getSuppliers(IBuildMacroProvider.CONTEXT_PROJECT, mproj);
 	//		assertNotNull(ms);
 	//		assertTrue(addMacro(TO_SAVE_P, IBuildMacro.VALUE_TEXT, TO_SAVE_P,
@@ -689,16 +689,16 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//		a = printMacros(mp.getMacros(IBuildMacroProvider.CONTEXT_WORKSPACE, worksp, flag), TO_SAVE_W);
 	//		String[] b2 = {TO_SAVE_W};
 	//		assertTrue(arrayContains(b2, a));
-	//	}	
+	//	}
 
 	/*
-	 * Below are service methods 
+	 * Below are service methods
 	 */
 	//TODO: comments for all methods
 
 	// returns a list of macro's NAMES (not values).
 	private String[] printMacros(IBuildMacro[] vars, String head) {
-		ArrayList<String> ar = new ArrayList<String>(0);
+		ArrayList<String> ar = new ArrayList<>(0);
 		if (vars != null) {
 			if (vars.length > 0) {
 				for (int i = 0; i < vars.length; i++) {
@@ -710,7 +710,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 							//if (vars[i] instanceof EclipseVarMacro) {
 							if (vars[i].getName().endsWith("prompt")) { //$NON-NLS-1$
 								System.out.println(head + "[" + i + "] " + //$NON-NLS-1$  //$NON-NLS-2$
-										vars[i].getName() + " = <UNREACHABLE>"); //$NON-NLS-1$ 
+										vars[i].getName() + " = <UNREACHABLE>"); //$NON-NLS-1$
 							} else {
 								System.out.println(head + "[" + i + "] " + //$NON-NLS-1$ //$NON-NLS-2$
 										vars[i].getName() + " = " + vars[i].getStringValue()); //$NON-NLS-1$
@@ -751,7 +751,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	}
 
 	/* Create new project or get existing one
-	 * 
+	 *
 	 * Sets "proj" "mproj" class variables
 	 */
 
@@ -783,7 +783,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 				fail("Cannot create project: " + e.getLocalizedMessage()); //$NON-NLS-1$
 			}
 
-			// Call this function just to avoid init problems in getProjectType();   
+			// Call this function just to avoid init problems in getProjectType();
 			IProjectType[] projTypes = ManagedBuildManager.getDefinedProjectTypes();
 			IProjectType projType = ManagedBuildManager.getProjectType("cdt.managedbuild.target.testenv.exe"); //$NON-NLS-1$
 			assertNotNull(projType);
@@ -886,8 +886,8 @@ public class ManagedBuildMacrosTests extends TestCase {
 		}*/
 	/**
 	 *      rmMacro
-	 * @param name     - name of macro 
-	 * @param context  
+	 * @param name     - name of macro
+	 * @param context
 	 * @param obj
 	 * @return
 	 */
@@ -911,7 +911,7 @@ public class ManagedBuildMacrosTests extends TestCase {
 	//		usup = ManagedBuildEnvironmentTests.getSupplier(worksp, "Workspace"); //$NON-NLS-1$
 	//		if (usup != null) {
 	//			try {
-	//				usup.createVariable("casetest","lowercase",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$ 
+	//				usup.createVariable("casetest","lowercase",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$
 	//				usup.createVariable("CaseTest","capitalize", app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$
 	//				usup.createVariable("CaSeTeSt","upper2low",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$
 	//				usup.createVariable("CASETEST","uppercase",  app, del, worksp ); //$NON-NLS-1$ //$NON-NLS-2$

@@ -41,14 +41,14 @@ public interface IToolListModification extends IApplicableModification {
 	//	ITool[] getSystemTools();
 
 	/**
-	 * returns a list of tool modifications for all project tools contained 
-	 * by this toollist modification 
+	 * returns a list of tool modifications for all project tools contained
+	 * by this toollist modification
 	 */
 	IToolModification[] getProjectToolModifications();
 
 	/**
-	 * returns a list of tool modifications for all system tools not contained 
-	 * by this toollist modification 
+	 * returns a list of tool modifications for all system tools not contained
+	 * by this toollist modification
 	 */
 	IToolModification[] getSystemToolModifications();
 

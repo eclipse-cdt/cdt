@@ -160,7 +160,7 @@ class UpdateManagedProject20 {
 				try {
 					convertConfiguration(newProject, newParent, (Element) configNodes.item(configIndex), monitor);
 				} catch (CoreException e) {
-					//TODO: implement logging					
+					//TODO: implement logging
 					//should we continue or fail ??
 				}
 			}
@@ -250,7 +250,7 @@ class UpdateManagedProject20 {
 			if (targetPlatform.isExtensionElement()) {
 				int nnn = ManagedBuildManager.getRandomNumber();
 				String subId = targetPlatform.getId() + "." + nnn; //$NON-NLS-1$
-				String builderName = targetPlatform.getName() + "." + newConfig.getName(); //$NON-NLS-1$				
+				String builderName = targetPlatform.getName() + "." + newConfig.getName(); //$NON-NLS-1$
 				toolChain.createTargetPlatform(targetPlatform, subId, builderName, false);
 			}
 			targetPlatform.setBinaryParserList(new String[] { binaryParser }); // Older projects have only a single binary parser.
@@ -346,7 +346,7 @@ class UpdateManagedProject20 {
 					ConverterMessages.getFormattedString("UpdateManagedProject20.5", toolId), null)); //$NON-NLS-1$
 		}
 
-		// Check for migration support 
+		// Check for migration support
 		((Tool) tool).checkForMigrationSupport();
 
 		//the tool found, proceed with conversion ...
@@ -433,7 +433,7 @@ class UpdateManagedProject20 {
 				case IOption.PREPROCESSOR_SYMBOLS:
 				case IOption.LIBRARIES:
 				case IOption.OBJECTS: {
-					Vector<String> values = new Vector<String>();
+					Vector<String> values = new Vector<>();
 					NodeList nodes = optRef.getElementsByTagName(IOption.LIST_VALUE);
 					for (int j = 0; j < nodes.getLength(); ++j) {
 						Node node = nodes.item(j);

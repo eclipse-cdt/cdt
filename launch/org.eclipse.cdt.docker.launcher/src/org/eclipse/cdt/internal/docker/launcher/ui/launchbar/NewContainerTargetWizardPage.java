@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contibutors:
  * 		Red Hat Inc. - initial implementation
  *******************************************************************************/
@@ -209,7 +209,7 @@ public class NewContainerTargetWizardPage extends WizardPage
 				return;
 			}
 			connection.removeImageListener(wizardPage);
-			ArrayList<String> imageNames = new ArrayList<String>();
+			ArrayList<String> imageNames = new ArrayList<>();
 			for (IDockerImage image : images) {
 				java.util.List<String> tags = image.repoTags();
 				if (tags != null) {
@@ -265,6 +265,7 @@ public class NewContainerTargetWizardPage extends WizardPage
 		connectionSelector.addModifyListener(connectionModifyListener);
 	}
 
+	@Override
 	public void listChanged(IDockerConnection c, java.util.List<IDockerImage> list) {
 		setErrorMessage(null);
 		final IDockerImage[] finalList = list.toArray(new IDockerImage[0]);
@@ -276,7 +277,7 @@ public class NewContainerTargetWizardPage extends WizardPage
 				@Override
 				public void run() {
 					connection.removeImageListener(wizardPage);
-					ArrayList<String> imageNames = new ArrayList<String>();
+					ArrayList<String> imageNames = new ArrayList<>();
 					for (IDockerImage image : finalList) {
 						java.util.List<String> tags = image.repoTags();
 						if (tags != null) {

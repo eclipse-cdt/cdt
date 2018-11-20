@@ -15,13 +15,12 @@
 
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.texteditor.spelling.IPreferenceStatusMonitor;
 import org.eclipse.ui.texteditor.spelling.ISpellingPreferenceBlock;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 
 /**
  * Spelling preference block

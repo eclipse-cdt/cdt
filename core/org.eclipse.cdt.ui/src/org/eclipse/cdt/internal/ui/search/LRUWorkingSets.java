@@ -40,13 +40,13 @@ public class LRUWorkingSets {
 	int size = 0;
 
 	public LRUWorkingSets(int size) {
-		workingSetsCache = new ArrayList<IWorkingSet[]>(size);
+		workingSetsCache = new ArrayList<>(size);
 		this.size = size;
 	}
 
 	public void add(IWorkingSet[] workingSet) {
 		cleanUpCache();
-		//See if this working set has been previously added to the 
+		//See if this working set has been previously added to the
 		IWorkingSet[] existingWorkingSets = find(workingSetsCache, workingSet);
 		if (existingWorkingSets != null)
 			workingSetsCache.remove(existingWorkingSets);
@@ -56,11 +56,11 @@ public class LRUWorkingSets {
 	}
 
 	private IWorkingSet[] find(ArrayList<IWorkingSet[]> list, IWorkingSet[] workingSet) {
-		Set<IWorkingSet> workingSetList = new HashSet<IWorkingSet>(Arrays.asList(workingSet));
+		Set<IWorkingSet> workingSetList = new HashSet<>(Arrays.asList(workingSet));
 		Iterator<IWorkingSet[]> iter = list.iterator();
 		while (iter.hasNext()) {
 			IWorkingSet[] lruWorkingSets = iter.next();
-			Set<IWorkingSet> lruWorkingSetList = new HashSet<IWorkingSet>(Arrays.asList(lruWorkingSets));
+			Set<IWorkingSet> lruWorkingSetList = new HashSet<>(Arrays.asList(lruWorkingSets));
 			if (lruWorkingSetList.equals(workingSetList))
 				return lruWorkingSets;
 		}

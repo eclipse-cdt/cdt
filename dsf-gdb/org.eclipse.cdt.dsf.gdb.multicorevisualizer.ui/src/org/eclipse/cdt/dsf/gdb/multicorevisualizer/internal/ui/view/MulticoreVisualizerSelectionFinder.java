@@ -32,7 +32,7 @@ import org.eclipse.cdt.visualizer.ui.util.SelectionUtils;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
 
-/** 
+/**
 * Debug view tree walker that finds elements to select
 * based on selection obtained from the multicore visualizer.
 */
@@ -68,7 +68,7 @@ public class MulticoreVisualizerSelectionFinder extends DebugViewTreeWalker {
 	public ISelection findSelection(ISelection selection) {
 		m_selection = SelectionUtils.getSelectedObjects(selection);
 
-		m_result = new HashSet<Object>();
+		m_result = new HashSet<>();
 		walk();
 		ISelection found = SelectionUtils.toSelection(m_result);
 		return found;

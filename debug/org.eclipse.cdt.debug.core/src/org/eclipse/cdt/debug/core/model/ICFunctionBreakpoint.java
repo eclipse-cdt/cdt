@@ -17,7 +17,7 @@ package org.eclipse.cdt.debug.core.model;
  * A breakpoint that suspends the execution when a function is entered.
  */
 public interface ICFunctionBreakpoint extends ICLineBreakpoint {
-	/** 
+	/**
 	 * Breakpoint marker type for this breakpoint type.
 	 * @since 7.2
 	 */

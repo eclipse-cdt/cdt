@@ -51,9 +51,9 @@ public class ConverterInfo {
 			IConfiguration[] cfgs = mProj.getConfigurations();
 			fConvertedFromObject = ManagedBuildManager.convert(fFromObject, fToObject.getId(), true);
 			IConfiguration[] updatedCfgs = mProj.getConfigurations();
-			Set<IConfiguration> oldSet = new HashSet<IConfiguration>(Arrays.asList(cfgs));
-			Set<IConfiguration> updatedSet = new HashSet<IConfiguration>(Arrays.asList(updatedCfgs));
-			Set<IConfiguration> oldSetCopy = new HashSet<IConfiguration>(oldSet);
+			Set<IConfiguration> oldSet = new HashSet<>(Arrays.asList(cfgs));
+			Set<IConfiguration> updatedSet = new HashSet<>(Arrays.asList(updatedCfgs));
+			Set<IConfiguration> oldSetCopy = new HashSet<>(oldSet);
 			oldSet.removeAll(updatedSet);
 			updatedSet.removeAll(oldSetCopy);
 			if (updatedSet.size() != 0)

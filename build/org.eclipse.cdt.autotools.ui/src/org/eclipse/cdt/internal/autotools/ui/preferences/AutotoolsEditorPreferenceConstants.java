@@ -23,7 +23,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class AutotoolsEditorPreferenceConstants {
 
 	/**
-	 * 
+	 *
 	 */
 	private AutotoolsEditorPreferenceConstants() {
 	}
@@ -34,11 +34,11 @@ public class AutotoolsEditorPreferenceConstants {
 	 */
 	public static final String CURRENT_LINE_COLOR = "org.eclipse.cdt.autotools.ui.automake.currentLineHightlightColor"; //$NON-NLS-1$
 	public static final String LINE_NUMBER_RULER_COLOR = "org.eclipse.cdt.autotools.ui.automake.lineNumberForegroundColor"; //$NON-NLS-1$
-	public static final String PRINT_MARGIN_COLOR = "org.eclipse.cdt.autotools.ui.automake.printMarginColor"; //$NON-NLS-1$	
+	public static final String PRINT_MARGIN_COLOR = "org.eclipse.cdt.autotools.ui.automake.printMarginColor"; //$NON-NLS-1$
 
 	/**
 	 * Preference key suffix for bold text style preference keys.
-	 * 
+	 *
 	 */
 	public static final String EDITOR_BOLD_SUFFIX = "_bold"; //$NON-NLS-1$
 

@@ -16,12 +16,12 @@ package org.eclipse.cdt.dsf.mi.service.command.output;
 
 /**
  * 'show endian' returns the endianness of the current target.
- * 
- * sample output: 
+ *
+ * sample output:
  *
  * (gdb) show endian
  * The target endianness is set automatically (currently little endian)
- * 
+ *
  * @since 4.2
  */
 public class CLIShowEndianInfo extends MIInfo {

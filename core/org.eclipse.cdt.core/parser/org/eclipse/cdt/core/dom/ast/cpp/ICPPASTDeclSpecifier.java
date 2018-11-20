@@ -85,7 +85,7 @@ public interface ICPPASTDeclSpecifier extends IASTDeclSpecifier {
 
 	/**
 	 * Is this thread_local
-	 * 
+	 *
 	 * @return boolean
 	 * @since 5.4
 	 */

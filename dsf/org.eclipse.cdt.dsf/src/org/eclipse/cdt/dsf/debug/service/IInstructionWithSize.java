@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.dsf.debug.service;
 
-import org.eclipse.cdt.dsf.debug.service.IInstruction;
-
 /**
  * Extension interface for instructions knowing their size.
  * <p>

@@ -19,9 +19,9 @@ import org.eclipse.core.runtime.IPath;
 
 /**
  * Settings for ScannerConfigBuilder
- * 
+ *
  * @author vhirsl
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

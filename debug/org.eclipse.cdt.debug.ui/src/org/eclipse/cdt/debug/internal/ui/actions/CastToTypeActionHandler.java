@@ -10,7 +10,7 @@
  *
  * Contributors:
  * QNX Software Systems - Initial API and implementation
- * Nokia - adapt to new command framework 
+ * Nokia - adapt to new command framework
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.ui.actions;
 
@@ -72,7 +72,7 @@ public class CastToTypeActionHandler extends AbstractHandler {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
 		 */
 		@Override
@@ -131,7 +131,7 @@ public class CastToTypeActionHandler extends AbstractHandler {
 	}
 
 	private ICastToType[] getCastToType(Object evaluationContext) {
-		List<ICastToType> castableItems = new ArrayList<ICastToType>();
+		List<ICastToType> castableItems = new ArrayList<>();
 		if (evaluationContext instanceof IEvaluationContext) {
 			Object s = ((IEvaluationContext) evaluationContext).getVariable(ISources.ACTIVE_MENU_SELECTION_NAME);
 			if (s instanceof IStructuredSelection) {

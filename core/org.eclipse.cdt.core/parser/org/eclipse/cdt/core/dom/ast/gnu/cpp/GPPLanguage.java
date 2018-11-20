@@ -46,15 +46,15 @@ public class GPPLanguage extends AbstractCLikeLanguage {
 			.getInstance();
 	public static final String ID = CCorePlugin.PLUGIN_ID + ".g++"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * @since 5.6
-	 * @deprecated This was meant for internal use only. 
+	 * @deprecated This was meant for internal use only.
 	 */
 	@Deprecated
 	public static final int GNU_LATEST_VERSION_MAJOR = 4;
-	/** 
+	/**
 	 * @since 5.6
-	 * @deprecated This was meant for internal use only. 
+	 * @deprecated This was meant for internal use only.
 	 */
 	@Deprecated
 	public static final int GNU_LATEST_VERSION_MINOR = 7;

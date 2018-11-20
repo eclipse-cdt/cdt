@@ -52,7 +52,7 @@ public class ToolListModificationInfo {
 
 	public List<ITool> getResultingToolList(List<ITool> list) {
 		if (list == null)
-			list = new ArrayList<ITool>(fResultingTools.length);
+			list = new ArrayList<>(fResultingTools.length);
 
 		for (int i = 0; i < fResultingTools.length; i++) {
 			list.add(fResultingTools[i].getResultingTool());
@@ -104,18 +104,18 @@ public class ToolListModificationInfo {
 	}
 
 	public MultiStatus getModificationStatus() {
-		List<IModificationStatus> statusList = new ArrayList<IModificationStatus>();
+		List<IModificationStatus> statusList = new ArrayList<>();
 
 		ToolInfo[][] conflictInfos = calculateConflictingTools(fResultingTools);
 		ITool[][] conflicting = toToolArray(conflictInfos, true);
 
-		Map<String, String> unspecifiedRequiredProps = new HashMap<String, String>();
-		Map<String, String> unspecifiedProps = new HashMap<String, String>();
-		Set<String> undefinedSet = new HashSet<String>();
+		Map<String, String> unspecifiedRequiredProps = new HashMap<>();
+		Map<String, String> unspecifiedProps = new HashMap<>();
+		Set<String> undefinedSet = new HashSet<>();
 		IConfiguration cfg = fRcInfo.getParent();
 		ITool[] nonManagedTools = null;
 		if (cfg.isManagedBuildOn() && cfg.supportsBuild(true)) {
-			List<ITool> list = new ArrayList<ITool>();
+			List<ITool> list = new ArrayList<>();
 			for (int i = 0; i < fResultingTools.length; i++) {
 				if (!fResultingTools[i].getInitialTool().supportsBuild(true)) {
 					list.add(fResultingTools[i].getInitialTool());
@@ -152,7 +152,7 @@ public class ToolListModificationInfo {
 	private ToolInfo[] filterInfos(ToolInfo[] infos) {
 		if (fRcInfo instanceof FolderInfo) {
 			Map<ITool, ToolInfo> map = createInitialToolToToolInfoMap(infos);
-			ITool[] tools = new ArrayList<ITool>(map.keySet()).toArray(new ITool[map.size()]);
+			ITool[] tools = new ArrayList<>(map.keySet()).toArray(new ITool[map.size()]);
 
 			tools = ((FolderInfo) fRcInfo).filterTools(tools, fRcInfo.getParent().getManagedProject());
 
@@ -168,7 +168,7 @@ public class ToolListModificationInfo {
 	}
 
 	private static Map<ITool, ToolInfo> createInitialToolToToolInfoMap(ToolInfo[] infos) {
-		Map<ITool, ToolInfo> map = new LinkedHashMap<ITool, ToolInfo>();
+		Map<ITool, ToolInfo> map = new LinkedHashMap<>();
 		for (int i = 0; i < infos.length; i++) {
 			map.put(infos[i].getInitialTool(), infos[i]);
 		}
@@ -177,16 +177,16 @@ public class ToolListModificationInfo {
 	}
 
 	private ToolInfo[][] doCalculateConflictingTools(ToolInfo[] infos) {
-		HashSet<ToolInfo> set = new HashSet<ToolInfo>();
+		HashSet<ToolInfo> set = new HashSet<>();
 		set.addAll(Arrays.asList(infos));
-		List<ToolInfo[]> result = new ArrayList<ToolInfo[]>();
+		List<ToolInfo[]> result = new ArrayList<>();
 		for (Iterator<ToolInfo> iter = set.iterator(); iter.hasNext();) {
 			ToolInfo ti = iter.next();
 			ITool t = ti.getInitialTool();
 			iter.remove();
 			@SuppressWarnings("unchecked")
 			HashSet<ToolInfo> tmp = (HashSet<ToolInfo>) set.clone();
-			List<ITool> list = new ArrayList<ITool>();
+			List<ITool> list = new ArrayList<>();
 			for (Iterator<ToolInfo> tmpIt = tmp.iterator(); tmpIt.hasNext();) {
 				ToolInfo otherTi = tmpIt.next();
 				ITool other = otherTi.getInitialTool();
@@ -213,8 +213,8 @@ public class ToolListModificationInfo {
 		IProject project = fRcInfo.getParent().getOwner().getProject();
 		String ext1[] = ((Tool) tool1).getAllInputExtensions(project);
 		String ext2[] = ((Tool) tool2).getAllInputExtensions(project);
-		Set<String> set1 = new HashSet<String>(Arrays.asList(ext1));
-		Set<String> result = new HashSet<String>();
+		Set<String> set1 = new HashSet<>(Arrays.asList(ext1));
+		Set<String> result = new HashSet<>();
 		for (int i = 0; i < ext2.length; i++) {
 			if (set1.remove(ext2[i]))
 				result.add(ext2[i]);

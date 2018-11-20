@@ -15,6 +15,8 @@ package org.eclipse.cdt.ui.tests.callhierarchy.extension;
 
 import java.util.HashMap;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -34,9 +36,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
-
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.ui.testplugin.CTestPlugin;
 
 public class CHOpenListener implements IOpenListener {
 
@@ -75,7 +74,7 @@ public class CHOpenListener implements IOpenListener {
 								}
 								IEditorPart editor = page.openEditor(input, editorId);
 								IMarker fMarker = file.createMarker(IMarker.TEXT);
-								HashMap<String, Object> map = new HashMap<String, Object>();
+								HashMap<String, Object> map = new HashMap<>();
 								map.put(IMarker.LINE_NUMBER, 3);
 								fMarker.setAttributes(map);
 								IDE.gotoMarker(editor, fMarker);

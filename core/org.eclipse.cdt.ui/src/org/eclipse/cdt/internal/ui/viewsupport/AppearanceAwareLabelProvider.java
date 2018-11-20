@@ -18,8 +18,6 @@ package org.eclipse.cdt.internal.ui.viewsupport;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-
 /**
  * CUILabelProvider that respects settings from the Appearance preference page.
  * Triggers a viewer update when a preference changes (currently none).

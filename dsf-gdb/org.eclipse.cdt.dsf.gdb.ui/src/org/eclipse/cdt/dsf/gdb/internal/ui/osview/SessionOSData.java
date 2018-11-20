@@ -55,8 +55,8 @@ public class SessionOSData {
 	private ICommandControlDMContext fContext;
 
 	private IResourceClass[] fResourceClasses = new IResourceClass[0];
-	private Map<String, OSData> fExistingData = new HashMap<String, OSData>();
-	private Map<String, Date> fTimestamp = new HashMap<String, Date>();
+	private Map<String, OSData> fExistingData = new HashMap<>();
+	private Map<String, Date> fTimestamp = new HashMap<>();
 
 	private Listener fUIListener;
 	private Control fUIControl;
@@ -240,7 +240,7 @@ public class SessionOSData {
 			// run until resource view is actually visible. And it will also block other interesting
 			//  async/job runnables, like perspective switch runnable using during debug launch,
 			//   causing launch to be stuck at random point.
-			// 
+			//
 			Display.getDefault().asyncExec(new Runnable() {
 
 				@Override

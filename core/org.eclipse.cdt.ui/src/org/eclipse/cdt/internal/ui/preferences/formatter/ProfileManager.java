@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Observable;
 
+import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -32,11 +35,6 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.osgi.util.TextProcessor;
 import org.osgi.service.prefs.BackingStoreException;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesAccess;
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * The model for the set of profiles which are available in the workbench.
@@ -69,7 +67,7 @@ public abstract class ProfileManager extends Observable {
 	private final static String ID_PREFIX = "_"; //$NON-NLS-1$
 
 	/**
-	 * Represents a profile with a unique ID, a name and a map 
+	 * Represents a profile with a unique ID, a name and a map
 	 * containing the code formatter settings.
 	 */
 	public static abstract class Profile implements Comparable<Profile> {
@@ -114,7 +112,7 @@ public abstract class ProfileManager extends Observable {
 	}
 
 	/**
-	 * Represents a built-in profile. The state of a built-in profile 
+	 * Represents a built-in profile. The state of a built-in profile
 	 * cannot be changed after instantiation.
 	 */
 	public final static class BuiltInProfile extends Profile {
@@ -347,7 +345,7 @@ public abstract class ProfileManager extends Observable {
 	private final List<Profile> fProfilesByName;
 
 	/**
-	 * The currently selected profile. 
+	 * The currently selected profile.
 	 */
 	private Profile fSelected;
 
@@ -362,7 +360,7 @@ public abstract class ProfileManager extends Observable {
 	/**
 	 * Create and initialize a new profile manager.
 	 * @param profiles Initial custom profiles (List of type <code>CustomProfile</code>)
-	 * @param profileVersioner 
+	 * @param profileVersioner
 	 */
 	public ProfileManager(List<Profile> profiles, IScopeContext context, PreferencesAccess preferencesAccess,
 			IProfileVersioner profileVersioner, KeySet[] keySets, String profileKey, String profileVersionKey) {
@@ -372,8 +370,8 @@ public abstract class ProfileManager extends Observable {
 		fProfileKey = profileKey;
 		fProfileVersionKey = profileVersionKey;
 
-		fProfiles = new HashMap<String, Profile>();
-		fProfilesByName = new ArrayList<Profile>();
+		fProfiles = new HashMap<>();
+		fProfilesByName = new ArrayList<>();
 
 		for (Object element : profiles) {
 			final Profile profile = (Profile) element;
@@ -398,7 +396,7 @@ public abstract class ProfileManager extends Observable {
 			Map<String, String> map = readFromPreferenceStore(context, profile);
 			if (map != null) {
 
-				List<String> allKeys = new ArrayList<String>();
+				List<String> allKeys = new ArrayList<>();
 				for (KeySet keySet : fKeySets) {
 					allKeys.addAll(keySet.getKeys());
 				}
@@ -455,7 +453,7 @@ public abstract class ProfileManager extends Observable {
 	/**
 	 * Notify observers with a message. The message must be one of the following:
 	 * @param message Message to send out
-	 * 
+	 *
 	 * @see #SELECTION_CHANGED_EVENT
 	 * @see #PROFILE_DELETED_EVENT
 	 * @see #PROFILE_RENAMED_EVENT
@@ -490,12 +488,12 @@ public abstract class ProfileManager extends Observable {
 	 * @param context The project context
 	 */
 	public Map<String, String> readFromPreferenceStore(IScopeContext context, Profile workspaceProfile) {
-		final Map<String, String> profileOptions = new HashMap<String, String>();
+		final Map<String, String> profileOptions = new HashMap<>();
 		IEclipsePreferences uiPrefs = context.getNode(CUIPlugin.PLUGIN_ID);
 
 		int version = uiPrefs.getInt(fProfileVersionKey, fProfileVersioner.getFirstVersion());
 		if (version != fProfileVersioner.getCurrentVersion()) {
-			Map<String, String> allOptions = new HashMap<String, String>();
+			Map<String, String> allOptions = new HashMap<>();
 			for (KeySet keySet : fKeySets) {
 				addAll(context.getNode(keySet.getNodeName()), allOptions);
 			}
@@ -565,7 +563,7 @@ public abstract class ProfileManager extends Observable {
 	}
 
 	/**
-	 * Update all formatter settings with the settings of the specified profile. 
+	 * Update all formatter settings with the settings of the specified profile.
 	 * @param profile The profile to write to the preference store
 	 */
 	private void writeToPreferenceStore(Profile profile, IScopeContext context) {
@@ -587,12 +585,12 @@ public abstract class ProfileManager extends Observable {
 		}
 	}
 
-	/** 
-	 * Get an immutable list as view on all profiles, sorted alphabetically. Unless the set 
-	 * of profiles has been modified between the two calls, the sequence is guaranteed to 
+	/**
+	 * Get an immutable list as view on all profiles, sorted alphabetically. Unless the set
+	 * of profiles has been modified between the two calls, the sequence is guaranteed to
 	 * correspond to the one returned by <code>getSortedNames</code>.
 	 * @return a list of elements of type <code>Profile</code>
-	 * 
+	 *
 	 * @see #getSortedDisplayNames()
 	 */
 	public List<Profile> getSortedProfiles() {
@@ -600,11 +598,11 @@ public abstract class ProfileManager extends Observable {
 	}
 
 	/**
-	 * Get the names of all profiles stored in this profile manager, sorted alphabetically. Unless the set of 
-	 * profiles has been modified between the two calls, the sequence is guaranteed to correspond to the one 
+	 * Get the names of all profiles stored in this profile manager, sorted alphabetically. Unless the set of
+	 * profiles has been modified between the two calls, the sequence is guaranteed to correspond to the one
 	 * returned by <code>getSortedProfiles</code>.
 	 * @return All names, sorted alphabetically
-	 * @see #getSortedProfiles()  
+	 * @see #getSortedProfiles()
 	 */
 	public String[] getSortedDisplayNames() {
 		final String[] sortedNames = new String[fProfilesByName.size()];
@@ -619,7 +617,7 @@ public abstract class ProfileManager extends Observable {
 	/**
 	 * Get the profile for this profile id.
 	 * @param ID The profile ID
-	 * @return The profile with the given ID or <code>null</code> 
+	 * @return The profile with the given ID or <code>null</code>
 	 */
 	public Profile getProfile(String ID) {
 		return fProfiles.get(ID);

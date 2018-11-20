@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *******************************************************************************/
@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Display;
  * interest using the proper constructor or the registerForEvent() method.
  * waitForEvent() can then be called to block until the event occurs or
  * the timeout elapses.
- * 
+ *
  * Note that if the event occurs after regsiterForEvent() is called but
  * before waitForEvent() is called, waitForEvent() will return immediatly
  * since it will know the event has already occured.
@@ -59,7 +59,7 @@ public class ServiceEventWaitor<V> {
 	}
 
 	/* Specify which event to wait for, and add ourselves as
-	 * a listener with the session 
+	 * a listener with the session
 	 */
 	public void registerForEvent(Class<V> eventClass) {
 		fEventTypeClass = eventClass;

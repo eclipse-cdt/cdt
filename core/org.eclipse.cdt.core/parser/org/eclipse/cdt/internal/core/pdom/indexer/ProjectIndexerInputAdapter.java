@@ -69,7 +69,7 @@ public class ProjectIndexerInputAdapter extends IndexerInputAdapter {
 		fCProject = cproject;
 		fProjectPrefix = cproject.getProject().getFullPath().toString() + IPath.SEPARATOR;
 		if (useCache) {
-			fIflCache = new HashMap<String, IIndexFileLocation>();
+			fIflCache = new HashMap<>();
 			fExistsCache = new FileExistsCache(isCaseInsensitiveFileSystem());
 		} else {
 			fIflCache = null;

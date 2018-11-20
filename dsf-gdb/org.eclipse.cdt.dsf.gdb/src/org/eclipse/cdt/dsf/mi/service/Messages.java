@@ -11,7 +11,7 @@
  * Contributors:
  *     Ericsson - initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
- *     Alvaro Sanchez-Leon (Ericsson) - Support Register Groups (Bug 235747) 
+ *     Alvaro Sanchez-Leon (Ericsson) - Support Register Groups (Bug 235747)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 

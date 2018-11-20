@@ -20,7 +20,7 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
  * -break-watch [ -a | -r ] LOCATION
- *  
+ *
  * Create a watchpoint on LOCATION. Without either of the options, the watchpoint
  * created is a regular watchpoint, i.e., a watchpoint that triggers when the
  * memory LOCATION is accessed for writing.

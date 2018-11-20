@@ -20,9 +20,6 @@ import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCProjectNature;
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -63,8 +60,11 @@ import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 import org.osgi.framework.Bundle;
 
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+
 /**
- * This file contains a set of generic tests for the core C model. Nothing 
+ * This file contains a set of generic tests for the core C model. Nothing
  * exotic, but should be a small sanity set of tests.
  */
 public class CModelTests extends TestCase {
@@ -85,15 +85,15 @@ public class CModelTests extends TestCase {
 	 * Sets up the test fixture.
 	 *
 	 * Called before every test case method.
-	 * 
-	 * Example code test the packages in the project 
+	 *
+	 * Example code test the packages in the project
 	 *  "com.qnx.tools.ide.cdt.core"
 	 */
 	@Override
 	protected void setUp() throws Exception {
 		/***
 		 * The test of the tests assume that they have a working workspace
-		 * and workspace root object to use to create projects/files in, 
+		 * and workspace root object to use to create projects/files in,
 		 * so we need to get them setup first.
 		 */
 		IWorkspaceDescription desc;
@@ -131,11 +131,11 @@ public class CModelTests extends TestCase {
 	/***
 	 * The follow are a simple set of tests to make usre the HasC/CCNature calls
 	 * seem to be sane.
-	 * 
-	 * Assumes that the CProjectHelper.createCProject properly creates a C 
+	 *
+	 * Assumes that the CProjectHelper.createCProject properly creates a C
 	 * project with a C nature, but does not add the CC nature.
-	 * It also assums that the AddCCNature call works 
-	 * 
+	 * It also assums that the AddCCNature call works
+	 *
 	 * @see CProjectHelper#createCProject
 	 * @see CoreModel#addCCNature
 	 */

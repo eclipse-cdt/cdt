@@ -49,9 +49,9 @@ public class XLCPerProjectBuildOutputParser extends AbstractXLCBuildOutputParser
 		}
 
 		// Recognized gcc or g++ compiler invocation
-		List<String> includes = new CopyOnWriteArrayList<String>();
-		List<String> symbols = new CopyOnWriteArrayList<String>();
-		List<String> targetSpecificOptions = new CopyOnWriteArrayList<String>();
+		List<String> includes = new CopyOnWriteArrayList<>();
+		List<String> symbols = new CopyOnWriteArrayList<>();
+		List<String> targetSpecificOptions = new CopyOnWriteArrayList<>();
 
 		String fileName = null;
 		for (int j = compilerInvocationIdx + 1; j < tokens.length; j++) {
@@ -148,7 +148,7 @@ public class XLCPerProjectBuildOutputParser extends AbstractXLCBuildOutputParser
 		}
 		// Contribute discovered includes and symbols to the ScannerInfoCollector
 		if (translatedIncludes.size() > 0 || symbols.size() > 0) {
-			Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+			Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<>();
 			scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, translatedIncludes);
 			scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
 			scannerInfo.put(ScannerInfoTypes.TARGET_SPECIFIC_OPTION, targetSpecificOptions);

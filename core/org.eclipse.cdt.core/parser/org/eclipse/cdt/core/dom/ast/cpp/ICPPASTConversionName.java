@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.dom.ast.IASTTypeId;
 
 /**
  * This interface represents a C++ conversion member function.
- *  
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -28,15 +28,15 @@ public interface ICPPASTConversionName extends ICPPASTName {
 
 	/**
 	 * Returns the IASTTypeId for the ICPPASTConversionName.
-	 * 
-	 * i.e. getTypeId() on operator int(); would return the IASTTypeId for "int" 
-	 * 
+	 *
+	 * i.e. getTypeId() on operator int(); would return the IASTTypeId for "int"
+	 *
 	 */
 	public IASTTypeId getTypeId();
 
 	/**
 	 * Sets the IASTTypeId for the ICPPASTConversionName.
-	 * 
+	 *
 	 * @param typeId
 	 */
 	public void setTypeId(IASTTypeId typeId);

@@ -23,7 +23,7 @@ public class QMLHyperlinkDetector extends AbstractHyperlinkDetector {
 		// TODO is length of region ever > 0?
 		IRegion wordRegion = QMLEditor.findWord(textViewer.getDocument(), region.getOffset());
 		if (wordRegion != null) {
-			ITextEditor editor = (ITextEditor) getAdapter(ITextEditor.class);
+			ITextEditor editor = getAdapter(ITextEditor.class);
 			return new IHyperlink[] { new QMLHyperlink(wordRegion, textViewer, editor) };
 		}
 		return null;

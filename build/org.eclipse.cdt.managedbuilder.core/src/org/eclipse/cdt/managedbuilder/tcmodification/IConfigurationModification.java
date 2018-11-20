@@ -28,7 +28,7 @@ public interface IConfigurationModification extends IFolderInfoModification {
 	IBuilder getRealBuilder();
 
 	/**
-	 * @return a set of compatible builders 
+	 * @return a set of compatible builders
 	 */
 	IBuilder[] getCompatibleBuilders();
 
@@ -38,7 +38,7 @@ public interface IConfigurationModification extends IFolderInfoModification {
 	CompatibilityStatus getBuilderCompatibilityStatus();
 
 	/**
-	 * @return the compatibility status for the builder, 
+	 * @return the compatibility status for the builder,
 	 * i.e. true when the getCompatibilityStatus() returns an non-ERROR status,
 	 * and false otherwise
 	 */
@@ -47,7 +47,7 @@ public interface IConfigurationModification extends IFolderInfoModification {
 	/**
 	 * sets the builder to this Configuration Modification
 	 * Note that this does NOT apply the builder to the underlying configuration
-	 * For applying the Modification settings the {@link IApplicableModification#apply()} 
+	 * For applying the Modification settings the {@link IApplicableModification#apply()}
 	 * method should be called
 	 */
 	void setBuilder(IBuilder builder);

@@ -16,6 +16,9 @@ package org.eclipse.cdt.internal.ui.util;
 
 import java.net.URI;
 
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -25,11 +28,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ide.FileStoreEditorInput;
-
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.ITranslationUnitEditorInput;
 
 /**
  * An EditorInput for an external (non-workspace) file.
@@ -41,7 +39,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for an external translation unit.
-	 * 
+	 *
 	 * @param unit  the translation unit
 	 */
 	public ExternalEditorInput(ITranslationUnit unit) {
@@ -52,7 +50,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for an external file of the local file system.
-	 * 
+	 *
 	 * @param location  the file system location
 	 */
 	public ExternalEditorInput(IPath location) {
@@ -61,7 +59,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for an external file of the local file system.
-	 * 
+	 *
 	 * @param location  the file system location
 	 * @param markerResource  the associated marker resource, may be <code>null</code>
 	 */
@@ -71,7 +69,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for a location URI.
-	 * 
+	 *
 	 * @param locationURI  the location URI
 	 */
 	public ExternalEditorInput(URI locationURI) {
@@ -80,7 +78,7 @@ public final class ExternalEditorInput extends FileStoreEditorInput implements I
 
 	/**
 	 * Creates an editor input for a location URI.
-	 * 
+	 *
 	 * @param locationURI  the location URI
 	 * @param markerResource  the associated marker resource, may be <code>null</code>
 	 */

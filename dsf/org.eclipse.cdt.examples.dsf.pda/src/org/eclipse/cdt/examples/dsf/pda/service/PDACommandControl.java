@@ -51,7 +51,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.osgi.framework.BundleContext;
 
 /**
- * Service that handles communication with a PDA debugger back end.  
+ * Service that handles communication with a PDA debugger back end.
  */
 public class PDACommandControl extends AbstractDsfService implements ICommandControlService {
 
@@ -72,30 +72,30 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 	private PDABackend fBackend;
 
 	// Queue of commands waiting to be sent to the debugger.  As long as commands
-	// are in this queue, they can still be removed by clients. 
-	private final List<CommandHandle> fCommandQueue = new LinkedList<CommandHandle>();
+	// are in this queue, they can still be removed by clients.
+	private final List<CommandHandle> fCommandQueue = new LinkedList<>();
 
 	// Queue of commands that are being sent to the debugger.  This queue is read
 	// by the send job, so as soon as commands are inserted into this queue, they can
 	// be considered as sent.
 	@ThreadSafe
-	private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<CommandHandle>();
+	private final BlockingQueue<CommandHandle> fTxCommands = new LinkedBlockingQueue<>();
 
 	// Flag indicating that the PDA debugger started
 	private boolean fStarted = false;
 
-	// Flag indicating that the PDA debugger has been disconnected 
+	// Flag indicating that the PDA debugger has been disconnected
 	@ThreadSafe
 	private boolean fTerminated = false;
 
-	//  Data Model context of this command control. 
+	//  Data Model context of this command control.
 	private PDAVirtualMachineDMContext fDMContext;
 
 	// Synchronous listeners for commands and events.
-	private final List<ICommandListener> fCommandListeners = new ArrayList<ICommandListener>();
-	private final List<IEventListener> fEventListeners = new ArrayList<IEventListener>();
+	private final List<ICommandListener> fCommandListeners = new ArrayList<>();
+	private final List<IEventListener> fEventListeners = new ArrayList<>();
 
-	// Sockets for communicating with PDA debugger 
+	// Sockets for communicating with PDA debugger
 	@ThreadSafe
 	private PrintWriter fRequestWriter;
 	@ThreadSafe
@@ -108,8 +108,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 	private CommandSendJob fCommandSendJob;
 
 	/**
-	 * Command control constructor. 
-	 * @param session The DSF session that this service is a part of. 
+	 * Command control constructor.
+	 * @param session The DSF session that this service is a part of.
 	 */
 	public PDACommandControl(DsfSession session) {
 		super(session);
@@ -156,7 +156,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 		fCommandSendJob = new CommandSendJob();
 		fCommandSendJob.schedule();
 
-		// Register the service with OSGi as the last step in initialization of 
+		// Register the service with OSGi as the last step in initialization of
 		// the service.
 		register(new String[] { ICommandControl.class.getName(), ICommandControlService.class.getName(),
 				PDACommandControl.class.getName() }, new Hashtable<String, String>());
@@ -177,8 +177,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 					// Mark the command control as terminated.
 					setTerminated();
 
-					// Ignore any error resulting from the exit command.  
-					// Errors will most likely result if the PDA process is 
+					// Ignore any error resulting from the exit command.
+					// Errors will most likely result if the PDA process is
 					// already terminated.
 					requestMonitor.done();
 				}
@@ -194,7 +194,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 	}
 
 	/**
-	 *  Job that services the send command queue. 
+	 *  Job that services the send command queue.
 	 */
 	private class CommandSendJob extends Job {
 		CommandSendJob() {
@@ -338,8 +338,8 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 				listener.commandQueued(token);
 			}
 
-			// In a separate dispatch cycle.  This allows command listeners to respond to the 
-			// command queued event.  
+			// In a separate dispatch cycle.  This allows command listeners to respond to the
+			// command queued event.
 			getExecutor().execute(new DsfRunnable() {
 				@Override
 				public void run() {
@@ -443,7 +443,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 
 	private synchronized void processQueues() {
 		if (isTerminated()) {
-			// If the PDA debugger is terminated.  Return all submitted commands 
+			// If the PDA debugger is terminated.  Return all submitted commands
 			// with an error.
 			for (CommandHandle handle : fCommandQueue) {
 				handle.fRequestMonitor.setStatus(new Status(IStatus.ERROR, PDAPlugin.PLUGIN_ID, INVALID_STATE,
@@ -466,7 +466,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 	}
 
 	/**
-	 * Return the PDA Debugger top-level Data Model context. 
+	 * Return the PDA Debugger top-level Data Model context.
 	 * @see PDAVirtualMachineDMContext
 	 */
 	@Override
@@ -484,7 +484,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 		// Mark the command control as started and ready to process commands.
 		fStarted = true;
 
-		// Process any commands which may have been queued before the 
+		// Process any commands which may have been queued before the
 		processQueues();
 
 		// Issue a data model event.
@@ -501,7 +501,7 @@ public class PDACommandControl extends AbstractDsfService implements ICommandCon
 
 	@ThreadSafe
 	private synchronized void setTerminated() {
-		// Set terminated may be called more than once: by event listener thread, 
+		// Set terminated may be called more than once: by event listener thread,
 		// by the terminate command, etc, so protect against sending events multiple
 		// times.
 		if (!fTerminated) {

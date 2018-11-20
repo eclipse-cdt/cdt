@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -25,27 +25,27 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdat
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 
 /**
- * View model nodes are configured with a view model provider to collectively 
- * define the layout of a view.  Each layout node generates elements of type 
+ * View model nodes are configured with a view model provider to collectively
+ * define the layout of a view.  Each layout node generates elements of type
  * {@link IVMContext} which are then stored in the viewer.
- * 
+ *
  * <p/>
- * NOTE: This interface extends <code>IElementContentProvider</code> but it has 
- * slightly different parameter requirements.  For the 
- * {@link IElementContentProvider#update(IChildrenUpdate[])} method, this class 
- * can accept an update where {@link IChildrenUpdate#getOffset()}  and 
- * {@link IChildrenUpdate#getLength()} may return -1. In this case the 
+ * NOTE: This interface extends <code>IElementContentProvider</code> but it has
+ * slightly different parameter requirements.  For the
+ * {@link IElementContentProvider#update(IChildrenUpdate[])} method, this class
+ * can accept an update where {@link IChildrenUpdate#getOffset()}  and
+ * {@link IChildrenUpdate#getLength()} may return -1. In this case the
  * implementation should return all available elements for the given parent.<br>
- * Also the for the {@link IElementContentProvider#update(IHasChildrenUpdate[])} and 
- * {@link IElementContentProvider#update(IChildrenCountUpdate[])} methods, the 
- * implementation may return an error with an error code of {@link IDsfService#NOT_SUPPORTED}.  
- * In this case the caller of this update should call 
+ * Also the for the {@link IElementContentProvider#update(IHasChildrenUpdate[])} and
+ * {@link IElementContentProvider#update(IChildrenCountUpdate[])} methods, the
+ * implementation may return an error with an error code of {@link IDsfService#NOT_SUPPORTED}.
+ * In this case the caller of this update should call
  * {@link IElementContentProvider#update(IChildrenUpdate[])}
  * instead.
- * 
+ *
  * @see AbstractDMVMProvider
  * @see IElementContentProvider
- * 
+ *
  * @since 1.0
  */
 @ConfinedToDsfExecutor("")
@@ -63,12 +63,12 @@ public interface IVMNode extends IElementContentProvider {
 	 * <i>may</i> be affected). If a delta flag is not returned, it means for
 	 * certain that elements of this node will not be affected in that way. That
 	 * information allows us to optimize the delta creation.
-	 * 
+	 *
 	 * <p>
 	 * A response of IModeDelta.CONTENT has a special meaning. If we return that
 	 * flag, it means the <i>collection</i> of elements of our type are
 	 * affected. It is not a statement on the elements themselves.
-	 * 
+	 *
 	 * @param event
 	 *            the event the caller is processing
 	 * @return IModelDelta flags
@@ -98,7 +98,7 @@ public interface IVMNode extends IElementContentProvider {
 	 * <i>might</i> end up adding to the delta, but it doesn't mean we are
 	 * obligated to or will.
 	 * </p>
-	 * 
+	 *
 	 * @param event
 	 *            Event to process.
 	 * @param parent
@@ -115,18 +115,18 @@ public interface IVMNode extends IElementContentProvider {
 	public void buildDelta(Object event, VMDelta parent, int nodeOffset, RequestMonitor requestMonitor);
 
 	/**
-	 * Retrieves the view model elements for the given data model event.  This method 
+	 * Retrieves the view model elements for the given data model event.  This method
 	 * is optional and it allows the view model provider to optimize event processing
 	 * by avoiding the need to retrieve all possible elements for the given node.
 	 * </p>
-	 * For example:  If a threads node implementation is given a thread stopped event in 
+	 * For example:  If a threads node implementation is given a thread stopped event in
 	 * this method, and the stopped event included a reference to the thread.  Then
 	 * the implementation should create a view model context for that thread and return it
 	 * here.
-	 *   
+	 *
 	 * @param parentDelta The parent delta in the processing of this event.
 	 * @param event The event to check for the data model object.
-	 * @param Request monitor for the array of elements corresponding to the 
+	 * @param Request monitor for the array of elements corresponding to the
 	 * given event.
 	 */
 	public void getContextsForEvent(VMDelta parentDelta, Object event, DataRequestMonitor<IVMContext[]> rm);

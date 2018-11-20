@@ -19,6 +19,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.templateengine.TemplateCore;
+import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
+import org.eclipse.cdt.core.templateengine.TemplateEngine;
+import org.eclipse.cdt.core.templateengine.TemplateInfo;
+import org.eclipse.cdt.core.templateengine.TemplateInitializationException;
+import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.templateengine.pages.UIPagesProvider;
+import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElementTreeBuilderHelper;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElementTreeBuilderManager;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -31,23 +42,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.w3c.dom.Element;
 
-import org.eclipse.cdt.core.templateengine.TemplateCore;
-import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
-import org.eclipse.cdt.core.templateengine.TemplateEngine;
-import org.eclipse.cdt.core.templateengine.TemplateInfo;
-import org.eclipse.cdt.core.templateengine.TemplateInitializationException;
-import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.templateengine.pages.UIPagesProvider;
-import org.eclipse.cdt.ui.templateengine.pages.UIWizardPage;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElementTreeBuilderHelper;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElementTreeBuilderManager;
-
 /**
- * Template class is responsible for initiating GUI construction. Collecting data from GUI and 
- * initiating process part of Template Engine. This is created per TemplateDescriptor basis. 
+ * Template class is responsible for initiating GUI construction. Collecting data from GUI and
+ * initiating process part of Template Engine. This is created per TemplateDescriptor basis.
  * Once The Template is created it creates a TemplateDescriptor for the XML file name given.
- * 
+ *
  * @since 4.0
  */
 
@@ -67,15 +66,15 @@ public class Template extends TemplateCore {
 	}
 
 	/**
-	 * 1. get PropertyGroupList. 
-	 * 2. clear UIPage's display order Vector. 
-	 * 3. for each PropertyGroup create the UIElementTree. 
-	 * 4. Request the UIPagesProvider to generate UIPages for the Tree. 
+	 * 1. get PropertyGroupList.
+	 * 2. clear UIPage's display order Vector.
+	 * 3. for each PropertyGroup create the UIElementTree.
+	 * 4. Request the UIPagesProvider to generate UIPages for the Tree.
 	 * 5. return the HashMap of UIPages.
 	 */
 	public Map<String, UIWizardPage> getUIPages() {
 		if (pageMap == null) {
-			pageMap = new HashMap<String, UIWizardPage>();
+			pageMap = new HashMap<>();
 			List<Element> rootPropertyGrouplist = templateDescriptor.getPropertyGroupList();
 
 			uiPagesProvider.clearOrderVector();
@@ -95,8 +94,8 @@ public class Template extends TemplateCore {
 	}
 
 	public IWizardPage[] getTemplateWizardPages(IWizardPage predatingPage, IWizardPage followingPage, IWizard wizard) {
-		List<IWizardDataPage> pages = new ArrayList<IWizardDataPage>();
-		//		if (predatingPage != null) { 
+		List<IWizardDataPage> pages = new ArrayList<>();
+		//		if (predatingPage != null) {
 		//			pages.add(predatingPage);
 		//		}
 
@@ -162,7 +161,7 @@ public class Template extends TemplateCore {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return List,which contains Page display order
 	 */
 
@@ -173,7 +172,7 @@ public class Template extends TemplateCore {
 	/**
 	 * this method is for JUnit Test case excecution. return the
 	 * UIElementTreeBuilderManager instance used by this Template.
-	 * 
+	 *
 	 * @return UIElementTreeBuilderManager
 	 */
 	public UIElementTreeBuilderManager getUIElementTreeBuilderManager() {
@@ -184,7 +183,7 @@ public class Template extends TemplateCore {
 	 * initializeProcessBlockList() will create the ProcessBlockList,
 	 * processPorcessBlockList() will invoke each process execution by assigning
 	 * resources to each process (Ref. ProcessResourceManager).
-	 * @param monitor 
+	 * @param monitor
 	 */
 	@Override
 	public IStatus[] executeTemplateProcesses(IProgressMonitor monitor, final boolean showError) {

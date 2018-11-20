@@ -38,7 +38,7 @@ import org.eclipse.cdt.core.model.ICElement;
 
 /**
  * Convenience class for bridging the model gap between binding types and CModel types
- * 
+ *
  * This is internal in case some IBinding's do not have ICElement constants in future
  */
 public class IndexModelUtil {
@@ -182,7 +182,7 @@ public class IndexModelUtil {
 	 * Extract the return type of the given function as string.
 	 * @param function
 	 * @return the return type of the function
-	 * @throws DOMException 
+	 * @throws DOMException
 	 */
 	public static String extractReturnType(IFunction function) throws DOMException {
 		return ASTTypeUtil.getType(function.getType().getReturnType(), false);

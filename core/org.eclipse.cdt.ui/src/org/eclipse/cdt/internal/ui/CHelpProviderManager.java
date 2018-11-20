@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  **********************************************************************/
@@ -43,7 +43,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * This class is used to manage external plugins that contribute 
+ * This class is used to manage external plugins that contribute
  * C/C++ help information through the CHelpProvider extension point
  */
 

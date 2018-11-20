@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -31,7 +31,7 @@ import org.eclipse.cdt.tests.dsf.vm.TestModel.TestElement;
 import org.junit.Assert;
 
 /**
- * 
+ *
  */
 public class FormattedValuesListener implements IFormattedValuesListener, IPropertiesUpdateListener {
 
@@ -39,14 +39,14 @@ public class FormattedValuesListener implements IFormattedValuesListener, IPrope
 
 	private final TestModel fModel;
 
-	private List<IPropertiesUpdate> fPropertiesUpdates = new ArrayList<IPropertiesUpdate>();
-	private List<List<FormattedValueDMContext>> fFormattedValuesInPending = new ArrayList<List<FormattedValueDMContext>>();
-	private List<FormattedValueDMContext> fFormattedValuesInProgress = new LinkedList<FormattedValueDMContext>();
-	private List<FormattedValueDMContext> fFormattedValuesCompleted = new ArrayList<FormattedValueDMContext>();
+	private List<IPropertiesUpdate> fPropertiesUpdates = new ArrayList<>();
+	private List<List<FormattedValueDMContext>> fFormattedValuesInPending = new ArrayList<>();
+	private List<FormattedValueDMContext> fFormattedValuesInProgress = new LinkedList<>();
+	private List<FormattedValueDMContext> fFormattedValuesCompleted = new ArrayList<>();
 
 	private DsfRunnable fProcessUpdatedFormattedValuesRunnable = null;
 
-	private Set<String> fCachedFormats = new HashSet<String>();
+	private Set<String> fCachedFormats = new HashSet<>();
 
 	public FormattedValuesListener(TestModel model) {
 		fModel = model;
@@ -60,7 +60,7 @@ public class FormattedValuesListener implements IFormattedValuesListener, IPrope
 	@Override
 	public void propertiesUpdatesStarted(IPropertiesUpdate[] updates) {
 		fPropertiesUpdates.addAll(Arrays.asList(updates));
-		List<FormattedValueDMContext> pending = new ArrayList<FormattedValueDMContext>(updates.length);
+		List<FormattedValueDMContext> pending = new ArrayList<>(updates.length);
 		for (IPropertiesUpdate update : updates) {
 			List<String> formatIds = getRequestedFormatIDs(update);
 			for (String formatId : formatIds) {
@@ -74,7 +74,7 @@ public class FormattedValuesListener implements IFormattedValuesListener, IPrope
 	}
 
 	private List<String> getRequestedFormatIDs(IPropertiesUpdate update) {
-		List<String> formatIds = new ArrayList<String>(1);
+		List<String> formatIds = new ArrayList<>(1);
 		for (String property : update.getProperties()) {
 			if (property.equals(IDebugVMConstants.PROP_FORMATTED_VALUE_ACTIVE_FORMAT_VALUE)) {
 				formatIds.add(ANY_FORMAT);
@@ -157,9 +157,9 @@ public class FormattedValuesListener implements IFormattedValuesListener, IPrope
 
 				if (progressIdx != -1) {
 					// The pending DMC may contain the ANY_FORMAT format ID.
-					// The progress DMC must contain the exact format retrieved. 
-					// To have a more accurate record, add the progress DMC to 
-					// the completed updates list.  
+					// The progress DMC must contain the exact format retrieved.
+					// To have a more accurate record, add the progress DMC to
+					// the completed updates list.
 					FormattedValueDMContext progress = fFormattedValuesInProgress.remove(progressIdx);
 					fFormattedValuesCompleted.add(progress);
 				} else {

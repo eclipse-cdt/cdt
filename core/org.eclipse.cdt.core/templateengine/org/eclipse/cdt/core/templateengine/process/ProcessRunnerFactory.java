@@ -50,7 +50,7 @@ public class ProcessRunnerFactory {
 	 *
 	 */
 	private synchronized void initializeProcessRunners() {
-		processRunnerMap = new HashMap<String, ProcessRunner>();
+		processRunnerMap = new HashMap<>();
 		IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_PROCESSES);
 		IExtension[] extensions = point.getExtensions();
 		for (int i = 0; i < extensions.length; i++) {
@@ -67,7 +67,7 @@ public class ProcessRunnerFactory {
 						IConfigurationElement[] elementChildren = element.getChildren();
 						for (int k = 0; k < elementChildren.length; k++) {
 							if (params == null) {
-								params = new ArrayList<ProcessParameter>();
+								params = new ArrayList<>();
 							}
 							params.add(new ProcessParameter(elementChildren[k]));
 						}

@@ -30,8 +30,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.dom.ast.ASTNodeProperty;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
 import org.eclipse.cdt.core.dom.ast.DOMException;
@@ -127,7 +125,6 @@ import org.eclipse.cdt.core.index.IIndexMacro;
 import org.eclipse.cdt.core.index.IIndexName;
 import org.eclipse.cdt.core.index.IndexFilter;
 import org.eclipse.cdt.core.parser.util.CharArrayUtils;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTIdExpression;
@@ -143,6 +140,7 @@ import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.CPPVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.Conversions;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.LookupData;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.semantics.SemanticUtil;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * For a whole translation unit or a part of it determines a set of externally defined bindings that
@@ -1510,7 +1508,7 @@ public class BindingClassifier {
 
 	/**
 	 * For a pointer or a reference type, defines the contained type. For an instance of a template
-	 * allowing incomplete argument types, defines the argument type. 
+	 * allowing incomplete argument types, defines the argument type.
 	 */
 	private void defineIndirectTypes(IType type) {
 		IType resolvedType = removeQualifiers(resolveTypedef(type));

@@ -55,7 +55,7 @@ import org.eclipse.ui.part.Page;
 /**
  * Page used for a full GDB console.  Each Debug session which uses the full GDB console will
  * use its own instance of this page.  GDB 7.12 is required to use the full GDB console.
- * 
+ *
  * Contributions to this page's context menu can be done using id "GdbFullCliConsole.#ContextMenu".
  * For example, using the extension point:<br>
  * <code>
@@ -191,7 +191,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 	}
 
 	protected void createContextMenu() {
-		// Choose the id to be similar in format to what 
+		// Choose the id to be similar in format to what
 		// the GdbBasicCliConsole has as id, for consistency
 		String id = "GdbFullCliConsole.#ContextMenu"; //$NON-NLS-1$
 		fMenuManager = new MenuManager(id, id);
@@ -258,7 +258,7 @@ public class GdbFullCliConsolePage extends Page implements IDebugContextListener
 
 	/**
 	 * Returns the launch to which the current selection belongs.
-	 * 
+	 *
 	 * @return the launch to which the current selection belongs.
 	 */
 	protected ILaunch getCurrentLaunch() {

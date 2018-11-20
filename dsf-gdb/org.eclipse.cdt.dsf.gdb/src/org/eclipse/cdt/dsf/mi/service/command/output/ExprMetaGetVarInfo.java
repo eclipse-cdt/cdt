@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson           - initial API and implementation
  *     Jens Elmenthaler (Verigy) - Added Full GDB pretty-printing support (bug 302121)
@@ -77,7 +77,7 @@ public class ExprMetaGetVarInfo implements ICommandResult {
 		this(e, varObj, varObj.getNumChildrenHint());
 	}
 
-	/** 
+	/**
 	 * Return raw MI fields for this variable or null if
 	 * no available.
 	 * @since 4.7
@@ -98,9 +98,9 @@ public class ExprMetaGetVarInfo implements ICommandResult {
 	 * In case of variable backed by a pretty printer, the number represents
 	 * only the number of currently fetched children, not all children that
 	 * might be available.
-	 * 
+	 *
 	 * @return The hint on the number of children.
-	 * 
+	 *
 	 * @deprecated Its not possible to tell the exact number of children, but
 	 *             you can use {@link #hasChildren()} in order to find out
 	 *             whether the variable has children at all. In order to find
@@ -113,7 +113,7 @@ public class ExprMetaGetVarInfo implements ICommandResult {
 
 	/**
 	 * @return Whether the variable has children or not (reliable).
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public boolean hasChildren() {
@@ -138,7 +138,7 @@ public class ExprMetaGetVarInfo implements ICommandResult {
 	/**
 	 * @return If <code>true</code>, the variable is definitely a collection,
 	 * if <code>false</code>, it's most probably not.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public boolean getCollectionHint() {
@@ -154,7 +154,7 @@ public class ExprMetaGetVarInfo implements ICommandResult {
 	 * @return Whether this variable can be safely ask for all its children, or
 	 *         whether clients need to specify a limit on the number of children
 	 *         to be fetched, because otherwise the gdb might hang up.
-	 *         
+	 *
 	 * @since 4.0
 	 */
 	public boolean isSafeToAskForAllChildren() {
@@ -163,7 +163,7 @@ public class ExprMetaGetVarInfo implements ICommandResult {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + " (" + //$NON-NLS-1$ 
+		return getClass().getSimpleName() + " (" + //$NON-NLS-1$
 				getExpr() + ", " + getNumChildren() + ", " + //$NON-NLS-1$ //$NON-NLS-2$
 				getType() + ", " + getEditable() + ", " + //$NON-NLS-1$ //$NON-NLS-2$
 				getCollectionHint() + ")"; //$NON-NLS-1$

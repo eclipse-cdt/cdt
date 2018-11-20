@@ -57,7 +57,7 @@ import org.eclipse.osgi.util.NLS;
  * <p>An extension of MIRegisters to support management of Register Groups as per the IRegisters2 interface.</p>
  * <p>The managed registered groups are user-defined subsets of the complete list of Registers reported by GDB for a specific Target</p>
  * <p>This class also triggers the read/write (persistence) of the user-defined Register Groups during the start/shutdown process of a session respectively.
- * It optionally supports persistence of user-defined Register Groups per container/process, 
+ * It optionally supports persistence of user-defined Register Groups per container/process,
  * see {@link #getPersistenceIdForRegisterGroupContainer(IContainerDMContext)}.</p>
  * @since 4.6
  */
@@ -72,20 +72,20 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	 * References to all groups related to a given context. Different programs may use different sets of registers e.g.
 	 * 32/64 bits
 	 */
-	private final ContextToGroupsMap<IContainerDMContext, MIRegisterGroupDMC[]> fContextToGroupsMap = new ContextToGroupsMap<IContainerDMContext, MIRegisterGroupDMC[]>();
+	private final ContextToGroupsMap<IContainerDMContext, MIRegisterGroupDMC[]> fContextToGroupsMap = new ContextToGroupsMap<>();
 
 	/**
 	 * Used to save base list of Registers associated to a group, these registers can not be used as is for
 	 * "getRegisters" since the execution context may change e.g. The current selection points to a process or a running
 	 * thread or a different frame, all information besides the execution context is valid.
 	 */
-	private final GroupRegistersMap<MIRegisterGroupDMC, MIRegisterDMC[]> fGroupToRegistersMap = new GroupRegistersMap<MIRegisterGroupDMC, MIRegisterDMC[]>();
+	private final GroupRegistersMap<MIRegisterGroupDMC, MIRegisterDMC[]> fGroupToRegistersMap = new GroupRegistersMap<>();
 
 	/**
 	 * Saves the Group number to RegisterGroupDescriptor created from the serialized memento, The group number is used across contexts as the
 	 * key:Integer uses a booking number incremented across container contexts
 	 */
-	private final Map<Integer, IRegisterGroupDescriptor> fGroupMementoDescriptorIndex = new HashMap<Integer, IRegisterGroupDescriptor>();
+	private final Map<Integer, IRegisterGroupDescriptor> fGroupMementoDescriptorIndex = new HashMap<>();
 
 	public GDBRegisters(DsfSession session) {
 		super(session);
@@ -93,7 +93,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	private class ContextToGroupsMap<K, V> extends HashMap<IContainerDMContext, MIRegisterGroupDMC[]> {
 		private static final long serialVersionUID = 1L;
-		private final Map<IContainerDMContext, Map<String, MIRegisterGroupDMC>> fNameToGroupMap = new HashMap<IContainerDMContext, Map<String, MIRegisterGroupDMC>>();
+		private final Map<IContainerDMContext, Map<String, MIRegisterGroupDMC>> fNameToGroupMap = new HashMap<>();
 
 		@Override
 		public MIRegisterGroupDMC[] put(IContainerDMContext key, MIRegisterGroupDMC[] value) {
@@ -131,7 +131,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 			Map<String, MIRegisterGroupDMC> nameMap = fNameToGroupMap.get(key);
 			if (nameMap == null) {
 				// cache not resolved, rebuild
-				nameMap = new HashMap<String, MIRegisterGroupDMC>();
+				nameMap = new HashMap<>();
 				MIRegisterGroupDMC[] groupsArr = super.get(key);
 				// If the container context exist, build the name map
 				if (groupsArr != null) {
@@ -175,7 +175,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	 */
 	private class GroupRegistersMap<K, V> extends HashMap<MIRegisterGroupDMC, MIRegisterDMC[]> {
 		private static final long serialVersionUID = 1L;
-		private final Map<MIRegisterGroupDMC, Map<String, MIRegisterDMC>> fNameToRegisterMap = new HashMap<MIRegisterGroupDMC, Map<String, MIRegisterDMC>>();
+		private final Map<MIRegisterGroupDMC, Map<String, MIRegisterDMC>> fNameToRegisterMap = new HashMap<>();
 
 		@Override
 		public MIRegisterDMC[] put(MIRegisterGroupDMC key, MIRegisterDMC[] value) {
@@ -216,7 +216,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 				return null;
 			}
 
-			Map<String, MIRegisterDMC> registerNameMap = new HashMap<String, MIRegisterDMC>();
+			Map<String, MIRegisterDMC> registerNameMap = new HashMap<>();
 			for (IRegisterDMContext register : registers) {
 				assert (register instanceof MIRegisterDMC);
 				MIRegisterDMC registerDmc = (MIRegisterDMC) register;
@@ -648,7 +648,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.dsf.debug.service.IRegisters2#removeRegisterGroups(org.eclipse.cdt.dsf.debug.service.IRegisters
 	 * .IRegisterGroupDMContext[], org.eclipse.cdt.dsf.concurrent.RequestMonitor)
@@ -674,7 +674,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	/**
 	 * Reset this class i.e. does not impact saved groups within launch configuration
-	 * 
+	 *
 	 * @param rm
 	 */
 	public void reset(final RequestMonitor rm) {
@@ -689,7 +689,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.dsf.mi.service.MIRegisters#findRegisterGroup(org.eclipse.cdt.dsf.datamodel.IDMContext,
 	 * java.lang.String, org.eclipse.cdt.dsf.concurrent.DataRequestMonitor)
 	 */
@@ -761,7 +761,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	 * Cast to MI and sort them ascending order by register index
 	 */
 	private MIRegisterDMC[] arrangeRegisters(IRegisterDMContext[] iRegisters) {
-		TreeMap<Integer, MIRegisterDMC> sortedRegisters = new TreeMap<Integer, MIRegisterDMC>();
+		TreeMap<Integer, MIRegisterDMC> sortedRegisters = new TreeMap<>();
 		for (int i = 0; i < iRegisters.length; i++) {
 			assert (iRegisters[i] instanceof MIRegisterDMC);
 			MIRegisterDMC register = (MIRegisterDMC) iRegisters[i];
@@ -781,7 +781,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	private void removeRegisterGroups(IRegisterGroupDMContext[] groups, boolean removeRoot, RequestMonitor rm) {
 		if (groups != null) {
 			// Save a list of updated containers to only send an update event for each of them
-			final Set<IContainerDMContext> updatedContainers = new HashSet<IContainerDMContext>();
+			final Set<IContainerDMContext> updatedContainers = new HashSet<>();
 			for (IRegisterGroupDMContext group : groups) {
 
 				if (!removeRoot) {
@@ -808,7 +808,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 				assert (groupsCtx != null);
 
 				if (groupsCtx != null) {
-					List<MIRegisterGroupDMC> groupsList = new ArrayList<MIRegisterGroupDMC>(Arrays.asList(groupsCtx));
+					List<MIRegisterGroupDMC> groupsList = new ArrayList<>(Arrays.asList(groupsCtx));
 
 					// Removing a single group
 					groupsList.remove(group);
@@ -875,7 +875,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 
 	IRegisterGroupDescriptor[] buildDescriptors() {
 		// use a tree map to sort the entries by group number
-		TreeMap<Integer, MIRegisterGroupDMC> sortedGroups = new TreeMap<Integer, MIRegisterGroupDMC>();
+		TreeMap<Integer, MIRegisterGroupDMC> sortedGroups = new TreeMap<>();
 
 		for (MIRegisterGroupDMC group : fGroupToRegistersMap.keySet()) {
 			sortedGroups.put(Integer.valueOf(group.getGroupNo()), group);
@@ -923,7 +923,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 			return new MIRegisterGroupDMC[0];
 		}
 
-		List<MIRegisterGroupDMC> groups = new ArrayList<MIRegisterGroupDMC>();
+		List<MIRegisterGroupDMC> groups = new ArrayList<>();
 		for (IRegisterGroupDescriptor group : groupDescriptions) {
 			fGroupMementoDescriptorIndex.put(fGroupBookingCount, group);
 			groups.add(new MIRegisterGroupDMC(this, contDmc, fGroupBookingCount, group.getName()));
@@ -934,15 +934,15 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	}
 
 	/**
-	 * @return the persistence id for the register group in the given contDmc container context, 
-	 * or null to associate the Register Groups in the given container to the launch itself (this is the default behavior). 
-	 * 
+	 * @return the persistence id for the register group in the given contDmc container context,
+	 * or null to associate the Register Groups in the given container to the launch itself (this is the default behavior).
+	 *
 	 * Subclasses may override. Alternatively simply use override {@link #useProcessIdAsRegisterGroupPersistanceId()} to return true to have
-	 * the process id be used as the persistence id. 
-	 * 
+	 * the process id be used as the persistence id.
+	 *
 	 * Note that for this to work correctly the id returned for a given container must be same across launch sessions,
 	 * otherwise persistence info will be lost. (Hence why null is the default behavior)
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	protected String getPersistenceIdForRegisterGroupContainer(final IContainerDMContext contDmc) {
@@ -955,11 +955,11 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	}
 
 	/**
-	 * @return whether the process id should be used as a container id for the persistence 
+	 * @return whether the process id should be used as a container id for the persistence
 	 * of the register groups. Subclasses may override.
-	 * 
+	 *
 	 * @see #getPersistenceIdForRegisterGroupContainer(IContainerDMContext)
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	protected boolean useProcessIdAsRegisterGroupPersistanceId() {
@@ -1001,7 +1001,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	 */
 	private MIRegisterDMC[] resolveRegisters(IRegisterGroupDescriptor grpDescriptor, IDMContext ctx)
 			throws CoreException {
-		final List<MIRegisterDMC> registerContexts = new ArrayList<MIRegisterDMC>();
+		final List<MIRegisterDMC> registerContexts = new ArrayList<>();
 		final IContainerDMContext containerDmc = DMContexts.getAncestorOfType(ctx, IContainerDMContext.class);
 		final MIRegisterGroupDMC groupDmc = DMContexts.getAncestorOfType(ctx, MIRegisterGroupDMC.class);
 
@@ -1043,7 +1043,7 @@ public class GDBRegisters extends MIRegisters implements IRegisters2 {
 	}
 
 	private void generateRegistersChangedEvent(IContainerDMContext containerDmc) {
-		//resolve the groups for the current container (process) context 
+		//resolve the groups for the current container (process) context
 		final MIRegisterGroupDMC[] groups = fContextToGroupsMap.get(containerDmc);
 
 		//trigger notification to all groups in the container

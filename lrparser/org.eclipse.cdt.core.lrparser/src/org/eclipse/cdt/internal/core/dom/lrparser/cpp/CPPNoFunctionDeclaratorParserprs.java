@@ -24,7 +24,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static byte isKeyword[] = IsKeyword.isKeyword;
 
@@ -237,7 +237,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static short baseCheck[] = BaseCheck.baseCheck;
 
@@ -251,7 +251,7 @@ public class CPPNoFunctionDeclaratorParserprs
 	@Override
 	public final int rhs(int index) {
 		return rhs[index];
-	};
+	}
 
 	public interface BaseAction {
 		public final static char baseAction[] = { 191, 5, 153, 93, 93, 30, 30, 80, 80, 39, 39, 42, 42, 218, 1, 1, 16,
@@ -598,7 +598,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				0, 8, 12, 0, 365, 95, 0, 35, 73, 0, 536, 6108, 0, 1, 263, 0, 313, 1581, 0, 263, 254, 0, 1, 1199, 0, 1,
 				2122, 0, 263, 253, 0, 6964, 1, 0, 6960, 1, 0, 1, 263, 3587, 0, 6961, 263, 0, 3588, 263, 0, 3643, 263, 0,
 				10, 12, 0, 8, 10, 12, 0, 3708, 227, 0, 218, 5172, 0 };
-	};
+	}
 
 	public final static char baseAction[] = BaseAction.baseAction;
 
@@ -612,7 +612,7 @@ public class CPPNoFunctionDeclaratorParserprs
 	@Override
 	public final int lhs(int index) {
 		return lhs[index];
-	};
+	}
 
 	public interface TermCheck {
 		public final static byte termCheck[] = { 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
@@ -754,7 +754,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				28, 29, 30, 31, 32, 33, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 				0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static byte termCheck[] = TermCheck.termCheck;
 
@@ -957,7 +957,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				6952, 569, 6952, 6952, 6952, 6952, 6952, 6952, 6952, 6952, 6952, 6805, 7251, 7249, 7258, 7257, 7253,
 				7254, 7252, 7255, 7256, 7259, 7250, 7246, 7323, 7324, 7240, 7247, 7243, 7219, 7245, 7244, 7241, 7242,
 				7220 };
-	};
+	}
 
 	public final static char termAction[] = TermAction.termAction;
 
@@ -997,7 +997,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				137, 468, 487, 487, 485, 466, 487, 605, 605, 15, 465, 803, 233, 605, 125, 817, 468, 234, 536, 234, 485,
 				340, 1046, 234, 794, 803, 95, 184, 234, 234, 632, 468, 15, 468, 605, 340, 503, 468, 465, 1002, 806, 806,
 				1038, 503, 466, 24, 605, 234, 539, 468, 234, 605, 468 };
-	};
+	}
 
 	public final static char asb[] = Asb.asb;
 
@@ -1048,7 +1048,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				38, 48, 43, 47, 12, 21, 11, 17, 15, 16, 18, 19, 14, 13, 20, 10, 42, 46, 44, 41, 49, 7, 5, 60, 8, 6, 4,
 				1, 2, 3, 0, 53, 23, 13, 55, 26, 14, 28, 29, 15, 16, 30, 31, 17, 18, 32, 56, 33, 58, 19, 22, 20, 24, 21,
 				12, 11, 25, 9, 3, 7, 5, 39, 63, 65, 88, 27, 62, 54, 57, 61, 8, 1, 2, 6, 4, 10, 0 };
-	};
+	}
 
 	public final static byte asr[] = Asr.asr;
 
@@ -1085,7 +1085,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				12, 12, 229, 12, 229, 169, 169, 180, 12, 169, 175, 175, 12, 205, 205, 226, 175, 12, 303, 229, 226, 200,
 				226, 302, 205, 12, 226, 54, 23, 303, 82, 226, 226, 205, 229, 12, 229, 175, 200, 162, 229, 115, 12, 130,
 				130, 198, 70, 12, 177, 175, 226, 259, 229, 226, 175, 229 };
-	};
+	}
 
 	public final static char nasb[] = Nasb.nasb;
 
@@ -1107,7 +1107,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				71, 0, 2, 69, 0, 139, 214, 138, 112, 137, 136, 0, 100, 99, 54, 75, 70, 4, 10, 9, 2, 0, 54, 4, 97, 27, 5,
 				0, 4, 10, 9, 13, 3, 1, 0, 134, 5, 50, 92, 0, 5, 50, 92, 94, 0, 112, 71, 13, 109, 110, 111, 190, 0, 5,
 				50, 92, 114, 48, 4, 0, 197, 5, 52, 0 };
-	};
+	}
 
 	public final static char nasr[] = Nasr.nasr;
 
@@ -1123,7 +1123,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				58, 78, 44, 121, 33, 30, 118, 119, 96, 108, 49, 50, 56, 57, 59, 69, 71, 72, 85, 92, 17, 18, 65, 21, 22,
 				6, 23, 24, 25, 26, 27, 32, 4, 15, 16, 28, 29, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 51, 80, 81, 82, 5,
 				117, 3, 123, 62, 116 };
-	};
+	}
 
 	public final static char terminalIndex[] = TerminalIndex.terminalIndex;
 
@@ -1143,7 +1143,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				0, 193, 0, 0, 0, 202, 0, 205, 211, 0, 0, 223, 224, 0, 0, 229, 232, 0, 234, 236, 0, 240, 241, 242, 245,
 				0, 0, 249, 124, 0, 150, 153, 0, 181, 0, 184, 0, 0, 208, 221, 226, 0, 0, 230, 231, 233, 235, 0, 238, 239,
 				244, 250, 253, 254, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	};
+	}
 
 	public final static char nonterminalIndex[] = NonterminalIndex.nonterminalIndex;
 
@@ -1159,7 +1159,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				551, 555, 645, 649, 653, 110, 7, 110, 410, 426, 439, 460, 479, 543, 129, 129, 245, 439, 566, 582, 593,
 				604, 220, 513, 69, 69, 169, 235, 238, 69, 254, 275, 238, 238, 69, 369, 492, 499, 169, 69, 668, 123, 355,
 				414, 454, 486, 472, 69, 355, 401, 190, 117, 452, 657, 664, 657, 664, 78, 420, 150, 117, 117, 264 };
-	};
+	}
 
 	public final static char scopePrefix[] = ScopePrefix.scopePrefix;
 
@@ -1175,7 +1175,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				666, 11, 114, 379, 379, 379, 464, 483, 535, 133, 138, 249, 443, 570, 570, 570, 570, 224, 517, 72, 72, 5,
 				5, 241, 243, 257, 5, 278, 278, 243, 108, 5, 257, 5, 528, 5, 126, 358, 417, 457, 489, 475, 547, 538, 404,
 				193, 108, 108, 659, 659, 661, 661, 80, 422, 152, 215, 200, 266 };
-	};
+	}
 
 	public final static char scopeSuffix[] = ScopeSuffix.scopeSuffix;
 
@@ -1191,7 +1191,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				12, 131, 178, 84, 83, 83, 64, 41, 156, 113, 113, 70, 83, 18, 18, 18, 18, 101, 20, 186, 182, 201, 99,
 				108, 68, 79, 67, 171, 88, 140, 85, 161, 160, 192, 156, 17, 178, 140, 115, 82, 22, 45, 156, 156, 84, 48,
 				178, 78, 154, 44, 154, 44, 185, 115, 109, 48, 48, 172 };
-	};
+	}
 
 	public final static char scopeLhs[] = ScopeLhs.scopeLhs;
 
@@ -1206,7 +1206,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				72, 113, 1, 72, 1, 39, 1, 39, 39, 73, 118, 72, 72, 72, 72, 72, 118, 1, 72, 1, 72, 72, 72, 71, 71, 4, 1,
 				1, 5, 72, 64, 64, 64, 64, 72, 3, 1, 1, 72, 72, 3, 1, 118, 72, 1, 1, 1, 39, 72, 118, 72, 6, 72, 1, 57,
 				70, 71, 72, 64, 1, 57, 75, 74, 39, 39, 4, 4, 4, 4, 3, 1, 69, 1, 1, 3 };
-	};
+	}
 
 	public final static byte scopeLa[] = ScopeLa.scopeLa;
 
@@ -1222,7 +1222,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				286, 286, 286, 286, 265, 6, 64, 77, 77, 77, 119, 346, 103, 136, 136, 180, 77, 286, 286, 286, 286, 146,
 				286, 28, 52, 196, 146, 148, 198, 142, 198, 61, 203, 138, 77, 55, 58, 106, 103, 286, 64, 138, 1, 77, 287,
 				111, 103, 103, 77, 67, 64, 11, 108, 155, 108, 155, 28, 1, 136, 67, 67, 61 };
-	};
+	}
 
 	public final static char scopeStateSet[] = ScopeStateSet.scopeStateSet;
 
@@ -1260,7 +1260,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				198, 166, 126, 10, 0, 136, 2, 0, 126, 0, 226, 3, 124, 275, 166, 126, 10, 0, 275, 166, 126, 10, 0, 135,
 				2, 0, 126, 0, 226, 3, 135, 0, 226, 3, 140, 0, 159, 60, 140, 0, 277, 0, 31, 0, 31, 139, 0, 165, 0, 134,
 				0, 159, 3, 0 };
-	};
+	}
 
 	public final static char scopeRhs[] = ScopeRhs.scopeRhs;
 
@@ -1292,7 +1292,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				5700, 5677, 5654, 5631, 5608, 5579, 1266, 3013, 3298, 3256, 3200, 3158, 1462, 1415, 3102, 3060, 1367,
 				2900, 2127, 2080, 2033, 1986, 1939, 1892, 1845, 1798, 1751, 1704, 1657, 1610, 599, 1554, 1292, 1512,
 				1144, 991, 1219, 0 };
-	};
+	}
 
 	public final static char scopeState[] = ScopeState.scopeState;
 
@@ -1330,7 +1330,7 @@ public class CPPNoFunctionDeclaratorParserprs
 				3, 3, 3, 203, 3, 123, 159, 123, 188, 228, 338, 238, 64, 3, 71, 237, 174, 237, 320, 149, 75, 237, 127,
 				127, 68, 53, 97, 337, 174, 152, 210, 152, 319, 127, 3, 152, 297, 245, 152, 152, 127, 70, 203, 161, 285,
 				159, 70, 121, 317, 152, 152 };
-	};
+	}
 
 	public final static char inSymb[] = InSymb.inSymb;
 
@@ -1386,28 +1386,33 @@ public class CPPNoFunctionDeclaratorParserprs
 				"template_argument_list", "template_argument", "type_name_specifier_inTemplate",
 				"type_name_declaration_specifie" + "rs_inTemplate", "type_specifier_seq_inTemplate", "handler",
 				"exception_declaration", "type_id_list" };
-	};
+	}
 
 	public final static String name[] = Name.name;
 
+	@Override
 	public final String name(int index) {
 		return name[index];
 	}
 
 	public final static int ERROR_SYMBOL = 62, SCOPE_UBOUND = 121, SCOPE_SIZE = 122, MAX_NAME_LENGTH = 43;
 
+	@Override
 	public final int getErrorSymbol() {
 		return ERROR_SYMBOL;
 	}
 
+	@Override
 	public final int getScopeUbound() {
 		return SCOPE_UBOUND;
 	}
 
+	@Override
 	public final int getScopeSize() {
 		return SCOPE_SIZE;
 	}
 
+	@Override
 	public final int getMaxNameLength() {
 		return MAX_NAME_LENGTH;
 	}
@@ -1418,42 +1423,52 @@ public class CPPNoFunctionDeclaratorParserprs
 
 	public final static boolean BACKTRACK = true;
 
+	@Override
 	public final int getNumStates() {
 		return NUM_STATES;
 	}
 
+	@Override
 	public final int getNtOffset() {
 		return NT_OFFSET;
 	}
 
+	@Override
 	public final int getLaStateOffset() {
 		return LA_STATE_OFFSET;
 	}
 
+	@Override
 	public final int getMaxLa() {
 		return MAX_LA;
 	}
 
+	@Override
 	public final int getNumRules() {
 		return NUM_RULES;
 	}
 
+	@Override
 	public final int getNumNonterminals() {
 		return NUM_NONTERMINALS;
 	}
 
+	@Override
 	public final int getNumSymbols() {
 		return NUM_SYMBOLS;
 	}
 
+	@Override
 	public final int getSegmentSize() {
 		return SEGMENT_SIZE;
 	}
 
+	@Override
 	public final int getStartState() {
 		return START_STATE;
 	}
 
+	@Override
 	public final int getStartSymbol() {
 		return lhs[0];
 	}
@@ -1462,55 +1477,68 @@ public class CPPNoFunctionDeclaratorParserprs
 		return IDENTIFIER_SYMBOL;
 	}
 
+	@Override
 	public final int getEoftSymbol() {
 		return EOFT_SYMBOL;
 	}
 
+	@Override
 	public final int getEoltSymbol() {
 		return EOLT_SYMBOL;
 	}
 
+	@Override
 	public final int getAcceptAction() {
 		return ACCEPT_ACTION;
 	}
 
+	@Override
 	public final int getErrorAction() {
 		return ERROR_ACTION;
 	}
 
+	@Override
 	public final boolean isValidForParser() {
 		return isValidForParser;
 	}
 
+	@Override
 	public final boolean getBacktrack() {
 		return BACKTRACK;
 	}
 
+	@Override
 	public final int originalState(int state) {
 		return -baseCheck[state];
 	}
 
+	@Override
 	public final int asi(int state) {
 		return asb[originalState(state)];
 	}
 
+	@Override
 	public final int nasi(int state) {
 		return nasb[originalState(state)];
 	}
 
+	@Override
 	public final int inSymbol(int state) {
 		return inSymb[originalState(state)];
 	}
 
+	@Override
 	public final int ntAction(int state, int sym) {
 		return baseAction[state + sym];
 	}
 
+	@Override
 	public final int tAction(int state, int sym) {
 		int i = baseAction[state], k = i + sym;
 		return termAction[termCheck[k] == sym ? k : i];
 	}
 
+	@Override
 	public final int lookAhead(int la_state, int sym) {
 		int k = la_state + sym;
 		return termAction[termCheck[k] == sym ? k : la_state];

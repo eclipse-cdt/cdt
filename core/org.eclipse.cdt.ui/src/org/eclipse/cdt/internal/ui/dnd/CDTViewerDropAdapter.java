@@ -34,28 +34,28 @@ import org.eclipse.swt.widgets.TreeItem;
 public class CDTViewerDropAdapter implements DropTargetListener {
 
 	/**
-	 * Constant describing the position of the mouse cursor relative 
+	 * Constant describing the position of the mouse cursor relative
 	 * to the target object.  This means the mouse is not positioned
 	 * over or near any valid target.
 	 */
 	public static final int LOCATION_NONE = DND.FEEDBACK_NONE;
 
 	/**
-	 * Constant describing the position of the mouse cursor relative 
+	 * Constant describing the position of the mouse cursor relative
 	 * to the target object.  This means the mouse is positioned
 	 * directly on the target.
 	 */
 	public static final int LOCATION_ON = DND.FEEDBACK_SELECT;
 
 	/**
-	 * Constant describing the position of the mouse cursor relative 
+	 * Constant describing the position of the mouse cursor relative
 	 * to the target object.  This means the mouse is positioned
 	 * slightly before the target.
 	 */
 	public static final int LOCATION_BEFORE = DND.FEEDBACK_INSERT_BEFORE;
 
 	/**
-	 * Constant describing the position of the mouse cursor relative 
+	 * Constant describing the position of the mouse cursor relative
 	 * to the target object.  This means the mouse is positioned
 	 * slightly after the target.
 	 */
@@ -89,7 +89,7 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 
 	/**
 	 * Controls whether the drop adapter shows insertion feedback or not.
-	 * 
+	 *
 	 * @param showInsertionFeedback <code>true</code> if the drop adapter is supposed
 	 *	to show insertion feedback. Otherwise <code>false</code>
 	 */
@@ -126,8 +126,8 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 
 	/**
 	 * Checks if the drop is valid. The method calls <code>validateDrop
-	 * (Object target, DropTargetEvent event). Implementors can alter the 
-	 * <code>currentDataType</code> field and the <code>detail</code> field 
+	 * (Object target, DropTargetEvent event). Implementors can alter the
+	 * <code>currentDataType</code> field and the <code>detail</code> field
 	 * to give feedback about drop acceptence.
 	 */
 	public void validateDrop(DropTargetEvent event) {
@@ -200,8 +200,8 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 
 	/**
 	 * Returns the position of the given coordinates relative to the given target.
-	 * The position is determined to be before, after, or on the item, based on 
-	 * some threshold value. The return value is one of the LOCATION_* constants 
+	 * The position is determined to be before, after, or on the item, based on
+	 * some threshold value. The return value is one of the LOCATION_* constants
 	 * defined in this class.
 	 */
 	final protected int computeLocation(DropTargetEvent event) {
@@ -224,7 +224,7 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 	}
 
 	/**
-	 * Returns the bounds of the given item, or <code>null</code> if it is not a 
+	 * Returns the bounds of the given item, or <code>null</code> if it is not a
 	 * valid type of item.
 	 */
 	private Rectangle getBounds(Item item) {
@@ -268,7 +268,7 @@ public class CDTViewerDropAdapter implements DropTargetListener {
 		fFeedback = feedback;
 	}
 
-	//---- helper methods to test DnD 
+	//---- helper methods to test DnD
 
 	public void internalTestSetLocation(int location) {
 		fLocation = location;

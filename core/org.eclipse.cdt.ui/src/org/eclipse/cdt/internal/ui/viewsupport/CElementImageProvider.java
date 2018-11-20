@@ -16,18 +16,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.model.IWorkbenchAdapter;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.model.CModelException;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -50,11 +38,21 @@ import org.eclipse.cdt.core.model.ISourceRoot;
 import org.eclipse.cdt.core.model.ITemplate;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.core.model.CModelManager;
 import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.cdt.ui.CElementImageDescriptor;
 import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.core.model.CModelManager;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
  * Default strategy of the C plugin for the construction of C element icons.
@@ -78,7 +76,7 @@ public class CElementImageProvider {
 	public final static int LIGHT_TYPE_ICONS = 0x4;
 
 	/**
-	 * Show error overlay. 
+	 * Show error overlay.
 	 */
 	public final static int OVERLAY_ERROR = 0x8;
 
@@ -88,12 +86,12 @@ public class CElementImageProvider {
 	public final static int OVERLAY_WARNING = 0x10;
 
 	/**
-	 * Show override overlay. 
+	 * Show override overlay.
 	 */
 	public final static int OVERLAY_OVERRIDE = 0x20;
 
 	/**
-	 * Show implements overlay. 
+	 * Show implements overlay.
 	 */
 	public final static int OVERLAY_IMPLEMENTS = 0x40;
 

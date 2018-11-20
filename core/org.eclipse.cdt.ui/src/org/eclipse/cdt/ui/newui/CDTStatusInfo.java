@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.newui;
 
-import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.IStatus;
 
 /**
  * Simple IStatus implementation to avoid using internal classes.

@@ -52,7 +52,7 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 	 * sends us a stopped event, but it doesn't include a reason in it.
 	 * Fortunately, it does output a stream record that tells us not only that a
 	 * catchpoint was hit, but what its breakpoint number is.
-	 * 
+	 *
 	 * @param streamRecord
 	 *            the stream record that reveals that a catchpoint was hit and
 	 *            what the event was
@@ -101,7 +101,7 @@ public class MICatchpointHitEvent extends MIBreakpointHitEvent {
 	 * "exception caught"). The inconsistency is fine. The user will get the
 	 * insight he needs either way.
 	 *
-	 * @since 5.0	 
+	 * @since 5.0
 	 */
 	public static MICatchpointHitEvent parse(IExecutionDMContext dmc, int token, MIResult[] results, String bkptNumber,
 			String gdbKeyword) {

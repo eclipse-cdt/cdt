@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -15,8 +15,6 @@ package org.eclipse.cdt.core.lrparser.tests;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.AssertionFailedError;
 
 import org.eclipse.cdt.core.dom.ICodeReaderFactory;
 import org.eclipse.cdt.core.dom.ast.ASTVisitor;
@@ -37,9 +35,11 @@ import org.eclipse.cdt.internal.core.dom.parser.c.CVisitor;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTNameBase;
 import org.eclipse.core.runtime.CoreException;
 
+import junit.framework.AssertionFailedError;
+
 /**
  * Utility methods for parsing test code using the C99 LPG parser.
- * 
+ *
  * @author Mike Kucera
  */
 @SuppressWarnings({ "restriction", "nls" })
@@ -52,8 +52,8 @@ public class ParseHelper {
 			shouldVisitNames = true;
 		}
 
-		public List<IASTName> nameList = new ArrayList<IASTName>();
-		public List<String> problemBindings = new ArrayList<String>();
+		public List<IASTName> nameList = new ArrayList<>();
+		public List<String> problemBindings = new ArrayList<>();
 		public int numNullBindings = 0;
 
 		@Override

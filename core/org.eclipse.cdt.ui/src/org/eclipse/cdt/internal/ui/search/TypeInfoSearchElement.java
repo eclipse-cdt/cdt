@@ -13,15 +13,13 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.search;
 
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.cdt.core.browser.ITypeInfo;
 import org.eclipse.cdt.core.browser.IndexTypeInfo;
 import org.eclipse.cdt.core.index.IIndex;
 import org.eclipse.cdt.core.index.IIndexBinding;
 import org.eclipse.cdt.core.index.IIndexName;
-
 import org.eclipse.cdt.internal.core.browser.ASTTypeInfo;
+import org.eclipse.core.runtime.CoreException;
 
 /**
  * Represents a a c/c++-entity in a search.

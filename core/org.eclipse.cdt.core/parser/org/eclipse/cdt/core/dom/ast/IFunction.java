@@ -10,14 +10,14 @@
  *
  * Contributors:
  *     Doug Schaefer (IBM) - Initial API and implementation
- *     Sergey Prigogin (Google) 
+ *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.core.dom.ast;
 
 /**
  * This represents a function in the program. A function is also a scope
  * for other bindings.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

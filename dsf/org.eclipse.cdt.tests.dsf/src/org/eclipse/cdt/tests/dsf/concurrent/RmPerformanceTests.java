@@ -7,21 +7,21 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.tests.dsf.concurrent;
-
-import junit.framework.TestCase;
 
 import org.eclipse.cdt.dsf.concurrent.ImmediateExecutor;
 import org.eclipse.cdt.dsf.concurrent.RequestMonitor;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
 
+import junit.framework.TestCase;
+
 /**
- * Tests to measure the performance of the viewer updates.  
+ * Tests to measure the performance of the viewer updates.
  */
 public class RmPerformanceTests extends TestCase {
 
@@ -83,7 +83,7 @@ public class RmPerformanceTests extends TestCase {
 						@Override
 						protected void handleCompleted() {
 							// do not call parent so it can be reused
-						};
+						}
 					};
 					rm.done();
 				}

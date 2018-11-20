@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.IPath;
 public interface IIncludeFileEntry extends IPathEntry {
 
 	/**
-	 * Returns the include file 
+	 * Returns the include file
 	 * @return IPath
 	 */
 	IPath getIncludeFilePath();

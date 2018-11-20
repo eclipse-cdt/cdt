@@ -31,12 +31,12 @@ import org.eclipse.jface.viewers.TreePath;
  * An update strategy decorator specialized for delayed stack frame refresh. The
  * strategy flushes only the cached top stack frame in case of an normal {@link ISuspendedDMEvent},
  * while in case of a special {@link FullStackRefreshEvent} everything is invalidated.
- * 
+ *
  * <p>
  * The underlying base update policy is considered for container contexts only.
  * In other cases the cache data is always flushed.
  * </p>
- * 
+ *
  * @since 1.1
  */
 public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
@@ -76,9 +76,9 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 
 		@Override
 		public boolean includes(IElementUpdateTester tester) {
-			// A non-lazy tester includes a lazy tester, but not vice versa.  
+			// A non-lazy tester includes a lazy tester, but not vice versa.
 			// This allows entries that were marked as dirty by a flush with
-			// the lazy mode to be superseded by a non-lazy update which 
+			// the lazy mode to be superseded by a non-lazy update which
 			// actually clears the entries that were marked as dirty.
 			if (tester instanceof DelayedStackRefreshUpdateTester) {
 				DelayedStackRefreshUpdateTester sfTester = (DelayedStackRefreshUpdateTester) tester;
@@ -127,17 +127,17 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 				}
 			}
 
-			// If the element is not a container or if the flush all flag is set, 
+			// If the element is not a container or if the flush all flag is set,
 			// always flush it.
 			return FLUSH;
 		}
 
 		@Override
 		public boolean includes(IElementUpdateTester tester) {
-			// A refresh-all tester includes a non-refresh-all tester, but not 
-			// vice versa. This allows entries that were marked as dirty by 
+			// A refresh-all tester includes a non-refresh-all tester, but not
+			// vice versa. This allows entries that were marked as dirty by
 			// a flush with
-			// the non-refresh-all to be superseded by a refresh-all update which 
+			// the non-refresh-all to be superseded by a refresh-all update which
 			// actually clears the entries that were marked as dirty.
 			if (tester instanceof ThreadsUpdateTester) {
 				ThreadsUpdateTester threadsTester = (ThreadsUpdateTester) tester;
@@ -158,7 +158,7 @@ public class DelayedStackRefreshUpdatePolicy extends UpdatePolicyDecorator {
 
 		@Override
 		public String toString() {
-			return "Threads update tester (base = " + fBaseTester + ") update tester"; //$NON-NLS-1$ //$NON-NLS-2$ 
+			return "Threads update tester (base = " + fBaseTester + ") update tester"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

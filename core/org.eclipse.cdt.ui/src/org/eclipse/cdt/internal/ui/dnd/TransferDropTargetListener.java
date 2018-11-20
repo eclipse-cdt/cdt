@@ -31,9 +31,9 @@ public interface TransferDropTargetListener extends DropTargetListener {
 	/**
 	 * Returns whether the listener is able to handle the given
 	 * drop traget event.
-	 * 
+	 *
 	 * @param event the drop target event
-	 * 
+	 *
 	 * @return <code>true</code> if the listener can handle the event;
 	 *  otherwise <code>false</code>
 	 */

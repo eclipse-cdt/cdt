@@ -15,16 +15,14 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.asm;
 
+import org.eclipse.cdt.internal.ui.text.BufferedDocumentScanner;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.rules.ICharacterScanner;
 import org.eclipse.jface.text.rules.IPartitionTokenScanner;
 import org.eclipse.jface.text.rules.IToken;
 import org.eclipse.jface.text.rules.Token;
-
-import org.eclipse.cdt.ui.text.ICPartitions;
-
-import org.eclipse.cdt.internal.ui.text.BufferedDocumentScanner;
 
 /**
  * This scanner recognizes
@@ -110,7 +108,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	 * These characters are considered line comment introducers at any position
 	 * in the code.
 	 * </p>
-	 * 
+	 *
 	 * @param chars
 	 */
 	public void setLineCommentCharacters(String chars) {
@@ -123,7 +121,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	 * These characters are considered line comment introducers only as first
 	 * non-whitespace character on the line.
 	 * </p>
-	 * 
+	 *
 	 * @param chars
 	 */
 	public void setLineStartCommentCharacters(String chars) {
@@ -136,7 +134,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 	 * These characters are considered line comment introducers at the end of a
 	 * instruction line.
 	 * </p>
-	 * 
+	 *
 	 * @param chars
 	 */
 	public void setLineEndCommentCharacters(String chars) {
@@ -145,7 +143,7 @@ public final class AsmPartitionScanner implements IPartitionTokenScanner, ICPart
 
 	/**
 	 * Configure whether preprocessor directives should be detected.
-	 * 
+	 *
 	 * @param detectPreprocessor
 	 */
 	public void setDetectPreprocessorDiretives(boolean detectPreprocessor) {

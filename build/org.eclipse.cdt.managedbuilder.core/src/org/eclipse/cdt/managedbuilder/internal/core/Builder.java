@@ -157,14 +157,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 */
 
 	/**
-	 * This constructor is called to create a builder defined by an extension point in 
+	 * This constructor is called to create a builder defined by an extension point in
 	 * a plugin manifest file, or returned by a dynamic element provider
-	 * 
+	 *
 	 * @param parent  				The IToolChain parent of this builder, or <code>null</code> if
 	 *                				defined at the top level
 	 * @param element 				The builder definition from the manifest file or a dynamic element
 	 *                				provider
-	 * @param managedBuildRevision 	The fileVersion of Managed Buid System                 
+	 * @param managedBuildRevision 	The fileVersion of Managed Buid System
 	 */
 	public Builder(IToolChain parent, IManagedConfigElement element, String managedBuildRevision) {
 		super(true);
@@ -184,9 +184,9 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 
 	/**
-	 * This constructor is called to create a Builder whose attributes and children will be 
+	 * This constructor is called to create a Builder whose attributes and children will be
 	 * added by separate calls.
-	 * 
+	 *
 	 * @param parent The parent of the builder, if any
 	 * @param superClass The superClass, if any
 	 * @param Id The id for the new Builder
@@ -216,10 +216,10 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 
 	/**
-	 * Create a <code>Builder</code> based on the specification stored in the 
+	 * Create a <code>Builder</code> based on the specification stored in the
 	 * project file (.cdtbuild).
-	 * 
-	 * @param parent The <code>IToolChain</code> the Builder will be added to. 
+	 *
+	 * @param parent The <code>IToolChain</code> the Builder will be added to.
 	 * @param element The XML element that contains the Builder settings.
 	 * @param managedBuildRevision 	The fileVersion of Managed Buid System
 	 */
@@ -244,8 +244,8 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	/**
 	 * Create a <code>Builder</code> based upon an existing builder.
-	 * 
-	 * @param parent The <code>IToolChain</code> the builder will be added to. 
+	 *
+	 * @param parent The <code>IToolChain</code> the builder will be added to.
 	 * @param builder The existing builder to clone.
 	 */
 	public Builder(IToolChain parent, String Id, String name, Builder builder) {
@@ -429,7 +429,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	/*	public Builder(IToolChain parent, String Id, String name, Builder builder, ICStorageElement el) {
 			this(parent, Id, name, builder);
-			
+
 			loadFromProject(el);
 		}
 	*/
@@ -439,10 +439,10 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 */
 
 	/**
-	 * Loads the builder information from the ManagedConfigElement specified in the 
+	 * Loads the builder information from the ManagedConfigElement specified in the
 	 * argument.
-	 * 
-	 * @param element Contains the Builder information 
+	 *
+	 * @param element Contains the Builder information
 	 */
 	protected void loadFromManifest(IManagedConfigElement element) {
 		ManagedBuildManager.putConfigElement(this, element);
@@ -570,7 +570,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 		// Get the semicolon separated list of IDs of the error parsers
 		errorParserIds = SafeStringInterner.safeIntern(element.getAttribute(IToolChain.ERROR_PARSERS));
 
-		// Store the configuration element IFF there is a build file generator defined 
+		// Store the configuration element IFF there is a build file generator defined
 		String buildfileGenerator = element.getAttribute(BUILDFILEGEN_ID);
 		if (buildfileGenerator != null && element instanceof DefaultManagedConfigElement) {
 			buildFileGeneratorElement = ((DefaultManagedConfigElement) element).getConfigurationElement();
@@ -596,7 +596,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 					if (entries.length == 0) {
 						outputEntries = new ICOutputEntry[0];
 					} else {
-						List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length);
+						List<ICSettingEntry> list = new ArrayList<>(entries.length);
 						for (int k = 0; k < entries.length; k++) {
 							if (entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
 								list.add(entries[k]);
@@ -656,10 +656,10 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	}
 
 	/**
-	 * Initialize the builder information from the XML element 
+	 * Initialize the builder information from the XML element
 	 * specified in the argument
-	 * 
-	 * @param element An XML element containing the builder information 
+	 *
+	 * @param element An XML element containing the builder information
 	 */
 	protected void loadFromProject(ICStorageElement element) {
 
@@ -815,7 +815,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 					if (entries.length == 0) {
 						outputEntries = new ICOutputEntry[0];
 					} else {
-						List<ICSettingEntry> list = new ArrayList<ICSettingEntry>(entries.length);
+						List<ICSettingEntry> list = new ArrayList<>(entries.length);
 						for (int k = 0; k < entries.length; k++) {
 							if (entries[k].getKind() == ICLanguageSettingEntry.OUTPUT_PATH)
 								list.add(entries[k]);
@@ -1181,7 +1181,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	/**
 	 * This method turns the supplied pattern to parallelization command
-	 * 
+	 *
 	 * It supports 2 kinds of pattern where "*" is replaced with number of jobs:
 	 * <li>Pattern 1 (supports "<b>-j*</b>"): "text*text" -> "text#text"</li>
 	 * <li>Pattern 2 (supports "<b>-[j*]</b>"): "text[text*text]text" -> "texttext#texttext</li>
@@ -1276,7 +1276,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 				errorParsers = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-				List<String> list = new ArrayList<String>(tok.countTokens());
+				List<String> list = new ArrayList<>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -1616,7 +1616,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 		} else {
 			// make the project is invalid
-			// 
+			//
 			IToolChain parent = getParent();
 			IConfiguration parentConfig = parent.getParent();
 			IManagedProject managedProject = parentConfig.getManagedProject();
@@ -1853,11 +1853,11 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 					if (result == null)
 						result = ""; //$NON-NLS-1$
 				} else {
-					result = ""; //$NON-NLS-1$ 
+					result = ""; //$NON-NLS-1$
 				}
 			}
 		} else {
-			result = ""; //$NON-NLS-1$ 
+			result = ""; //$NON-NLS-1$
 		}
 
 		return result;
@@ -1867,7 +1867,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			String path = getBuildPathAttribute();
 			if(path == null)
 				return true;
-		
+
 			if(isWorkspaceBuildPath == null){
 				if(superClass != null)
 					return superClass.isWorkspaceBuildPath();
@@ -2356,14 +2356,14 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	private Map<String, String> getCustomBuildPropertiesMap() {
 		if (customBuildProperties == null) {
-			customBuildProperties = new HashMap<String, String>();
+			customBuildProperties = new HashMap<>();
 		}
 		return customBuildProperties;
 	}
 
 	@Override
 	public void setEnvironment(Map<String, String> env) throws CoreException {
-		customizedEnvironment = new HashMap<String, String>(env);
+		customizedEnvironment = new HashMap<>(env);
 	}
 
 	@Override
@@ -2473,7 +2473,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 			return null;
 		if (!isExtensionBuilder)
 			return null;
-		return new MatchKey<Builder>(this);
+		return new MatchKey<>(this);
 	}
 
 	@Override
@@ -2508,7 +2508,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	/**
 	 * Returns the optimal number of parallel jobs.
 	 * The number is the number of available processors on the machine.
-	 * 
+	 *
 	 * The function never returns number smaller than 1.
 	 */
 	public int getOptimalParallelJobNum() {
@@ -2525,12 +2525,12 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	 * Returns the internal representation of maximum number of parallel jobs
 	 * to be used for a build.
 	 * Note that negative number represents "optimal" value.
-	 * 
+	 *
 	 * The value of the number is encoded as follows:
 	 * <pre>
 	 *  Status       Returns
-	 * No parallel      1       
-	 * Optimal       -CPU# (negative number of processors) 
+	 * No parallel      1
+	 * Optimal       -CPU# (negative number of processors)
 	 * Specific        >0  (positive number)
 	 * Unlimited    Builder.UNLIMITED_JOBS
 	 * </pre>
@@ -2565,7 +2565,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @param jobs - maximum number of jobs. There are 2 special cases:
 	 *    <br>- any number <=0 is interpreted as setting "optimal" property,
 	 *    the value of the number itself is ignored in this case
@@ -2648,7 +2648,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @param on - the flag to enable or disable parallel mode.
 	 *    <br>{@code true} to enable, in this case the maximum number of jobs
 	 *      will be set to "optimal" number, see {@link #getOptimalParallelJobNum()}.
@@ -2667,7 +2667,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	public Set<String> contributeErrorParsers(Set<String> set) {
 		if (getErrorParserIds() != null) {
 			if (set == null)
-				set = new HashSet<String>();
+				set = new HashSet<>();
 
 			String ids[] = getErrorParserList();
 			if (ids.length != 0)
@@ -2683,7 +2683,7 @@ public class Builder extends HoldsOptions implements IBuilder, IMatchKeyProvider
 	void removeErrorParsers(Set<String> set) {
 		Set<String> oldSet = contributeErrorParsers(null);
 		if (oldSet == null)
-			oldSet = new HashSet<String>();
+			oldSet = new HashSet<>();
 		oldSet.removeAll(set);
 		setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
 	}

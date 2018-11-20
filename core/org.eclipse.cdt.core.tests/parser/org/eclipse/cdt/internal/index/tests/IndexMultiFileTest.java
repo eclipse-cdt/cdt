@@ -215,7 +215,7 @@ public class IndexMultiFileTest extends IndexBindingResolutionTestBase {
 	//	        friend int operator*(unrelated, unrelated) { return 0; }
 	//	    };
 	//	}
-	//	    
+	//
 	//	template <typename = int>
 	//	struct C : public N::B {
 	//	    #include "test.h"

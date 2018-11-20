@@ -15,6 +15,7 @@ package org.eclipse.cdt.internal.ui.actions;
 
 import java.util.ResourceBundle;
 
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.text.IDocument;
@@ -27,8 +28,6 @@ import org.eclipse.ui.texteditor.FindNextAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
-
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
 
 /**
  * Select the word at current cursor location and find the next occurrence.

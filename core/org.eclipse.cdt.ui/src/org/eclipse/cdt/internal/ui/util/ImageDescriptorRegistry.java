@@ -17,18 +17,17 @@ package org.eclipse.cdt.internal.ui.util;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.core.runtime.Assert;
 
 /**
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.
  */
 public class ImageDescriptorRegistry {
 
-	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<ImageDescriptor, Image>(10);
+	private HashMap<ImageDescriptor, Image> fRegistry = new HashMap<>(10);
 	private Display fDisplay;
 
 	/**
@@ -42,8 +41,8 @@ public class ImageDescriptorRegistry {
 	/**
 	 * Creates a new image descriptor registry for the given display. All images
 	 * managed by this registry will be disposed when the display gets disposed.
-	 * 
-	 * @param display the display the images managed by this registry are allocated for 
+	 *
+	 * @param display the display the images managed by this registry are allocated for
 	 */
 	public ImageDescriptorRegistry(Display display) {
 		fDisplay = display;
@@ -53,7 +52,7 @@ public class ImageDescriptorRegistry {
 
 	/**
 	 * Returns the image assiciated with the given image descriptor.
-	 * 
+	 *
 	 * @param descriptor the image descriptor for which the registry manages an image
 	 * @return the image associated with the image descriptor or <code>null</code>
 	 *  if the image descriptor can't create the requested image.

@@ -22,7 +22,6 @@ import org.eclipse.cdt.core.envvar.IEnvironmentVariable;
 import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
 import org.eclipse.cdt.core.settings.model.ICMultiConfigDescription;
 import org.eclipse.cdt.core.settings.model.MultiItemsHolder;
-
 import org.eclipse.cdt.internal.core.envvar.ContributedEnvironment;
 
 /**

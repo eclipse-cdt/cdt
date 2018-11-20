@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     Ericsson AB		  - Modules view for DSF implementation
  *******************************************************************************/
@@ -51,7 +51,7 @@ public class ModuleDetailPaneFactory implements IDetailPaneFactory {
 
 	@Override
 	public Set getDetailPaneTypes(IStructuredSelection selection) {
-		Set<String> possibleIDs = new HashSet<String>(1);
+		Set<String> possibleIDs = new HashSet<>(1);
 		possibleIDs.add(ModuleDetailPane.ID);
 		return possibleIDs;
 	}

@@ -462,7 +462,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 
 		final IContainerDMContext contDmc = DMContexts.getAncestorOfType(selectionContext.fcontext,
 				IContainerDMContext.class);
-		// Using the container context to get all existing registers from the target instead of a limited set of registers for a selected group 
+		// Using the container context to get all existing registers from the target instead of a limited set of registers for a selected group
 		regServiceManager.getRegisters(contDmc, new DataRequestMonitor<IRegisterDMContext[]>(executor, null) {
 
 			@Override
@@ -495,7 +495,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 												// Get data for all selected registers i.e. selected for the new group
 												final IRegisterDMData[] selectedRegistersData = getData();
 
-												//Need the root group name to build register descriptors 
+												//Need the root group name to build register descriptors
 												regServiceManager.getRegisterGroupData(rootGroupDmc,
 														new DataRequestMonitor<IRegisterGroupDMData>(executor, null) {
 															@Override
@@ -535,7 +535,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 																								} catch (CoreException e) {
 																									failed(e);
 																								}
-																							};
+																							}
 																						});
 																			}
 																		});
@@ -662,7 +662,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 
 						final IContainerDMContext contDmc = DMContexts.getAncestorOfType(selectionContext.fcontext,
 								IContainerDMContext.class);
-						// Using the container context to get all existing registers from the target instead of a limited set of registers for a selected group 
+						// Using the container context to get all existing registers from the target instead of a limited set of registers for a selected group
 						// This is needed to populate the dialog with all available registers to pick from
 						regServiceManager.getRegisters(contDmc,
 								new DataRequestMonitor<IRegisterDMContext[]>(executor, null) {
@@ -749,11 +749,11 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 																																} catch (CoreException e) {
 																																	failed(e);
 																																}
-																															};
+																															}
 																														});
 																											}
 																										});
-																					};
+																					}
 
 																				});
 																	}
@@ -769,7 +769,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 
 	private IRegisterGroupDMContext[] resolveSelectedGroups(IStructuredSelection selection) {
 		IRegisterGroupDMContext[] selectedGroups = null;
-		List<IRegisterGroupDMContext> groupList = new ArrayList<IRegisterGroupDMContext>();
+		List<IRegisterGroupDMContext> groupList = new ArrayList<>();
 		if (selection != null && !selection.isEmpty()) {
 			for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 				Object element = iterator.next();
@@ -791,7 +791,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 
 	@ConfinedToDsfExecutor("selectionContext.fsession.getExecutor()")
 	private IRegisterDMContext[] resolveSelectedRegisters(IStructuredSelection selection) {
-		List<IRegisterDMContext> selectedRegistersList = new ArrayList<IRegisterDMContext>();
+		List<IRegisterDMContext> selectedRegistersList = new ArrayList<>();
 		for (Iterator<?> iterator = selection.iterator(); iterator.hasNext();) {
 			Object element = iterator.next();
 			IDMVMContext regContext = null;
@@ -861,7 +861,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 	/**
 	 * Build descriptor adapters to dialog interface both all registers as well as registers to be pre-selected on the
 	 * dialog
-	 * 
+	 *
 	 * @param checkedRegistersData
 	 */
 	@ConfinedToDsfExecutor("selectionContext.fsession.getExecutor()")
@@ -869,11 +869,11 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 			IRegisterDMData[] registerData, IRegisterDMData[] checkedRegistersData) {
 		assert (registers.length == registerData.length);
 
-		List<RegisterDescriptor> checkedDescriptorsList = new ArrayList<RegisterDescriptor>();
+		List<RegisterDescriptor> checkedDescriptorsList = new ArrayList<>();
 
 		final RegisterDescriptor[] regDescriptors = new RegisterDescriptor[registers.length];
 
-		Map<String, RegisterDescriptor> mapNameToRegDescriptor = new HashMap<String, RegisterDescriptor>();
+		Map<String, RegisterDescriptor> mapNameToRegDescriptor = new HashMap<>();
 
 		for (int i = 0; i < registers.length; i++) {
 			regDescriptors[i] = new RegisterDescriptor(groupName, registers[i], registerData[i].getName());
@@ -929,7 +929,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 								notifyUser(getStatus().getMessage());
 							}
 
-						};
+						}
 					});
 		}
 	}
@@ -950,7 +950,7 @@ public abstract class AbstractDsfRegisterGroupActions extends AbstractHandler {
 								notifyUser(getStatus().getMessage());
 							}
 
-						};
+						}
 					});
 		}
 	}

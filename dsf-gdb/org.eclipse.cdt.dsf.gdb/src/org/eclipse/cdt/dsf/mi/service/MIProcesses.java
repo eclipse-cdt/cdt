@@ -7,10 +7,10 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
- *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748) 
+ *     Marc Khouzam (Ericsson) - Make each thread an IDisassemblyDMContext (bug 352748)
  *******************************************************************************/
 package org.eclipse.cdt.dsf.mi.service;
 
@@ -59,7 +59,7 @@ import org.osgi.framework.BundleContext;
 public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICachingService {
 
 	// Below is the context hierarchy that is implemented between the
-	// MIProcesses service and the MIRunControl service for the MI 
+	// MIProcesses service and the MIRunControl service for the MI
 	// implementation of DSF:
 	//
 	//                        MIControlDMContext (ICommandControlDMContext)
@@ -90,7 +90,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		 * Instead clients should call {@link IMIProcesses#createExecutionContext()}
 		 * to create instances of this context based on the thread ID.
 		 * <p/>
-		 * 
+		 *
 		 * @param sessionId Session that this context belongs to.
 		 * @param containerDmc The container that this context belongs to.
 		 * @param threadDmc The thread context parents of this context.
@@ -132,7 +132,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	}
 
 	/**
-	 * Context representing a thread group of GDB/MI. 
+	 * Context representing a thread group of GDB/MI.
 	 */
 	@Immutable
 	protected static class MIContainerDMC extends AbstractDMContext
@@ -146,7 +146,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		 * Constructor for the context.  It should not be called directly by clients.
 		 * Instead clients should call {@link IMIProcesses#createContainerContext
 		 * to create instances of this context based on the group name.
-		 * 
+		 *
 		 * @param sessionId Session that this context belongs to.
 		 * @param processDmc The process context that is the parent of this context.
 		 * @param groupId GDB/MI thread group identifier.
@@ -182,7 +182,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	}
 
 	/**
-	 * Context representing a thread. 
+	 * Context representing a thread.
 	 */
 	@Immutable
 	private static class MIThreadDMC extends AbstractDMContext implements IThreadDMContext {
@@ -197,7 +197,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		 * Instead clients should call {@link IMIProcesses#createThreadContext}
 		 * to create instances of this context based on the thread ID.
 		 * <p/>
-		 * 
+		 *
 		 * @param sessionId Session that this context belongs to.
 		 * @param processDmc The process that this thread belongs to.
 		 * @param id thread identifier.
@@ -245,7 +245,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 		 * Instead clients should call {@link IMIProcesses#createProcessContext}
 		 * to create instances of this context based on the PID.
 		 * <p/>
-		 * 
+		 *
 		 * @param sessionId Session that this context belongs to.
 		 * @param controlDmc The control context parent of this process.
 		 * @param id process identifier.
@@ -270,7 +270,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 			// We treat the UNKNOWN_PROCESS_ID as a wildcard.  Any processId (except null) will be considered
 			// equal to the UNKNOWN_PROCESS_ID.  This is important because before starting a process, we don't
 			// have a pid yet, but we still need to create a process context, and we must use UNKNOWN_PROCESS_ID.
-			// Bug 336890 
+			// Bug 336890
 
 			if (!baseEquals(obj)) {
 				return false;
@@ -331,7 +331,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 	/**
 	 * Event indicating that an execution group (debugged process) has started.  This event
-	 * implements the {@link IStartedMDEvent} from the IRunControl service. 
+	 * implements the {@link IStartedMDEvent} from the IRunControl service.
 	 */
 	public static class ContainerStartedDMEvent extends AbstractDMEvent<IExecutionDMContext>
 			implements IStartedDMEvent {
@@ -342,7 +342,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 	/**
 	 * Event indicating that an execution group is no longer being debugged.  This event
-	 * implements the {@link IExitedMDEvent} from the IRunControl service. 
+	 * implements the {@link IExitedMDEvent} from the IRunControl service.
 	 */
 	public static class ContainerExitedDMEvent extends AbstractDMEvent<IExecutionDMContext> implements IExitedDMEvent {
 		public ContainerExitedDMEvent(IContainerDMContext context) {
@@ -367,7 +367,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 
 	/**
 	 * This method initializes this service.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The request monitor indicating the operation is finished
 	 */
@@ -384,7 +384,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	/**
 	 * This method initializes this service after our superclass's initialize()
 	 * method succeeds.
-	 * 
+	 *
 	 * @param requestMonitor
 	 *            The call-back object to notify when this service's
 	 *            initialization is done.
@@ -422,7 +422,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 	 * This method shuts down this service. It unregisters the service, stops
 	 * receiving service events, and calls the superclass shutdown() method to
 	 * finish the shutdown process.
-	 * 
+	 *
 	 * @return void
 	 */
 	@Override
@@ -504,7 +504,7 @@ public class MIProcesses extends AbstractDsfService implements IMIProcesses, ICa
 											rm.setData(threadData);
 										} else {
 											rm.setStatus(new Status(IStatus.ERROR, GdbPlugin.PLUGIN_ID, INVALID_HANDLE,
-													"Could not get thread info", null)); //$NON-NLS-1$        	        			
+													"Could not get thread info", null)); //$NON-NLS-1$
 										}
 										rm.done();
 									}

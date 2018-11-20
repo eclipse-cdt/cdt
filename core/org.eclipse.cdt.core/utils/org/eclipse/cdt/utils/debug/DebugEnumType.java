@@ -16,7 +16,7 @@ package org.eclipse.cdt.utils.debug;
 
 /**
  * DebugEnumType
- *  
+ *
  */
 public class DebugEnumType extends DebugType {
 
@@ -24,7 +24,7 @@ public class DebugEnumType extends DebugType {
 	String name;
 
 	/**
-	 *  
+	 *
 	 */
 	public DebugEnumType(String name, DebugEnumField[] fields) {
 		this.name = name;

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson                    - Added support for IRunToAddress for DSF DisassemblyView (302324)
@@ -25,8 +25,8 @@ import org.eclipse.cdt.debug.core.model.IRunToLine;
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
 import org.eclipse.cdt.dsf.concurrent.IDsfStatusConstants;
 import org.eclipse.cdt.dsf.concurrent.Query;
-import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.debug.service.IRunControl.IExecutionDMContext;
+import org.eclipse.cdt.dsf.debug.service.IRunControl2;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
 import org.eclipse.cdt.dsf.service.DsfServicesTracker;
 import org.eclipse.cdt.dsf.service.DsfSession;
@@ -39,7 +39,7 @@ import org.eclipse.debug.ui.actions.IRunToLineTarget;
 /**
  * Implements the CDT's run to line interface.  This interface is called by CDT's
  * {@link IRunToLineTarget} implementation.
- * 
+ *
  * @since 2.1
  */
 public class RunToLine implements IRunToLine, IRunToAddress {
@@ -131,7 +131,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
 			}
 		} else {
 			throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
-					"Debug session is not active", null)); //$NON-NLS-1$            
+					"Debug session is not active", null)); //$NON-NLS-1$
 		}
 	}
 
@@ -205,7 +205,7 @@ public class RunToLine implements IRunToLine, IRunToAddress {
 			}
 		} else {
 			throw new DebugException(new Status(IStatus.ERROR, DsfUIPlugin.PLUGIN_ID, DebugException.REQUEST_FAILED,
-					"Debug session is not active", null)); //$NON-NLS-1$            
+					"Debug session is not active", null)); //$NON-NLS-1$
 		}
 	}
 }

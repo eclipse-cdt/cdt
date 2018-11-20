@@ -51,7 +51,7 @@ public class AutotoolsVirtualFolderTest {
 
 	/**
 	 * Test sample project with a virtual folder that points to configure scripts.
-	 * Tests Bug 434275 - Autotools configuration in subfolder not found 
+	 * Tests Bug 434275 - Autotools configuration in subfolder not found
 	 * @throws Exception
 	 */
 	@Test

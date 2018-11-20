@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * This represents a field in a struct. This allows for the specification of
  * size for a bit field.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -30,14 +30,14 @@ public interface IASTFieldDeclarator extends IASTDeclarator {
 
 	/**
 	 * Returns the number of bits if this is a bit field, otherwise {@code null}.
-	 * 
+	 *
 	 * @return size of bit field or null.
 	 */
 	public IASTExpression getBitFieldSize();
 
 	/**
 	 * Sets the bitfield size.
-	 * 
+	 *
 	 * @param size
 	 *            <code>IASTExpression</code>
 	 */

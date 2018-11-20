@@ -21,14 +21,14 @@ import org.eclipse.cdt.core.dom.ast.IBinding;
 
 /**
  * Used to compute binding resolution during the parse.
- * 
+ *
  * Imperative style symbol table with destructive update.
- * 
+ *
  * Consists of two data structures, a hash table for fast lookup
  * of bindings given their names, and a stack used to keep track
  * of scopes.
- * 
- * 
+ *
+ *
  * @author Mike Kucera
  */
 public class CImperativeSymbolTable {
@@ -37,19 +37,19 @@ public class CImperativeSymbolTable {
 
 	private Bucket[] table = new Bucket[TABLE_SIZE];
 
-	private LinkedList<SymbolScope> scopeStack = new LinkedList<SymbolScope>();
+	private LinkedList<SymbolScope> scopeStack = new LinkedList<>();
 
 	/**
 	 * Represents a scope in the C language.
 	 */
 	private static class SymbolScope {
 
-		/** 
+		/**
 		 * List of buckets that have been modified in the current scope.
-		 * When the scope is closed these buckets are popped, returning the 
+		 * When the scope is closed these buckets are popped, returning the
 		 * symbol table to the state it was in before the scope was opened.
 		 */
-		List<Integer> modifiedBuckets = new ArrayList<Integer>();
+		List<Integer> modifiedBuckets = new ArrayList<>();
 	}
 
 	/**
@@ -83,7 +83,7 @@ public class CImperativeSymbolTable {
 
 	/**
 	 * Adds a binding to the symbol table in the current scope.
-	 * 
+	 *
 	 * @param mask A bit mask used to identify the namespace of the identifier.
 	 */
 	public void put(CNamespace namespace, String ident, IBinding b) {
@@ -97,7 +97,7 @@ public class CImperativeSymbolTable {
 	/**
 	 * Returns the binding associated with the given identifier, or
 	 * null if there is none.
-	 * 
+	 *
 	 * @param mask A bit mask used to identify the namespace of the identifier.
 	 */
 	public IBinding get(CNamespace namespace, String ident) {
@@ -112,8 +112,8 @@ public class CImperativeSymbolTable {
 
 	/**
 	 * Opens a new inner scope for identifiers.
-	 * 
-	 * If an identifier is added that already exists in an outer scope 
+	 *
+	 * If an identifier is added that already exists in an outer scope
 	 * then it will be shadowed.
 	 */
 	public void openScope() {
@@ -122,7 +122,7 @@ public class CImperativeSymbolTable {
 
 	/**
 	 * Remove all the symbols defined in the scope that is being closed.
-	 * 
+	 *
 	 * @param scope An IScope object that will be used to represent this scope.
 	 * @throws SymbolTableException If the global scope has already been closed or if bindingScope is null.
 	 */

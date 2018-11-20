@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.settings.model;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CProjectNature;
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
@@ -32,6 +30,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.IJobManager;
 import org.eclipse.core.runtime.jobs.Job;
+
+import junit.framework.TestSuite;
 
 public class CProjectDescriptionBasicTests extends BaseTestCase {
 	private static final String PROJ_NAME_PREFIX = "CProjectDescriptionBasicTests_";

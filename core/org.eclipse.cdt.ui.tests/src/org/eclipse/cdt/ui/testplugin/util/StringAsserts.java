@@ -109,8 +109,8 @@ abstract public class StringAsserts {
 	}
 
 	public static void assertEqualStringsIgnoreOrder(String[] actuals, String[] expecteds) {
-		ArrayList<String> list1 = new ArrayList<String>(Arrays.asList(actuals));
-		ArrayList<String> list2 = new ArrayList<String>(Arrays.asList(expecteds));
+		ArrayList<String> list1 = new ArrayList<>(Arrays.asList(actuals));
+		ArrayList<String> list2 = new ArrayList<>(Arrays.asList(expecteds));
 
 		for (int i = list1.size() - 1; i >= 0; i--) {
 			if (list2.remove(list1.get(i))) {
@@ -152,8 +152,8 @@ abstract public class StringAsserts {
 	}
 
 	public static void assertExpectedExistInProposals(String[] actuals, String[] expecteds) {
-		ArrayList<String> list1 = new ArrayList<String>(Arrays.asList(actuals));
-		ArrayList<String> list2 = new ArrayList<String>(Arrays.asList(expecteds));
+		ArrayList<String> list1 = new ArrayList<>(Arrays.asList(actuals));
+		ArrayList<String> list2 = new ArrayList<>(Arrays.asList(expecteds));
 
 		for (int i = list1.size() - 1; i >= 0; i--) {
 			if (list2.remove(list1.get(i))) {

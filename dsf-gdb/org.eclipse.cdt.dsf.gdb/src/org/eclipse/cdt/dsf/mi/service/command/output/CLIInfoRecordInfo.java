@@ -17,15 +17,15 @@ import org.eclipse.cdt.debug.core.model.IChangeReverseMethodHandler.ReverseDebug
 
 /**
  * 'info record' returns the selected reverse trace method.
- * 
- * sample output: 
+ *
+ * sample output:
  *
  * (gdb) info record
  * ~ Active record target: record-btrace
  * ~ Recording format: Branch Trace Store.
  * ~ Buffer size: 64kB.
  * ~ Recorded 0 instructions in 0 functions (0 gaps) for thread 1 (process 24645).
- * 
+ *
  * @since 5.0
  */
 

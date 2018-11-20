@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *      Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,16 +24,16 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.resource.JFaceResources;
 
 /**
- * VMC of an expression object that failed to get parsed by any of the 
+ * VMC of an expression object that failed to get parsed by any of the
  * configured expression layout nodes.  It is only used to display an
- * error message in the view, and to allow the user to edit the 
+ * error message in the view, and to allow the user to edit the
  * expression.
  * <p>
- * Note: VM Nodes using this invalid expression VM context should 
- * provide a cell modifier to edit the expressions.  The cell modifier 
+ * Note: VM Nodes using this invalid expression VM context should
+ * provide a cell modifier to edit the expressions.  The cell modifier
  * should subclass {@link WatchExpressionCellModifier}.
- * </p> 
- * 
+ * </p>
+ *
  * @since 1.1
  */
 public class InvalidExpressionVMContext extends AbstractVMContext implements IElementLabelProvider {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -24,9 +24,9 @@ import org.eclipse.cdt.dsf.datamodel.AbstractDMEvent;
 import org.eclipse.cdt.dsf.datamodel.DMContexts;
 import org.eclipse.cdt.dsf.datamodel.IDMContext;
 import org.eclipse.cdt.dsf.debug.service.ICachingService;
+import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.IRegisters;
 import org.eclipse.cdt.dsf.debug.service.IRunControl;
-import org.eclipse.cdt.dsf.debug.service.IExpressions.IExpressionDMContext;
 import org.eclipse.cdt.dsf.debug.service.command.CommandCache;
 import org.eclipse.cdt.dsf.debug.service.command.IEventListener;
 import org.eclipse.cdt.dsf.service.AbstractDsfService;
@@ -42,7 +42,7 @@ import org.eclipse.cdt.examples.dsf.pda.service.commands.PDARegistersCommandResu
 import org.osgi.framework.BundleContext;
 
 /**
- * 
+ *
  */
 public class PDARegisters extends AbstractDsfService implements IRegisters, IEventListener, ICachingService {
 
@@ -381,13 +381,13 @@ public class PDARegisters extends AbstractDsfService implements IRegisters, IEve
 		fCommandControl = getServicesTracker().getService(PDACommandControl.class);
 		fExpressions = getServicesTracker().getService(PDAExpressions.class);
 
-		// Create the cache to store the register definitions.  This cache 
+		// Create the cache to store the register definitions.  This cache
 		// only needs to be reset upon the "registers" event and is available
 		// all the time.
 		fNamesCache = new CommandCache(getSession(), fCommandControl);
 		fNamesCache.setContextAvailable(fCommandControl.getContext(), true);
 
-		// Add the register service as a listener to PDA events, to catch 
+		// Add the register service as a listener to PDA events, to catch
 		// the "registers" events from the command control.
 		fCommandControl.addEventListener(this);
 
@@ -428,7 +428,7 @@ public class PDARegisters extends AbstractDsfService implements IRegisters, IEve
 				}
 				rm.setData(groups);
 				rm.done();
-			};
+			}
 		});
 	}
 
@@ -457,7 +457,7 @@ public class PDARegisters extends AbstractDsfService implements IRegisters, IEve
 						}
 						rm.setData(groups);
 						rm.done();
-					};
+					}
 				});
 
 	}

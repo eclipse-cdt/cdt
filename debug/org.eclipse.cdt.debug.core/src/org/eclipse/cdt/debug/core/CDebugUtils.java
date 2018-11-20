@@ -220,10 +220,10 @@ public class CDebugUtils {
 
 	/**
 	 * Serializes a XML document into a string - encoded in UTF8 format, with platform line separators.
-	 * 
+	 *
 	 * @param doc document to serialize
 	 * @param indent if the xml text should be indented.
-	 * 
+	 *
 	 * @return the document as a string
 	 */
 	public static String serializeDocument(Document doc, boolean indent) throws IOException, TransformerException {
@@ -235,12 +235,12 @@ public class CDebugUtils {
 		DOMSource source = new DOMSource(doc);
 		StreamResult outputTarget = new StreamResult(s);
 		transformer.transform(source, outputTarget);
-		return s.toString("UTF8"); //$NON-NLS-1$			
+		return s.toString("UTF8"); //$NON-NLS-1$
 	}
 
 	/**
 	 * Serializes a XML document into a string - encoded in UTF8 format, with platform line separators.
-	 * 
+	 *
 	 * @param doc document to serialize
 	 * @return the document as a string
 	 */
@@ -279,7 +279,7 @@ public class CDebugUtils {
 	}
 
 	public static List<IProject> getReferencedProjects(IProject project) {
-		ArrayList<IProject> list = new ArrayList<IProject>(10);
+		ArrayList<IProject> list = new ArrayList<>(10);
 		if (project != null && project.exists() && project.isOpen()) {
 			IProject[] refs = new IProject[0];
 			try {
@@ -405,7 +405,7 @@ public class CDebugUtils {
 
 	/**
 	 * Append the Breakpoint Extension message to the breakpoint text in buffer.
-	 * 
+	 *
 	 * @param breakpoint C Breakpoint
 	 * @param buffer buffer to append message to
 	 * @see {@link ICBreakpointExtension#getExtensionMessage()
@@ -637,7 +637,7 @@ public class CDebugUtils {
 	 * of a CDT launch configuration, or throws a CoreException providing a
 	 * reason (e.g., the setting is empty, the project no longer exists, the
 	 * isn't a CDT one, etc).
-	 * 
+	 *
 	 * @param config
 	 *            the launch configuration
 	 * @return an ICProject; never null.
@@ -676,7 +676,7 @@ public class CDebugUtils {
 	 * such possible reasons (a problem with the <i>Project</i> setting, an
 	 * empty <i>C/C++ Application</i> setting, the combined settings doesn't
 	 * resolve to an existing file, etc).
-	 * 
+	 *
 	 * @param config
 	 *            the launch configuration
 	 * @param ignoreProjectSetting
@@ -704,7 +704,7 @@ public class CDebugUtils {
 				// See if we can brute-force append the program path to the
 				// project location. This allows us to support the program file
 				// being outside the project, even outside the workspace, without
-				// requiring a linked resource (e.g., the setting could be 
+				// requiring a linked resource (e.g., the setting could be
 				// "..\..\some\dir\myprogram.exe")
 				IPath location = cproject.getProject().getLocation();
 				if (location != null) {
@@ -716,7 +716,7 @@ public class CDebugUtils {
 						try {
 							projFile = cproject.getProject().getFile(CDebugUtils.getProgramPath(config));
 						} catch (IllegalArgumentException exc) {
-							// thrown if relative path that resolves to a root file (e.g., "..\somefile")							
+							// thrown if relative path that resolves to a root file (e.g., "..\somefile")
 						}
 						if (projFile != null && projFile.exists()) {
 							programPath = projFile.getLocation();
@@ -738,7 +738,7 @@ public class CDebugUtils {
 	 * Variant that expects (requires) the launch configuration to have a valid
 	 * <i>Project</i> setting. See
 	 * {@link #verifyProgramPath(ILaunchConfiguration, boolean)}
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public static IPath verifyProgramPath(ILaunchConfiguration config) throws CoreException {
@@ -760,7 +760,7 @@ public class CDebugUtils {
 	 * Generic method to fetch an attribute from a Map that has keys of type String.  The defaultValue
 	 * parameter will be returned if the map does not contain the key, or if the matching value is not
 	 * of the correct type.
-	 * 
+	 *
 	 * @param <V> The type of the value we are looking for.  Specified by the type of defaultValue.
 	 * @param attributes The map with keys of type String, and values of any type.  Cannot be null.
 	 * @param key They key for which we want the value.
@@ -779,11 +779,11 @@ public class CDebugUtils {
 	}
 
 	/**
-	 * Overrides the standard project ICBreakpoint toggle breakpoint factory with 
-	 * a custom toggle breakpoint factory. The ICBreakpoint toggle breakpoint factory 
-	 * will be disabled and it is up to the client to contribute it's own toggle 
-	 * breakpoint factory. 
-	 * 
+	 * Overrides the standard project ICBreakpoint toggle breakpoint factory with
+	 * a custom toggle breakpoint factory. The ICBreakpoint toggle breakpoint factory
+	 * will be disabled and it is up to the client to contribute it's own toggle
+	 * breakpoint factory.
+	 *
 	 * @param project a project
 	 * @param factoryId a breakpoint toggle factory identifier
 	 * @since 7.1
@@ -800,7 +800,7 @@ public class CDebugUtils {
 
 	/**
 	 * Returns the toggle breakpoint factory identifier for the project
-	 * 
+	 *
 	 * @param project the project
 	 * @return the toggle breakpoint factory identifier, can be {@code null}
 	 * @since 7.1
@@ -812,7 +812,7 @@ public class CDebugUtils {
 
 	/**
 	 * Returns whether the project uses the standard ICBreakpoint toggle breakpoint factory.
-	 * 
+	 *
 	 * @param project the project
 	 * @return {@code true} if the project uses the standard ICBreakpoint breakpoint toggle factory
 	 * @since 7.1
@@ -822,9 +822,9 @@ public class CDebugUtils {
 	}
 
 	/**
-	 * Returns whether the custom toggle breakpoint factory should be consider when evaluating the 
+	 * Returns whether the custom toggle breakpoint factory should be consider when evaluating the
 	 * enablement of the standard ICBreakpoint toggle breakpoint factory.
-	 * 
+	 *
 	 * @return true if the custom model breakpoint system property is set
 	 * @since 7.1
 	 * @see ICDebugConstants#PREF_TOGGLE_BREAKPOINT_MODEL_IDENTIFIER
@@ -846,7 +846,7 @@ public class CDebugUtils {
 		/**
 		 * Returns the containing folder of the input file. Can be empty if the
 		 * input file was a filename.
-		 * 
+		 *
 		 * @return containing folder
 		 */
 		public String getFolder() {
@@ -856,7 +856,7 @@ public class CDebugUtils {
 		/**
 		 * Returns the filename (after last slash) of the input file. Can be
 		 * empty if input ended with a slash.
-		 * 
+		 *
 		 * @return file name
 		 */
 		public String getFileName() {
@@ -865,7 +865,7 @@ public class CDebugUtils {
 
 		/**
 		 * Returns the extension of {@link #getFileName()}
-		 * 
+		 *
 		 * @return the extension
 		 */
 		public String getExtension() {
@@ -881,14 +881,14 @@ public class CDebugUtils {
 
 	/**
 	 * Split a Windows or Unix style path into its constituent parts.
-	 * 
+	 *
 	 * The split does not modify or canonicalize the individual parts of the
 	 * file name. Nor does it convert between platforms.
-	 * 
+	 *
 	 * This method is useful for dealing with Windows paths when running on
 	 * Linux and vice versa, it is also useful for non-canonical paths (ones
 	 * with .. in them).
-	 * 
+	 *
 	 * @param file
 	 *            file name
 	 * @return parts of a file

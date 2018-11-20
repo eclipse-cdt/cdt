@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *     Ericsson Communication - upgrade IF to IMemoryBlockExtension
@@ -51,9 +51,9 @@ import org.eclipse.debug.core.model.MemoryByte;
 /**
  * This class manages the memory block retrieved from the target as a result
  * of a getBytesFromAddress() call from the platform.
- * 
+ *
  * It performs its read/write functions using the MemoryService.
- * 
+ *
  * @since 1.0
  */
 public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtension, IMemoryBlockUpdatePolicyProvider {
@@ -76,16 +76,16 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
 	private String fUpdatePolicy = UPDATE_POLICY_AUTOMATIC;
 
-	private ArrayList<Object> fConnections = new ArrayList<Object>();
+	private ArrayList<Object> fConnections = new ArrayList<>();
 
 	@SuppressWarnings("unused")
 	private boolean isEnabled;
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param retrieval    - the MemoryBlockRetrieval (session context)
-	 * @param modelId      - 
+	 * @param modelId      -
 	 * @param expression   - the displayed expression in the UI
 	 * @param address      - the actual memory block start address
 	 * @param word_size    - the number of bytes per address
@@ -344,14 +344,14 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		int newLength = (newBlock != null) ? newBlock.length : 0;
 
 		// If the retrieved block overlaps with the cached block, flag the changed bytes
-		// so they can be properly highlighted in the platform Memory view. 
+		// so they can be properly highlighted in the platform Memory view.
 		// Note: In the standard Memory view, the values are displayed in cells of 4 bytes
 		// (on 4-bytes address boundaries) and all 4 bytes have to be flagged so the
 		// cell is highlighted (and the delta sigh is shown).
 		if (fBlock != null && newLength > 0) {
 			switch (fBlockAddress.compareTo(address)) {
 			// case : Cached block begins before the retrieved block location
-			//          
+			//
 			//          <--- fLength -------------------------------------------------->
 			//          +--------------------------------------------------------------+
 			//          | Cached data from previous retrieve                           |
@@ -387,7 +387,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 			//          fBlockAddress
 			case -1: {
 				// Determine the distance between the cached and the requested block addresses
-				// If the distance does not exceed the length of the cached block,  then there 
+				// If the distance does not exceed the length of the cached block,  then there
 				// is some overlap between the blocks and we have to mark the changed bytes.
 				BigInteger bigDistance = address.subtract(fBlockAddress).multiply(BigInteger.valueOf(addressableSize));
 				if (bigDistance.compareTo(BigInteger.valueOf(fLength)) == -1) {
@@ -600,10 +600,10 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	 * The real thing. Since the original call is synchronous (from a platform
 	 * Job), we use a Query that will patiently wait for the underlying
 	 * asynchronous calls to complete before returning.
-	 * 
-	 * @param bigAddress 
+	 *
+	 * @param bigAddress
 	 * @param count - Number of addressable units for this memory block
-	 * @return MemoryByte[] 
+	 * @return MemoryByte[]
 	 * @throws DebugException
 	 * @since 2.1
 	 */
@@ -620,7 +620,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		// For the IAddress interface
 		final Addr64 address = new Addr64(bigAddress);
 
-		// Use a Query to synchronize the downstream calls  
+		// Use a Query to synchronize the downstream calls
 		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
@@ -655,7 +655,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
 	/**
 	 *  Writes an array of bytes to memory.
-	 * 
+	 *
 	 * @param offset
 	 * @param bytes
 	 * @throws DebugException
@@ -676,7 +676,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 		// For the IAddress interface
 		final Addr64 address = new Addr64(fBaseAddress);
 
-		// Use a Query to synchronize the downstream calls  
+		// Use a Query to synchronize the downstream calls
 		Query<MemoryByte[]> query = new Query<MemoryByte[]>() {
 			@Override
 			protected void execute(final DataRequestMonitor<MemoryByte[]> drm) {
@@ -721,7 +721,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 	@DsfServiceEventHandler
 	public void eventDispatched(IMemoryChangedEvent e) {
 
-		// Check if we are in the same address space 
+		// Check if we are in the same address space
 		if (e.getDMContext().equals(fContext)) {
 			IAddress[] addresses = e.getAddresses();
 			for (int i = 0; i < addresses.length; i++)
@@ -774,7 +774,7 @@ public class DsfMemoryBlock extends PlatformObject implements IMemoryBlockExtens
 
 	/**
 	 * Get the context specified at construction.
-	 * 
+	 *
 	 * @since 2.7
 	 */
 	public IMemoryDMContext getContext() {

@@ -19,7 +19,7 @@ import org.eclipse.cdt.core.dom.ast.IASTDeclarationListOwner;
 
 /**
  * This interface represents a linkage specification. e.g. extern "C" { ... }
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -32,28 +32,28 @@ public interface ICPPASTLinkageSpecification extends IASTDeclaration, IASTDeclar
 
 	/**
 	 * Returns the "literal" that represents the linkage.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getLiteral();
 
 	/**
 	 * Sets the "literal" that represents the linkage.
-	 * 
+	 *
 	 * @param value the "literal" that represents the linkage
 	 */
 	public void setLiteral(String value);
 
 	/**
 	 * Returns all of the declarations.
-	 * 
+	 *
 	 * @return {@code IASTDeclaration[]}
 	 */
 	public IASTDeclaration[] getDeclarations();
 
 	/**
 	 * Adds another declaration to the linkage.
-	 * 
+	 *
 	 * @param declaration the declaration to add
 	 */
 	@Override

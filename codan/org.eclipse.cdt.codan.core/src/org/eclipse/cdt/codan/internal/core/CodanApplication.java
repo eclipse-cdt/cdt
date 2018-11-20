@@ -35,7 +35,7 @@ import org.eclipse.osgi.util.NLS;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class CodanApplication implements IApplication {
-	private Collection<String> projects = new ArrayList<String>();
+	private Collection<String> projects = new ArrayList<>();
 	private boolean verbose;
 	private boolean all;
 

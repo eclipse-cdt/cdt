@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,9 +21,9 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 /**
  * This is the adapter that implements the flexible hierarchy viewer interfaces
- * for providing content, labels, and event processing for the viewer.  This 
+ * for providing content, labels, and event processing for the viewer.  This
  * adapter is registered with the DSF Session object, and is returned by the
- * IDMContext.getAdapter() and IVMContext.getAdapter() methods, 
+ * IDMContext.getAdapter() and IVMContext.getAdapter() methods,
  * which both call {@link DsfSession#getModelAdapter(Class)}.
  */
 @SuppressWarnings("restriction")

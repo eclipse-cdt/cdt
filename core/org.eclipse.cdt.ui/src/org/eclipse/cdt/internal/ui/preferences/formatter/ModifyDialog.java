@@ -23,6 +23,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
+import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
@@ -48,17 +57,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.StatusInfo;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.CustomProfile;
-import org.eclipse.cdt.internal.ui.preferences.formatter.ProfileManager.Profile;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-import org.eclipse.cdt.internal.ui.util.Messages;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.StringDialogField;
-
 public abstract class ModifyDialog extends StatusDialog implements IModifyDialogTabPage.IModificationListener {
 
 	/**
@@ -70,7 +68,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 	private static final String DS_KEY_PREFERRED_Y = "modify_dialog.preferred_y"; //$NON-NLS-1$
 
 	/**
-	 * The key to store the number (beginning at 0) of the tab page which had the 
+	 * The key to store the number (beginning at 0) of the tab page which had the
 	 * focus last time.
 	 */
 	private static final String DS_KEY_LAST_FOCUS = "modify_dialog.last_focus"; //$NON-NLS-1$
@@ -115,9 +113,9 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 
 		fProfile = profile;
 		setTitle(Messages.format(FormatterMessages.ModifyDialog_dialog_title, profile.getName()));
-		fWorkingValues = new HashMap<String, String>(fProfile.getSettings());
+		fWorkingValues = new HashMap<>(fProfile.getSettings());
 		setStatusLineAboveButtons(false);
-		fTabPages = new ArrayList<IModifyDialogTabPage>();
+		fTabPages = new ArrayList<>();
 		fDialogSettings = CUIPlugin.getDefault().getDialogSettings();
 	}
 
@@ -272,13 +270,13 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		if (!fProfile.getName().equals(fProfileNameField.getText())) {
 			fProfile = fProfile.rename(fProfileNameField.getText(), fProfileManager);
 		}
-		fProfile.setSettings(new HashMap<String, String>(fWorkingValues));
+		fProfile.setSettings(new HashMap<>(fWorkingValues));
 		fProfileManager.setSelected(fProfile);
 		doValidate();
 	}
 
 	private void saveButtonPressed() {
-		Profile selected = new CustomProfile(fProfileNameField.getText(), new HashMap<String, String>(fWorkingValues),
+		Profile selected = new CustomProfile(fProfileNameField.getText(), new HashMap<>(fWorkingValues),
 				fProfile.getVersion(), fProfileManager.getProfileVersioner().getProfileKind());
 
 		final FileDialog dialog = new FileDialog(getShell(), SWT.SAVE);
@@ -305,7 +303,7 @@ public abstract class ModifyDialog extends StatusDialog implements IModifyDialog
 		final IContentType type = Platform.getContentTypeManager().getContentType("org.eclipse.core.runtime.xml"); //$NON-NLS-1$
 		if (type != null)
 			encoding = type.getDefaultCharset();
-		final Collection<Profile> profiles = new ArrayList<Profile>();
+		final Collection<Profile> profiles = new ArrayList<>();
 		profiles.add(selected);
 		try {
 			fProfileStore.writeProfilesToFile(profiles, file, encoding);

@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.PlatformObject;
 @SuppressWarnings("restriction")
 public class C99Structure extends PlatformObject implements IC99Binding, ICompositeType, ITypeable {
 
-	private Map<String, IField> fields = new LinkedHashMap<String, IField>();
+	private Map<String, IField> fields = new LinkedHashMap<>();
 	private IField[] fieldArray = null;
 
 	/** either t_union or t_structure defined in IASTCompositeTypeSpecifier */
@@ -137,7 +137,7 @@ public class C99Structure extends PlatformObject implements IC99Binding, ICompos
 			C99Structure clone = (C99Structure) super.clone();
 			//clone.scope = (IScope) scope.clone(); TODO
 			clone.fieldArray = null;
-			clone.fields = new LinkedHashMap<String, IField>();
+			clone.fields = new LinkedHashMap<>();
 			for (IField field : fields.values())
 				clone.addField(field); // TODO not a deep clone
 			return clone;

@@ -16,9 +16,9 @@ package org.eclipse.cdt.make.ui.actions;
 import org.eclipse.cdt.make.core.IMakeTarget;
 import org.eclipse.cdt.make.core.MakeCorePlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
+import org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage;
 import org.eclipse.cdt.make.ui.TargetBuild;
 import org.eclipse.cdt.make.ui.dialogs.BuildTargetDialog;
-import org.eclipse.cdt.make.internal.ui.preferences.MakePreferencePage;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -31,9 +31,9 @@ import org.eclipse.jface.window.Window;
  * Rebuild last target of selected resource or project.
  * Search is done non-recursively.
  * If no valid last target is found, show the build target dialog.
- * 
+ *
  * @since 7.0
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */

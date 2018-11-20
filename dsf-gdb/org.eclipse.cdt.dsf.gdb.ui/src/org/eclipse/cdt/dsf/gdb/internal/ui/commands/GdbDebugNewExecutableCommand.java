@@ -137,7 +137,7 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 					protected void handleCancel() {
 						rm.cancel();
 						rm.done();
-					};
+					}
 
 					@Override
 					protected void handleSuccess() {
@@ -150,7 +150,7 @@ public class GdbDebugNewExecutableCommand extends RefreshableDebugCommand implem
 							rm.setStatus(e.getStatus());
 							rm.done();
 						}
-					};
+					}
 				});
 		job.schedule();
 	}

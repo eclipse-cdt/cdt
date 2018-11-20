@@ -53,7 +53,7 @@ public interface IDisassemblySelection extends ITextSelection {
 
 	/**
 	 * @return the label, may be <code>null</code>
-	 * 
+	 *
 	 * @since 2.2
 	 */
 	String getLabel();

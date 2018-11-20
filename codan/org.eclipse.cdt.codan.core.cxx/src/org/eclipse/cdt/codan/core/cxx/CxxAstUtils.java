@@ -198,7 +198,7 @@ public final class CxxAstUtils {
 	/**
 	 * For any BinaryExpression, guess the type from the other operand. (A good
 	 * guess for =, ==; hard to get a better guess for others)
-	 * 
+	 *
 	 * @return inferred type or {@code null} if couldn't infer
 	 */
 	private static IType tryInferTypeFromBinaryExpr(IASTName astName) {
@@ -218,7 +218,7 @@ public final class CxxAstUtils {
 	/**
 	 * For a function call, tries to find a matching function declaration.
 	 * Checks the argument count.
-	 * 
+	 *
 	 * @param index the index
 	 * @return a generated declaration or {@code null} if not suitable
 	 */
@@ -337,7 +337,7 @@ public final class CxxAstUtils {
 	/**
 	 * If the function definition belongs to a class, returns the class.
 	 * Otherwise, returns {@code null}.
-	 * 
+	 *
 	 * @param function the function definition to check
 	 * @param index the index to use for name lookup
 	 * @return either a type specifier or {@code null}

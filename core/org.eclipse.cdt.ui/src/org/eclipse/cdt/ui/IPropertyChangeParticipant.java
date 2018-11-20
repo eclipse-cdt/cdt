@@ -22,7 +22,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 5.0
  */
 public interface IPropertyChangeParticipant {

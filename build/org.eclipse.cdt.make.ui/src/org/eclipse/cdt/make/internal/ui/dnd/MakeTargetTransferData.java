@@ -127,7 +127,7 @@ public class MakeTargetTransferData {
 	 *
 	 */
 	public MakeTargetTransferData() {
-		makeTargetData = new ArrayList<MakeTargetData>();
+		makeTargetData = new ArrayList<>();
 	}
 
 	/**
@@ -175,7 +175,7 @@ public class MakeTargetTransferData {
 	 */
 	public IMakeTarget[] createMakeTargets(IProject project) {
 		IMakeTargetManager makeTargetManager = MakeCorePlugin.getDefault().getTargetManager();
-		ArrayList<IMakeTarget> makeTargets = new ArrayList<IMakeTarget>(makeTargetData.size());
+		ArrayList<IMakeTarget> makeTargets = new ArrayList<>(makeTargetData.size());
 		String[] ids = makeTargetManager.getTargetBuilders(project);
 		String builderId = ids[0];
 

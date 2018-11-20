@@ -15,7 +15,7 @@ package org.eclipse.cdt.debug.ui.breakpoints;
 
 /**
  * This interface can be implemented by FieldEditors used in {@extensionPoint org.eclipse.cdt.debug.ui.breakpointContribution} extension.
- * This allow to connect field back to parent that creates it {@link ICBreakpointsUIContribution} 
+ * This allow to connect field back to parent that creates it {@link ICBreakpointsUIContribution}
 */
 public interface ICBreakpointsUIContributionUser {
 	/**

@@ -20,9 +20,9 @@ package org.eclipse.cdt.core.parser;
  */
 public interface IMacro {
 	/**
-	 * Return the signature of a macro, which is the name for object style macros and 
-	 * the name followed by the comma-separated parameters put in parenthesis. For 
-	 * example: 'funcStyleMacro(par1, par2)'. 
+	 * Return the signature of a macro, which is the name for object style macros and
+	 * the name followed by the comma-separated parameters put in parenthesis. For
+	 * example: 'funcStyleMacro(par1, par2)'.
 	 */
 	public char[] getSignature();
 

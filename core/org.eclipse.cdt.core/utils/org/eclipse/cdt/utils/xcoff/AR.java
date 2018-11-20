@@ -27,7 +27,7 @@ import org.eclipse.cdt.core.CCorePlugin;
  *  of these objects can then be turned into an XCOFF32 object for performing XCOFF32
  *  class operations.
  *  @see MemberHeader
- * 
+ *
  * @author vhirsl
  */
 public class AR {
@@ -38,7 +38,7 @@ public class AR {
 
 	/**
 	 * Content of an archive in AIX XCOFF32 format
-	 * 
+	 *
 	 * @author vhirsl
 	 */
 	public class ARHeader {
@@ -47,7 +47,7 @@ public class AR {
 		private byte[] fl_magic = new byte[SAIAMAG];// Archive magic string
 		private byte[] fl_memoff = new byte[20]; // Offset to member table
 		private byte[] fl_gstoff = new byte[20]; // Offset to global symbol table
-		private byte[] fl_gst64off = new byte[20]; // Offset to global symbol table for 64-bit objects  
+		private byte[] fl_gst64off = new byte[20]; // Offset to global symbol table for 64-bit objects
 		private byte[] fl_fstmoff = new byte[20]; // Offset to first archive member
 		private byte[] fl_lstmoff = new byte[20]; // Offset to last archive member
 		private byte[] fl_freeoff = new byte[20]; // Offset to first member on free list
@@ -89,7 +89,7 @@ public class AR {
 	}
 
 	/**
-	 *  Creates a new <code>AR</code> object from the contents of 
+	 *  Creates a new <code>AR</code> object from the contents of
 	 *  the given file.
 	 *
 	 *  @param filename The file to process.
@@ -132,7 +132,7 @@ public class AR {
 	}
 
 	/**
-	 * The <code>ARHeader</code> class is used to store the per-object file 
+	 * The <code>ARHeader</code> class is used to store the per-object file
 	 *  archive headers.  It can also create an XCOFF32 object for inspecting
 	 *  the object file data.
 	 */
@@ -168,13 +168,13 @@ public class AR {
 
 		/**
 		 * Look up the name stored in the archive's string table based
-		 * on the offset given. 
+		 * on the offset given.
 		 *
 		 * Maintains <code>file</code> file location.
 		 *
-		 * @param offset 
+		 * @param offset
 		 *    Offset into the string table for first character of the name.
-		 * @throws IOException 
+		 * @throws IOException
 		 *    <code>offset</code> not in string table bounds.
 		 */
 		//		private String nameFromStringTable(long offset) throws IOException {
@@ -196,11 +196,11 @@ public class AR {
 		//		}
 
 		/**
-		 * Creates a new archive header object.  
+		 * Creates a new archive header object.
 		 *
 		 * Assumes that file is already at the correct location in the file.
 		 *
-		 * @throws IOException 
+		 * @throws IOException
 		 *    There was an error processing the header data from the file.
 		 */
 		public MemberHeader() throws IOException {
@@ -268,7 +268,7 @@ public class AR {
 		if (memberHeaders != null)
 			return;
 
-		Vector<MemberHeader> v = new Vector<MemberHeader>();
+		Vector<MemberHeader> v = new Vector<>();
 		try {
 			//
 			// Check for EOF condition
@@ -289,8 +289,8 @@ public class AR {
 
 	/**
 	 *  Get an array of all the object file headers for this archive.
-	 * 
-	 * @throws IOException 
+	 *
+	 * @throws IOException
 	 *    Unable to process the archive file.
 	 * @return An array of headers, one for each object within the archive.
 	 * @see ARHeader
@@ -301,7 +301,7 @@ public class AR {
 	}
 
 	public String[] extractFiles(String outdir, String[] names) throws IOException {
-		Vector<String> names_used = new Vector<String>();
+		Vector<String> names_used = new Vector<>();
 		String object_name;
 		int count;
 

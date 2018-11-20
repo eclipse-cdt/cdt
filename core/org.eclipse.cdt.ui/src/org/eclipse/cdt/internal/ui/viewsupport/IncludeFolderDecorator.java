@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.viewsupport;
 
+import org.eclipse.cdt.core.model.IIncludeReference;
+import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
@@ -21,11 +24,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-
-import org.eclipse.cdt.core.model.IIncludeReference;
-import org.eclipse.cdt.ui.CDTSharedImages;
-
-import org.eclipse.cdt.internal.ui.cview.IncludeReferenceProxy;
 
 /**
  * Determines whether an include folder under "Includes" node does exist

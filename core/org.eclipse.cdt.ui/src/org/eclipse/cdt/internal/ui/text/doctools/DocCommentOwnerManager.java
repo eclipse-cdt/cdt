@@ -15,12 +15,16 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.doctools;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -38,11 +42,7 @@ import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.osgi.service.prefs.Preferences;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwnershipListener;
-import org.eclipse.cdt.ui.text.doctools.IDocCommentViewerConfiguration;
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class manages which IDocCommentOwner's are available in the run-time, and how they map to
@@ -69,12 +69,12 @@ public class DocCommentOwnerManager {
 
 	private Map<String, IDocCommentOwner> fOwners;
 	private IDocCommentOwner fWorkspaceOwner;
-	private Map<IProject, ProjectMap> prj2map = new HashMap<IProject, ProjectMap>();
+	private Map<IProject, ProjectMap> prj2map = new HashMap<>();
 	private static List<IDocCommentOwnershipListener> fListeners;
 
 	private DocCommentOwnerManager() {
 		fOwners = getCommentOwnerExtensions();
-		fListeners = new ArrayList<IDocCommentOwnershipListener>();
+		fListeners = new ArrayList<>();
 
 		Preferences defaultPrefs = DefaultScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
 		Preferences prefs = InstanceScope.INSTANCE.getNode(QUALIFIER).node(WORKSPACE_DOC_TOOL_NODE);
@@ -90,7 +90,7 @@ public class DocCommentOwnerManager {
 
 	/**
 	 * @param project a non-null project
-	 * @return whether the specified project defines any documentation owner association 
+	 * @return whether the specified project defines any documentation owner association
 	 */
 	public boolean projectDefinesOwnership(IProject project) {
 		return !getProjectMap(project).isEmpty();
@@ -123,7 +123,7 @@ public class DocCommentOwnerManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param resource May be null.
 	 * @return a non-null IDocCommentOwner. If the resource was null, the {@link NullDocCommentOwner} is returned.
 	 */
@@ -227,7 +227,7 @@ public class DocCommentOwnerManager {
 	 * via the DocCommentOwner extension point
 	 */
 	private static Map<String, IDocCommentOwner> getCommentOwnerExtensions() {
-		Map<String, IDocCommentOwner> result = new HashMap<String, IDocCommentOwner>();
+		Map<String, IDocCommentOwner> result = new HashMap<>();
 
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IExtensionPoint indexProviders = registry.getExtensionPoint(CUIPlugin.ID_COMMENT_OWNER);

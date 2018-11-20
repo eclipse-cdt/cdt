@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  *     Intel Corporation - Initial API and implementation
  **********************************************************************/
 
@@ -19,10 +19,10 @@ import org.eclipse.core.resources.IProject;
 
 /**
  * Invocation context for the CHelpProviderManager.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * 
+ *
  * @see IHoverHelpInvocationContext
  * @see IContentAssistHelpInvocationContext
  */

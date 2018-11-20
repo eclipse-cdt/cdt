@@ -10,7 +10,7 @@
  *
  * Contributors:
  * Nokia - Initial API and implementation
- * Marc Khouzam (Ericsson) - Turn off casting for expression-group or 
+ * Marc Khouzam (Ericsson) - Turn off casting for expression-group or
  *                           pattern expressions (bug 394408)
  *******************************************************************************/
 
@@ -56,7 +56,7 @@ public class DsfCastToTypeSupport {
 	private final SyncVariableDataAccess fSyncVariableDataAccess;
 
 	/** expression memento to casting context (TODO: persist these; bug 228301)*/
-	private Map<String, CastInfo> fCastedExpressionStorage = new HashMap<String, CastInfo>();
+	private Map<String, CastInfo> fCastedExpressionStorage = new HashMap<>();
 
 	public class CastImplementation extends PlatformObject implements ICastToArray {
 		private final IExpressionDMContext exprDMC;
@@ -258,7 +258,7 @@ public class DsfCastToTypeSupport {
 		// TODO: the memento doesn't really strictly define the expression's context;
 		// we should fetch module name, function name, etc. to be more useful (but do that asynchronously)
 		String expression = exprDMC.getExpression();
-		String memento = exprDMC.getSessionId() + "." + expression; //$NON-NLS-1$ 
+		String memento = exprDMC.getSessionId() + "." + expression; //$NON-NLS-1$
 		return memento;
 	}
 
@@ -282,7 +282,7 @@ public class DsfCastToTypeSupport {
 
 	/**
 	 * Get the ICastToArray (and ICastToType) implementation for the expression.
-	 * This does not necessarily return a unique object for each call. 
+	 * This does not necessarily return a unique object for each call.
 	 * @param exprDMC
 	 * @return {@link ICastToArray}
 	 */

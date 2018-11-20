@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 Anton Gorenkov 
+ * Copyright (c) 2011, 2015 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,7 +35,7 @@ public class TAPTestsRunnerPlugin extends Plugin {
 
 	/**
 	 * Returns the TAP Tests Runner provider plug-in instance.
-	 * 
+	 *
 	 * @return the plug-in instance
 	 */
 	public static TAPTestsRunnerPlugin getDefault() {
@@ -49,7 +49,7 @@ public class TAPTestsRunnerPlugin extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status status to log
 	 */
 	public static void log(IStatus status) {
@@ -58,7 +58,7 @@ public class TAPTestsRunnerPlugin extends Plugin {
 
 	/**
 	 * Logs an internal error with the specified throwable
-	 * 
+	 *
 	 * @param e the exception to be logged
 	 */
 	public static void log(Throwable e) {

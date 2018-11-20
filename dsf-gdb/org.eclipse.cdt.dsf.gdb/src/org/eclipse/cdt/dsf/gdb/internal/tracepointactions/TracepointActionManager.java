@@ -74,7 +74,7 @@ public class TracepointActionManager {
 
 	public ArrayList<ITracepointAction> getActions() {
 		if (tracepointActions == null) {
-			tracepointActions = new ArrayList<ITracepointAction>();
+			tracepointActions = new ArrayList<>();
 			loadActionData();
 		}
 		return tracepointActions;
@@ -159,8 +159,8 @@ public class TracepointActionManager {
 				ITracepointAction action = iter.next();
 
 				Element element = doc.createElement("actionEntry"); //$NON-NLS-1$
-				element.setAttribute("name", action.getName()); //$NON-NLS-1$				
-				element.setAttribute("class", action.getClass().getName()); //$NON-NLS-1$				
+				element.setAttribute("name", action.getName()); //$NON-NLS-1$
+				element.setAttribute("class", action.getClass().getName()); //$NON-NLS-1$
 				element.setAttribute("value", action.getMemento()); //$NON-NLS-1$
 				rootElement.appendChild(element);
 

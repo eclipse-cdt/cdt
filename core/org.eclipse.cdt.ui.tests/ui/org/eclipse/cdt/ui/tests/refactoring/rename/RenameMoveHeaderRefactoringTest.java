@@ -13,8 +13,15 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.refactoring.rename;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.model.ISourceRoot;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactoringArgument;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameProcessor;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameRefactoring;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
@@ -24,16 +31,7 @@ import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 import org.eclipse.ltk.internal.core.refactoring.resource.MoveResourcesProcessor;
 import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
 
-import org.eclipse.cdt.core.model.ISourceRoot;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.tests.refactoring.RefactoringTestBase;
-
-import org.eclipse.cdt.internal.ui.refactoring.CRefactoring;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactoringArgument;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameProcessor;
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRenameRefactoring;
+import junit.framework.Test;
 
 /**
  * Tests for

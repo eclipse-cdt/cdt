@@ -17,16 +17,16 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
- * 
+ *
  * -gdb-set env VARNAME [=VALUE]
  *
- * Set environment variable VARNAME to VALUE. The value changes for your program only, 
- * not for gdb itself. VALUE may be any string; the values of environment variables are 
+ * Set environment variable VARNAME to VALUE. The value changes for your program only,
+ * not for gdb itself. VALUE may be any string; the values of environment variables are
  * just strings, and any interpretation is supplied by your program itself. The VALUE
  * parameter is optional; if it is omitted, the variable is set to a null value.
  *
  * @since 3.0
- * 
+ *
  */
 public class MIGDBSetEnv extends MIGDBSet {
 	public MIGDBSetEnv(ICommandControlDMContext dmc, String name) {

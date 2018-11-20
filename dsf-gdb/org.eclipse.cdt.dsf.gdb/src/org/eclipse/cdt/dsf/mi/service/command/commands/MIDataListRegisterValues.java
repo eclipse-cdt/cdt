@@ -25,9 +25,9 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataListRegisterValuesInf
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * 
+ *
  *       -data-list-register-values FMT [ ( REGNO )*]
- * 
+ *
  *    Display the registers' contents.  FMT is the format according to
  * which the registers' contents are to be returned, followed by an
  * optional list of numbers specifying the registers to display.  A

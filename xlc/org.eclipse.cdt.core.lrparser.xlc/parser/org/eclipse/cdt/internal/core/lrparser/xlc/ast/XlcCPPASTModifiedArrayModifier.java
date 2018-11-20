@@ -50,46 +50,56 @@ public class XlcCPPASTModifiedArrayModifier extends CPPASTArrayModifier implemen
 		return copy(copy, style);
 	}
 
+	@Override
 	public boolean isConst() {
 		return isConst;
 	}
 
+	@Override
 	public boolean isStatic() {
 		return isStatic;
 	}
 
+	@Override
 	public boolean isRestrict() {
 		return isRestrict;
 	}
 
+	@Override
 	public boolean isVolatile() {
 		return isVolatile;
 	}
 
+	@Override
 	public void setConst(boolean value) {
 		assertNotFrozen();
 		this.isConst = value;
 	}
 
+	@Override
 	public void setVolatile(boolean value) {
 		assertNotFrozen();
 		this.isVolatile = value;
 	}
 
+	@Override
 	public void setRestrict(boolean value) {
 		assertNotFrozen();
 		this.isRestrict = value;
 	}
 
+	@Override
 	public void setStatic(boolean value) {
 		assertNotFrozen();
 		this.isStatic = value;
 	}
 
+	@Override
 	public boolean isVariableSized() {
 		return varSized;
 	}
 
+	@Override
 	public void setVariableSized(boolean value) {
 		assertNotFrozen();
 		varSized = value;

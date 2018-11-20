@@ -15,6 +15,11 @@ package org.eclipse.cdt.ui.newui;
 
 import java.util.Arrays;
 
+import org.eclipse.cdt.core.model.util.CDTListComparator;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICProjectDescription;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -36,13 +41,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.cdt.core.model.util.CDTListComparator;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICProjectDescription;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -187,7 +185,7 @@ public class ManageConfigDialog extends Dialog {
 
 	/**
 	 * Tries to load MBS-specific creation dialog a
-	 * @return false if there's no such feature 
+	 * @return false if there's no such feature
 	 */
 	protected INewCfgDialog handleSpecificMBS(String id) {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(EXTENSION_POINT_ID);
@@ -294,7 +292,7 @@ public class ManageConfigDialog extends Dialog {
 				description = ""; //$NON-NLS-1$
 			}
 			t.setText(1, description);
-			t.setText(2, cfgds[i].isActive() ? Messages.ManageConfigDialog_5 : ""); //$NON-NLS-1$ 
+			t.setText(2, cfgds[i].isActive() ? Messages.ManageConfigDialog_5 : ""); //$NON-NLS-1$
 			t.setData(cfgds[i]);
 		}
 		if (table.getItemCount() > 0) {

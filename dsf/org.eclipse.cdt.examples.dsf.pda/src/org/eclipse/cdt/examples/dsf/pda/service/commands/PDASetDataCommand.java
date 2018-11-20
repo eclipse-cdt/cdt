@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -18,11 +18,11 @@ import org.eclipse.cdt.examples.dsf.pda.service.PDAThreadDMContext;
 
 /**
  * Sets a data value in the data stack at the given location
- * 
+ *
  * <pre>
  *    C: setdata {thread_id} {index} {value}
  *    R: ok
- *    
+ *
  * Errors:
  *    error: invalid thread
  * </pre>

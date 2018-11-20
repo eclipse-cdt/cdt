@@ -46,8 +46,8 @@ public class VisualizerCPU implements Comparable<VisualizerCPU>, IVisualizerMode
 	/** Constructor */
 	public VisualizerCPU(int id) {
 		m_id = id;
-		m_cores = new ArrayList<VisualizerCore>();
-		m_coreMap = new Hashtable<Integer, VisualizerCore>();
+		m_cores = new ArrayList<>();
+		m_coreMap = new Hashtable<>();
 	}
 
 	/** Dispose method */

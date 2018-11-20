@@ -21,6 +21,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore;
+import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,14 +37,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.text.folding.ICFoldingPreferenceBlock;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore;
-import org.eclipse.cdt.internal.ui.preferences.OverlayPreferenceStore.OverlayKey;
-
 /**
  */
 public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock {
@@ -46,7 +44,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	private IPreferenceStore fStore;
 	protected OverlayPreferenceStore fOverlayStore;
 	private OverlayKey[] fKeys;
-	protected Map<Button, String> fCheckBoxes = new HashMap<Button, String>();
+	protected Map<Button, String> fCheckBoxes = new HashMap<>();
 
 	private SelectionListener fCheckBoxListener = new SelectionListener() {
 		@Override
@@ -73,7 +71,7 @@ public class DefaultCFoldingPreferenceBlock implements ICFoldingPreferenceBlock 
 	}
 
 	private OverlayKey[] createKeys() {
-		ArrayList<OverlayKey> overlayKeys = new ArrayList<OverlayKey>();
+		ArrayList<OverlayKey> overlayKeys = new ArrayList<>();
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN,
 				PreferenceConstants.EDITOR_FOLDING_MACROS));

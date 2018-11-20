@@ -18,7 +18,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * see org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class TypedCDTViewerFilter extends ViewerFilter {

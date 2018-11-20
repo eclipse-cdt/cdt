@@ -18,15 +18,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
-import com.ibm.icu.text.MessageFormat;
-
 import org.eclipse.cdt.core.templateengine.TemplateDescriptor;
 import org.eclipse.cdt.core.templateengine.TemplateEngine;
 import org.eclipse.cdt.core.templateengine.TemplateInfo;
@@ -38,6 +29,14 @@ import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UISelectWidget;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UISpecialListWidget;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UIStringListWidget;
 import org.eclipse.cdt.ui.templateengine.uitree.uiwidgets.UITextWidget;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * UIElementTreeBuilderHelper provides methods to convert an Element (XML) into

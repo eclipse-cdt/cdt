@@ -17,10 +17,10 @@ package org.eclipse.cdt.make.scannerdiscovery;
 
 import java.util.List;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.make.core.scannerconfig.ScannerInfoTypes;
 import org.eclipse.cdt.make.internal.core.scannerconfig.gnu.GCCScannerInfoConsoleParser;
+
+import junit.framework.TestSuite;
 
 /**
  * Scanner configuration console parser tests

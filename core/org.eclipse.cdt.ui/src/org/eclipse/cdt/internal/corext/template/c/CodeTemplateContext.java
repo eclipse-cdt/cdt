@@ -14,10 +14,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.corext.template.c;
 
-import org.eclipse.core.resources.IFile;
-
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.core.resources.IFile;
 
 /**
  * A template context for C/C++ code and comment.

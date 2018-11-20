@@ -15,27 +15,25 @@ package org.eclipse.cdt.ui.tests.buildconsole;
 
 import java.io.IOException;
 
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.testplugin.ResourceHelper;
+import org.eclipse.cdt.internal.ui.buildconsole.BuildConsole;
+import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePage;
+import org.eclipse.cdt.internal.ui.buildconsole.ConsoleMessages;
+import org.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IBuildConsoleManager;
+import org.eclipse.cdt.ui.testplugin.Accessor;
+import org.eclipse.cdt.ui.testplugin.DisplayHelper;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.console.ConsolePlugin;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.testplugin.ResourceHelper;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IBuildConsoleManager;
-import org.eclipse.cdt.ui.testplugin.Accessor;
-import org.eclipse.cdt.ui.testplugin.DisplayHelper;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
-import org.eclipse.cdt.internal.ui.buildconsole.BuildConsole;
-import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePage;
-import org.eclipse.cdt.internal.ui.buildconsole.ConsoleMessages;
-import org.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager;
+import junit.framework.TestSuite;
 
 /**
  * BuildConsoleTests.

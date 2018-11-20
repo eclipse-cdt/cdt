@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.model;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICModelStatus;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.cdt.core.model.ICModelStatus;
-import org.eclipse.cdt.core.model.CModelException;
 
 /**
  * An operation created as a result of a call to JavaCore.run(IWorkspaceRunnable, IProgressMonitor)

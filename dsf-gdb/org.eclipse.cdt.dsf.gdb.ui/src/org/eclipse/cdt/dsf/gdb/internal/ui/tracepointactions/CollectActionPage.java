@@ -94,7 +94,7 @@ public class CollectActionPage extends PlatformObject implements IBreakpointActi
 			}
 		});
 
-		// A label asking for an optional limit of bytes of collected strings 
+		// A label asking for an optional limit of bytes of collected strings
 		final Label limitLabel = new Label(composite, SWT.NONE);
 		gd = new GridData(SWT.CENTER, SWT.CENTER, false, false);
 		gd.horizontalIndent = buttonWidth;

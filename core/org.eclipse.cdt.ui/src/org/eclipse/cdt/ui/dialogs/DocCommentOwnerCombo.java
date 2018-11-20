@@ -16,20 +16,18 @@ package org.eclipse.cdt.ui.dialogs;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
+import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
+import org.eclipse.cdt.utils.ui.controls.ControlFactory;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 
-import org.eclipse.cdt.ui.text.doctools.IDocCommentOwner;
-import org.eclipse.cdt.utils.ui.controls.ControlFactory;
-
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.doctools.NullDocCommentOwner;
-
 /**
  * Manages the population and selection of the doc-comment {@link Combo} box
  * <em>This class is not intended for use outside of CDT</em>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -55,7 +53,7 @@ public class DocCommentOwnerCombo extends Composite {
 	 * test plug-in.
 	 */
 	private static IDocCommentOwner[] getNontestOwners() {
-		List<IDocCommentOwner> result = new ArrayList<IDocCommentOwner>();
+		List<IDocCommentOwner> result = new ArrayList<>();
 		for (IDocCommentOwner owner : DocCommentOwnerManager.getInstance().getRegisteredOwners()) {
 			if (owner.getID().indexOf(".test.") == -1) //$NON-NLS-1$
 				result.add(owner);

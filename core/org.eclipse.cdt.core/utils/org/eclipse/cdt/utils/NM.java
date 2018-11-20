@@ -150,10 +150,10 @@ public class NM {
 			args[params.length + 1] = file;
 		}
 
-		undef_symbols = new ArrayList<String>();
-		text_symbols = new ArrayList<AddressNamePair>();
-		data_symbols = new ArrayList<AddressNamePair>();
-		bss_symbols = new ArrayList<AddressNamePair>();
+		undef_symbols = new ArrayList<>();
+		text_symbols = new ArrayList<>();
+		data_symbols = new ArrayList<>();
+		bss_symbols = new ArrayList<>();
 		Process process = ProcessFactory.getFactory().exec(args);
 		parseOutput(process.getInputStream());
 		process.destroy();

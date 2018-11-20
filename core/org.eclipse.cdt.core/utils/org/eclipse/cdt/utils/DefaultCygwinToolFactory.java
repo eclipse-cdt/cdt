@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.Path;
 public class DefaultCygwinToolFactory extends DefaultGnuToolFactory implements ICygwinToolsFactroy {
 
 	/**
-	 * 
+	 *
 	 */
 	public DefaultCygwinToolFactory(ICExtension ext) {
 		super(ext);
@@ -31,7 +31,7 @@ public class DefaultCygwinToolFactory extends DefaultGnuToolFactory implements I
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.utils.CygwinToolsProvider#getCygPath()
 	 */
 	@Override

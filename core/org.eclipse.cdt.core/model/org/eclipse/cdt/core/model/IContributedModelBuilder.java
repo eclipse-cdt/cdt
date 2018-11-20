@@ -16,29 +16,29 @@ package org.eclipse.cdt.core.model;
 
 /**
  * Interface supported by model builders for contributed languages.
- * 
+ *
  * Model builders parse a <code>TranslationUnit</code> (i.e., a file) and
  * return a hierarchy of <code>ICElement</code>s which represent the high-level
  * structure of that file (what modules, classes, functions, and similar
  * constructs are contained in it, and on what line(s) the definition occurs).
- * 
+ *
  * The translation unit to parse and the initial element map are given to
  * {@link ILanguage#createModelBuilder}, which will presumably
  * pass that information on to the model builder constructor.
- * 
+ *
  * @author Jeff Overbey
  */
 public interface IContributedModelBuilder {
 
 	/**
 	 * A factory to create a model builder for a translation unit.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	public interface Factory {
 		/**
 		 * Create a model builder for the given translation unit.
-		 * 
+		 *
 		 * @param tu  the translation unit
 		 * @return the model builder or <code>null</code> if no model builder could be created
 		 */
@@ -47,7 +47,7 @@ public interface IContributedModelBuilder {
 
 	/**
 	 * Callback used when a <code>TranslationUnit</code> needs to be parsed.
-	 * 
+	 *
 	 * The translation unit to parse is given to
 	 * {@link ILanguage#createModelBuilder}, which will presumably
 	 * pass it on to the model builder constructor.

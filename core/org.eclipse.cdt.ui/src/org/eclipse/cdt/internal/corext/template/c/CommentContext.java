@@ -14,6 +14,8 @@
 
 package org.eclipse.cdt.internal.corext.template.c;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.Position;
@@ -24,9 +26,6 @@ import org.eclipse.jface.text.templates.TemplateContextType;
 import org.eclipse.jface.text.templates.TemplateException;
 import org.eclipse.jface.text.templates.TemplateTranslator;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-
 /**
  * A context for (block) comments.
  *
@@ -36,7 +35,7 @@ public class CommentContext extends TranslationUnitContext {
 
 	/**
 	 * Creates a comment template context.
-	 * 
+	 *
 	 * @param type the context type.
 	 * @param document the document.
 	 * @param completionOffset the completion offset within the document.
@@ -50,7 +49,7 @@ public class CommentContext extends TranslationUnitContext {
 
 	/**
 	 * Creates a comment template context.
-	 * 
+	 *
 	 * @param type the context type.
 	 * @param document the document.
 	 * @param completionPosition the completion position within the document

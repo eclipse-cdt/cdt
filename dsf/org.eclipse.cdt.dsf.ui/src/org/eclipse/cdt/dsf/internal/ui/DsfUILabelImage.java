@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -16,7 +16,7 @@ package org.eclipse.cdt.dsf.internal.ui;
 import org.eclipse.cdt.dsf.ui.viewmodel.properties.LabelImage;
 
 /**
- * @since 2.0 
+ * @since 2.0
  */
 public class DsfUILabelImage extends LabelImage {
 	public DsfUILabelImage(String imageId) {

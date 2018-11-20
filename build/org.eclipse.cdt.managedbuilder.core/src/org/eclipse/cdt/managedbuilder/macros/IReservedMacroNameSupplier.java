@@ -18,7 +18,7 @@ import org.eclipse.cdt.managedbuilder.core.IConfiguration;
 /**
  * This interface is to be implemented by the tool-integrator to specify to the MBS
  * the reserved builder variable names
- *  
+ *
  * @since 3.0
  */
 public interface IReservedMacroNameSupplier {

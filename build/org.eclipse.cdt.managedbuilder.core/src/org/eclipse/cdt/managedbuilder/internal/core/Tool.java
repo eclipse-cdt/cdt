@@ -170,10 +170,10 @@ public class Tool extends HoldsOptions
 	private boolean rebuildState;
 	private BooleanExpressionApplicabilityCalculator booleanExpressionCalculator;
 
-	private HashMap<IInputType, CLanguageData> typeToDataMap = new HashMap<IInputType, CLanguageData>(2);
+	private HashMap<IInputType, CLanguageData> typeToDataMap = new HashMap<>(2);
 	private boolean fDataMapInited;
 	private List<Tool> identicalList;
-	private HashMap<String, PathInfoCache> discoveredInfoMap = new HashMap<String, PathInfoCache>(2);
+	private HashMap<String, PathInfoCache> discoveredInfoMap = new HashMap<>(2);
 	private String scannerConfigDiscoveryProfileId;
 
 	/*
@@ -420,10 +420,10 @@ public class Tool extends HoldsOptions
 			commandLinePattern = tool.commandLinePattern;
 		}
 		if (tool.inputExtensions != null) {
-			inputExtensions = new ArrayList<String>(tool.inputExtensions);
+			inputExtensions = new ArrayList<>(tool.inputExtensions);
 		}
 		if (tool.interfaceExtensions != null) {
-			interfaceExtensions = new ArrayList<String>(tool.interfaceExtensions);
+			interfaceExtensions = new ArrayList<>(tool.interfaceExtensions);
 		}
 		if (tool.natureFilter != null) {
 			natureFilter = tool.natureFilter;
@@ -467,7 +467,7 @@ public class Tool extends HoldsOptions
 		optionPathConverter = tool.optionPathConverter;
 
 		if (tool.envVarBuildPathList != null)
-			envVarBuildPathList = new ArrayList<IEnvVarBuildPath>(tool.envVarBuildPathList);
+			envVarBuildPathList = new ArrayList<>(tool.envVarBuildPathList);
 
 		//		tool.updateScannerInfoSettingsToInputTypes();
 
@@ -559,10 +559,10 @@ public class Tool extends HoldsOptions
 			commandLinePattern = tool.commandLinePattern;
 		}
 		if (inputExtensions == null && tool.inputExtensions != null) {
-			inputExtensions = new ArrayList<String>(tool.inputExtensions);
+			inputExtensions = new ArrayList<>(tool.inputExtensions);
 		}
 		if (interfaceExtensions == null && tool.interfaceExtensions != null) {
-			interfaceExtensions = new ArrayList<String>(tool.interfaceExtensions);
+			interfaceExtensions = new ArrayList<>(tool.interfaceExtensions);
 		}
 		if (natureFilter == null) {
 			natureFilter = tool.natureFilter;
@@ -619,7 +619,7 @@ public class Tool extends HoldsOptions
 		}
 
 		if (envVarBuildPathList == null && tool.envVarBuildPathList != null)
-			envVarBuildPathList = new ArrayList<IEnvVarBuildPath>(tool.envVarBuildPathList);
+			envVarBuildPathList = new ArrayList<>(tool.envVarBuildPathList);
 
 		//  Clone the children in superclass
 		super.copyNonoverriddenSettings(tool);
@@ -949,7 +949,7 @@ public class Tool extends HoldsOptions
 			announcement = SafeStringInterner.safeIntern(element.getAttribute(ITool.ANNOUNCEMENT));
 		}
 
-		// Get the tool hidden setting 
+		// Get the tool hidden setting
 		if (element.getAttribute(ITool.IS_HIDDEN) != null) {
 			String hidden = element.getAttribute(ITool.IS_HIDDEN);
 			if (hidden != null) {
@@ -1371,7 +1371,7 @@ public class Tool extends HoldsOptions
 		if (isExtensionTool || types.length == 0)
 			return types;
 
-		List<OutputType> list = new ArrayList<OutputType>(types.length);
+		List<OutputType> list = new ArrayList<>(types.length);
 		for (IOutputType itype : types) {
 			OutputType type = (OutputType) itype;
 			if (type.isEnabled(this))
@@ -1385,7 +1385,7 @@ public class Tool extends HoldsOptions
 		if (isExtensionTool || types.length == 0)
 			return types;
 
-		List<InputType> list = new ArrayList<InputType>(types.length);
+		List<InputType> list = new ArrayList<>(types.length);
 		for (IInputType itype : types) {
 			InputType type = (InputType) itype;
 			if (type.isEnabled(this))
@@ -1577,7 +1577,7 @@ public class Tool extends HoldsOptions
 	 */
 	private Vector<InputType> getInputTypeList() {
 		if (inputTypeList == null) {
-			inputTypeList = new Vector<InputType>();
+			inputTypeList = new Vector<>();
 		}
 		return inputTypeList;
 	}
@@ -1587,7 +1587,7 @@ public class Tool extends HoldsOptions
 	 */
 	private Map<String, InputType> getInputTypeMap() {
 		if (inputTypeMap == null) {
-			inputTypeMap = new HashMap<String, InputType>();
+			inputTypeMap = new HashMap<>();
 		}
 		return inputTypeMap;
 	}
@@ -1602,7 +1602,7 @@ public class Tool extends HoldsOptions
 	 */
 	private Vector<OutputType> getOutputTypeList() {
 		if (outputTypeList == null) {
-			outputTypeList = new Vector<OutputType>();
+			outputTypeList = new Vector<>();
 		}
 		return outputTypeList;
 	}
@@ -1612,7 +1612,7 @@ public class Tool extends HoldsOptions
 	 */
 	private Map<String, OutputType> getOutputTypeMap() {
 		if (outputTypeMap == null) {
-			outputTypeMap = new HashMap<String, OutputType>();
+			outputTypeMap = new HashMap<>();
 		}
 		return outputTypeMap;
 	}
@@ -1724,7 +1724,7 @@ public class Tool extends HoldsOptions
 				errorParsers = new String[0];
 			} else {
 				StringTokenizer tok = new StringTokenizer(parserIDs, ";"); //$NON-NLS-1$
-				List<String> list = new ArrayList<String>(tok.countTokens());
+				List<String> list = new ArrayList<>(tok.countTokens());
 				while (tok.hasMoreElements()) {
 					list.add(tok.nextToken());
 				}
@@ -1740,7 +1740,7 @@ public class Tool extends HoldsOptions
 	public Set<String> contributeErrorParsers(Set<String> set) {
 		if (getErrorParserIds() != null) {
 			if (set == null)
-				set = new HashSet<String>();
+				set = new HashSet<>();
 			String ids[] = getErrorParserList();
 			if (ids.length != 0)
 				set.addAll(Arrays.asList(ids));
@@ -1755,7 +1755,7 @@ public class Tool extends HoldsOptions
 	@Override
 	public List<String> getInputExtensions() {
 		String[] exts = getPrimaryInputExtensions();
-		List<String> extList = new ArrayList<String>();
+		List<String> extList = new ArrayList<>();
 		for (String ext : exts) {
 			extList.add(ext);
 		}
@@ -1768,7 +1768,7 @@ public class Tool extends HoldsOptions
 			if (getSuperClass() != null) {
 				return ((Tool) getSuperClass()).getInputExtensionsAttribute();
 			} else {
-				inputExtensions = new ArrayList<String>();
+				inputExtensions = new ArrayList<>();
 			}
 		}
 		return inputExtensions;
@@ -1776,7 +1776,7 @@ public class Tool extends HoldsOptions
 
 	private List<String> getInputExtensionsList() {
 		if (inputExtensions == null) {
-			inputExtensions = new ArrayList<String>();
+			inputExtensions = new ArrayList<>();
 		}
 		return inputExtensions;
 	}
@@ -1834,7 +1834,7 @@ public class Tool extends HoldsOptions
 	public String[] getAllInputExtensions(IProject project) {
 		IInputType[] types = getInputTypes();
 		if (types != null && types.length > 0) {
-			List<String> allExts = new ArrayList<String>();
+			List<String> allExts = new ArrayList<>();
 			for (IInputType type : types) {
 				String[] exts = ((InputType) type).getSourceExtensions(this, project);
 				for (String ext : exts) {
@@ -1897,7 +1897,7 @@ public class Tool extends HoldsOptions
 	 */
 	@Override
 	public IPath[] getAdditionalDependencies() {
-		List<IPath> allDeps = new ArrayList<IPath>();
+		List<IPath> allDeps = new ArrayList<>();
 		IInputType[] types = getInputTypes();
 		for (IInputType type : types) {
 			//  Additional dependencies come from 2 places.
@@ -1911,7 +1911,7 @@ public class Tool extends HoldsOptions
 					IOption option = getOptionBySuperClassId(type.getOptionId());
 					if (option != null) {
 						try {
-							List<IPath> inputs = new ArrayList<IPath>();
+							List<IPath> inputs = new ArrayList<>();
 							int optType = option.getValueType();
 							if (optType == IOption.STRING) {
 								inputs.add(Path.fromOSString(option.getStringValue()));
@@ -1942,7 +1942,7 @@ public class Tool extends HoldsOptions
 	 */
 	@Override
 	public IPath[] getAdditionalResources() {
-		List<IPath> allRes = new ArrayList<IPath>();
+		List<IPath> allRes = new ArrayList<>();
 		for (IInputType type : getInputTypes()) {
 			//  Additional resources come from 2 places.
 			//  1.  From AdditionalInput childen
@@ -1967,7 +1967,7 @@ public class Tool extends HoldsOptions
 	public String[] getAllDependencyExtensions() {
 		IInputType[] types = getInputTypes();
 		if (types != null && types.length > 0) {
-			List<String> allExts = new ArrayList<String>();
+			List<String> allExts = new ArrayList<>();
 			for (IInputType t : types)
 				for (String s : t.getDependencyExtensions(this))
 					allExts.add(s);
@@ -1999,7 +1999,7 @@ public class Tool extends HoldsOptions
 				return ((Tool) getSuperClass()).getHeaderExtensionsAttribute();
 			} else {
 				if (interfaceExtensions == null) {
-					interfaceExtensions = new ArrayList<String>();
+					interfaceExtensions = new ArrayList<>();
 				}
 			}
 		}
@@ -2008,7 +2008,7 @@ public class Tool extends HoldsOptions
 
 	private List<String> getInterfaceExtensionsList() {
 		if (interfaceExtensions == null) {
-			interfaceExtensions = new ArrayList<String>();
+			interfaceExtensions = new ArrayList<>();
 		}
 		return interfaceExtensions;
 	}
@@ -2318,7 +2318,7 @@ public class Tool extends HoldsOptions
 	public String[] getAllOutputExtensions(IProject project) {
 		IOutputType[] types = getOutputTypes();
 		if (types != null && types.length > 0) {
-			List<String> allExts = new ArrayList<String>();
+			List<String> allExts = new ArrayList<>();
 			for (IOutputType t : types) {
 				String[] exts = ((OutputType) t).getOutputExtensions(this, project);
 				if (exts != null)
@@ -2610,7 +2610,7 @@ public class Tool extends HoldsOptions
 	public String[] getToolCommandFlags(IPath inputFileLocation, IPath outputFileLocation,
 			SupplierBasedCdtVariableSubstitutor macroSubstitutor, IMacroContextInfoProvider provider) {
 		IOption[] opts = getOptions();
-		ArrayList<String> flags = new ArrayList<String>();
+		ArrayList<String> flags = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
 		for (IOption option : opts) {
 			if (option == null)
@@ -3199,7 +3199,7 @@ public class Tool extends HoldsOptions
 		if (path == null)
 			return;
 		if (envVarBuildPathList == null)
-			envVarBuildPathList = new ArrayList<IEnvVarBuildPath>();
+			envVarBuildPathList = new ArrayList<>();
 
 		envVarBuildPathList.add(path);
 	}
@@ -3564,7 +3564,7 @@ public class Tool extends HoldsOptions
 	}
 
 	private List<IInputType> getLanguageInputTypes() {
-		List<IInputType> list = new ArrayList<IInputType>();
+		List<IInputType> list = new ArrayList<>();
 		IInputType[] types = getInputTypes();
 		for (IInputType t : types) {
 			InputType type = (InputType) t;
@@ -3781,7 +3781,7 @@ public class Tool extends HoldsOptions
 			return null;
 		if (!isExtensionTool)
 			return null;
-		return new MatchKey<Tool>(this);
+		return new MatchKey<>(this);
 	}
 
 	@Override
@@ -3858,7 +3858,7 @@ public class Tool extends HoldsOptions
 			supported = props.getSupportedTypeIds();
 		} else {
 			BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			if (calc != null) {
 				list.addAll(Arrays.asList(calc.getReferencedPropertyIds()));
 			}
@@ -3877,7 +3877,7 @@ public class Tool extends HoldsOptions
 			supported = props.getSupportedValueIds(typeId);
 		} else {
 			BooleanExpressionApplicabilityCalculator calc = getBooleanExpressionCalculator();
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			if (calc != null) {
 				list.addAll(Arrays.asList(calc.getReferencedValueIds(typeId)));
 			}
@@ -3908,7 +3908,7 @@ public class Tool extends HoldsOptions
 		if (set != null && !set.isEmpty()) {
 			Set<String> oldSet = contributeErrorParsers(null);
 			if (oldSet == null)
-				oldSet = new HashSet<String>();
+				oldSet = new HashSet<>();
 
 			oldSet.removeAll(set);
 			setErrorParserList(oldSet.toArray(new String[oldSet.size()]));
@@ -4135,7 +4135,7 @@ public class Tool extends HoldsOptions
 	}
 
 	public IOption[] getOptionsOfType(int type) {
-		List<IOption> list = new ArrayList<IOption>();
+		List<IOption> list = new ArrayList<>();
 		for (IOption op : getOptions()) {
 			try {
 				if (op.getValueType() == type)
@@ -4153,7 +4153,7 @@ public class Tool extends HoldsOptions
 
 		int opType = Option.getOppositeType(type);
 		if (opType != 0) {
-			Set<Object> filterSet = new HashSet<Object>();
+			Set<Object> filterSet = new HashSet<>();
 			for (IOption op : getOptionsOfType(opType)) {
 				filterSet.addAll((List<Object>) op.getValue());
 			}

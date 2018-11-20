@@ -36,7 +36,7 @@ import org.eclipse.jface.text.Position;
 
 /**
  * Default implementation of {@link IDisassemblySelection}.
- * 
+ *
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -50,7 +50,7 @@ public class DisassemblySelection implements IDisassemblySelection {
 
 	/**
 	 * Create a disassembly selection from a normal text selection and a disassembly part.
-	 * 
+	 *
 	 * @param selection  the text selection
 	 * @param part  the disassembly part
 	 */

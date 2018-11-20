@@ -15,6 +15,9 @@ package org.eclipse.cdt.ui.templateengine;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
+import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -23,16 +26,12 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.templateengine.TemplateEngineUtil;
-import org.eclipse.cdt.core.templateengine.process.ProcessFailureException;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 public class TemplateEngineUIUtil {
 	/**
 	 * Shows the error message in a Dialog Box.
 	 * @param message
 	 * @param t
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static void showError(String message, Throwable t) {
@@ -85,7 +84,7 @@ public class TemplateEngineUIUtil {
 	 * Shows the Status message in Dialog Box.
 	 * @param message
 	 * @param status
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static void showStatusDialog(String message, IStatus status) {

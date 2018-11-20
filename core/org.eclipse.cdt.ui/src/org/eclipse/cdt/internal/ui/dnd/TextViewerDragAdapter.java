@@ -33,7 +33,7 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
 
 /**
  * Drag source adapter for text selections in ITextViewers.
- * 
+ *
  * @since 4.0
  */
 public class TextViewerDragAdapter extends DragSourceAdapter {
@@ -154,7 +154,7 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 
 	/**
 	 * Convert mouse screen coordinates to a <code>StyledText</code> offset.
-	 * 
+	 *
 	 * @param x
 	 *            screen X-coordinate
 	 * @param y
@@ -163,7 +163,7 @@ public class TextViewerDragAdapter extends DragSourceAdapter {
 	 *            if <code>true</code>, coordinates are expected to be
 	 *            absolute screen coordinates
 	 * @return text offset
-	 * 
+	 *
 	 * @see StyledText#getOffsetAtLocation()
 	 */
 	private int getOffsetAtLocation(int x, int y, boolean absolute) {

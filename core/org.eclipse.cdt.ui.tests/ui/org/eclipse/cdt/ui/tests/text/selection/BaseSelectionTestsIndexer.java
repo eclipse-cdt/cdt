@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -19,6 +19,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.testplugin.FileManager;
+import org.eclipse.cdt.internal.core.parser.ParserException;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -44,17 +49,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.testplugin.FileManager;
-
-import org.eclipse.cdt.internal.core.parser.ParserException;
-
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-import org.eclipse.cdt.internal.ui.search.actions.OpenDeclarationsAction;
-
 /**
  * Base test class for testing Ctrl_F3/F3 with the indexers.
- *  
+ *
  * @author dsteffle
  */
 public class BaseSelectionTestsIndexer extends BaseSelectionTests {

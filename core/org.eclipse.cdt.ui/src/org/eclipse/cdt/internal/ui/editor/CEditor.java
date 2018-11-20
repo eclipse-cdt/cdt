@@ -32,6 +32,75 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.CCorePreferenceConstants;
+import org.eclipse.cdt.core.dom.ast.IASTName;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IBinding;
+import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.ILanguage;
+import org.eclipse.cdt.core.model.ISourceRange;
+import org.eclipse.cdt.core.model.ISourceReference;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.core.model.ITranslationUnitHolder;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.AlignConstAction;
+import org.eclipse.cdt.internal.ui.actions.FindWordAction;
+import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
+import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
+import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
+import org.eclipse.cdt.internal.ui.actions.IndentAction;
+import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectHistoryAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
+import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
+import org.eclipse.cdt.internal.ui.actions.SurroundWithActionGroup;
+import org.eclipse.cdt.internal.ui.dialogs.FormattingScopeDialog;
+import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder;
+import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
+import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
+import org.eclipse.cdt.internal.ui.text.CPairMatcher;
+import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.CWordFinder;
+import org.eclipse.cdt.internal.ui.text.CWordIterator;
+import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
+import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
+import org.eclipse.cdt.internal.ui.text.Symbols;
+import org.eclipse.cdt.internal.ui.text.TabsToSpacesConverter;
+import org.eclipse.cdt.internal.ui.text.c.hover.CExpandHover;
+import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.util.CUIHelp;
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
+import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.ICEditor;
+import org.eclipse.cdt.ui.ICModelBasedEditor;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.PreferenceConstants;
+import org.eclipse.cdt.ui.actions.GenerateActionGroup;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
+import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
+import org.eclipse.cdt.ui.text.ICPartitions;
+import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ProjectScope;
@@ -179,78 +248,6 @@ import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 import com.ibm.icu.text.BreakIterator;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.CCorePreferenceConstants;
-import org.eclipse.cdt.core.dom.ast.IASTName;
-import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.dom.ast.IBinding;
-import org.eclipse.cdt.core.dom.ast.gnu.cpp.GPPLanguage;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.ILanguage;
-import org.eclipse.cdt.core.model.ISourceRange;
-import org.eclipse.cdt.core.model.ISourceReference;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.core.model.ITranslationUnitHolder;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.ICEditor;
-import org.eclipse.cdt.ui.ICModelBasedEditor;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.PreferenceConstants;
-import org.eclipse.cdt.ui.actions.GenerateActionGroup;
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
-import org.eclipse.cdt.ui.text.CSourceViewerConfiguration;
-import org.eclipse.cdt.ui.text.ICPartitions;
-import org.eclipse.cdt.ui.text.folding.ICFoldingStructureProvider;
-
-import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.actions.AddBlockCommentAction;
-import org.eclipse.cdt.internal.ui.actions.AlignConstAction;
-import org.eclipse.cdt.internal.ui.actions.FindWordAction;
-import org.eclipse.cdt.internal.ui.actions.FoldingActionGroup;
-import org.eclipse.cdt.internal.ui.actions.GoToNextPreviousMemberAction;
-import org.eclipse.cdt.internal.ui.actions.GotoNextBookmarkAction;
-import org.eclipse.cdt.internal.ui.actions.IndentAction;
-import org.eclipse.cdt.internal.ui.actions.RemoveBlockCommentAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectEnclosingAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectHistoryAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectNextAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectPreviousAction;
-import org.eclipse.cdt.internal.ui.actions.StructureSelectionAction;
-import org.eclipse.cdt.internal.ui.actions.SurroundWithActionGroup;
-import org.eclipse.cdt.internal.ui.dialogs.FormattingScopeDialog;
-import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder;
-import org.eclipse.cdt.internal.ui.search.IOccurrencesFinder.OccurrenceLocation;
-import org.eclipse.cdt.internal.ui.search.OccurrencesFinder;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-import org.eclipse.cdt.internal.ui.text.CHeuristicScanner;
-import org.eclipse.cdt.internal.ui.text.CPairMatcher;
-import org.eclipse.cdt.internal.ui.text.CSourceViewerScalableConfiguration;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.CWordFinder;
-import org.eclipse.cdt.internal.ui.text.CWordIterator;
-import org.eclipse.cdt.internal.ui.text.DocumentCharacterIterator;
-import org.eclipse.cdt.internal.ui.text.ICReconcilingListener;
-import org.eclipse.cdt.internal.ui.text.Symbols;
-import org.eclipse.cdt.internal.ui.text.TabsToSpacesConverter;
-import org.eclipse.cdt.internal.ui.text.c.hover.CExpandHover;
-import org.eclipse.cdt.internal.ui.text.c.hover.SourceViewerInformationControl;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.internal.ui.util.CUIHelp;
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.viewsupport.ISelectionListenerWithAST;
-import org.eclipse.cdt.internal.ui.viewsupport.SelectionListenerWithASTManager;
-
 /**
  * C/C++ source editor.
  */
@@ -261,7 +258,7 @@ public class CEditor extends TextEditor
 
 	/**
 	 * A slightly modified implementation of IGotomarker compared to AbstractDecoratedTextEditor.
-	 * 
+	 *
 	 * @since 5.0
 	 */
 	private final class GotoMarkerAdapter implements IGotoMarker {
@@ -398,9 +395,9 @@ public class CEditor extends TextEditor
 			ICElement inputCElement = getInputCElement();
 			ICProject cProject = inputCElement != null ? inputCElement.getCProject() : null;
 			if (cProject == null) {
-				preferences = new HashMap<String, Object>(CCorePlugin.getOptions());
+				preferences = new HashMap<>(CCorePlugin.getOptions());
 			} else {
-				preferences = new HashMap<String, Object>(cProject.getOptions(true));
+				preferences = new HashMap<>(cProject.getOptions(true));
 			}
 
 			if (inputCElement instanceof ITranslationUnit) {
@@ -1268,14 +1265,14 @@ public class CEditor extends TextEditor
 
 	/**
 	 * Time when last error message got set.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	private long fErrorMessageTime;
 
 	/**
 	 * Timeout for the error message.
-	 * 
+	 *
 	 * @since 5.3
 	 */
 	private static final long ERROR_MESSAGE_TIMEOUT = 1000;
@@ -1347,7 +1344,7 @@ public class CEditor extends TextEditor
 	 * AST reconciling listeners.
 	 * @since 4.0
 	 */
-	private final ListenerList<ICReconcilingListener> fReconcilingListeners = new ListenerList<ICReconcilingListener>(
+	private final ListenerList<ICReconcilingListener> fReconcilingListeners = new ListenerList<>(
 			ListenerList.IDENTITY);
 
 	/**
@@ -1408,7 +1405,7 @@ public class CEditor extends TextEditor
 		setOutlinerContextMenuId("#CEditorOutlinerContext"); //$NON-NLS-1$
 
 		fCEditorErrorTickUpdater = new CEditorErrorTickUpdater(this);
-		fPostSaveListeners = new ListenerList<IPostSaveListener>();
+		fPostSaveListeners = new ListenerList<>();
 	}
 
 	@Override

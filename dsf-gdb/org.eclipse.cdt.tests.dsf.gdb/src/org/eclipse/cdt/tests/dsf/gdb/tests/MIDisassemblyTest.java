@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - Initial Implementation
  *******************************************************************************/
@@ -50,14 +50,14 @@ import org.junit.runners.Parameterized;
 
 /*
  * This is the Disassembly Service test suite.
- * 
+ *
  * It is meant to be a regression suite to be executed automatically against
  * the DSF nightly builds.
- * 
+ *
  * It is also meant to be augmented with a proper test case(s) every time a
  * feature is added or in the event (unlikely :-) that a bug is found in the
  * Disassembly Service.
- * 
+ *
  * Refer to the JUnit4 documentation for an explanation of the annotations.
  */
 
@@ -143,10 +143,10 @@ public class MIDisassemblyTest extends BaseParametrizedTestCase {
 	 * Invokes the ExpressionService to evaluate an expression. In theory, we
 	 * shouldn't rely on another service to test this one but we need a way to
 	 * access a variable from the test application in order verify that the
-	 * memory operations (read/write) are working properly.   
+	 * memory operations (read/write) are working properly.
 	 * ------------------------------------------------------------------------
 	 * @param expression Expression to resolve
-	 * @return Resolved expression  
+	 * @return Resolved expression
 	 * @throws InterruptedException
 	 * ------------------------------------------------------------------------
 	 */

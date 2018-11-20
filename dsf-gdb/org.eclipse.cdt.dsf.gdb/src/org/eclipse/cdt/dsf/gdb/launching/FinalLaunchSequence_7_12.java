@@ -33,7 +33,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Subclass for GDB >= 7.12.
- * 
+ *
  * @since 5.2
  */
 public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
@@ -52,7 +52,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 		if (GROUP_TOP_LEVEL.equals(group)) {
 			// Initialize the list with the base class' steps
 			// We need to create a list that we can modify, which is why we create our own ArrayList.
-			List<String> orderList = new ArrayList<String>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
+			List<String> orderList = new ArrayList<>(Arrays.asList(super.getExecutionOrder(GROUP_TOP_LEVEL)));
 
 			// Now insert our steps right after the initialization of the base class.
 			orderList.add(orderList.indexOf("stepInitializeFinalLaunchSequence_7_7") + 1, //$NON-NLS-1$
@@ -150,7 +150,7 @@ public class FinalLaunchSequence_7_12 extends FinalLaunchSequence_7_7 {
 			// GDBs that don't support non-stop don't allow you to set it to false.
 			// We really should set it to false when GDB supports it though.
 			// Something to fix later.
-			// Note: The base class is setting pagination to off, this is only necessary when 
+			// Note: The base class is setting pagination to off, this is only necessary when
 			// using the Full GDB console (The basic console is started in MI mode and does not paginate).
 			// When the Full GDB console is used, pagination is set to off when GDB is started.
 			fCommandControl.queueCommand(fCommandFactory.createMIGDBSetNonStop(fCommandControl.getContext(), true),

@@ -1,16 +1,16 @@
 /*******************************************************************************
  * Copyright (c) 2006, 2018 PalmSource, Inc. and others.
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0 
- * 
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * Ewa Matejska (PalmSource)
- * 
+ *
  * Referenced GDBDebuggerPage code to write this.
  * Anna Dushistova (Mentor Graphics) - moved to org.eclipse.cdt.launch.remote.tabs
  * Red Hat Inc. - modified to work with CDT Container Launcher
@@ -148,6 +148,7 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		fGDBServerCommandText.setLayoutData(data);
 		fGDBServerCommandText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -162,6 +163,7 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		fGDBServerPortNumberText.setLayoutData(data);
 		fGDBServerPortNumberText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -186,6 +188,7 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 		fRemoteTimeoutValueText.setToolTipText(Messages.Gdbserver_Settings_Remotetimeout_tooltip);
 		fRemoteTimeoutValueText.addModifyListener(new ModifyListener() {
 
+			@Override
 			public void modifyText(ModifyEvent evt) {
 				updateLaunchConfigurationDialog();
 			}
@@ -199,7 +202,7 @@ public class RemoteDebuggerPage extends GdbDebuggerPage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.cdt.debug.mi.internal.ui.GDBDebuggerPage#createTabs(org.eclipse
 	 * .swt.widgets.TabFolder)

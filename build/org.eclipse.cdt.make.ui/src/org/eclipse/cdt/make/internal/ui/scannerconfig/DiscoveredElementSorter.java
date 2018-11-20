@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ViewerSorter;
 /**
  * @deprecated as of CDT 4.0. This class was used to set preferences/properties
  * for 3.X style projects.
- * 
+ *
  * @author vhirsl
  */
 @Deprecated

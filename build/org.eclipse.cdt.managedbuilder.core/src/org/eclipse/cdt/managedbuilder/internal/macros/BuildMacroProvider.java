@@ -121,7 +121,7 @@ public class BuildMacroProvider implements IBuildMacroProvider, IMacroContextInf
 	}
 
 	private static IBuildMacroSupplier[] filterMacroSuppliers(ICdtVariableSupplier suppliers[]) {
-		List<ICdtVariableSupplier> list = new ArrayList<ICdtVariableSupplier>(suppliers.length);
+		List<ICdtVariableSupplier> list = new ArrayList<>(suppliers.length);
 		for (int i = 0; i < suppliers.length; i++) {
 			if (suppliers[i] instanceof IBuildMacroSupplier)
 				list.add(suppliers[i]);

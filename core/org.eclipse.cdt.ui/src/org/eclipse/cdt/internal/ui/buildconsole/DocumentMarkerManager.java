@@ -14,12 +14,11 @@
 
 package org.eclipse.cdt.internal.ui.buildconsole;
 
+import org.eclipse.cdt.core.ProblemMarkerInfo;
 import org.eclipse.jface.text.ITypedRegion;
 
-import org.eclipse.cdt.core.ProblemMarkerInfo;
-
 /**
- * Manages current position of highlighted error in BuildConsole 
+ * Manages current position of highlighted error in BuildConsole
  */
 class DocumentMarkerManager {
 

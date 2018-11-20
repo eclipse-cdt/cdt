@@ -46,7 +46,7 @@ import org.eclipse.core.runtime.Path;
 
 public class CompilerOptionParser implements IWorkspaceRunnable {
 
-	private static final String GCC_COMPILE_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"; //$NON-NLS-1$ 
+	private static final String GCC_COMPILE_OPTIONS_PROVIDER_ID = "org.eclipse.cdt.debug.application.DwarfLanguageSettingsProvider"; //$NON-NLS-1$
 	private final IProject project;
 	private final String executable;
 
@@ -175,4 +175,4 @@ public class CompilerOptionParser implements IWorkspaceRunnable {
 
 		return currentFolder;
 	}
-};
+}

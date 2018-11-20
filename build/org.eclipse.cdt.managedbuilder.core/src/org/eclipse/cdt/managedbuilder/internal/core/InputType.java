@@ -325,7 +325,7 @@ public class InputType extends BuildObject implements IInputType {
 		superClassId = SafeStringInterner.safeIntern(element.getAttribute(IProjectType.SUPERCLASS));
 
 		// sourceContentType
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		String ids = element.getAttribute(IInputType.SOURCE_CONTENT_TYPE);
 		if (ids != null) {
 			StringTokenizer tokenizer = new StringTokenizer(ids, DEFAULT_SEPARATOR);
@@ -456,7 +456,7 @@ public class InputType extends BuildObject implements IInputType {
 
 		// sourceContentType
 		IContentTypeManager manager = Platform.getContentTypeManager();
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (element.getAttribute(IInputType.SOURCE_CONTENT_TYPE) != null) {
 			String ids = element.getAttribute(IInputType.SOURCE_CONTENT_TYPE);
 			if (ids != null) {
@@ -471,7 +471,7 @@ public class InputType extends BuildObject implements IInputType {
 				}
 
 				if (sourceContentTypeIds != null) {
-					List<IContentType> types = new ArrayList<IContentType>();
+					List<IContentType> types = new ArrayList<>();
 					for (String sourceContentTypeId : sourceContentTypeIds) {
 						IContentType type = manager.getContentType(sourceContentTypeId);
 						if (type != null)
@@ -869,7 +869,7 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public IPath[] getAdditionalDependencies() {
-		List<IPath> deps = new ArrayList<IPath>();
+		List<IPath> deps = new ArrayList<>();
 		for (AdditionalInput additionalInput : getAdditionalInputList()) {
 			int kind = additionalInput.getKind();
 			if (kind == IAdditionalInput.KIND_ADDITIONAL_DEPENDENCY
@@ -892,7 +892,7 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	@Override
 	public IPath[] getAdditionalResources() {
-		List<IPath> ins = new ArrayList<IPath>();
+		List<IPath> ins = new ArrayList<>();
 		for (AdditionalInput additionalInput : getAdditionalInputList()) {
 			int kind = additionalInput.getKind();
 			if (kind == IAdditionalInput.KIND_ADDITIONAL_INPUT
@@ -915,7 +915,7 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	private Vector<InputOrder> getInputOrderList() {
 		if (inputOrderList == null) {
-			inputOrderList = new Vector<InputOrder>();
+			inputOrderList = new Vector<>();
 		}
 		return inputOrderList;
 	}
@@ -925,7 +925,7 @@ public class InputType extends BuildObject implements IInputType {
 	 */
 	private Vector<AdditionalInput> getAdditionalInputList() {
 		if (additionalInputList == null) {
-			additionalInputList = new Vector<AdditionalInput>();
+			additionalInputList = new Vector<>();
 		}
 		return additionalInputList;
 	}
@@ -1023,7 +1023,7 @@ public class InputType extends BuildObject implements IInputType {
 				return superClass.getDependencyExtensionsAttribute();
 			} else {
 				if (dependencyExtensions == null) {
-					dependencyExtensions = new ArrayList<String>();
+					dependencyExtensions = new ArrayList<>();
 				}
 			}
 		}
@@ -1096,7 +1096,7 @@ public class InputType extends BuildObject implements IInputType {
 
 	private List<String> getDependencyExtensionsList() {
 		if (dependencyExtensions == null) {
-			dependencyExtensions = new ArrayList<String>();
+			dependencyExtensions = new ArrayList<>();
 		}
 		return dependencyExtensions;
 	}
@@ -1441,7 +1441,7 @@ public class InputType extends BuildObject implements IInputType {
 				setRebuildState(true);
 			}
 		} else {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			StringTokenizer tokenizer = new StringTokenizer(extensions, DEFAULT_SEPARATOR);
 			while (tokenizer.hasMoreElements()) {
 				list.add(tokenizer.nextToken());
@@ -1480,7 +1480,7 @@ public class InputType extends BuildObject implements IInputType {
 		//  Use content type if specified and registered with Eclipse
 		IContentType types[] = getSourceContentTypes();
 		if (types.length != 0) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (IContentType type : types) {
 				list.addAll(Arrays.asList(((Tool) tool).getContentTypeFileSpecs(type, project)));
 			}
@@ -1493,7 +1493,7 @@ public class InputType extends BuildObject implements IInputType {
 	public String[] getHeaderExtensions(ITool tool) {
 		IContentType types[] = getHeaderContentTypes();
 		if (types.length != 0) {
-			List<String> list = new ArrayList<String>();
+			List<String> list = new ArrayList<>();
 			for (IContentType type : types) {
 				list.addAll(Arrays.asList(((Tool) tool).getContentTypeFileSpecs(type)));
 			}
@@ -1589,7 +1589,7 @@ public class InputType extends BuildObject implements IInputType {
 
 			// Resolve content types
 			IContentTypeManager manager = Platform.getContentTypeManager();
-			List<IContentType> list = new ArrayList<IContentType>();
+			List<IContentType> list = new ArrayList<>();
 			if (sourceContentTypeIds != null) {
 				for (String sourceContentTypeId : sourceContentTypeIds) {
 					IContentType type = manager.getContentType(sourceContentTypeId);

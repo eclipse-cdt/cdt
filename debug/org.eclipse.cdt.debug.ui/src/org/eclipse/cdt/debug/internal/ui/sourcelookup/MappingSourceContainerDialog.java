@@ -587,7 +587,7 @@ public class MappingSourceContainerDialog extends TitleAreaDialog {
 		MapEntrySourceContainer entry = selEntries[0];
 		try {
 			ISourceContainer[] containers = fContainer.getSourceContainers();
-			List<MapEntrySourceContainer> list = new ArrayList<MapEntrySourceContainer>(containers.length);
+			List<MapEntrySourceContainer> list = new ArrayList<>(containers.length);
 			for (ISourceContainer container : containers) {
 				list.add(((MapEntrySourceContainer) container).copy());
 			}

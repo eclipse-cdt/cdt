@@ -20,7 +20,7 @@ import java.net.URI;
  * files. Clients can obtain instances of IIndexFileLocation implementations from
  * {@link IndexLocationFactory}. Two index file locations are considered equal if their URIs are
  * equal.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 4.0

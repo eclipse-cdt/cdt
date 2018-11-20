@@ -65,7 +65,7 @@ public class SemanticsTests extends AST2TestBase {
 	//		void operator +(X x)    {} // Addition
 	//		A operator +=(int y)    {} // Addition with assignment
 	//		B operator -(X x)       {} // Subtraction
-	//		void operator -=(int y) {} // Subtraction with assignment	
+	//		void operator -=(int y) {} // Subtraction with assignment
 	//		void operator ->*(int z){} // ptr-to-member selection
 	//		void operator /(int x)  {} // division
 	//		void operator /=(int y) {} // division with assignment
@@ -88,7 +88,7 @@ public class SemanticsTests extends AST2TestBase {
 	//		void operator()(int a, int b, int c) {} // function call
 	//
 	//		void operator[](int i) {} // subscripting
-	//      
+	//
 	//      operator A(); // conversion
 	//      operator B(); // conversion
 	//	};

@@ -78,7 +78,7 @@ public class ExcludeResources extends ProcessRunner {
 		 * Determine which configurations to exclude for
 		 */
 		IConfiguration[] allConfigs = managedProject.getConfigurations();
-		List<IConfiguration> matchingConfigs = new ArrayList<IConfiguration>();
+		List<IConfiguration> matchingConfigs = new ArrayList<>();
 		for (int i = 0; i < allConfigs.length; i++) {
 			IConfiguration config = allConfigs[i];
 			if (config.getId().matches(configIdPattern)) {
@@ -87,7 +87,7 @@ public class ExcludeResources extends ProcessRunner {
 		}
 
 		if (invert) {
-			List<IConfiguration> invertedConfigs = new ArrayList<IConfiguration>(Arrays.asList(allConfigs));
+			List<IConfiguration> invertedConfigs = new ArrayList<>(Arrays.asList(allConfigs));
 			invertedConfigs.removeAll(matchingConfigs);
 			matchingConfigs = invertedConfigs;
 		}

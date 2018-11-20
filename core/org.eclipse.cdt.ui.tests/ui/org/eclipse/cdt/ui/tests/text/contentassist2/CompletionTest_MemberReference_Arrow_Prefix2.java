@@ -18,7 +18,7 @@ import junit.framework.TestSuite;
 
 /**
  * @author hamer
- * 
+ *
  * Testing Member_Reference, with a prefix
  * Complex Context: Function return value: foo()->a(CTRL+SPACE)
  *

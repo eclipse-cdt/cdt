@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  * Institute for Software - initial API and implementation
  *******************************************************************************/
 
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
@@ -32,11 +33,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
-import org.eclipse.cdt.internal.ui.refactoring.utils.NameHelper;
-
 /**
  * @author Mirko Stocker
- * 
+ *
  * Text field with a description and error handling using the Validator-Callback. Can also be used for multiple inputs.
  *
  */
@@ -44,9 +43,9 @@ public class ValidatingLabeledTextField extends Composite {
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
 
-	private final Map<Text, Boolean> validationStatus = new HashMap<Text, Boolean>();
+	private final Map<Text, Boolean> validationStatus = new HashMap<>();
 
-	private final ArrayList<Listener> inputTextListeners = new ArrayList<Listener>();
+	private final ArrayList<Listener> inputTextListeners = new ArrayList<>();
 
 	private final Color errorColor = new Color(getShell().getDisplay(), new RGB(255, 208, 196));
 
@@ -169,7 +168,7 @@ public class ValidatingLabeledTextField extends Composite {
 
 				layout();
 
-				// recheck all other listeners in case duplicate names have been resolved, 
+				// recheck all other listeners in case duplicate names have been resolved,
 				// but remove this first to avoid an infinite loop
 				inputTextListeners.remove(this);
 				for (Listener listener : (ArrayList<Listener>) inputTextListeners.clone()) {

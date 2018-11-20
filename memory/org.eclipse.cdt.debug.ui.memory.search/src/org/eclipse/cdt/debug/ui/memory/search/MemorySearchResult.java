@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -27,28 +27,32 @@ public class MemorySearchResult implements ISearchResult {
 	private ISearchQuery fQuery;
 	private String fLabel;
 
-	private Vector<ISearchResultListener> listeners = new Vector<ISearchResultListener>();
+	private Vector<ISearchResultListener> listeners = new Vector<>();
 
-	private Vector<MemoryMatch> fMatches = new Vector<MemoryMatch>();
+	private Vector<MemoryMatch> fMatches = new Vector<>();
 
 	public MemorySearchResult(ISearchQuery query, String label) {
 		fQuery = query;
 		fLabel = label;
 	}
 
+	@Override
 	public ImageDescriptor getImageDescriptor() {
 
 		return null;
 	}
 
+	@Override
 	public String getLabel() {
 		return fLabel;
 	}
 
+	@Override
 	public ISearchQuery getQuery() {
 		return fQuery;
 	}
 
+	@Override
 	public String getTooltip() {
 
 		return fLabel;
@@ -75,11 +79,13 @@ public class MemorySearchResult implements ISearchResult {
 		}
 	}
 
+	@Override
 	public void addListener(ISearchResultListener l) {
 		listeners.addElement(l);
 
 	}
 
+	@Override
 	public void removeListener(ISearchResultListener l) {
 		listeners.removeElement(l);
 	}

@@ -68,15 +68,15 @@ public class MIDataListRegisterValuesInfo extends MIInfo {
 
 	/**
 	 * Returns the desired subset of results. When this function is being called
-	 * the data here represents a coalesced request which is a superset of at 
-	 * least two original requests. We are extracting the data associated with 
+	 * the data here represents a coalesced request which is a superset of at
+	 * least two original requests. We are extracting the data associated with
 	 * the specified original request which we know is contained in this result.
 	 */
 	@Override
 	public <V extends ICommandResult> V getSubsetResult(ICommand<V> cmd) {
 		if (cmd instanceof MIDataListRegisterValues) {
 			MIDataListRegisterValues command = (MIDataListRegisterValues) cmd;
-			List<MIRegisterValue> aList = new ArrayList<MIRegisterValue>();
+			List<MIRegisterValue> aList = new ArrayList<>();
 			int[] wantedRegNos = command.getRegList();
 
 			/*

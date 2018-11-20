@@ -44,7 +44,7 @@ public class LayoutUtil {
 	 * Creates a composite and fills in the given editors.
 	 * @param labelOnTop Defines if the label of all fields should be on top of the fields
 	 * @param minWidth The minimal width of the composite
-	 * @param minHeight The minimal height of the composite 
+	 * @param minHeight The minimal height of the composite
 	 */
 	public static void doDefaultLayout(Composite parent, DialogField[] editors, boolean labelOnTop, int minWidth,
 			int minHeight) {

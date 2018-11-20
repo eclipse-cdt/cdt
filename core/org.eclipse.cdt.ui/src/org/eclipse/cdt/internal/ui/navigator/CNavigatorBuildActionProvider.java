@@ -24,7 +24,7 @@ import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
 /**
  * A Common Navigator action provider providing the contributions
  * from the build action group.
- * 
+ *
  * @see CNavigatorBuildActionGroup
  */
 public class CNavigatorBuildActionProvider extends CommonActionProvider {

@@ -19,7 +19,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationCont
 
 /**
  * An adapter to support breakpoint creation/deletion for the disassembly editor.
- * 
+ *
  * This interface is experimental.
  */
 public interface IElementToggleBreakpointAdapter {

@@ -62,7 +62,7 @@ public abstract class ResourceChangeHandlerBase implements IResourceChangeListen
 
 	private class DeltaVisitor implements IResourceDeltaVisitor {
 		//		private IResourceDelta fRootDelta;
-		private Map<IResource, IResource> fMoveMap = new HashMap<IResource, IResource>();
+		private Map<IResource, IResource> fMoveMap = new HashMap<>();
 		private IResourceMoveHandler fHandler;
 
 		public DeltaVisitor(IResourceMoveHandler handler, IResourceDelta rootDelta) {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -94,7 +94,7 @@ public class GdbMemoryBlockAddressInfoRetrieval implements IMemoryBlockAddressIn
 									@Override
 									protected void handleCompleted() {
 										request.done();
-									};
+									}
 								};
 
 								for (final IGdbMemoryAddressInfoTypeRetrieval infoProvider : infoTypeProviders) {
@@ -123,7 +123,7 @@ public class GdbMemoryBlockAddressInfoRetrieval implements IMemoryBlockAddressIn
 						request.done();
 					}
 				} else {
-					// The selection context does not match the block memory context, 
+					// The selection context does not match the block memory context,
 					// Simply close the request
 					request.done();
 				}

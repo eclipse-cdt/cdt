@@ -16,27 +16,49 @@
 
 package org.eclipse.cdt.internal.core.lrparser.xlc.c;
 
-import lpg.lpgjavaruntime.*;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
-import org.eclipse.cdt.core.dom.ast.*;
+import org.eclipse.cdt.core.dom.ast.IASTBinaryExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCastExpression;
+import org.eclipse.cdt.core.dom.ast.IASTCompletionNode;
+import org.eclipse.cdt.core.dom.ast.IASTCompositeTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTElaboratedTypeSpecifier;
+import org.eclipse.cdt.core.dom.ast.IASTLiteralExpression;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.dom.ast.IASTTypeIdExpression;
+import org.eclipse.cdt.core.dom.ast.IASTUnaryExpression;
+import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.IDOMTokenMap;
 import org.eclipse.cdt.core.dom.lrparser.IParser;
 import org.eclipse.cdt.core.dom.lrparser.ITokenCollector;
-import org.eclipse.cdt.core.dom.lrparser.CPreprocessorAdapter;
 import org.eclipse.cdt.core.dom.lrparser.action.ITokenStream;
-import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.lrparser.action.ScopedStack;
-import org.eclipse.cdt.core.parser.IScanner;
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCSecondaryParserFactory;
+import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
+import org.eclipse.cdt.core.dom.lrparser.lpgextensions.FixedBacktrackingParser;
 import org.eclipse.cdt.core.dom.parser.IBuiltinBindingsProvider;
 import org.eclipse.cdt.core.index.IIndex;
-
-import org.eclipse.cdt.core.dom.lrparser.action.gnu.GNUBuildASTParserAction;
-
-import org.eclipse.cdt.core.dom.lrparser.action.gnu.GCCSecondaryParserFactory;
-
 import org.eclipse.cdt.core.lrparser.xlc.action.XlcCBuildASTParserAction;
+import org.eclipse.cdt.core.parser.IScanner;
 import org.eclipse.cdt.internal.core.lrparser.xlc.ast.XlcCNodeFactory;
+
+import lpg.lpgjavaruntime.BadParseException;
+import lpg.lpgjavaruntime.BadParseSymFileException;
+import lpg.lpgjavaruntime.DiagnoseParser;
+import lpg.lpgjavaruntime.ErrorToken;
+import lpg.lpgjavaruntime.IToken;
+import lpg.lpgjavaruntime.LexStream;
+import lpg.lpgjavaruntime.Monitor;
+import lpg.lpgjavaruntime.NotBacktrackParseTableException;
+import lpg.lpgjavaruntime.NullExportedSymbolsException;
+import lpg.lpgjavaruntime.NullTerminalSymbolsException;
+import lpg.lpgjavaruntime.ParseErrorCodes;
+import lpg.lpgjavaruntime.ParseTable;
+import lpg.lpgjavaruntime.PrsStream;
+import lpg.lpgjavaruntime.RuleAction;
+import lpg.lpgjavaruntime.UndefinedEofSymbolException;
+import lpg.lpgjavaruntime.UnimplementedTerminalsException;
 
 public class XlcCParser extends PrsStream
 		implements RuleAction, ITokenStream, ITokenCollector, IParser<IASTTranslationUnit>
@@ -85,6 +107,7 @@ public class XlcCParser extends PrsStream
 		return btParser.getFirstToken();
 	}
 
+	@Override
 	public IToken getLeftIToken() {
 		return super.getIToken(getLeftSpan());
 	}
@@ -93,6 +116,7 @@ public class XlcCParser extends PrsStream
 		return btParser.getLastToken();
 	}
 
+	@Override
 	public IToken getRightIToken() {
 		return super.getIToken(getRightSpan());
 	}
@@ -130,6 +154,7 @@ public class XlcCParser extends PrsStream
 		}
 	}
 
+	@Override
 	public String[] orderedTerminalSymbols() {
 		return XlcCParsersym.orderedTerminalSymbols;
 	}
@@ -143,7 +168,7 @@ public class XlcCParser extends PrsStream
 	}
 
 	public PrsStream getParseStream() {
-		return (PrsStream) this;
+		return this;
 	}
 
 	//
@@ -174,7 +199,7 @@ public class XlcCParser extends PrsStream
 
 	public void parser(Monitor monitor, int error_repair_count) {
 		try {
-			btParser = new FixedBacktrackingParser(monitor, (TokenStream) this, prs, (RuleAction) this);
+			btParser = new FixedBacktrackingParser(monitor, this, prs, this);
 		} catch (NotBacktrackParseTableException e) {
 			throw new Error(
 					new NotBacktrackParseTableException("Regenerate XlcCParserprs.java with -BACKTRACK option"));
@@ -202,7 +227,7 @@ public class XlcCParser extends PrsStream
 	}
 
 	private void initActions(Map<String, String> properties) {
-		ScopedStack<Object> astStack = new ScopedStack<Object>();
+		ScopedStack<Object> astStack = new ScopedStack<>();
 
 		action = new XlcCBuildASTParserAction(this, astStack, XlcCNodeFactory.getDefault(),
 				GCCSecondaryParserFactory.getDefault());
@@ -213,11 +238,13 @@ public class XlcCParser extends PrsStream
 
 	}
 
+	@Override
 	public void addToken(IToken token) {
 		token.setKind(mapKind(token.getKind())); // TODO does mapKind need to be called?
 		super.addToken(token);
 	}
 
+	@Override
 	public IASTTranslationUnit parse() {
 		// this has to be done, or... kaboom!
 		setStreamLength(getSize());
@@ -230,19 +257,23 @@ public class XlcCParser extends PrsStream
 		return (IASTTranslationUnit) action.getParseResult();
 	}
 
+	@Override
 	public IASTCompletionNode getCompletionNode() {
 		return compNode;
 	}
 
 	// uncomment this method to use with backtracking parser
+	@Override
 	public List<IToken> getRuleTokens() {
 		return getTokens().subList(getLeftSpan(), getRightSpan() + 1);
 	}
 
+	@Override
 	public String[] getOrderedTerminalSymbols() {
 		return XlcCParsersym.orderedTerminalSymbols;
 	}
 
+	@Override
 	@SuppressWarnings("nls")
 	public String getName() {
 		return "XlcCParser";
@@ -250,6 +281,7 @@ public class XlcCParser extends PrsStream
 
 	private GNUBuildASTParserAction gnuAction;
 
+	@Override
 	public void ruleAction(int ruleNumber) {
 		switch (ruleNumber) {
 

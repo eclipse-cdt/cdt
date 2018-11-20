@@ -15,9 +15,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.managedbuilder.tests.suite;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.build.core.scannerconfig.tests.CfgScannerConfigProfileManagerTests;
 import org.eclipse.cdt.build.core.scannerconfig.tests.GCCSpecsConsoleParserTest;
 import org.eclipse.cdt.core.CCorePlugin;
@@ -48,6 +45,9 @@ import org.eclipse.cdt.projectmodel.tests.BackwardCompatiblityTests;
 import org.eclipse.cdt.projectmodel.tests.CProjectDescriptionSerializationTests;
 import org.eclipse.cdt.projectmodel.tests.OptionStringListValueTests;
 import org.eclipse.cdt.projectmodel.tests.ProjectModelTests;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Main TestSuite for all the managed build tests

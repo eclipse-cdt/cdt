@@ -37,7 +37,7 @@ public abstract class Rule extends Parent implements IRule {
 	@Override
 	public ICommand[] getCommands() {
 		IDirective[] directives = getDirectives();
-		ArrayList<IDirective> cmds = new ArrayList<IDirective>(directives.length);
+		ArrayList<IDirective> cmds = new ArrayList<>(directives.length);
 		for (int i = 0; i < directives.length; i++) {
 			if (directives[i] instanceof ICommand) {
 				cmds.add(directives[i]);

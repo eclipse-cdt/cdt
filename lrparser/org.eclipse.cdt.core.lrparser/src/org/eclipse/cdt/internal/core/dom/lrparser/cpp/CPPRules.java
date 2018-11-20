@@ -7,14 +7,14 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.internal.core.dom.lrparser.cpp;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 public class CPPRules {
 	static Map fRules = new HashMap();

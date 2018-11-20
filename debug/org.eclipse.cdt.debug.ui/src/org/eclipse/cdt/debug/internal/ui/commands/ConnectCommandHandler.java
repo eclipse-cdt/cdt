@@ -18,7 +18,7 @@ import org.eclipse.debug.ui.actions.DebugCommandHandler;
 
 /**
  * Command handler to trigger a connect operation
- * 
+ *
  * @since 7.3
  */
 public class ConnectCommandHandler extends DebugCommandHandler {

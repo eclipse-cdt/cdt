@@ -15,10 +15,9 @@
 
 package org.eclipse.cdt.internal.ui.search;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * The content in the tree and list views may be either:
@@ -39,11 +38,11 @@ public interface IPDOMSearchContentProvider {
 	static Object URI_CONTAINER = new Object();
 
 	/** This node appears in the tree when the indexer was running during the search
-	 * to warn the user that the results are suspicious.  
+	 * to warn the user that the results are suspicious.
 	 * <p>
 	 * TODO: it would be better if IIndexManager told us which projects specifically
 	 * were being indexed at the time, so we could annotate per-project whose results are suspicious
-	 * (which may be none at all for a given search).  
+	 * (which may be none at all for a given search).
 	 * See the handling of {@link CSearchResult#wasIndexerBusy()}.
 	 */
 	static IStatus INCOMPLETE_RESULTS_NODE = new Status(IStatus.WARNING, CUIPlugin.PLUGIN_ID,

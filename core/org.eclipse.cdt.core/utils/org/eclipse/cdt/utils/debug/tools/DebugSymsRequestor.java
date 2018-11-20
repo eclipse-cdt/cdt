@@ -32,10 +32,10 @@ public class DebugSymsRequestor implements IDebugEntryRequestor {
 	DebugSym currentCU;
 	DebugSym currentFunction;
 
-	List<DebugSym> list = new ArrayList<DebugSym>();
+	List<DebugSym> list = new ArrayList<>();
 
 	/**
-	 * 
+	 *
 	 */
 	public DebugSymsRequestor() {
 		super();

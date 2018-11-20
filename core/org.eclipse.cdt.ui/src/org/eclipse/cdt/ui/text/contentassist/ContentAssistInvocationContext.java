@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems)
@@ -61,7 +61,7 @@ public class ContentAssistInvocationContext {
 	/**
 	 * Equivalent to
 	 * {@linkplain #ContentAssistInvocationContext(ITextViewer, int) ContentAssistInvocationContext(viewer, viewer.getSelectedRange().x)}.
-	 * 
+	 *
 	 * @param viewer the text viewer that content assist is invoked in
 	 */
 	public ContentAssistInvocationContext(ITextViewer viewer) {
@@ -70,7 +70,7 @@ public class ContentAssistInvocationContext {
 
 	/**
 	 * Creates a new context for the given viewer and offset.
-	 * 
+	 *
 	 * @param viewer the text viewer that content assist is invoked in
 	 * @param offset the offset into the viewer's document where content assist is invoked at
 	 */
@@ -94,7 +94,7 @@ public class ContentAssistInvocationContext {
 
 	/**
 	 * Creates a new context for the given document and offset.
-	 * 
+	 *
 	 * @param document the document that content assist is invoked in
 	 * @param offset the offset into the document where content assist is invoked at
 	 */
@@ -109,7 +109,7 @@ public class ContentAssistInvocationContext {
 
 	/**
 	 * Returns the invocation offset.
-	 * 
+	 *
 	 * @return the invocation offset
 	 */
 	public final int getInvocationOffset() {
@@ -119,7 +119,7 @@ public class ContentAssistInvocationContext {
 
 	/**
 	 * Returns the viewer, <code>null</code> if not available.
-	 * 
+	 *
 	 * @return the viewer, possibly <code>null</code>
 	 */
 	public final ITextViewer getViewer() {
@@ -129,7 +129,7 @@ public class ContentAssistInvocationContext {
 
 	/**
 	 * Returns the document that content assist is invoked on, or <code>null</code> if not known.
-	 * 
+	 *
 	 * @return the document or <code>null</code>
 	 */
 	public IDocument getDocument() {
@@ -145,7 +145,7 @@ public class ContentAssistInvocationContext {
 	/**
 	 * Computes the identifier (as specified by {@link Character#isJavaIdentifierPart(char)}) that
 	 * immediately precedes the invocation offset.
-	 * 
+	 *
 	 * @return the prefix preceding the content assist invocation offset, <code>null</code> if
 	 *         there is no document
 	 * @throws BadLocationException if accessing the document fails
@@ -194,14 +194,14 @@ public class ContentAssistInvocationContext {
 	 * necessarily cached values).
 	 * <p>
 	 * Example:
-	 * 
+	 *
 	 * <pre>
 	 * class MyContext extends ContentAssistInvocationContext {
 	 * 	private final Object fState;
 	 * 	private Object fCachedInfo;
-	 * 
+	 *
 	 * 	...
-	 * 
+	 *
 	 * 	public boolean equals(Object obj) {
 	 * 		if (!super.equals(obj))
 	 * 			return false;
@@ -210,12 +210,12 @@ public class ContentAssistInvocationContext {
 	 * 	}
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * </p>
 	 * <p>
 	 * Subclasses should also extend {@link Object#hashCode()}.
 	 * </p>
-	 * 
+	 *
 	 * @param obj {@inheritDoc}
 	 * @return {@inheritDoc}
 	 */

@@ -27,7 +27,7 @@ import org.eclipse.cdt.utils.envvar.EnvVarOperationProcessor;
  * This class implements the "merging" functionality of environment variables
  * Used by the EnvironmentVariableProvider to "merge" the sets of macros returned
  * by different suppliers into one set returned to the user
- *  
+ *
  * @since 3.0
  *
  */
@@ -63,7 +63,7 @@ public class EnvVarCollector {
 
 				if (fMap == null) {
 					noCheck = true;
-					fMap = new HashMap<String, EnvVarDescriptor>();
+					fMap = new HashMap<>();
 				}
 
 				EnvVarDescriptor des = null;
@@ -81,7 +81,7 @@ public class EnvVarCollector {
 
 	/**
 	 * Returns an array of variables held by this collector
-	 * 
+	 *
 	 * @param includeRemoved true if removed variables should be included in the resulting array
 	 * @return IBuildEnvironmentVariable[]
 	 */
@@ -89,7 +89,7 @@ public class EnvVarCollector {
 		if (fMap == null)
 			return new EnvVarDescriptor[0];
 		Collection<EnvVarDescriptor> values = fMap.values();
-		List<EnvVarDescriptor> list = new ArrayList<EnvVarDescriptor>();
+		List<EnvVarDescriptor> list = new ArrayList<>();
 		Iterator<EnvVarDescriptor> iter = values.iterator();
 		while (iter.hasNext()) {
 			EnvVarDescriptor des = iter.next();
@@ -101,7 +101,7 @@ public class EnvVarCollector {
 
 	/**
 	 * Returns a variable of a given name held by this collector
-	 * 
+	 *
 	 * @param name a variable name
 	 * @return IBuildEnvironmentVariable
 	 */
@@ -118,7 +118,7 @@ public class EnvVarCollector {
 	/**
 	 * Returns an array of variables held by this collector
 	 * The call to this method is equivalent of calling toArray(true)
-	 * 
+	 *
 	 * @return IBuildEnvironmentVariable[]
 	 */
 	public EnvVarDescriptor[] getVariables() {

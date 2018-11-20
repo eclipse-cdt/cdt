@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - Initial API and implementation
  *     Dmitry Kozlov (Mentor Graphics) - Trace control view enhancements (Bug 390827)
@@ -59,9 +59,9 @@ import org.eclipse.ui.progress.UIJob;
 
 /**
  * TraceControlView Part
- * 
+ *
  * This view is used to control Tracing.
- * 
+ *
  * @since 2.1
  */
 public class TraceControlView extends ViewPart implements IViewPart {
@@ -235,7 +235,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 		// Tracing status line
 		createStatusLine(fTopComposite);
 
-		// Secondary status: start time, stop time and reason 
+		// Secondary status: start time, stop time and reason
 		setSecondaryStatusLineVisible(false, null);
 
 		// Buffer line
@@ -521,7 +521,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 					} catch (Exception ex) {
 					}
 				} else if (e.detail == SWT.DRAG) {
-					// We don't want to query gdb while user drags thumb, just update the label instead 
+					// We don't want to query gdb while user drags thumb, just update the label instead
 					// but postpone actual gdb query to the time thumb is released (e.detail == SWT.NONE)
 					fFrameNumberLabel.setText(TracepointsMessages
 							.bind(TracepointsMessages.TraceControlView_frame_dragging, fFrameSlider.getSelection()));
@@ -641,7 +641,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 					&& tData.getNumberOfCreatedFrames() > tData.getNumberOfCollectedFrame()) {
 				// If we run with Circular buffer and all buffer was filled in once, we continue displaying progress 100%
 				// and showing moving bar that makes a circle every tData.getNumberOfCollectedFrame() because it is buffer size in frames
-				// and actual number of collected frames from the start is tData.getNumberOfCreatedFrames(), but only last 
+				// and actual number of collected frames from the start is tData.getNumberOfCreatedFrames(), but only last
 				// tData.getNumberOfCollectedFrame() are stored in the buffer
 				int p = (tData.getNumberOfCreatedFrames() % tData.getNumberOfCollectedFrame()) * 100
 						/ tData.getNumberOfCollectedFrame();
@@ -751,14 +751,14 @@ public class TraceControlView extends ViewPart implements IViewPart {
 			fStatusLabel.setText(s);
 			setActionLinkVisible(false, EMPTY_STRING);
 
-			// If start and stop time are not available in trace data file, do not show secondary status line 
+			// If start and stop time are not available in trace data file, do not show secondary status line
 			if (getTimeMilliseconds(traceData.getStartTime()) != 0
 					&& getTimeMilliseconds(traceData.getStopTime()) != 0) {
 				setSecondaryStatusLineVisible(true, traceData);
 			} else {
 				setSecondaryStatusLineVisible(false, traceData);
 			}
-			//setNotesLineVisible(true, traceData, true);			
+			//setNotesLineVisible(true, traceData, true);
 			setBufferLineVisible(true, traceData, true);
 			setFrameLineVisible(true, traceData);
 
@@ -772,7 +772,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 			setActionLinkVisible(true, TracepointsMessages.TraceControlView_action_start);
 
 			setSecondaryStatusLineVisible(false, null);
-			//setNotesLineVisible(true, traceData, false);  			
+			//setNotesLineVisible(true, traceData, false);
 			setBufferLineVisible(true, traceData, false);
 			setFrameLineVisible(false, null);
 
@@ -914,17 +914,17 @@ public class TraceControlView extends ViewPart implements IViewPart {
 		return microseconds / 1000;
 	}
 
-	/** 
+	/**
 	 * Format time from gdb presentation into user-understandable form
 	 * @param time in gd presentation
-	 * @return 
+	 * @return
 	 */
 	protected String formatTime(String time) {
 		long milliseconds = getTimeMilliseconds(time);
 		return formatTime(milliseconds);
 	}
 
-	/** 
+	/**
 	 * Format time from standard milliseconds since Epoch into user-understandable form
 	 */
 	protected String formatTime(long milliseconds) {
@@ -945,7 +945,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 	}
 
 	/**
-	 * Format time interval returned by trace status command into human-readable 
+	 * Format time interval returned by trace status command into human-readable
 	 */
 	protected String formatTimeInterval(String startTime, String stopTime) {
 		long startMicroseconds = 0;
@@ -969,7 +969,7 @@ public class TraceControlView extends ViewPart implements IViewPart {
 	}
 
 	/**
-	 * Format time interval returned by trace status command into human-readable 
+	 * Format time interval returned by trace status command into human-readable
 	 */
 	protected String formatTimeInterval(long startMilliseconds, long stopMilliseconds, boolean shortForm) {
 		long millis = stopMilliseconds - startMilliseconds;
@@ -1009,9 +1009,9 @@ public class TraceControlView extends ViewPart implements IViewPart {
 		return (sb.toString());
 	}
 
-	/** 
+	/**
 	 * GDB's set trace-user and set trace-notes commands require quotes if argument contains spaces,
-	 * but these quotes are returned by trace status, to workaround this we remove quotes on UI side 
+	 * but these quotes are returned by trace status, to workaround this we remove quotes on UI side
 	 */
 	protected String removeQuotes(String s) {
 		if (s.startsWith("\"") && s.endsWith("\"")) { //$NON-NLS-1$//$NON-NLS-2$

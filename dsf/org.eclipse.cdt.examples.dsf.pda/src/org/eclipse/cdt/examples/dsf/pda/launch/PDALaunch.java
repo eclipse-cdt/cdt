@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -35,10 +35,10 @@ import org.eclipse.debug.core.model.ISourceLocator;
 import org.eclipse.debug.core.model.ITerminate;
 
 /**
- * The PDA launch object. In general, a DSF-based debugger has to override 
- * the base launch class in order to supply its own content providers for the 
+ * The PDA launch object. In general, a DSF-based debugger has to override
+ * the base launch class in order to supply its own content providers for the
  * debug view.  Additionally, the PDA launch is used to monitor the state of the
- * PDA debugger and to shutdown the DSF services and session belonging to the 
+ * PDA debugger and to shutdown the DSF services and session belonging to the
  * launch.
  * <p>
  * The PDA launch class mostly contains methods and fields that can be accessed
@@ -48,7 +48,7 @@ import org.eclipse.debug.core.model.ITerminate;
  */
 @ThreadSafe
 public class PDALaunch extends DsfLaunch implements ITerminate {
-	// DSF executor and session.  Both are created and shutdown by the launch. 
+	// DSF executor and session.  Both are created and shutdown by the launch.
 	private final DefaultDsfExecutor fExecutor;
 	private final DsfSession fSession;
 
@@ -61,16 +61,16 @@ public class PDALaunch extends DsfLaunch implements ITerminate {
 
 	/**
 	 * Launch constructor creates the launch for given parameters.  The
-	 * constructor also creates a DSF session and an executor, so that 
-	 * {@link #getSession()} returns a valid value, however no services 
-	 * are initialized yet. 
-	 * 
+	 * constructor also creates a DSF session and an executor, so that
+	 * {@link #getSession()} returns a valid value, however no services
+	 * are initialized yet.
+	 *
 	 * @see Launch
 	 */
 	public PDALaunch(ILaunchConfiguration launchConfiguration, String mode, ISourceLocator locator) {
 		super(launchConfiguration, mode, locator);
 
-		// Create the dispatch queue to be used by debugger control and services 
+		// Create the dispatch queue to be used by debugger control and services
 		// that belong to this launch
 		final DefaultDsfExecutor dsfExecutor = new DefaultDsfExecutor(PDAPlugin.ID_PDA_DEBUG_MODEL);
 		dsfExecutor.prestartCoreThread();
@@ -84,8 +84,8 @@ public class PDALaunch extends DsfLaunch implements ITerminate {
 	}
 
 	/**
-	 * Returns the DSF services session that belongs to this launch.  This 
-	 * method will always return a DsfSession object, however if the debugger 
+	 * Returns the DSF services session that belongs to this launch.  This
+	 * method will always return a DsfSession object, however if the debugger
 	 * is shut down, the session will no longer active.
 	 */
 	public DsfSession getSession() {
@@ -93,17 +93,17 @@ public class PDALaunch extends DsfLaunch implements ITerminate {
 	}
 
 	/**
-	 * Initializes the DSF services using the specified parameters.  This 
-	 * method has to be called on the executor thread in order to avoid 
-	 * synchronization issues.  
+	 * Initializes the DSF services using the specified parameters.  This
+	 * method has to be called on the executor thread in order to avoid
+	 * synchronization issues.
 	 */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void initializeServices(String program, final RequestMonitor rm) {
 		// Double-check that we're being called in the correct thread.
 		assert fExecutor.isInExecutorThread();
 
-		// Check if shutdownServices() was called already, which would be 
-		// highly unusual, but if so we don't need to do anything except set 
+		// Check if shutdownServices() was called already, which would be
+		// highly unusual, but if so we don't need to do anything except set
 		// the initialized flag.
 		synchronized (this) {
 			if (fShutDown) {
@@ -115,15 +115,15 @@ public class PDALaunch extends DsfLaunch implements ITerminate {
 		// Register the launch as listener for services events.
 		fSession.addServiceEventListener(PDALaunch.this, null);
 
-		// The initialization sequence is stored in a field to allow it to be 
-		// canceled if shutdownServices() is called before the sequence 
+		// The initialization sequence is stored in a field to allow it to be
+		// canceled if shutdownServices() is called before the sequence
 		// completes.
 		fInitializationSequence = new PDAServicesInitSequence(getSession(), this, program,
 				new RequestMonitor(ImmediateExecutor.getInstance(), rm) {
 					@Override
 					protected void handleCompleted() {
-						// Set the initialized flag and check whether the 
-						// shutdown flag is set.  Access the flags in a 
+						// Set the initialized flag and check whether the
+						// shutdown flag is set.  Access the flags in a
 						// synchronized section as these flags can be accessed
 						// on any thread.
 						boolean doShutdown = false;
@@ -136,11 +136,11 @@ public class PDALaunch extends DsfLaunch implements ITerminate {
 						}
 
 						if (doShutdown) {
-							// If shutdownServices() was already called, start the 
+							// If shutdownServices() was already called, start the
 							// shutdown sequence now.
 							doShutdown(rm);
 						} else {
-							// If there was an error in the startup sequence, 
+							// If there was an error in the startup sequence,
 							// report the error to the client.
 							if (getStatus().getSeverity() == IStatus.ERROR) {
 								rm.setStatus(getStatus());
@@ -151,12 +151,12 @@ public class PDALaunch extends DsfLaunch implements ITerminate {
 					}
 				});
 
-		// Finally, execute the sequence. 
+		// Finally, execute the sequence.
 		getSession().getExecutor().execute(fInitializationSequence);
 	}
 
 	/**
-	 * Event handler for a debugger terminated event.    
+	 * Event handler for a debugger terminated event.
 	 */
 	@DsfServiceEventHandler
 	public void eventDispatched(PDATerminatedEvent event) {
@@ -196,16 +196,16 @@ public class PDALaunch extends DsfLaunch implements ITerminate {
 	}
 
 	/**
-	 * Shuts down the services, the session and the executor associated with 
-	 * this launch.  
+	 * Shuts down the services, the session and the executor associated with
+	 * this launch.
 	 * <p>
 	 * Note: The argument request monitor to this method should NOT use the
-	 * executor that belongs to this launch.  By the time the shutdown is 
-	 * complete, this executor will not be dispatching anymore and the 
+	 * executor that belongs to this launch.  By the time the shutdown is
+	 * complete, this executor will not be dispatching anymore and the
 	 * request monitor will never be invoked.  Instead callers should use
 	 * the {@link ImmediateExecutor}.
 	 * </p>
-	 * @param rm The request monitor invoked when the shutdown is complete.    
+	 * @param rm The request monitor invoked when the shutdown is complete.
 	 */
 	@ConfinedToDsfExecutor("getSession().getExecutor()")
 	public void shutdownServices(final RequestMonitor rm) {
@@ -214,7 +214,7 @@ public class PDALaunch extends DsfLaunch implements ITerminate {
 		boolean doShutdown = false;
 		synchronized (this) {
 			if (!fInitialized && fInitializationSequence != null) {
-				// Launch has not yet initialized, try to cancel the 
+				// Launch has not yet initialized, try to cancel the
 				// shutdown sequence.
 				fInitializationSequence.cancel(false);
 			} else {
@@ -243,7 +243,7 @@ public class PDALaunch extends DsfLaunch implements ITerminate {
 						}
 						// Last order of business, shutdown the dispatch queue.
 						DsfSession.endSession(fSession);
-						// endSession takes a full dispatch to distribute the 
+						// endSession takes a full dispatch to distribute the
 						// session-ended event, finish step only after the dispatch.
 						fireTerminate();
 

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Red Hat Inc. - modified for use in Meson build
  *******************************************************************************/
 package org.eclipse.cdt.meson.core;
@@ -82,7 +82,7 @@ public class MesonProjectGenerator extends FMProjectGenerator {
 		}
 
 		entries.add(CoreModel.newOutputEntry(buildFolder.getFullPath(), // $NON-NLS-1$
-				new IPath[] {})); //$NON-NLS-1$
+				new IPath[] {}));
 		CoreModel.getDefault().create(project).setRawPathEntries(entries.toArray(new IPathEntry[entries.size()]),
 				monitor);
 	}

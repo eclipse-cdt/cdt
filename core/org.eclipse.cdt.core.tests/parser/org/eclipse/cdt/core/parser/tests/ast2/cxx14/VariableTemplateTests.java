@@ -320,7 +320,7 @@ public class VariableTemplateTests extends AST2CPPTestBase {
 	//	struct meta {
 	//		static const bool value = true;
 	//	};
-	//	
+	//
 	//  template <typename T>
 	//  constexpr bool var = meta<T>::value;
 	//

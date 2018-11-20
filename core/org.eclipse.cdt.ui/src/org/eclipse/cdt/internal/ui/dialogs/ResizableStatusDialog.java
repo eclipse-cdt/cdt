@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A resizable {@link StatusDialog} that preserves its dimensions between invocations.

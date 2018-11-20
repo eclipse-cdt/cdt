@@ -7,10 +7,10 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Freescale Semiconductor (stripped out functionality from platform debug version) 
+ *     Freescale Semiconductor (stripped out functionality from platform debug version)
  *******************************************************************************/
 package org.eclipse.cdt.launch.ui;
 
@@ -75,14 +75,14 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 /**
  * This class was taken from org.eclipse.debug.ui. We expose a Common tab for
  * Multilaunch that has only a subset of the standard tab's properties.
- * 
+ *
  * Launch configuration tab used to specify the location a launch configuration
  * is stored in, whether it should appear in the favorites list, and perspective
  * switching behavior for an associated launch.
  * <p>
  * Clients may instantiate this class.
  * </p>
- * 
+ *
  * @since 6.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -230,7 +230,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Sets the widgets for specifying that a launch configuration is to be shared to the enable value
-	 * @param enable the enabled value for 
+	 * @param enable the enabled value for
 	 */
 	private void setSharedEnabled(boolean enable) {
 		fSharedLocationText.setEnabled(enable);
@@ -379,7 +379,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Update the favorite settings.
-	 * 
+	 *
 	 * NOTE: set to <code>null</code> instead of <code>false</code> for backwards compatibility
 	 *  when comparing if content is equal, since 'false' is default
 	 * 	and will be missing for older configurations.
@@ -497,7 +497,7 @@ public class CommonTabLite extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getId()
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override

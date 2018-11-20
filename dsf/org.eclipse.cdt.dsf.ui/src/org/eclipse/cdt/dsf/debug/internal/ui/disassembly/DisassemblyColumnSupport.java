@@ -51,7 +51,7 @@ class DisassemblyColumnSupport implements IColumnSupport {
 		Assert.isLegal(registry != null);
 		fDisassembly = disassembly;
 		fRegistry = registry;
-		fColumns = new ArrayList<IContributedRulerColumn>();
+		fColumns = new ArrayList<>();
 	}
 
 	/*
@@ -202,7 +202,7 @@ class DisassemblyColumnSupport implements IColumnSupport {
 	 */
 	@Override
 	public void dispose() {
-		for (Iterator<IContributedRulerColumn> iter = new ArrayList<IContributedRulerColumn>(fColumns).iterator(); iter
+		for (Iterator<IContributedRulerColumn> iter = new ArrayList<>(fColumns).iterator(); iter
 				.hasNext();)
 			removeColumn(getRuler(), iter.next());
 		fColumns.clear();

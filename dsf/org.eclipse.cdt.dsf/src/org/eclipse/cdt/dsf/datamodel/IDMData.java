@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -16,10 +16,10 @@ package org.eclipse.cdt.dsf.datamodel;
 import org.eclipse.cdt.dsf.concurrent.Immutable;
 
 /**
- * Marker interface for data corresponding to IDMContext, retrieved from a 
- * service.  These data objects are meant to be processed by clients on 
+ * Marker interface for data corresponding to IDMContext, retrieved from a
+ * service.  These data objects are meant to be processed by clients on
  * different threads, therefore they should be immutable.
- * 
+ *
  * @since 1.0
  */
 @Immutable

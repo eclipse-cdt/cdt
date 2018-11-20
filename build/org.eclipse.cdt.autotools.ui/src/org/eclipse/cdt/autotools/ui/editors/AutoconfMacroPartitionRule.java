@@ -136,7 +136,7 @@ public class AutoconfMacroPartitionRule implements IPredicateRule {
 
 	/**
 	 * Returns the characters in the buffer to the scanner.
-	 * 
+	 *
 	 * @param scanner
 	 *            the scanner to be used
 	 */

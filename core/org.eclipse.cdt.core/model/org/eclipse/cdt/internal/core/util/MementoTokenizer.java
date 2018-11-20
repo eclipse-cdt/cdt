@@ -18,7 +18,7 @@ import org.eclipse.cdt.internal.core.model.CElement;
 
 /**
  * A tokenizer to decipher a C element memento string.
- * 
+ *
  * @since 5.0
  */
 public class MementoTokenizer {

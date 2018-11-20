@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
  * Data Request monitor that takes <code>IViewerUpdate</code> as a parent.
  * If the IViewerUpdate is canceled, this request monitor becomes canceled as well.
  * @see IViewerUpdate
- * 
+ *
  * @since 2.0
  */
 public class ViewerRequestMonitor extends RequestMonitor {

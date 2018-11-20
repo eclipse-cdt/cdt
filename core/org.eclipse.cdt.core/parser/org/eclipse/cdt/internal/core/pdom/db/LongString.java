@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.CoreException;
  * This is for strings that take up more than on chunk.
  * The string will need to be broken up into sections and then
  * reassembled when necessary.
- * 
+ *
  * @author Doug Schaefer
  */
 public class LongString implements IString {

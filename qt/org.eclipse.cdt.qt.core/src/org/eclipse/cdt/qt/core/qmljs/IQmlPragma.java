@@ -17,7 +17,7 @@ public interface IQmlPragma extends IQmlHeaderItem {
 	@Override
 	default public String getType() {
 		return "QMLPragma"; //$NON-NLS-1$
-	};
+	}
 
 	public IQmlQualifiedID getIdentifier();
 }

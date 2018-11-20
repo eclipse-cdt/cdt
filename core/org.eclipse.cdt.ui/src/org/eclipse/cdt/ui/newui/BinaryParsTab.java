@@ -17,6 +17,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModelUtil;
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICResourceDescription;
+import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.newui.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.dialogs.ICOptionPage;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -40,19 +51,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModelUtil;
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.core.settings.model.ICMultiResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICResourceDescription;
-import org.eclipse.cdt.core.settings.model.ICTargetPlatformSetting;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.dialogs.ICOptionPage;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.newui.Messages;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -240,7 +238,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 			ids = CoreModelUtil.getBinaryParserIds(cfgs);
 		}
 		Object[] data = new Object[configMap.size()];
-		HashMap<String, BinaryParserConfiguration> clone = new HashMap<String, BinaryParserConfiguration>(configMap);
+		HashMap<String, BinaryParserConfiguration> clone = new HashMap<>(configMap);
 		// add checked elements
 		int i;
 		for (i = 0; i < ids.length; i++) {
@@ -270,7 +268,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 				CCorePlugin.BINARY_PARSER_SIMPLE_ID);
 		if (point != null) {
 			IExtension[] exts = point.getExtensions();
-			configMap = new HashMap<String, BinaryParserConfiguration>(exts.length);
+			configMap = new HashMap<>(exts.length);
 			for (IExtension ext : exts) {
 				if (isExtensionVisible(ext)) {
 					configMap.put(ext.getUniqueIdentifier(), new BinaryParserConfiguration(ext));
@@ -280,7 +278,7 @@ public class BinaryParsTab extends AbstractCPropertyTab {
 	}
 
 	private void initializeParserPageMap() {
-		fParserPageMap = new HashMap<String, BinaryParserPageConfiguration>(5);
+		fParserPageMap = new HashMap<>(5);
 
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
 				"BinaryParserPage"); //$NON-NLS-1$

@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ILinkage;
 import org.eclipse.cdt.core.dom.IPDOMManager;
@@ -52,6 +50,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.osgi.framework.Bundle;
+
+import junit.framework.Test;
 
 /**
  * Tests the GeneratePDOMApplication
@@ -90,13 +90,13 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 	}
 
 	public void testBrokenExportProjectProvider1() throws Exception {
-		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for createProject 
+		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for createProject
 		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider1.class.getName() });
 	}
 
 	public void testBrokenExportProjectProvider2() throws Exception {
-		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for getLocationConverter 
+		setExpectedNumberOfLoggedNonOKStatusObjects(1); // IExportProjectProvider implementation returns null for getLocationConverter
 		doGenerate(new String[] { GeneratePDOMApplication.OPT_TARGET, target.getAbsolutePath(),
 				GeneratePDOMApplication.OPT_PROJECTPROVIDER, TestProjectProvider2.class.getName() });
 	}
@@ -186,7 +186,7 @@ public class GeneratePDOMApplicationTest extends PDOMTestBase {
 		} finally {
 			wpdom.releaseReadLock();
 		}
-		// depending on the timing the index of the temporary project is changed once or twice. 
+		// depending on the timing the index of the temporary project is changed once or twice.
 		assertTrue("state is " + stateCount[0], stateCount[0] == 2 || stateCount[0] == 4);
 	}
 

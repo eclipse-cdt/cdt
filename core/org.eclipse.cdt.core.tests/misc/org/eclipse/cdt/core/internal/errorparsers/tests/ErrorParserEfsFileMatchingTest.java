@@ -18,10 +18,6 @@ import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.ArrayList;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.ErrorParserManager;
 import org.eclipse.cdt.core.IErrorParser;
@@ -40,6 +36,10 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+
+import junit.framework.Assert;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 /**
  * The test case includes a few tests checking that {@link AbstractErrorParser}/{@link ErrorPattern}
@@ -96,7 +96,7 @@ public class ErrorParserEfsFileMatchingTest extends TestCase {
 			Assert.assertNotNull(fProject);
 			mockErrorParserId = addErrorParserExtension("MockErrorParser", MockErrorParser.class);
 		}
-		errorList = new ArrayList<ProblemMarkerInfo>();
+		errorList = new ArrayList<>();
 	}
 
 	@Override

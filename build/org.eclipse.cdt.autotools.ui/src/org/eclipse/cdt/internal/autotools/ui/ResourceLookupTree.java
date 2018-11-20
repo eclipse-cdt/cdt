@@ -52,14 +52,14 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * Allows for looking up resources by location or name. When using this class 100 bytes per resource
- * are needed. Therefore the support is limited to header-files int non-cdt projects and all files 
+ * are needed. Therefore the support is limited to header-files int non-cdt projects and all files
  * except non-cdt-files in CDT projects.
  *
  * The information for a project is initialized when first requested and then it is kept up to date
  * using a resource change listener. No memory is used, as long as the class is not used.
  * When information is not used for more than 10 minutes, the data-structures will be held via a weak
  * reference, only and are subject to garbage collection.
- * 
+ *
  * The node map stores a map from hash-code of file-names to nodes.
  * A node contains the name of a file plus a link to the parent resource. From that we can compute
  * the resource path and obtain further information via the resource.

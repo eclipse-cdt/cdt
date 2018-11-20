@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     QNX Software Systems - Initial API and implementation 
+ *     QNX Software Systems - Initial API and implementation
  *     Wind River Systems   - Modified for new DSF Reference Implementation
  *******************************************************************************/
 
@@ -35,7 +35,7 @@ public class MIBreakInsertInfo extends MIInfo {
 	public MIBreakInsertInfo(MIOutput record) {
 		super(record);
 		breakpoints = null;
-		List<MIBreakpoint> aList = new ArrayList<MIBreakpoint>(1);
+		List<MIBreakpoint> aList = new ArrayList<>(1);
 		if (isDone()) {
 			MIResultRecord rr = record.getMIResultRecord();
 			if (rr != null) {
@@ -82,7 +82,7 @@ public class MIBreakInsertInfo extends MIInfo {
 
 	/**
 	 * Create a target specific MIBreakpoint
-	 * 
+	 *
 	 * @param value
 	 *            tuple suitable for passing to MIBreakpoint constructor
 	 * @return new breakpoint

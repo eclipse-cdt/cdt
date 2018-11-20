@@ -75,7 +75,7 @@ public class MakefilePartitionScanner extends RuleBasedPartitionScanner {
 		rules.add(new MultiLineRule("ifnneq", "endif", tIf)); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// Last rule must be supplied with default token!
-		rules.add(new MacroDefinitionRule(tMacro, tOther)); //$NON-NLS-1$
+		rules.add(new MacroDefinitionRule(tMacro, tOther));
 
 		IPredicateRule[] result = new IPredicateRule[rules.size()];
 		rules.toArray(result);

@@ -61,8 +61,8 @@ public class CPPASTTranslationUnit extends ASTTranslationUnit implements ICPPAST
 	private final Map<ICPPClassType, FinalOverriderMap> fFinalOverriderMapCache = new HashMap<>();
 	// Cache for type instantiations. This is currently only used for instantiations of
 	// alias template instances, but its use could potentially be expanded to cover other
-	// instantiations. Note that class template instances are already cached by the 
-	// template definition, so we wouldn't want to double-cache those. (But we could e.g. 
+	// instantiations. Note that class template instances are already cached by the
+	// template definition, so we wouldn't want to double-cache those. (But we could e.g.
 	// cache instantiations of function types if we found it worthwhile.)
 	private final Map<TypeInstantiationRequest, IType> fInstantiationCache = new HashMap<>();
 

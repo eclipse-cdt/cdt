@@ -15,9 +15,9 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Interface for searching nodes in a translation unit. An instance of this interface, responsible
- * for one file contained in a translation-unit, can be obtained using 
+ * for one file contained in a translation-unit, can be obtained using
  * {@link IASTTranslationUnit#getNodeSelector(String)}.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 5.0
@@ -44,20 +44,20 @@ public interface IASTNodeSelector {
 	/**
 	 * Returns the implicit name for the exact given range, or {@code null} if there is
 	 * no such node.
-	 * 
+	 *
 	 * Note that there can be more than one implicit name in the same location.
 	 * The implicit name's parent can be used to get all the names at the location.
-	 * 
+	 *
 	 * @since 5.1
 	 */
 	IASTImplicitName findImplicitName(int offset, int length);
 
 	/**
 	 * Returns the first implicit name enclosing the given range.
-	 * 
+	 *
 	 * Note that there can be more than one implicit name in the same location.
 	 * The implicit name's parent can be used to get all the names at the location.
-	 * 
+	 *
 	 * @since 5.1
 	 */
 	IASTImplicitName findEnclosingImplicitName(int offset, int length);

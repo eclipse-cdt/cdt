@@ -29,6 +29,39 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.model.CoreModel;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IWorkingCopy;
+import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
+import org.eclipse.cdt.internal.core.model.IBufferFactory;
+import org.eclipse.cdt.internal.corext.template.c.CContextType;
+import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
+import org.eclipse.cdt.internal.corext.template.c.CommentContextType;
+import org.eclipse.cdt.internal.corext.template.c.DocCommentContextType;
+import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
+import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
+import org.eclipse.cdt.internal.ui.CUIMessages;
+import org.eclipse.cdt.internal.ui.ICStatusConstants;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
+import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
+import org.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager;
+import org.eclipse.cdt.internal.ui.editor.ASTProvider;
+import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
+import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
+import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
+import org.eclipse.cdt.internal.ui.text.doctools.EditorReopener;
+import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
+import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
+import org.eclipse.cdt.internal.ui.util.Util;
+import org.eclipse.cdt.internal.ui.viewsupport.CDTContextActivator;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -79,42 +112,6 @@ import org.osgi.framework.BundleException;
 import org.osgi.framework.ServiceReference;
 
 import com.ibm.icu.text.MessageFormat;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.model.CoreModel;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IWorkingCopy;
-
-import org.eclipse.cdt.internal.core.dom.rewrite.ASTRewriteAnalyzer;
-import org.eclipse.cdt.internal.core.model.IBufferFactory;
-import org.eclipse.cdt.internal.corext.template.c.CContextType;
-import org.eclipse.cdt.internal.corext.template.c.CodeTemplateContextType;
-import org.eclipse.cdt.internal.corext.template.c.CommentContextType;
-import org.eclipse.cdt.internal.corext.template.c.DocCommentContextType;
-import org.eclipse.cdt.internal.corext.template.c.FileTemplateContextType;
-
-import org.eclipse.cdt.internal.ui.CElementAdapterFactory;
-import org.eclipse.cdt.internal.ui.CUIMessages;
-import org.eclipse.cdt.internal.ui.ICStatusConstants;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.ResourceAdapterFactory;
-import org.eclipse.cdt.internal.ui.buildconsole.BuildConsoleManager;
-import org.eclipse.cdt.internal.ui.buildconsole.GlobalBuildConsoleManager;
-import org.eclipse.cdt.internal.ui.editor.ASTProvider;
-import org.eclipse.cdt.internal.ui.editor.CDocumentProvider;
-import org.eclipse.cdt.internal.ui.editor.WorkingCopyManager;
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
-import org.eclipse.cdt.internal.ui.refactoring.CTextFileChangeFactory;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
-import org.eclipse.cdt.internal.ui.text.c.hover.CEditorTextHoverDescriptor;
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
-import org.eclipse.cdt.internal.ui.text.doctools.DocCommentOwnerManager;
-import org.eclipse.cdt.internal.ui.text.doctools.EditorReopener;
-import org.eclipse.cdt.internal.ui.text.folding.CFoldingStructureProviderRegistry;
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.internal.ui.util.ProblemMarkerManager;
-import org.eclipse.cdt.internal.ui.util.Util;
-import org.eclipse.cdt.internal.ui.viewsupport.CDTContextActivator;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -806,8 +803,8 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * @return an array of all dirty editor parts.
 	 */
 	public static IEditorPart[] getDirtyEditors() {
-		Set<IEditorInput> inputs = new HashSet<IEditorInput>();
-		List<IEditorPart> result = new ArrayList<IEditorPart>(0);
+		Set<IEditorInput> inputs = new HashSet<>();
+		List<IEditorPart> result = new ArrayList<>(0);
 		IWorkbench workbench = getDefault().getWorkbench();
 		for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
 			for (IWorkbenchPage page : window.getPages()) {
@@ -830,7 +827,7 @@ public class CUIPlugin extends AbstractUIPlugin {
 	 * Returns an array of all instantiated editors.
 	 */
 	public static IEditorPart[] getInstanciatedEditors() {
-		List<IEditorPart> result = new ArrayList<IEditorPart>(0);
+		List<IEditorPart> result = new ArrayList<>(0);
 		IWorkbench workbench = getDefault().getWorkbench();
 		IWorkbenchWindow[] windows = workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {

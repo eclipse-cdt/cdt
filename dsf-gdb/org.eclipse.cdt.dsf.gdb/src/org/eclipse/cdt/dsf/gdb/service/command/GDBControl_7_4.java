@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Marc Khouzam (Ericsson) - initial API and implementation
  *     Marc Khouzam (Ericsson) - Update breakpoint handling for GDB >= 7.4 (Bug 389945)
@@ -25,10 +25,10 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 /**
  * With GDB 7.4, the command 'maintenance set python print-stack' is not supported.
  * The new command "set python print-stack none|full|message" has replaced it.
- * 
+ *
  * With GDB 7.4, breakpoints are handled globally for all of GDB, so our
  * IBreakpointsTargetDMContext becomes the GDBControlContext.
- * 
+ *
  * @since 4.1
  */
 public class GDBControl_7_4 extends GDBControl_7_2 implements IGDBControl {

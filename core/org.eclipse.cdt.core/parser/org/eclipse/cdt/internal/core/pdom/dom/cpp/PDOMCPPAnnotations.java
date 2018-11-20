@@ -57,7 +57,7 @@ class PDOMCPPAnnotations {
 
 	/**
 	 * Encodes annotations applicable to C++ functions.
-	 * 
+	 *
 	 * @param function the function whose annotations will be encoded
 	 * @return a bit vector of the annotations
 	 */
@@ -88,7 +88,7 @@ class PDOMCPPAnnotations {
 
 	/**
 	 * Encodes annotations applicable to C++ variables.
-	 * 
+	 *
 	 * @param variable the IBinding whose annotations will be encoded
 	 * @return a bit vector of the annotations
 	 */
@@ -120,7 +120,7 @@ class PDOMCPPAnnotations {
 
 	/**
 	 * Encodes extra annotations applicable to C++ methods.
-	 * 
+	 *
 	 * @param binding the IBinding whose annotations will be encoded
 	 * @return a bit vector of the annotation
 	 */

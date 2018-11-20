@@ -20,16 +20,16 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MITraceListVariablesInfo;
 /**
  * -trace-list-variables
  *
- * Return a table of all defined trace variables. Each element of the table has the 
+ * Return a table of all defined trace variables. Each element of the table has the
  * following fields:
  *   'name'    The name of the trace variable. This field is always present.
  *   'initial' The initial value. This is a 64-bit signed integer. This field is always present.
  *   'current' The value the trace variable has at the moment. This is a 64-bit signed integer.
- *             This field may is absent if the current value is not defined, for example if 
+ *             This field may is absent if the current value is not defined, for example if
  *             the trace was never run, or is presently running.
- * 
+ *
  * Available with GDB 7.1
- * 
+ *
  * @since 3.0
  */
 public class MITraceListVariables extends MICommand<MITraceListVariablesInfo> {

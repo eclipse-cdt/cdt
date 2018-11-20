@@ -42,7 +42,7 @@ public abstract class AbstractCWizard extends CNewWizard {
 	}
 
 	/**
-	 * Checks whether toolchain can be displayed 
+	 * Checks whether toolchain can be displayed
 	 * @param tc
 	 * @return
 	 */
@@ -51,7 +51,7 @@ public abstract class AbstractCWizard extends CNewWizard {
 		if (!isLanguageCompatible(tc, w))
 			return false;
 
-		// Do not do further check if all toolchains are permitted	
+		// Do not do further check if all toolchains are permitted
 		if (!supportedOnly)
 			return true;
 
@@ -64,9 +64,9 @@ public abstract class AbstractCWizard extends CNewWizard {
 	}
 
 	/**
-	 * Checks toolchain for Language ID, Content type ID 
+	 * Checks toolchain for Language ID, Content type ID
 	 * and Extensions, if they are required by wizard.
-	 * 
+	 *
 	 * @param tc - toolchain to check
 	 * @param w - wizard which provides selection criteria
 	 * @return
@@ -83,7 +83,7 @@ public abstract class AbstractCWizard extends CNewWizard {
 		String[] ctypeIDs = wz.getContentTypeIDs();
 		String[] exts = wz.getExtensions();
 
-		// nothing requied ?   
+		// nothing requied ?
 		if (empty(langIDs) && empty(ctypeIDs) && empty(exts))
 			return true;
 
@@ -151,7 +151,7 @@ public abstract class AbstractCWizard extends CNewWizard {
 				}
 			}
 			return false;
-		} else { 
+		} else {
 			return true;
 		}
 	}

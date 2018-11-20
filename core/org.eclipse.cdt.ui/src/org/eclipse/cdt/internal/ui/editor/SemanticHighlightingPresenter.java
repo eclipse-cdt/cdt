@@ -18,6 +18,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
+import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
+import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.BadPositionCategoryException;
 import org.eclipse.jface.text.DocumentEvent;
@@ -33,16 +37,10 @@ import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextPresentation;
 import org.eclipse.swt.custom.StyleRange;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightedPosition;
-import org.eclipse.cdt.internal.ui.editor.SemanticHighlightingManager.HighlightingStyle;
-import org.eclipse.cdt.internal.ui.text.CPresentationReconciler;
-
 /**
  * Semantic highlighting presenter - UI thread implementation.
  * Cloned from JDT.
- * 
+ *
  * @since 4.0
  */
 public class SemanticHighlightingPresenter implements ITextPresentationListener, ITextInputListener, IDocumentListener {
@@ -235,7 +233,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 	private CPresentationReconciler fPresentationReconciler;
 
 	/** UI's current highlighted positions - can contain <code>null</code> elements */
-	private List<HighlightedPosition> fPositions = new ArrayList<HighlightedPosition>();
+	private List<HighlightedPosition> fPositions = new ArrayList<>();
 	/** UI position lock */
 	private Object fPositionLock = new Object();
 
@@ -400,7 +398,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 				 * removed on the fly. The second of two is the list of added positions. The result
 				 * is stored in newPositions.
 				 */
-				List<HighlightedPosition> newPositions = new ArrayList<HighlightedPosition>(newSize);
+				List<HighlightedPosition> newPositions = new ArrayList<>(newSize);
 				HighlightedPosition position = null;
 				HighlightedPosition addedPosition = null;
 				for (int i = 0, j = 0, n = oldPositions.size(), m = addedPositions.length; i < n || position != null
@@ -552,7 +550,7 @@ public class SemanticHighlightingPresenter implements ITextPresentationListener,
 		int i = computeIndexAtOffset(fPositions, region.getOffset());
 		int n = computeIndexAtOffset(fPositions, region.getOffset() + region.getLength());
 		if (n - i > 2) {
-			List<StyleRange> ranges = new ArrayList<StyleRange>(n - i);
+			List<StyleRange> ranges = new ArrayList<>(n - i);
 			for (; i < n; i++) {
 				HighlightedPosition position = fPositions.get(i);
 				if (!position.isDeleted())

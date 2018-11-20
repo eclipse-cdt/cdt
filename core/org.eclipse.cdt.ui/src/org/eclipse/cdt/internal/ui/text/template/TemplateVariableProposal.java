@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.text.template;
 
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -24,8 +25,6 @@ import org.eclipse.jface.text.templates.TemplateVariableResolver;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-
-import org.eclipse.cdt.ui.CUIPlugin;
 
 /**
  * A proposal for insertion of template variables.
@@ -47,7 +46,7 @@ public class TemplateVariableProposal implements ICompletionProposal {
 	 * @param offset the offset to replace
 	 * @param length the length to replace
 	 * @param viewer the viewer
-	 * @param includeBrace whether to also replace the ${ 
+	 * @param includeBrace whether to also replace the ${
 	 */
 	public TemplateVariableProposal(TemplateVariableResolver variable, int offset, int length, ITextViewer viewer,
 			boolean includeBrace) {

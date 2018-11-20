@@ -104,7 +104,7 @@ public class CProjectNature implements IProjectNature {
 	public static void removeNature(IProject project, String natureId, IProgressMonitor monitor) throws CoreException {
 		IProjectDescription description = project.getDescription();
 		String[] prevNatures = description.getNatureIds();
-		List<String> newNatures = new ArrayList<String>(Arrays.asList(prevNatures));
+		List<String> newNatures = new ArrayList<>(Arrays.asList(prevNatures));
 		newNatures.remove(natureId);
 		description.setNatureIds(newNatures.toArray(new String[newNatures.size()]));
 		project.setDescription(description, monitor);

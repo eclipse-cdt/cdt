@@ -88,7 +88,7 @@ public abstract class IntegratedCModelTest extends BaseTestCase {
 	protected ITranslationUnit getTU() throws CModelException {
 		ITranslationUnit tu = (ITranslationUnit) CoreModel.getDefault().create(sourceFile);
 		CCorePlugin.getDefault().setStructuralParseMode(isStructuralParse());
-		// parse the translation unit to get the elements tree		
+		// parse the translation unit to get the elements tree
 		// Force the parsing now to do this in the right ParseMode.
 		tu.close();
 		tu.open(new NullProgressMonitor());

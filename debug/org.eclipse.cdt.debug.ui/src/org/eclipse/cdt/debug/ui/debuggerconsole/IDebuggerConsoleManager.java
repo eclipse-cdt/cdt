@@ -19,7 +19,7 @@ public interface IDebuggerConsoleManager {
 	/**
 	 * Registers the given listener for console notifications. Has
 	 * no effect if an identical listener is already registered.
-	 * 
+	 *
 	 * @param listener listener to register
 	 */
 	public void addConsoleListener(IConsoleListener listener);
@@ -27,7 +27,7 @@ public interface IDebuggerConsoleManager {
 	/**
 	 * Unregisters the given listener for console notifications. Has
 	 * no effect if listener is not already registered.
-	 * 
+	 *
 	 * @param listener listener to unregister
 	 */
 	public void removeConsoleListener(IConsoleListener listener);
@@ -35,21 +35,21 @@ public interface IDebuggerConsoleManager {
 	/**
 	 * Adds the given console to the console manager. Has no effect for
 	 * equivalent consoles already registered.
-	 * 
+	 *
 	 * @param console console to add
 	 */
 	public void addConsole(IDebuggerConsole console);
 
 	/**
 	 * Removes the given console from the console manager.
-	 * 
+	 *
 	 * @param console console to remove
 	 */
 	public void removeConsole(IDebuggerConsole console);
 
 	/**
 	 * Returns a array of consoles registered with the console manager.
-	 * 
+	 *
 	 * @return an array of consoles registered with the console manager
 	 */
 	public IDebuggerConsole[] getConsoles();

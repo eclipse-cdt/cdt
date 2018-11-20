@@ -15,6 +15,9 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.core.parser.util.ArrayUtil;
+import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
+import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -30,11 +33,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
-
-import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.utils.ui.controls.TabFolderLayout;
-
-import org.eclipse.cdt.internal.ui.dialogs.IStatusChangeListener;
 
 /**
  * The preference block for configuring styles of names.
@@ -67,7 +65,7 @@ public class TabConfigurationBlock extends OptionsConfigurationBlock {
 	}
 
 	private static Key[] getAllKeys(OptionsConfigurationBlock[] tabs) {
-		ArrayList<Key> keys = new ArrayList<Key>();
+		ArrayList<Key> keys = new ArrayList<>();
 		for (OptionsConfigurationBlock tab : tabs) {
 			ArrayUtil.addAll(keys, tab.fAllKeys);
 		}

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -42,6 +42,7 @@ public class PDAScanner extends BufferedRuleBasedScanner {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
 		 */
+		@Override
 		public boolean isWordStart(char c) {
 			return Character.isLetter(c);
 		}
@@ -49,6 +50,7 @@ public class PDAScanner extends BufferedRuleBasedScanner {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
 		 */
+		@Override
 		public boolean isWordPart(char c) {
 			return Character.isLetter(c) || c == '_';
 		}
@@ -62,6 +64,7 @@ public class PDAScanner extends BufferedRuleBasedScanner {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.rules.IWordDetector#isWordStart(char)
 		 */
+		@Override
 		public boolean isWordStart(char c) {
 			return c == ':';
 		}
@@ -69,6 +72,7 @@ public class PDAScanner extends BufferedRuleBasedScanner {
 		/* (non-Javadoc)
 		 * @see org.eclipse.jface.text.rules.IWordDetector#isWordPart(char)
 		 */
+		@Override
 		public boolean isWordPart(char c) {
 			return super.isWordPart(c) || Character.isDigit(c);
 		}

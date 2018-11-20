@@ -13,12 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.refactoring;
 
+import org.eclipse.cdt.internal.core.dom.rewrite.ICTextFileChangeFactory;
+import org.eclipse.cdt.ui.refactoring.CTextFileChange;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
-
-import org.eclipse.cdt.ui.refactoring.CTextFileChange;
-
-import org.eclipse.cdt.internal.core.dom.rewrite.ICTextFileChangeFactory;
 
 /**
  * Factory provided to the core plugin to create appropriate text file changes.

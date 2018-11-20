@@ -89,7 +89,7 @@ public abstract class AbstractMesonCommandHandler extends AbstractHandler {
 
 	/**
 	 * Separate targets to array from a string.
-	 * 
+	 *
 	 * @param rawArgList
 	 * @return targets in string[] array. if targets are not formatted properly,
 	 *         returns null

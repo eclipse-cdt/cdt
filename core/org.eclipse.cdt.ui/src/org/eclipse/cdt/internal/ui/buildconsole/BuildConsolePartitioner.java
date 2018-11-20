@@ -26,6 +26,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.eclipse.cdt.core.ConsoleOutputStream;
+import org.eclipse.cdt.core.ProblemMarkerInfo;
+import org.eclipse.cdt.core.resources.IConsole;
+import org.eclipse.cdt.core.resources.ResourcesUtil;
+import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePartitionerEditData.UpdateUIData;
+import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IProject;
@@ -43,15 +50,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.ConsolePlugin;
 
-import org.eclipse.cdt.core.ConsoleOutputStream;
-import org.eclipse.cdt.core.ProblemMarkerInfo;
-import org.eclipse.cdt.core.resources.IConsole;
-import org.eclipse.cdt.core.resources.ResourcesUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.buildconsole.BuildConsolePartitionerEditData.UpdateUIData;
-import org.eclipse.cdt.internal.ui.preferences.BuildConsolePreferencePage;
-
 /*
  * XXX the wrap lines is way too slow to be usable on large {@link #fMaxLines}
  * (not sure limit, 500 seems ok, 10000 is a problem) Best idea may be to do the
@@ -66,7 +64,7 @@ public class BuildConsolePartitioner
 	/**
 	 * Active list of partitions, must only be accessed form UI thread which
 	 * provides implicit lock.
-	 * 
+	 *
 	 * The partitions are required to be sorted, and the partitions must not have
 	 * any gaps. (The Offset + Length of partition N must equals the Offset of
 	 * partition N + 1.)

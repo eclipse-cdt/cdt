@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -34,7 +34,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 
 /**
- * Viewer model node that populates the filesystem root elements.  
+ * Viewer model node that populates the filesystem root elements.
  */
 @SuppressWarnings("restriction")
 class FilesystemRootsVMNode extends AbstractVMNode implements IElementLabelProvider {
@@ -75,7 +75,7 @@ class FilesystemRootsVMNode extends AbstractVMNode implements IElementLabelProvi
 	public void update(final IHasChildrenUpdate[] updates) {
 		for (IHasChildrenUpdate update : updates) {
 			/*
-			 * Assume that all filesystem roots have children.  If user attempts 
+			 * Assume that all filesystem roots have children.  If user attempts
 			 * to expand an empty directory, the plus sign will be removed
 			 * from the element.
 			 */
@@ -126,8 +126,8 @@ class FilesystemRootsVMNode extends AbstractVMNode implements IElementLabelProvi
 	}
 
 	/**
-	 * Returs the text label to show in the tree for given element.  Filesystem 
-	 * roots return an empty string for call to File.getName(), use the abolute path 
+	 * Returs the text label to show in the tree for given element.  Filesystem
+	 * roots return an empty string for call to File.getName(), use the abolute path
 	 * string instead.
 	 */
 	private String getLabel(FileVMContext vmc) {
@@ -163,7 +163,7 @@ class FilesystemRootsVMNode extends AbstractVMNode implements IElementLabelProvi
 
 					if (eventFile.exists()) {
 						// Create a list containing all files in path of the file from the event
-						List<File> filePath = new LinkedList<File>();
+						List<File> filePath = new LinkedList<>();
 						for (File file = eventFile; file != null; file = file.getParentFile()) {
 							filePath.add(0, file);
 						}

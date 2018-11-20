@@ -18,7 +18,7 @@ package org.eclipse.cdt.internal.core.dom.parser.cpp;
  */
 public interface ICPPInternalDeclaredVariable extends ICPPInternalVariable {
 	/**
-	 * Informs the variable that all its declarations and definitions have already been added. 
+	 * Informs the variable that all its declarations and definitions have already been added.
 	 */
 	public void allDeclarationsDefinitionsAdded();
 }

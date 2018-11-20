@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Andrew Niefer (IBM Corporation) - Initial API and implementation 
+ *     Andrew Niefer (IBM Corporation) - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
  *     Gerhard Schaber (Wind River Systems)
  *******************************************************************************/
@@ -40,8 +40,8 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Creates labels for ICElement objects.
- * 
- * @deprecated Use org.eclipse.cdt.ui.CElementLabelProvider instead. 
+ *
+ * @deprecated Use org.eclipse.cdt.ui.CElementLabelProvider instead.
  * Internally you can also use org.eclipse.cdt.internal.ui.viewsupport.CElementLabels.
  */
 @Deprecated
@@ -191,8 +191,8 @@ public class CElementBaseLabels {
 	public final static int PROJECT_POST_QUALIFIED = 1 << 30;
 
 	/**
-	 * Post qualify symbols with file. 
-	 * e.g. func() - /proj/folder/file.cpp 
+	 * Post qualify symbols with file.
+	 * e.g. func() - /proj/folder/file.cpp
 	 */
 	public final static int MF_POST_FILE_QUALIFIED = 1 << 31;
 
@@ -452,7 +452,7 @@ public class CElementBaseLabels {
 
 	/**
 	 * Strip any qualifier from the given name.
-	 * 
+	 *
 	 * @param elementName
 	 * @return a "simple" name
 	 */
@@ -911,7 +911,7 @@ public class CElementBaseLabels {
 
 	/**
 	 * Convert an <code>ASTAccessVisibility</code> into its string representation.
-	 * 
+	 *
 	 * @param access
 	 * @return "public", "protected" or "private"
 	 */

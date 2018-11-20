@@ -33,7 +33,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 /**
  * Provides information for the current word under the cursor based on the documentation hover
  * and spelling correction hover.
- * 
+ *
  * @see CTypeHover
  * @since 5.0
  */

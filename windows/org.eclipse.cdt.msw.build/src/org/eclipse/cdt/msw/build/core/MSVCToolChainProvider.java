@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Status;
 
 /**
  * Toolchain provider for Microsoft's Visual C++ Compiler (MSVC).
- * 
+ *
  * This implementation only supports Microsoft Build Tools 2017 and
  * the Windows 10 SDK (Kit).
  */

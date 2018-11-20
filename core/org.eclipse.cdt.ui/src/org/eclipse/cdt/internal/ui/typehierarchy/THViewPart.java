@@ -18,6 +18,31 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.model.IDeclaration;
+import org.eclipse.cdt.core.model.IMember;
+import org.eclipse.cdt.core.model.IMethodDeclaration;
+import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
+import org.eclipse.cdt.internal.ui.CPluginImages;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.IContextMenuConstants;
+import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
+import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
+import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
+import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
+import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
+import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
+import org.eclipse.cdt.internal.ui.viewsupport.SelectionProviderMediator;
+import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.actions.CdtActionConstants;
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
+import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
@@ -81,33 +106,6 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.model.IDeclaration;
-import org.eclipse.cdt.core.model.IMember;
-import org.eclipse.cdt.core.model.IMethodDeclaration;
-import org.eclipse.cdt.core.parser.ast.ASTAccessVisibility;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.actions.CdtActionConstants;
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
-import org.eclipse.cdt.ui.refactoring.actions.CRefactoringActionGroup;
-
-import org.eclipse.cdt.internal.ui.CPluginImages;
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.IContextMenuConstants;
-import org.eclipse.cdt.internal.ui.actions.CopyTreeAction;
-import org.eclipse.cdt.internal.ui.editor.ICEditorActionDefinitionIds;
-import org.eclipse.cdt.internal.ui.search.actions.SelectionSearchGroup;
-import org.eclipse.cdt.internal.ui.viewsupport.AdaptingSelectionProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.AppearanceAwareLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementImageProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.CElementLabels;
-import org.eclipse.cdt.internal.ui.viewsupport.CUILabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.DecoratingCLabelProvider;
-import org.eclipse.cdt.internal.ui.viewsupport.EditorOpener;
-import org.eclipse.cdt.internal.ui.viewsupport.SelectionProviderMediator;
-import org.eclipse.cdt.internal.ui.viewsupport.WorkingSetFilterUI;
-
 /**
  * The view part for the include browser.
  */
@@ -143,7 +141,7 @@ public class THViewPart extends ViewPart implements ITHModelPresenter {
 	private boolean fShowsMessage = true;
 	private int fCurrentViewOrientation = -1;
 	private boolean fInComputeOrientation = false;
-	private ArrayList<ICElement> fHistoryEntries = new ArrayList<ICElement>(MAX_HISTORY_SIZE);
+	private ArrayList<ICElement> fHistoryEntries = new ArrayList<>(MAX_HISTORY_SIZE);
 	private int fIgnoreSelectionChanges = 0;
 
 	// widgets

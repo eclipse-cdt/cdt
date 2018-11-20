@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik 
+* Copyright (c) 2016 Institute for Software, HSR Hochschule fuer Technik
 * Rapperswil, University of applied sciences and others
 *
 * This program and the accompanying materials
@@ -147,7 +147,7 @@ public class ClassTemplateTests extends TestBase {
 
 	//	template<int I>
 	//	struct S {
-	//		constexpr S():x{I*2} {}	
+	//		constexpr S():x{I*2} {}
 	//		int x;
 	//	};
 	//

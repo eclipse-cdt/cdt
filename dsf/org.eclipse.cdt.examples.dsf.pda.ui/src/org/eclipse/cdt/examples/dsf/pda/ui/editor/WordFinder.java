@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Bjorn Freeman-Benson - initial API and implementation
@@ -28,7 +28,7 @@ public class WordFinder {
 	/**
 	 * Returns the region in the given document that contains an identifier, or
 	 * <code>null</code> if none.
-	 * 
+	 *
 	 * @param document document to search
 	 * @param offset offset at which to look for an identifier
 	 * @return region containing an identifier, or <code>null</code>

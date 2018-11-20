@@ -22,7 +22,7 @@ import org.eclipse.cdt.make.core.makefile.ISpecialRule;
  *
  *  `.SECONDARY' with no prerequisites causes all targets to be treated
  *  as secondary (i.e., no target is removed because it is considered intermediate).
- *  
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

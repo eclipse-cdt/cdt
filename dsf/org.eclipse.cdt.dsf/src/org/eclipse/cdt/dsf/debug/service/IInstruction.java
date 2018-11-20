@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import java.math.BigInteger;
  * Implementers should extend {@link AbstractInstruction} instead of
  * implementing this interface directly.
  * </p>
- * 
+ *
  * @since 1.0
  * @see IInstructionWithSize
  */

@@ -17,6 +17,17 @@ package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.core.model.ICProject;
+import org.eclipse.cdt.core.model.IContainerEntry;
+import org.eclipse.cdt.core.model.IPathEntry;
+import org.eclipse.cdt.internal.ui.ICHelpContextIds;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,22 +40,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Composite;
 
-import org.eclipse.cdt.core.model.ICProject;
-import org.eclipse.cdt.core.model.IContainerEntry;
-import org.eclipse.cdt.core.model.IPathEntry;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.ICHelpContextIds;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ITreeListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.TreeListDialogField;
-
 /**
  * Path Containers tab for C/C++ Project Paths page for 3.X projects.
- * 
+ *
  * @deprecated as of CDT 4.0. This tab was used to set preferences/properties
  * for 3.X style projects.
  */
@@ -71,7 +69,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 		ContainersAdapter adapter = new ContainersAdapter();
 
-		fContainersList = new TreeListDialogField<CPElement>(adapter, buttonLabels, new CPElementLabelProvider());
+		fContainersList = new TreeListDialogField<>(adapter, buttonLabels, new CPElementLabelProvider());
 		fContainersList.setDialogFieldListener(adapter);
 		fContainersList.setLabelText(CPathEntryMessages.ContainerEntryPage_libraries_label);
 
@@ -91,7 +89,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 	private void updateLibrariesList() {
 		List<CPElement> cpelements = fCPathList.getElements();
-		List<CPElement> libelements = new ArrayList<CPElement>(cpelements.size());
+		List<CPElement> libelements = new ArrayList<>(cpelements.size());
 
 		int nElements = cpelements.size();
 		for (int i = 0; i < nElements; i++) {
@@ -222,7 +220,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 			int nElementsChosen = containers.length;
 			// remove duplicates
 			List<CPElement> cplist = fContainersList.getElements();
-			List<CPElement> elementsToAdd = new ArrayList<CPElement>(nElementsChosen);
+			List<CPElement> elementsToAdd = new ArrayList<>(nElementsChosen);
 
 			for (int i = 0; i < nElementsChosen; i++) {
 				CPElement curr = containers[i];
@@ -452,7 +450,7 @@ public class CPathContainerEntryPage extends CPathBasePage {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jdt.internal.ui.wizards.buildpaths.BuildPathBasePage#isEntryKind(int)
 	 */
 	@Override

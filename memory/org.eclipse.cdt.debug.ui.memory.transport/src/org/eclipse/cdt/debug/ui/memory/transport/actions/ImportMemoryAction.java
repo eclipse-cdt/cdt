@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ted R Williams (Wind River Systems, Inc.) - initial implementation
  *******************************************************************************/
@@ -29,11 +29,13 @@ public class ImportMemoryAction implements IViewActionDelegate {
 
 	private IMemoryRenderingSite fView;
 
+	@Override
 	public void init(IViewPart view) {
 		if (view instanceof IMemoryRenderingSite)
 			fView = (IMemoryRenderingSite) view;
 	}
 
+	@Override
 	public void run(IAction action) {
 
 		ISelection selection = fView.getSite().getSelectionProvider().getSelection();
@@ -51,8 +53,9 @@ public class ImportMemoryAction implements IViewActionDelegate {
 		dialog.getResult();
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		// use utility function in export code		
+		// use utility function in export code
 		action.setEnabled(ExportMemoryAction.getMemoryBlockAndInitialStartAddress(selection).block != null);
 	}
 

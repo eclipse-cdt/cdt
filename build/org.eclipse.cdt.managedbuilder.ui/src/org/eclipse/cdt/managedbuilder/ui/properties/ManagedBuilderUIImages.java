@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Bundle of all images used by the C plugin.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -64,7 +64,7 @@ public class ManagedBuilderUIImages {
 	public static final String IMG_BUILD_CAT = NAME_PREFIX + "config-category.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_BUILD_CAT = createManaged(T_BUILD, IMG_BUILD_CAT);
 
-	// new images 
+	// new images
 	public static final String IMG_READ_ONLY = NAME_PREFIX + "read_only.gif"; //$NON-NLS-1$
 	public static final ImageDescriptor DESC_READ_ONLY = createManaged(T_OBJ, IMG_READ_ONLY);
 	public static final String IMG_EDITABLE = NAME_PREFIX + "editable.gif"; //$NON-NLS-1$

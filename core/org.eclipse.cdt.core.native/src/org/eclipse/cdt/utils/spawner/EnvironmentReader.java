@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.Platform;
 
 /**
  * This class provides environment variables supplied as {@link Properties} class.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
@@ -39,7 +39,7 @@ public class EnvironmentReader {
 			} else {
 				envVarsNormalized = envVars;
 			}
-			rawVars = new ArrayList<String>();
+			rawVars = new ArrayList<>();
 			Map<String, String> envMap = System.getenv();
 			for (String var : envMap.keySet()) {
 				String value = envMap.get(var);

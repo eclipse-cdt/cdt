@@ -17,14 +17,14 @@ package org.eclipse.cdt.managedbuilder.core;
  * This class represents a configuration element for loading the managed build
  * model objects.  They can either be loaded from the ManagedBuildInfo extension
  * point, or from an instance of IManagedConfigProvider.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IManagedConfigElement {
 
 	/**
-	 * @return the name of this config element (i.e. tag name of the 
+	 * @return the name of this config element (i.e. tag name of the
 	 * corresponding xml element)
 	 */
 	String getName();

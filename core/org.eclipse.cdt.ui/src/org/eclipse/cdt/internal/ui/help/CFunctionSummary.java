@@ -15,13 +15,12 @@ package org.eclipse.cdt.internal.ui.help;
 
 import java.util.ArrayList;
 
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import org.eclipse.cdt.ui.FunctionPrototypeSummary;
 import org.eclipse.cdt.ui.IFunctionSummary;
 import org.eclipse.cdt.ui.IRequiredInclude;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class CFunctionSummary implements IFunctionSummary {
 	private static final String ATTR_STD = "standard"; //$NON-NLS-1$
@@ -45,7 +44,7 @@ public class CFunctionSummary implements IFunctionSummary {
 		String args = null;
 		String type = null;
 		NodeList list = e.getChildNodes();
-		ArrayList<IRequiredInclude> incList = new ArrayList<IRequiredInclude>();
+		ArrayList<IRequiredInclude> incList = new ArrayList<>();
 		for (int j = 0; j < list.getLength(); j++) {
 			Node node = list.item(j);
 			if (node.getNodeType() != Node.ELEMENT_NODE)
@@ -101,7 +100,7 @@ public class CFunctionSummary implements IFunctionSummary {
 	}
 
 	/**
-	 * This class implements IRequiredInclude interface 
+	 * This class implements IRequiredInclude interface
 	 */
 	private class RequiredInclude implements IRequiredInclude {
 		private String iname;

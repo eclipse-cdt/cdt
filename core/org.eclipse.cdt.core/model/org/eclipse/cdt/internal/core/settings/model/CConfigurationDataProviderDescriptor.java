@@ -49,7 +49,7 @@ public class CConfigurationDataProviderDescriptor {
 			fConflictingNatureIds = toArray(fProviderElement.getAttribute(CONFLICTING_NATURES));
 			//			fBuilderIds = toArray(fProviderElement.getAttribute(ECLIPSE_BUILDERS));
 		} else {
-			//fBuilderIds = 
+			//fBuilderIds =
 			fNatureIds = new String[0];
 			fConflictingNatureIds = new String[0];
 		}
@@ -66,7 +66,7 @@ public class CConfigurationDataProviderDescriptor {
 
 		StringTokenizer t = new StringTokenizer(value, DELIMITER);
 		int num = t.countTokens();
-		List<String> list = new ArrayList<String>(num);
+		List<String> list = new ArrayList<>(num);
 		for (int i = 0; i < num; i++) {
 			String v = t.nextToken().trim();
 			if (v.length() != 0)

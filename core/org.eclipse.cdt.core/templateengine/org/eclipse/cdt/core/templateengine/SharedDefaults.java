@@ -63,7 +63,7 @@ public class SharedDefaults extends HashMap<String, String> {
 	 * shareddefaults.xml
 	 */
 
-	public static final String SET = "SET"; //$NON-NLS-1$ 
+	public static final String SET = "SET"; //$NON-NLS-1$
 	public static final String GET = "GET"; //$NON-NLS-1$
 
 	/**
@@ -93,9 +93,9 @@ public class SharedDefaults extends HashMap<String, String> {
 	 */
 
 	public SharedDefaults() {
-		sharedDefaultsMap = new HashMap<String, String>();
-		persistDataMap = new HashMap<String, String>();
-		tableDataMap = new HashMap<String, String>();
+		sharedDefaultsMap = new HashMap<>();
+		persistDataMap = new HashMap<>();
+		tableDataMap = new HashMap<>();
 
 		// The conditional controls here is provided to have consistent
 		// data storage in the file during System crash or
@@ -146,7 +146,7 @@ public class SharedDefaults extends HashMap<String, String> {
 
 	/**
 	 * This method updates the HashMap with new key-value pair into the XML file
-	 * 
+	 *
 	 * @param sharedMap
 	 */
 
@@ -168,7 +168,7 @@ public class SharedDefaults extends HashMap<String, String> {
 
 	/**
 	 * This method returns the latest key value pair (HashMap)
-	 * 
+	 *
 	 * @return HashMap
 	 */
 
@@ -192,7 +192,7 @@ public class SharedDefaults extends HashMap<String, String> {
 
 	/**
 	 * Updates backend with changed value for a specific key(name)
-	 * 
+	 *
 	 * @param updateName
 	 * @param updateValue
 	 */
@@ -222,7 +222,7 @@ public class SharedDefaults extends HashMap<String, String> {
 
 	/**
 	 * Deletes the key-value pair from the backend with Key as identifier.
-	 * 
+	 *
 	 * @param deleteName
 	 */
 	public void deleteBackEndStorage(String[] deleteName) {
@@ -253,7 +253,7 @@ public class SharedDefaults extends HashMap<String, String> {
 
 	/**
 	 * This method returns the default XMLFormat for the newly created XML file
-	 * 
+	 *
 	 * @param parsedXML
 	 * @return
 	 */

@@ -37,7 +37,7 @@ public class GDBJtagDeviceContributionFactory {
 	protected ArrayList<GDBJtagDeviceContribution> contributions;
 
 	private GDBJtagDeviceContributionFactory() {
-		contributions = new ArrayList<GDBJtagDeviceContribution>();
+		contributions = new ArrayList<>();
 		loadSubtypeContributions();
 	}
 

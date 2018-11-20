@@ -21,16 +21,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.text.IRegion;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.Region;
-import org.eclipse.ui.texteditor.ITextEditor;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.IName;
 import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
@@ -62,17 +52,24 @@ import org.eclipse.cdt.core.model.ILanguage;
 import org.eclipse.cdt.core.model.ITranslationUnit;
 import org.eclipse.cdt.core.model.IWorkingCopy;
 import org.eclipse.cdt.core.parser.util.ArrayUtil;
-import org.eclipse.cdt.ui.CUIPlugin;
-
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTQueries;
 import org.eclipse.cdt.internal.core.index.IIndexFragmentName;
 import org.eclipse.cdt.internal.core.model.ASTCache.ASTRunnable;
 import org.eclipse.cdt.internal.core.model.ext.CElementHandleFactory;
 import org.eclipse.cdt.internal.core.model.ext.ICElementHandle;
-
 import org.eclipse.cdt.internal.ui.ICStatusConstants;
 import org.eclipse.cdt.internal.ui.viewsupport.IndexUI;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.Region;
+import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * Based on class OpenDeclarationsJob
@@ -199,7 +196,7 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 
 		targets = ArrayUtil.trim(ArrayUtil.addAll(targets, implicitTargets));
 
-		final ArrayList<IFunctionDeclaration> functionElements = new ArrayList<IFunctionDeclaration>();
+		final ArrayList<IFunctionDeclaration> functionElements = new ArrayList<>();
 		filterToFunctions(fTranslationUnit.getCProject(), fIndex, targets, functionElements);
 
 		// save the resolved function declarations
@@ -259,7 +256,7 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 
 	private IName[] findDefinitions(IIndex index, IASTTranslationUnit ast, NameKind kind, IBinding binding)
 			throws CoreException {
-		List<IASTName> declNames = new ArrayList<IASTName>();
+		List<IASTName> declNames = new ArrayList<>();
 		declNames.addAll(Arrays.asList(ast.getDefinitionsInAST(binding)));
 		for (Iterator<IASTName> i = declNames.iterator(); i.hasNext();) {
 			IASTName name = i.next();
@@ -299,7 +296,7 @@ public class SelectionToDeclarationJob extends Job implements ASTRunnable {
 				astNames[i] = null;
 			} else if (ASTQueries.findAncestorWithType(name, ICPPASTUsingDeclaration.class) != null) {
 				if (usingDeclarations == null)
-					usingDeclarations = new ArrayList<IASTName>(1);
+					usingDeclarations = new ArrayList<>(1);
 				usingDeclarations.add(name);
 				astNames[i] = null;
 			}

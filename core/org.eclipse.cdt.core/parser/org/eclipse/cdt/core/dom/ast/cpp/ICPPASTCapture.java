@@ -20,7 +20,7 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 
 /**
  * Capture for a lambda expression, introduced in C++0x.
- * 
+ *
  * @since 5.3
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
@@ -45,7 +45,7 @@ public interface ICPPASTCapture extends IASTNode, ICPPASTPackExpandable, IASTNam
 	boolean capturesThisPointer();
 
 	/**
-	 * Returns the identifier for this capture or <code>null</code>, when 
+	 * Returns the identifier for this capture or <code>null</code>, when
 	 * <code>this<code> is captured.
 	 */
 	IASTName getIdentifier();

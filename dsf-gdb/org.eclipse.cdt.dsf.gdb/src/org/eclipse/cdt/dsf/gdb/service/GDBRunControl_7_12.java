@@ -124,7 +124,7 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 	@Override
 	public boolean isTargetAcceptingCommands() {
-		// We shall directly return true if the async mode is ON, 
+		// We shall directly return true if the async mode is ON,
 		// Since this run control service is specifically for all-stop mode,
 		//   The only possibility to be running asynchronously is if the Full GDB console
 		// is being used.
@@ -246,20 +246,20 @@ public class GDBRunControl_7_12 extends GDBRunControl_7_10 {
 
 	/**
 	 * Changes the reverse debugging method as soon as the program is suspended at the specified breakpoint location
-	 * 
+	 *
 	 * It is recommended to use this request before the program runs or restarts in order to prevent timing issues and
 	 * miss a suspend event
-	 * 
+	 *
 	 * Note, using the break point id to determine the stop location would be sufficient although in the case where
 	 * multiple break points are inserted in the same location, GDB will only report one of them (e.g. GDB 7.12)
-	 * 
+	 *
 	 * Having the MIBreakpoint will give us access to the address, file and line number as well which can be used as
 	 * alternatives to determine a matched location.
-	 * 
-	 * This method is specially useful when using async mode with i.e. with GDB 7.12. 
-	 * Activating reverse debugging when the target is running may trigger an unresponsive GDB, this triggered the 
+	 *
+	 * This method is specially useful when using async mode with i.e. with GDB 7.12.
+	 * Activating reverse debugging when the target is running may trigger an unresponsive GDB, this triggered the
 	 * creation of this method
-	 * 
+	 *
 	 */
 	void enableReverseModeAtBpLocation(final IContainerDMContext containerContext, final ReverseDebugMethod traceMethod,
 			MIBreakpoint bp, boolean triggerContinue) {

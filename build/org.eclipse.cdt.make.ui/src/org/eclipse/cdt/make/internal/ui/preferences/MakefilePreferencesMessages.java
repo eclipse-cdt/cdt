@@ -23,7 +23,7 @@ import java.util.ResourceBundle;
 public class MakefilePreferencesMessages {
 
 	/**
-	 * 
+	 *
 	 */
 	private MakefilePreferencesMessages() {
 	}

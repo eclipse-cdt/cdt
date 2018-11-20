@@ -21,20 +21,20 @@ import org.eclipse.cdt.dsf.mi.service.command.output.MIDataWriteMemoryInfo;
 import org.eclipse.cdt.dsf.mi.service.command.output.MIOutput;
 
 /**
- * -data-write-memory [ -o COLUMN_OFFSET ] 
+ * -data-write-memory [ -o COLUMN_OFFSET ]
  *   	ADDRESS WORD-FORMAT WORD-SIZE VALUE
- *  
+ *
  * where:
- * 
+ *
  * 'COLUMN_OFFSET'
  *   	The cell offset from the beginning of the memory grid row
- *    
+ *
  * 'ADDRESS'
  *   	Row address of the cell to be written
- *   
+ *
  * 'WORD-FORMAT'
  *      The format to be used to print the memory words
- * 
+ *
  * 'WORD-SIZE'
  *      The size of each memory word in bytes
  *

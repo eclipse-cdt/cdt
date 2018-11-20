@@ -62,7 +62,7 @@ public interface ICDTLaunchConfigurationConstants {
 	/**
 	 * Specifies the default launch delegate for a Remote Debug session.
 	 * This default is part of the optional plugin org.eclipse.cdt.launch.remote.  If that plugin is not installed
-	 * then we won't set a default, which is ok since we only have one other delegate 
+	 * then we won't set a default, which is ok since we only have one other delegate
 	 * (which is org.eclipse.cdt.dsf.gdb.launch.remoteCLaunch).
 	 * @since 7.1
 	 */
@@ -89,10 +89,10 @@ public interface ICDTLaunchConfigurationConstants {
 	/**
 	 * Identifier for the C/C++ program process type, which is annotated on processes created
 	 * by the C/C++ application launch delegate.
-	 * 
+	 *
 	 * (value <code>"C/C++"</code>).
 	 */
-	public static final String ID_PROGRAM_PROCESS_TYPE = "C/C++"; //$NON-NLS-1$ 
+	public static final String ID_PROGRAM_PROCESS_TYPE = "C/C++"; //$NON-NLS-1$
 
 	/**
 	 * Launch configuration attribute key. The value is a name of a C/C++
@@ -102,7 +102,7 @@ public interface ICDTLaunchConfigurationConstants {
 
 	/**
 	 * Launch configuration attribute value constants for build before launch.
-	 * 
+	 *
 	 * @since 7.0
 	 */
 	public static final int BUILD_BEFORE_LAUNCH_DISABLED = 0;
@@ -166,7 +166,7 @@ public interface ICDTLaunchConfigurationConstants {
 	/**
 	 * Launch configuration attribute key. The value is a Map specifying the
 	 * environment to use when launching a C/C++ application.
-	 * 
+	 *
 	 * @deprecated - see ILaunchManager.ATTR_ENVIRONMENT_VARIABLES
 	 */
 	@Deprecated
@@ -205,13 +205,13 @@ public interface ICDTLaunchConfigurationConstants {
 	public static final String ATTR_DEBUGGER_STOP_AT_MAIN = CDT_LAUNCH_ID + ".DEBUGGER_STOP_AT_MAIN"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key. The value is a String specifying 
+	 * Launch configuration attribute key. The value is a String specifying
 	 * the symbol to use for the main breakpoint.
 	 */
 	public static final String ATTR_DEBUGGER_STOP_AT_MAIN_SYMBOL = CDT_LAUNCH_ID + ".DEBUGGER_STOP_AT_MAIN_SYMBOL"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute key. The value is a String specifying 
+	 * Launch configuration attribute key. The value is a String specifying
 	 * the register groups memento.
 	 */
 	public static final String ATTR_DEBUGGER_REGISTER_GROUPS = CDT_LAUNCH_ID + ".DEBUGGER_REGISTER_GROUPS"; //$NON-NLS-1$
@@ -281,7 +281,7 @@ public interface ICDTLaunchConfigurationConstants {
 	 */
 	public static final String ATTR_DEBUGGER_MEMORY_BLOCKS = CDT_LAUNCH_ID + ".MEMORY_BLOCKS"; //$NON-NLS-1$
 
-	/**         
+	/**
 	 * Launch configuration attribute key. The value is a String specifying the type of post mortem launch.
 	 * Note that we use the prefix "org.eclipse.cdt.dsf.gdb" for backwards-compatibility.
 	 * See bug 476589.
@@ -329,10 +329,10 @@ public interface ICDTLaunchConfigurationConstants {
 	 */
 	public static String DEBUGGER_MODE_CORE = "core"; //$NON-NLS-1$
 
-	/**  
+	/**
 	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
 	 * Indicates a core file.
-	 *   
+	 *
 	 * @since 7.7
 	 */
 	public static final String DEBUGGER_POST_MORTEM_CORE_FILE = "CORE_FILE"; //$NON-NLS-1$
@@ -340,12 +340,12 @@ public interface ICDTLaunchConfigurationConstants {
 	/**
 	 * Possible attribute value for the key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
 	 * Indicates a trace data file.
-	 *      
+	 *
 	 * @since 7.7
 	 */
 	public static final String DEBUGGER_POST_MORTEM_TRACE_FILE = "TRACE_FILE"; //$NON-NLS-1$
 
-	/**  
+	/**
 	 * Launch configuration attribute value. The key is ATTR_DEBUGGER_POST_MORTEM_TYPE.
 	 * @since 7.7
 	 */

@@ -36,10 +36,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
- * TemplateEngine is implemented as a Singleton. TemplateEngine is responsible for 
+ * TemplateEngine is implemented as a Singleton. TemplateEngine is responsible for
  * creating SharedDefaults and initialising the SharedDefaults. Template instances
  * are obtained from TemplateEngine.
- * 
+ *
  * @since 4.0
  */
 public class TemplateEngine {
@@ -55,9 +55,9 @@ public class TemplateEngine {
 	/**
 	 * This is a Map <WizardID, TemplateInfo>.
 	 */
-	private Map<String, List<TemplateInfo>> templateInfoMap = new LinkedHashMap<String, List<TemplateInfo>>();
+	private Map<String, List<TemplateInfo>> templateInfoMap = new LinkedHashMap<>();
 
-	Map<String, TemplateCategory> categoryMap = new HashMap<String, TemplateCategory>();
+	Map<String, TemplateCategory> categoryMap = new HashMap<>();
 
 	/**
 	 * TemplateEngine constructor, create and initialise SharedDefaults.
@@ -71,7 +71,7 @@ public class TemplateEngine {
 	 */
 	public TemplateCore[] getTemplates() {
 		TemplateInfo[] templateInfoArray = getTemplateInfos();
-		List<TemplateCore> tcores = new ArrayList<TemplateCore>();
+		List<TemplateCore> tcores = new ArrayList<>();
 		for (int i = 0; i < templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
@@ -123,7 +123,7 @@ public class TemplateEngine {
 	 */
 	public TemplateCore[] getTemplates(String projectType, String toolChain, String usageFilter) {
 		TemplateInfo[] templateInfoArray = getTemplateInfos(projectType, toolChain, usageFilter);
-		List<TemplateCore> templatesList = new ArrayList<TemplateCore>();
+		List<TemplateCore> templatesList = new ArrayList<>();
 		for (int i = 0; i < templateInfoArray.length; i++) {
 			TemplateInfo info = templateInfoArray[i];
 			try {
@@ -173,7 +173,7 @@ public class TemplateEngine {
 	 * @param template
 	 */
 	public void updateSharedDefaults(TemplateCore template) {
-		Map<String, String> tobePersisted = new HashMap<String, String>();
+		Map<String, String> tobePersisted = new HashMap<>();
 		Map<String, String> valueStore = template.getValueStore();
 		for (String key : template.getPersistTrueIDs()) {
 			tobePersisted.put(key, valueStore.get(key));
@@ -186,9 +186,9 @@ public class TemplateEngine {
 	 * TEMPLATE_ENGINE. If TEMPLATE_ENGINE is null create the TemplateEngine
 	 * instance assign it to TEMPLATE_ENGINE. There is no need to have
 	 * synchronized here(while creating TemplateEngine).
-	 * 
+	 *
 	 * @return TEMPLATE_ENGINE, instance of TemplateEngine.
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static TemplateEngine getDefault() {
@@ -235,12 +235,12 @@ public class TemplateEngine {
 					}
 
 					IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
-					Set<String> toolChainIdSet = new LinkedHashSet<String>();
+					Set<String> toolChainIdSet = new LinkedHashSet<>();
 					for (IConfigurationElement toolChainConfig : toolChainConfigs)
 						toolChainIdSet.add(toolChainConfig.getAttribute(TemplateEngineHelper.ID));
 
 					IConfigurationElement[] parentCategoryConfigs = config.getChildren("parentCategory"); //$NON-NLS-1$
-					List<String> parentCategoryIds = new ArrayList<String>();
+					List<String> parentCategoryIds = new ArrayList<>();
 					for (IConfigurationElement parentCategoryConfig : parentCategoryConfigs)
 						parentCategoryIds.add(parentCategoryConfig.getAttribute("id")); //$NON-NLS-1$
 
@@ -257,7 +257,7 @@ public class TemplateEngine {
 					String label = config.getAttribute("label"); //$NON-NLS-1$
 
 					IConfigurationElement[] parentCategoryConfigs = config.getChildren("parentCategory"); //$NON-NLS-1$
-					List<String> parentCategoryIds = new ArrayList<String>();
+					List<String> parentCategoryIds = new ArrayList<>();
 					for (IConfigurationElement parentCategoryConfig : parentCategoryConfigs)
 						parentCategoryIds.add(parentCategoryConfig.getAttribute("id")); //$NON-NLS-1$
 
@@ -283,7 +283,7 @@ public class TemplateEngine {
 				templateId = config.getAttribute(TemplateEngineHelper.ID);
 
 				IConfigurationElement[] toolChainConfigs = config.getChildren(TemplateEngineHelper.TOOL_CHAIN);
-				Set<String> toolChainIdSet = new LinkedHashSet<String>();
+				Set<String> toolChainIdSet = new LinkedHashSet<>();
 				for (int k = 0; k < toolChainConfigs.length; k++) {
 					toolChainIdSet.add(toolChainConfigs[k].getAttribute(TemplateEngineHelper.ID));
 				}
@@ -312,7 +312,7 @@ public class TemplateEngine {
 	 */
 	public TemplateInfo[] getTemplateInfos(String projectType, String toolChain, String usageFilter) {
 		List<TemplateInfo> templateInfoList = templateInfoMap.get(projectType.trim());
-		List<TemplateInfo> matchedTemplateInfoList = new ArrayList<TemplateInfo>();
+		List<TemplateInfo> matchedTemplateInfoList = new ArrayList<>();
 
 		if (templateInfoList != null) {
 			for (TemplateInfo templateInfo : templateInfoList) {
@@ -355,7 +355,7 @@ public class TemplateEngine {
 	 * @return all TemplateInfo objects known to the TemplateEngine
 	 */
 	public TemplateInfo[] getTemplateInfos() {
-		List<TemplateInfo> infoList = new ArrayList<TemplateInfo>();
+		List<TemplateInfo> infoList = new ArrayList<>();
 		for (List<TemplateInfo> infos : templateInfoMap.values()) {
 			infoList.addAll(infos);
 		}
@@ -371,7 +371,7 @@ public class TemplateEngine {
 
 	/**
 	 * Returns the Template Schema URL
-	 * 
+	 *
 	 * @return URL of the Template Schema.
 	 * @throws IOException
 	 */
@@ -384,11 +384,11 @@ public class TemplateEngine {
 	 * Returns the Children of the Element.
 	 * @param element
 	 * @return List of the child elements
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static List<Element> getChildrenOfElement(Element element) {
-		List<Element> list = new ArrayList<Element>();
+		List<Element> list = new ArrayList<>();
 		NodeList children = element.getChildNodes();
 		for (int i = 0, l = children.getLength(); i < l; i++) {
 			Node child = children.item(i);
@@ -401,15 +401,15 @@ public class TemplateEngine {
 
 	/**
 	 * Returns the child elements by Tag
-	 * 
+	 *
 	 * @param element
 	 * @param tag
 	 * @return List of child elements
-	 * 
+	 *
 	 * @since 4.0
 	 */
 	public static List<Element> getChildrenOfElementByTag(Element element, String tag) {
-		List<Element> list = new ArrayList<Element>();
+		List<Element> list = new ArrayList<>();
 		NodeList children = element.getChildNodes();
 		for (int i = 0, l = children.getLength(); i < l; i++) {
 			Node child = children.item(i);

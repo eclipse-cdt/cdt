@@ -125,10 +125,10 @@ final class Chunk {
 	 */
 	static long expandToFreeRecPtr(int value) {
 		/*
-		 * We need to properly manage the integer that was read. The value will be sign-extended 
-		 * so if the most significant bit is set, the resulting long will look negative. By 
-		 * masking it with ((long)1 << 32) - 1 we remove all the sign-extended bits and just 
-		 * have an unsigned 32-bit value as a long. This gives us one more useful bit in the 
+		 * We need to properly manage the integer that was read. The value will be sign-extended
+		 * so if the most significant bit is set, the resulting long will look negative. By
+		 * masking it with ((long)1 << 32) - 1 we remove all the sign-extended bits and just
+		 * have an unsigned 32-bit value as a long. This gives us one more useful bit in the
 		 * stored record pointers.
 		 */
 		long address = value & 0xFFFFFFFFL;

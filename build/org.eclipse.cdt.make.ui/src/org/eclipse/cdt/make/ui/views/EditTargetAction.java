@@ -16,8 +16,8 @@ package org.eclipse.cdt.make.ui.views;
 import java.util.List;
 
 import org.eclipse.cdt.make.core.IMakeTarget;
-import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.internal.ui.MakeUIImages;
+import org.eclipse.cdt.make.internal.ui.MakeUIPlugin;
 import org.eclipse.cdt.make.ui.dialogs.MakeTargetDialog;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;

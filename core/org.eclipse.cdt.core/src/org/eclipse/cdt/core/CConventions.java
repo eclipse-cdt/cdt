@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Rational Software - initial implementation
  *     Sergey Prigogin (Google)
@@ -345,7 +345,7 @@ public class CConventions {
 	 *
 	 * @param name the include declaration
 	 * @return a status object with code <code>IStatus.OK</code> if
-	 *		the given name is valid as an include name, otherwise a status 
+	 *		the given name is valid as an include name, otherwise a status
 	 *		object indicating what is wrong with the name
 	 */
 

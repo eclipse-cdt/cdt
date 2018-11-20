@@ -43,7 +43,7 @@ import org.eclipse.ui.console.IOConsole;
  * Any input to this console is read and discarded, since this console should be
  * read-only.  We don't actually make the console read-only because it is nice
  * for the user to be able to add delimiters such as empty lines within the traces.
- * 
+ *
  * @since 2.1
  * This class was moved from package org.eclipse.cdt.dsf.gdb.internal.ui.tracing
  */
@@ -175,7 +175,7 @@ public class TracingConsole extends IOConsole {
 	 * from filling up.  We don't actually do anything with
 	 * the data we read, since the Trace console should not
 	 * accept input.
-	 * 
+	 *
 	 * But instead of making the console read-only, we allow
 	 * the user to type things to allow for comments to be
 	 * inserted within the traces.

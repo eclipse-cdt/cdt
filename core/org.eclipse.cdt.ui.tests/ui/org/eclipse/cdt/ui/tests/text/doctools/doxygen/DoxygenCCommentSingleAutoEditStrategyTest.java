@@ -17,30 +17,27 @@ package org.eclipse.cdt.ui.tests.text.doctools.doxygen;
 
 import java.util.HashMap;
 
-import junit.framework.Test;
-
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.text.BadLocationException;
-import org.eclipse.jface.text.Document;
-import org.eclipse.jface.text.IDocument;
-
 import org.eclipse.cdt.core.CCorePlugin;
 import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ICProject;
 import org.eclipse.cdt.core.testplugin.CProjectHelper;
 import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.core.model.TranslationUnit;
+import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
+import org.eclipse.cdt.internal.ui.text.CTextTools;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.tests.text.AbstractAutoEditTest;
 import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.cdt.ui.text.doctools.DefaultMultilineCommentAutoEditStrategy;
 import org.eclipse.cdt.ui.text.doctools.doxygen.DoxygenSingleAutoEditStrategy;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 
-import org.eclipse.cdt.internal.core.model.TranslationUnit;
-
-import org.eclipse.cdt.internal.ui.text.CAutoIndentStrategy;
-import org.eclipse.cdt.internal.ui.text.CTextTools;
+import junit.framework.Test;
 
 /**
  * Testing the auto indent strategies.
@@ -104,7 +101,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// ///   X
 	//  void foo() {}
 
-	// ///   
+	// ///
 	// /// X
 	//  void foo() {}
 	public void testAutoDocCommentContent2() throws CoreException {
@@ -193,7 +190,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	//  C* bar_baz(A a, B b, int c) {}
 
 	// class A {}; class B {};
-	// /// 
+	// ///
 	// /// X@param a
 	// /// @param b
 	// /// @param c
@@ -272,7 +269,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// {}
 
 	// void foo_bar(int x)
-	// /// 
+	// ///
 	// /// X@param x
 	// {}
 	public void testAutoDocCommentContent9b() throws CoreException {
@@ -283,7 +280,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	// {}
 
 	// void foo_bar(int x)
-	// /// 
+	// ///
 	// /// X@param x
 	// {}
 	public void testAutoDocCommentContent9c() throws CoreException {
@@ -405,7 +402,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	//	public:
 	//      ///X
 	//      STATIC void D::foo(int x) {
-	//      
+	//
 	//      }
 	//	};
 
@@ -415,7 +412,7 @@ public class DoxygenCCommentSingleAutoEditStrategyTest extends AbstractAutoEditT
 	//	public:
 	//      /// X@param x
 	//      STATIC void D::foo(int x) {
-	//      
+	//
 	//      }
 	//	};
 	public void testAutoDocCommentContent17() throws CoreException {

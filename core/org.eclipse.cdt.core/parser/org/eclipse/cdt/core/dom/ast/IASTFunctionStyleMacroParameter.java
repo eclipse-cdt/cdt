@@ -16,7 +16,7 @@ package org.eclipse.cdt.core.dom.ast;
 /**
  * This interface represents the name of a function style macro parameter. This
  * is not an IASTName, as there are not any bindings for
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -30,14 +30,14 @@ public interface IASTFunctionStyleMacroParameter extends IASTNode {
 
 	/**
 	 * Get the parameter name.
-	 * 
+	 *
 	 * @return String name
 	 */
 	public String getParameter();
 
 	/**
 	 * Set the parameter name.
-	 * 
+	 *
 	 * @param value
 	 *            String
 	 */

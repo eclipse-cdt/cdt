@@ -13,10 +13,10 @@
  *******************************************************************************/
 package org.eclipse.cdt.codan.core.model;
 
-import org.eclipse.core.resources.IResource;
-
 import java.util.Collection;
 import java.util.Iterator;
+
+import org.eclipse.core.resources.IResource;
 
 /**
  * This interface an API to add/remove checker and problems programmatically,

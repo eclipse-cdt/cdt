@@ -28,7 +28,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * org.eclipse.cdt.debug.internal.ui.views.modules.CElementLabelProvider: 
+ * org.eclipse.cdt.debug.internal.ui.views.modules.CElementLabelProvider:
  * //TODO Add description.
  */
 public class ModuleLabelProvider extends ElementLabelProvider {

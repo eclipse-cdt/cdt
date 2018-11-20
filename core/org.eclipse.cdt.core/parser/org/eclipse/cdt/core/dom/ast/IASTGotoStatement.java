@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Represents a goto statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -25,14 +25,14 @@ public interface IASTGotoStatement extends IASTStatement, IASTNameOwner {
 
 	/**
 	 * Returns the name of the label. The name resolves to a ILabel binding.
-	 * 
+	 *
 	 * @return <code>IASTName</code>
 	 */
 	public IASTName getName();
 
 	/**
 	 * Set the name for a goto statement label.
-	 * 
+	 *
 	 * @param name
 	 *            <code>IASTName</code>
 	 */

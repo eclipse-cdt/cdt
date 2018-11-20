@@ -14,6 +14,7 @@
 package org.eclipse.cdt.debug.internal.core;
 
 import java.util.Map;
+
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.ICBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -32,7 +33,7 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#installingBreakpoint(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
@@ -49,7 +50,7 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointInstalled(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
@@ -62,7 +63,7 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint)
 	 */
@@ -75,7 +76,7 @@ public class CBreakpointNotifier implements ICBreakpointListener {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.cdt.debug.core.ICBreakpointListener#breakpointsRemoved(org.eclipse.debug.core.model.IDebugTarget,
 	 *      org.eclipse.debug.core.model.IBreakpoint[])
 	 */

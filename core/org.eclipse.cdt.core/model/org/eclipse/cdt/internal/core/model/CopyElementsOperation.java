@@ -52,9 +52,9 @@ import org.eclipse.cdt.core.model.ITranslationUnit;
  * 	the creation operation for that element type.
  *
  *    <li>This operation can be used to copy and rename elements within
- *    the same container. 
+ *    the same container.
  *
- *    <li>This operation only copies elements contained within compilation units. 
+ *    <li>This operation only copies elements contained within compilation units.
  * </ul>
  *
  */
@@ -197,7 +197,7 @@ public class CopyElementsOperation extends MultiOperation {
 	}
 
 	/**
-	 * Returns the anchor used for positioning in the destination for 
+	 * Returns the anchor used for positioning in the destination for
 	 * the element being renamed. For renaming, if no anchor has
 	 * explicitly been provided, the element is anchored in the same position.
 	 */
@@ -252,7 +252,7 @@ public class CopyElementsOperation extends MultiOperation {
 	 *		this error occurs, the element provided in the operation status is the <code>element</code>.
 	 *	<li>INVALID_NAME - the new name for <code>element</code> does not have valid syntax.
 	 *      In this case the element and name are provided in the status.
-	
+
 	 * </ul>
 	 */
 	@Override

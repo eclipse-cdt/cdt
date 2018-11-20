@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * File Browser example dialog.  It hold a tree viewer that displays 
+ * File Browser example dialog.  It hold a tree viewer that displays
  * file system contents and a text box for entering a file path to be
- * shown in the tree. 
+ * shown in the tree.
  */
 @SuppressWarnings("restriction")
 public class FileBrowserDialog extends Dialog {
@@ -43,7 +43,7 @@ public class FileBrowserDialog extends Dialog {
 	private TreeModelViewer fViewer;
 
 	/**
-	 * The model adapter for the tree viewer. 
+	 * The model adapter for the tree viewer.
 	 */
 	private FileBrowserModelAdapter fModelAdapter;
 
@@ -76,7 +76,7 @@ public class FileBrowserDialog extends Dialog {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {
 				/*
-				 * Update the file name in the text control, to match the 
+				 * Update the file name in the text control, to match the
 				 * selection in the tree.  Do this only if the user is not
 				 * actively typing in the text field (test if text has focus).
 				 */

@@ -142,7 +142,7 @@ public class AddBuildTargetAction extends Action {
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
 			List<?> list = ((IStructuredSelection) sel).toList();
 			if (list.size() > 0) {
-				List<ITargetRule> targets = new ArrayList<ITargetRule>(list.size());
+				List<ITargetRule> targets = new ArrayList<>(list.size());
 				Object[] elements = list.toArray();
 				for (Object element : elements) {
 					if (element instanceof ITargetRule) {

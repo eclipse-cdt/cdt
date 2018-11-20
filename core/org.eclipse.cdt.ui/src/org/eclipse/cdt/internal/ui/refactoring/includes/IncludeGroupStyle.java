@@ -21,13 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.preferences.PreferencesMessages;
 
 /**
  * Style preferences for a category of include statements.
@@ -63,7 +61,7 @@ public class IncludeGroupStyle implements Comparable<IncludeGroupStyle> {
 		public final String name;
 		public final String description;
 		public final IncludeKind parent;
-		public final List<IncludeKind> children = new ArrayList<IncludeKind>();
+		public final List<IncludeKind> children = new ArrayList<>();
 
 		private IncludeKind(String name, String description, IncludeKind parent) {
 			this.name = name;

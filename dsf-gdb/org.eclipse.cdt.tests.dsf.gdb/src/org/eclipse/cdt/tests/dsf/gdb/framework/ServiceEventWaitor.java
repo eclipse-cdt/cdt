@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Ericsson			  - Initial Implementation
  *     Marc Khouzam (Ericsson) - Add support to receive multiple events
@@ -31,10 +31,10 @@ import org.eclipse.core.runtime.Platform;
  * This class provides a way to wait for an asynchronous ServerEvent
  * to occur.  The user of this class specifies which event is of
  * interest . waitForEvent() can then be called to block until the event occurs or
- * the timeout elapses. It's important that this object be created <b>before</b> 
- * executing the debugger operation that will cause the expected event to occur, 
+ * the timeout elapses. It's important that this object be created <b>before</b>
+ * executing the debugger operation that will cause the expected event to occur,
  * otherwise the caller stands to miss out on the event.
- * 
+ *
  * Note that if the event occurs after object construction but
  * before waitForEvent() is called, waitForEvent() will return immediately
  * since it will know the event has already occurred.
@@ -62,7 +62,7 @@ public class ServiceEventWaitor<V> {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param session
 	 *            the DSF session we'll wait for an event to happen on
 	 * @param eventClass
@@ -106,7 +106,7 @@ public class ServiceEventWaitor<V> {
 	 */
 	public synchronized List<V> waitForEvents(int period) {
 		long startMs = System.currentTimeMillis();
-		List<V> events = new ArrayList<V>();
+		List<V> events = new ArrayList<>();
 
 		//Timeout exception will exit the loop and return the resulting list of events
 		while (true) {
@@ -132,7 +132,7 @@ public class ServiceEventWaitor<V> {
 	/*
 	 * Block until 'timeout' or the expected event occurs. The expected event is
 	 * specified at construction time.
-	 * 
+	 *
 	 * @param timeout the maximum time to wait in milliseconds.
 	 */
 	public synchronized V waitForEvent(int timeout) throws Exception {
@@ -151,9 +151,9 @@ public class ServiceEventWaitor<V> {
 
 		long stopMs = System.currentTimeMillis();
 
-		// Turning on trace during development gives you the following  
+		// Turning on trace during development gives you the following
 		// helpful analysis, which you can use to establish reasonable timeouts,
-		// and detect poorly configured ones. The best way to use this it to 
+		// and detect poorly configured ones. The best way to use this it to
 		// set breakpoints on the WARNING println calls.
 		if (LOG) {
 			final long duration = stopMs - startMs;
@@ -169,7 +169,7 @@ public class ServiceEventWaitor<V> {
 					System.out.println("\t" + frame);
 				}
 				if (!print && frame.toString().contains("ServiceEventWaitor.waitForEvent")) {
-					// we're only interested in the call stack up to (and including) our caller					
+					// we're only interested in the call stack up to (and including) our caller
 					print = true;
 				}
 			}

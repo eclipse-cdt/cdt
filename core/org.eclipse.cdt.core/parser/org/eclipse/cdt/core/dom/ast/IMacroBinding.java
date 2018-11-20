@@ -22,13 +22,13 @@ package org.eclipse.cdt.core.dom.ast;
  */
 public interface IMacroBinding extends IBinding {
 	/**
-	 * Returns <code>true</code> if this is a function-style macro. 
+	 * Returns <code>true</code> if this is a function-style macro.
 	 * @since 5.0
 	 */
 	boolean isFunctionStyle();
 
 	/**
-	 * Returns <code>true</code> if this is a dynamic macro. 
+	 * Returns <code>true</code> if this is a dynamic macro.
 	 * @since 5.0
 	 */
 	boolean isDynamic();
@@ -55,7 +55,7 @@ public interface IMacroBinding extends IBinding {
 	char[][] getParameterPlaceholderList();
 
 	/**
-	 * Returns the image of the expansion (also containing comments), or <code>null</code> if the definition 
+	 * Returns the image of the expansion (also containing comments), or <code>null</code> if the definition
 	 * is not available. For dynamic macros an exemplary image is returned.
 	 * @since 5.0
 	 */

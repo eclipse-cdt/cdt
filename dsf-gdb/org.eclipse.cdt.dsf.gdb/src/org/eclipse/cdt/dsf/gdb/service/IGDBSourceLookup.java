@@ -23,7 +23,7 @@ import org.eclipse.cdt.dsf.debug.service.ISourceLookup;
  * handle the path mapping source container type -
  * {@link MappingSourceContainer} - on the GDB side using GDB's
  * "set substitute-path" mechanism.
- * 
+ *
  * @since 5.0
  */
 public interface IGDBSourceLookup extends ISourceLookup {
@@ -31,7 +31,7 @@ public interface IGDBSourceLookup extends ISourceLookup {
 	/**
 	 * Initialise the source substitutions on the GDB backend (aka do the
 	 * initial "set substitute-path"s)
-	 * 
+	 *
 	 * @param sourceLookupCtx
 	 * @param rm
 	 */
@@ -40,7 +40,7 @@ public interface IGDBSourceLookup extends ISourceLookup {
 	/**
 	 * Update the source substitutions on the GDB backend (aka modify the
 	 * "set substitute-path"s)
-	 * 
+	 *
 	 * @param sourceLookupCtx
 	 * @param rm
 	 *            with the result set to True if a change was made

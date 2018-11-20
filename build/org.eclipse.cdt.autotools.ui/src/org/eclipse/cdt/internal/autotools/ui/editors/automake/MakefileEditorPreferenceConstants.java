@@ -22,7 +22,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 public class MakefileEditorPreferenceConstants {
 
 	/**
-	 * 
+	 *
 	 */
 	private MakefileEditorPreferenceConstants() {
 	}
@@ -33,11 +33,11 @@ public class MakefileEditorPreferenceConstants {
 	 */
 	public static final String CURRENT_LINE_COLOR = "org.eclipse.cdt.make.ui.currentLineHightlightColor"; //$NON-NLS-1$
 	public static final String LINE_NUMBER_RULER_COLOR = "org.eclipse.cdt.make.ui.lineNumberForegroundColor"; //$NON-NLS-1$
-	public static final String PRINT_MARGIN_COLOR = "org.eclipse.cdt.make.ui.printMarginColor"; //$NON-NLS-1$	
+	public static final String PRINT_MARGIN_COLOR = "org.eclipse.cdt.make.ui.printMarginColor"; //$NON-NLS-1$
 
 	/**
 	 * Preference key suffix for bold text style preference keys.
-	 * 
+	 *
 	 */
 	public static final String EDITOR_BOLD_SUFFIX = "_bold"; //$NON-NLS-1$
 

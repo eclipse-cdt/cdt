@@ -18,6 +18,19 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.ast.ASTVisitor;
+import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
+import org.eclipse.cdt.core.dom.ast.IASTNode;
+import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
+import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
+import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
+import org.eclipse.cdt.core.index.IIndex;
+import org.eclipse.cdt.core.model.CModelException;
+import org.eclipse.cdt.core.model.ITranslationUnit;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.IWorkingCopyManager;
+import org.eclipse.cdt.ui.text.ICPartitions;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentCommand;
@@ -35,25 +48,11 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.ast.ASTVisitor;
-import org.eclipse.cdt.core.dom.ast.IASTDeclaration;
-import org.eclipse.cdt.core.dom.ast.IASTNode;
-import org.eclipse.cdt.core.dom.ast.IASTNodeLocation;
-import org.eclipse.cdt.core.dom.ast.IASTNodeSelector;
-import org.eclipse.cdt.core.dom.ast.IASTTranslationUnit;
-import org.eclipse.cdt.core.index.IIndex;
-import org.eclipse.cdt.core.model.CModelException;
-import org.eclipse.cdt.core.model.ITranslationUnit;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.IWorkingCopyManager;
-import org.eclipse.cdt.ui.text.ICPartitions;
-
 /**
  * This class provides default behaviors for multi-line comment auto-editing.
- * 
+ *
  * This class is intended to be sub-classed.
- * 
+ *
  * @since 5.0
  */
 public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrategy {
@@ -227,7 +226,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 			}
 
 			/**
-			 * Holds the 
+			 * Holds the
 			 */
 			IASTDeclaration stopWhenLeaving;
 
@@ -274,7 +273,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	}
 
 	/**
-	 * @return the AST for the given translation unit, based on the given index, or <code>null</code> if 
+	 * @return the AST for the given translation unit, based on the given index, or <code>null</code> if
 	 * the translation unit is <code>null</code>, or the AST could not be obtained.
 	 * @since 5.10
 	 */
@@ -367,7 +366,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * of each line in the specified input buffer
 	 * @param buffer
 	 * @param indent
-	 * @param lineDelim 
+	 * @param lineDelim
 	 * @since 5.3
 	 */
 	protected static final StringBuilder indent(StringBuilder buffer, String indent, String lineDelim) {
@@ -388,7 +387,7 @@ public class DefaultMultilineCommentAutoEditStrategy implements IAutoEditStrateg
 	 * of each line in the specified input buffer
 	 * @param buffer
 	 * @param indent
-	 * 
+	 *
 	 * @deprecated Use {{@link #indent(StringBuilder, String, String)} instead.
 	 */
 	@Deprecated

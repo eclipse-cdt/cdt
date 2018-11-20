@@ -14,6 +14,7 @@
 
 package org.eclipse.cdt.internal.ui.navigator;
 
+import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IActionBars;
@@ -22,8 +23,6 @@ import org.eclipse.ui.actions.ActionContext;
 import org.eclipse.ui.navigator.CommonActionProvider;
 import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.ICommonViewerWorkbenchSite;
-
-import org.eclipse.cdt.ui.actions.OpenViewActionGroup;
 
 public class CNavigatorOpenViewActionProvider extends CommonActionProvider {
 

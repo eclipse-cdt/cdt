@@ -28,7 +28,7 @@ import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
  * The UIPagesProvider creates a Map of UIPages. The Map will have ID as key,
  * UIPage as value. The sequence of call to get Map of UIPages. 1.
  * clearOrderVector() for all PropertyGroup Elements. 2. getUIPages(...)
- * 
+ *
  */
 public class UIPagesProvider {
 
@@ -38,12 +38,12 @@ public class UIPagesProvider {
 	private List<String> orderVector;
 
 	public UIPagesProvider() {
-		orderVector = new ArrayList<String>();
+		orderVector = new ArrayList<>();
 	}
 
 	/**
 	 * after getting this clear the Vector.
-	 * 
+	 *
 	 * @return Vector
 	 */
 	public List<String> getOrderVector() {
@@ -54,7 +54,7 @@ public class UIPagesProvider {
 	 * re-initialize the Vector.
 	 */
 	public void clearOrderVector() {
-		orderVector = new ArrayList<String>();
+		orderVector = new ArrayList<>();
 	}
 
 	/**
@@ -62,7 +62,7 @@ public class UIPagesProvider {
 	 * correspond to UIElement group passed as parameter to this method. For a
 	 * group UIElement, the children count is taken. An array of UIPage for the
 	 * count is created. The same is initialized with UIPages.
-	 * 
+	 *
 	 * @param uiElement
 	 *            UIElement group root element. Which can be converted to a
 	 *            UIPage.
@@ -79,7 +79,7 @@ public class UIPagesProvider {
 		}
 
 		// HashMap of UIPages
-		HashMap<String, UIWizardPage> pageMap = new HashMap<String, UIWizardPage>();
+		HashMap<String, UIWizardPage> pageMap = new HashMap<>();
 
 		// If uiElement contains other group elements as children.
 		if (hasChildUIGroupElement(uiElement)) {
@@ -107,7 +107,7 @@ public class UIPagesProvider {
 	/**
 	 * whether the given (node in UIElementTree) UIElement contains children of
 	 * group type.
-	 * 
+	 *
 	 * @param parent
 	 * @return boolean, true if it does, false otherwise.
 	 */
@@ -131,7 +131,7 @@ public class UIPagesProvider {
 	/**
 	 * whether the given (node in UIElementTree) UIElement contains children of
 	 * UIElement type.
-	 * 
+	 *
 	 * @param parent
 	 * @return boolean, true if it does, false otherwise.
 	 */
@@ -155,7 +155,7 @@ public class UIPagesProvider {
 	/**
 	 * If the order vector contains the page id return, do not add it to order
 	 * vector. HashMap will not allow duplicate keys.
-	 * 
+	 *
 	 * @param pageId
 	 */
 	private void addToOrderVector(String pageId) {

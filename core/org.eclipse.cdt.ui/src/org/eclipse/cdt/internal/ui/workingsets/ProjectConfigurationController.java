@@ -16,6 +16,9 @@ package org.eclipse.cdt.internal.ui.workingsets;
 
 import java.util.Set;
 
+import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
+import org.eclipse.cdt.internal.ui.workingsets.IWorkingSetProjectConfiguration.ISnapshot;
+import org.eclipse.cdt.ui.CDTSharedImages;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
@@ -30,18 +33,13 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import org.eclipse.cdt.core.settings.model.ICConfigurationDescription;
-import org.eclipse.cdt.ui.CDTSharedImages;
-
-import org.eclipse.cdt.internal.ui.workingsets.IWorkingSetProjectConfiguration.ISnapshot;
-
 /**
  * Default implementation of the working set project configuration controller protocol.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 public class ProjectConfigurationController implements IWorkingSetProjectConfigurationController {
 
@@ -49,7 +47,7 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 
 	/**
 	 * Initializes me with my project configuration.
-	 * 
+	 *
 	 * @param config
 	 *            my project configuration
 	 */
@@ -128,7 +126,7 @@ public class ProjectConfigurationController implements IWorkingSetProjectConfigu
 
 		ContentProvider(IWorkingSetProjectConfiguration project) {
 			this.project = project;
-			this.configs = new java.util.HashSet<ICConfigurationDescription>(project.resolveConfigurations());
+			this.configs = new java.util.HashSet<>(project.resolveConfigurations());
 		}
 
 		@Override

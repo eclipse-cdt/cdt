@@ -413,7 +413,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 
 	/**
 	 * Return the cached entries, if no cache null.
-	 * 
+	 *
 	 * @param cproject
 	 */
 	protected IPathEntry[] getCachedResolvedPathEntries(ICProject cproject) {
@@ -1034,7 +1034,7 @@ public class PathEntryManager implements IPathEntryStoreListener, IElementChange
 	/**
 	 * Collects path entry errors for each project and generates error markers
 	 * for these errors
-	 * 
+	 *
 	 * @param project
 	 *            - Project with path entry errors
 	 * @param problems

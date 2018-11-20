@@ -24,7 +24,7 @@ import org.eclipse.cdt.core.testplugin.CTestPlugin;
 
 /**
  * Basic CDefaultConfigurationDataProvider
- * 
+ *
  * This is extended to allow persisting Library path + Library file language
  * settings which aren't supported by the base default configuration data provider
  * i.e. cdt.core without managedbuild...

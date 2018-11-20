@@ -21,7 +21,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 
 /**
  * A class to represent source folders added to Make Targets View on top.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  *
@@ -32,7 +32,7 @@ public class TargetSourceContainer {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param srcEntry - source entry backing the container.
 	 */
 	public TargetSourceContainer(ICSourceEntry srcEntry) {
@@ -42,7 +42,7 @@ public class TargetSourceContainer {
 
 	/**
 	 * Returns resource container associated with the source entry.
-	 * 
+	 *
 	 * @return resource container.
 	 */
 	public IContainer getContainer() {

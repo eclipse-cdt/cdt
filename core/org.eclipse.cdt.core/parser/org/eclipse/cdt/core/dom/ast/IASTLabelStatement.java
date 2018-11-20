@@ -15,7 +15,7 @@ package org.eclipse.cdt.core.dom.ast;
 
 /**
  * Represents a label statement.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -24,7 +24,7 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 	public static final IASTLabelStatement[] EMPTY_ARRAY = {};
 	/**
 	 * @since 5.4
-	 * @deprecated use {@link #EMPTY_ARRAY} instead 
+	 * @deprecated use {@link #EMPTY_ARRAY} instead
 	 * @noreference This field is not intended to be referenced by clients.
 	 */
 	@Deprecated
@@ -37,14 +37,14 @@ public interface IASTLabelStatement extends IASTStatement, IASTNameOwner {
 
 	/**
 	 * The name for the label. The name resolves to an ILabel binding.
-	 * 
+	 *
 	 * @return the name for the label
 	 */
 	public IASTName getName();
 
 	/**
 	 * Set the name for a label.
-	 * 
+	 *
 	 * @param name
 	 */
 	public void setName(IASTName name);

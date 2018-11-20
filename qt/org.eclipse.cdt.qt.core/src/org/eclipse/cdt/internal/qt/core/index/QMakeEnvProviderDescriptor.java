@@ -37,7 +37,7 @@ public final class QMakeEnvProviderDescriptor implements Comparable<QMakeEnvProv
 	private final IConfigurationElement element;
 	private final String id;
 	private final int priority;
-	private final AtomicReference<Boolean> evaluation = new AtomicReference<Boolean>();
+	private final AtomicReference<Boolean> evaluation = new AtomicReference<>();
 	private final Expression enablementExpression;
 
 	QMakeEnvProviderDescriptor(IConfigurationElement element) {

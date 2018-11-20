@@ -48,7 +48,7 @@ public class CompositeCPPClassSpecialization extends CompositeCPPClassType imple
 	private final ThreadLocal<Set<IBinding>> fInProgress = new ThreadLocal<Set<IBinding>>() {
 		@Override
 		protected Set<IBinding> initialValue() {
-			return new HashSet<IBinding>();
+			return new HashSet<>();
 		}
 	};
 

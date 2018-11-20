@@ -23,7 +23,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * into the part (editor/view) that created them. Except where noted, methods
  * must be invoked on the GUI thread. A disassembly backend has to call back
  * into the editor/view to carry out its duties.
- * 
+ *
  * <p>
  * This interface was born of the refactoring which allowed the DSF Disassembly
  * view to work with both DSF and CDI. Before that, the functionality of
@@ -33,7 +33,7 @@ import org.eclipse.ui.IWorkbenchPartSite;
  * DisassemblyPart all along. Documentation for those methods were sparse, and
  * thus this interface is likewise. See the DisassemblyPart for any available
  * documentation.
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

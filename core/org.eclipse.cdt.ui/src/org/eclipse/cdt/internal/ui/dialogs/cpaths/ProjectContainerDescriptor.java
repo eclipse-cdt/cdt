@@ -13,13 +13,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.dialogs.cpaths;
 
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.ide.IDE;
-
 import org.eclipse.cdt.core.model.IPathEntry;
 import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.cdt.ui.wizards.IPathEntryContainerPage;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.ide.IDE;
 
 public class ProjectContainerDescriptor implements IContainerDescriptor {
 	private int[] fFilterType;

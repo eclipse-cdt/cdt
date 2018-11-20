@@ -16,9 +16,9 @@ package org.eclipse.cdt.ui.testplugin;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import junit.framework.Assert;
-
 import org.eclipse.swt.widgets.Display;
+
+import junit.framework.Assert;
 
 /**
  * Runs the event loop of the given display until {@link #condition()} becomes
@@ -30,9 +30,9 @@ import org.eclipse.swt.widgets.Display;
  * otherwise, the waiter may time out before <code>sleep</code> is called and
  * the sleeping thread may never be waken up.
  * </p>
- * 
+ *
  * <p>Copied from org.eclipse.jdt.testplugin.util.</p>
- * 
+ *
  * @since 4.0
  */
 public abstract class DisplayHelper {
@@ -57,7 +57,7 @@ public abstract class DisplayHelper {
 	 * loop is driven at most once, but <code>Display.sleep()</code> is never
 	 * invoked.
 	 * </p>
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param timeout the timeout in milliseconds
 	 * @return <code>true</code> if the condition became <code>true</code>,
@@ -105,7 +105,7 @@ public abstract class DisplayHelper {
 	 * <code>timeout == 0</code>, the event loop is driven exactly once, but
 	 * <code>Display.sleep()</code> is never invoked.
 	 * </p>
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param millis the timeout in milliseconds
 	 */
@@ -128,7 +128,7 @@ public abstract class DisplayHelper {
 	 * If <code>timeout == 0</code>, the event loop is driven exactly once,
 	 * but <code>Display.sleep()</code> is never invoked.
 	 * </p>
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param timeout the timeout in milliseconds
 	 * @return <code>true</code> if any event was taken off the event queue,
@@ -157,7 +157,7 @@ public abstract class DisplayHelper {
 	 * The condition which has to be met in order for
 	 * {@link #waitForCondition(Display, int)} to return before the timeout
 	 * elapses.
-	 * 
+	 *
 	 * @return <code>true</code> if the condition is met, <code>false</code>
 	 *         if the event loop should be driven some more
 	 */
@@ -165,7 +165,7 @@ public abstract class DisplayHelper {
 
 	/**
 	 * Runs the event loop on the given display.
-	 * 
+	 *
 	 * @param display the display
 	 * @return if <code>display.readAndDispatch</code> returned
 	 *         <code>true</code> at least once
@@ -191,7 +191,7 @@ public abstract class DisplayHelper {
 	 * The condition gets rechecked every <code>interval</code> milliseconds, even
 	 * if no events were read from the queue.
 	 * </p>
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param timeout the timeout in milliseconds
 	 * @param interval the interval to re-check the condition in milliseconds
@@ -242,7 +242,7 @@ public abstract class DisplayHelper {
  * Implements the thread that will wait for the timeout and wake up the display
  * so it does not wait forever. The thread may be restarted after it was stopped
  * or timed out.
- * 
+ *
  * @since 3.1
  */
 final class DisplayWaiter {
@@ -255,7 +255,7 @@ final class DisplayWaiter {
 		/**
 		 * Returns <code>true</code> if the timeout has been reached,
 		 * <code>false</code> if not.
-		 * 
+		 *
 		 * @return <code>true</code> if the timeout has been reached,
 		 *         <code>false</code> if not
 		 */
@@ -280,7 +280,7 @@ final class DisplayWaiter {
 	private final boolean fKeepRunningOnTimeout;
 
 	/* State -- possible transitions:
-	 * 
+	 *
 	 * STOPPED   -> RUNNING
 	 * RUNNING   -> STOPPED
 	 * RUNNING   -> IDLE
@@ -302,7 +302,7 @@ final class DisplayWaiter {
 
 	/**
 	 * Creates a new instance on the given display and timeout.
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 */
 	public DisplayWaiter(Display display) {
@@ -311,7 +311,7 @@ final class DisplayWaiter {
 
 	/**
 	 * Creates a new instance on the given display and timeout.
-	 * 
+	 *
 	 * @param display the display to run the event loop of
 	 * @param keepRunning <code>true</code> if the thread should be kept
 	 *        running after timing out
@@ -326,7 +326,7 @@ final class DisplayWaiter {
 	/**
 	 * Starts the timeout thread if it is not currently running. Nothing happens
 	 * if a thread is already running.
-	 * 
+	 *
 	 * @param delay the delay from now in milliseconds
 	 * @return the timeout state which can be queried for its timed out status
 	 */
@@ -350,7 +350,7 @@ final class DisplayWaiter {
 
 	/**
 	 * Sets the next timeout to <em>current time</em> plus <code>delay</code>.
-	 * 
+	 *
 	 * @param delay the delay until the next timeout occurs in milliseconds from
 	 *        now
 	 */
@@ -366,7 +366,7 @@ final class DisplayWaiter {
 	/**
 	 * Starts the thread if it is not currently running; resets the timeout if
 	 * it is.
-	 * 
+	 *
 	 * @param delay the delay from now in milliseconds
 	 * @return the timeout state which can be queried for its timed out status
 	 */
@@ -461,7 +461,7 @@ final class DisplayWaiter {
 
 			/**
 			 * Runs the thread.
-			 * 
+			 *
 			 * @throws InterruptedException if the thread was interrupted
 			 * @throws ThreadChangedException if the thread changed
 			 */
@@ -488,7 +488,7 @@ final class DisplayWaiter {
 			/**
 			 * Check whether the current thread is this thread, throw an
 			 * exception otherwise.
-			 * 
+			 *
 			 * @throws ThreadChangedException if the current thread changed
 			 */
 			private void checkThread() throws ThreadChangedException {
@@ -498,7 +498,7 @@ final class DisplayWaiter {
 
 			/**
 			 * Waits until the next timeout occurs.
-			 * 
+			 *
 			 * @throws InterruptedException if the thread was interrupted
 			 * @throws ThreadChangedException if the thread changed
 			 */
@@ -532,7 +532,7 @@ final class DisplayWaiter {
 			 * state must not be <code>RUNNING</code> when calling this
 			 * method. The state is either <code>STOPPED</code> or
 			 * <code>RUNNING</code> when the method returns.
-			 * 
+			 *
 			 * @throws InterruptedException if the thread was interrupted
 			 * @throws ThreadChangedException if the thread has changed while on
 			 *         hold
@@ -553,7 +553,7 @@ final class DisplayWaiter {
 	 * Transitions to <code>nextState</code> if the current state is one of
 	 * <code>possibleStates</code>. Returns <code>true</code> if the
 	 * transition happened, <code>false</code> otherwise.
-	 * 
+	 *
 	 * @param possibleStates the states which trigger a transition
 	 * @param nextState the state to transition to
 	 * @return <code>true</code> if the transition happened,
@@ -573,7 +573,7 @@ final class DisplayWaiter {
 	/**
 	 * Checks the <code>possibleStates</code> and throws an assertion if it is
 	 * not met, then transitions to <code>nextState</code>.
-	 * 
+	 *
 	 * @param possibleStates the allowed states
 	 * @param nextState the state to transition to
 	 */
@@ -585,7 +585,7 @@ final class DisplayWaiter {
 
 	/**
 	 * Implements state consistency checking.
-	 * 
+	 *
 	 * @param states the allowed states
 	 * @throws junit.framework.AssertionFailedError if the current state is not
 	 *         in <code>states</code>
@@ -597,7 +597,7 @@ final class DisplayWaiter {
 	/**
 	 * Answers <code>true</code> if the current state is in the given
 	 * <code>states</code>.
-	 * 
+	 *
 	 * @param states the possible states
 	 * @return <code>true</code> if the current state is in the given states,
 	 *         <code>false</code> otherwise
@@ -608,7 +608,7 @@ final class DisplayWaiter {
 
 	/**
 	 * Pretty print the given states.
-	 * 
+	 *
 	 * @param states the states
 	 * @return a string representation of the states
 	 */

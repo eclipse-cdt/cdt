@@ -153,7 +153,7 @@ public class OpenIncludeAction extends Action {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void noElementsFound() {
 		MessageBox errorMsg = new MessageBox(CUIPlugin.getActiveWorkbenchShell(), SWT.ICON_ERROR | SWT.OK);
@@ -170,7 +170,7 @@ public class OpenIncludeAction extends Action {
 	 * Returns the path as is, if it points to a workspace resource. If the path
 	 * does not point to a workspace resource, but there are linked workspace
 	 * resources pointing to it, returns the paths of these resources.
-	 * Othervise, returns the path as is. 
+	 * Othervise, returns the path as is.
 	 */
 	private IPath[] resolveIncludeLink(IPath path) {
 		if (!isInProject(path)) {

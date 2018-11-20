@@ -19,8 +19,6 @@ package org.eclipse.cdt.core.model.tests;
 import java.util.HashSet;
 import java.util.Set;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.dom.IPDOMManager;
 import org.eclipse.cdt.core.model.CoreModel;
 import org.eclipse.cdt.core.model.ElementChangedEvent;
@@ -40,6 +38,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+
+import junit.framework.TestSuite;
 
 /*
  * CPathEntryTest
@@ -72,7 +72,7 @@ public class CPathEntryTest extends BaseTestCase {
 
 		/*
 		 * (non-Javadoc)
-		 * 
+		 *
 		 * @see org.eclipse.cdt.core.model.IElementChangedListener#elementChanged(org.eclipse.cdt.core.model.ElementChangedEvent)
 		 */
 		@Override
@@ -84,7 +84,7 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/**
 	 * Constructor for CModelTests.
-	 * 
+	 *
 	 * @param name
 	 */
 	public CPathEntryTest(String name) {
@@ -93,9 +93,9 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/**
 	 * Sets up the test fixture.
-	 * 
+	 *
 	 * Called before every test case method.
-	 *  
+	 *
 	 */
 	@Override
 	protected void setUp() throws CoreException {
@@ -107,7 +107,7 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/**
 	 * Tears down the test fixture.
-	 * 
+	 *
 	 * Called after every test case method.
 	 */
 	@Override
@@ -121,7 +121,7 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/*******************************************************************************************************************************
 	 * Check if the PathEntry's are generated.
-	 * 
+	 *
 	 * @see CProjectHelper#createCProject
 	 */
 	public void testCPathEntries() throws CoreException {
@@ -146,7 +146,7 @@ public class CPathEntryTest extends BaseTestCase {
 
 	/*******************************************************************************************************************************
 	 * Check if the PathEntry's are generated.
-	 * 
+	 *
 	 * @see CProjectHelper#createCProject
 	 */
 	public void testCPathEntriesDelta() throws CoreException {

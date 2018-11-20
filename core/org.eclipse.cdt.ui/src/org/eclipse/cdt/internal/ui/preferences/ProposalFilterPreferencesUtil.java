@@ -15,6 +15,8 @@ package org.eclipse.cdt.internal.ui.preferences;
 
 import java.util.ArrayList;
 
+import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -22,10 +24,6 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Combo;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.text.contentassist.ContentAssistPreference;
 
 /**
  * A class which encapsulates several utility functions
@@ -45,7 +43,7 @@ public class ProposalFilterPreferencesUtil {
 	 * to fill into the Combo)
 	 */
 	public static String[] getProposalFilterNames() {
-		ArrayList<String> names = new ArrayList<String>();
+		ArrayList<String> names = new ArrayList<>();
 		try {
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(CUIPlugin.PLUGIN_ID,
 					"ProposalFilter"); //$NON-NLS-1$
@@ -73,7 +71,7 @@ public class ProposalFilterPreferencesUtil {
 	}
 
 	/**
-	 * Look up all contributed completion proposal filters 
+	 * Look up all contributed completion proposal filters
 	 * and return their names as a semicolon-separated list
 	 * plus a leading entry for the selected index 0,
 	 * plus a leading <default> entry. <br>
@@ -92,7 +90,7 @@ public class ProposalFilterPreferencesUtil {
 	}
 
 	/**
-	 * Return the configuration element which corresponds 
+	 * Return the configuration element which corresponds
 	 * to the human-readable filter name
 	 * @param filterName The human-readable filter name
 	 * @return The configuration element, or null if there is none
@@ -134,7 +132,7 @@ public class ProposalFilterPreferencesUtil {
 	/**
 	 * The state of a Combo consists of the list of entries
 	 * and the index of the selected entry.
-	 * This method converts the state of the given Combo 
+	 * This method converts the state of the given Combo
 	 * to a string representation for storage in a preference store. <br>
 	 * The string contains a semicolon-separated list of entries.
 	 * The first entry is the index of the selected entry.
@@ -190,11 +188,11 @@ public class ProposalFilterPreferencesUtil {
 		public String[] items;
 	}
 
-	/** 
+	/**
 	 * Convenience method to extract the state of a Combo
 	 * from the state string stored e.g. in a preference store
 	 * @param comboPreference The state string
-	 * @return A ComboState instance. 
+	 * @return A ComboState instance.
 	 */
 	public static ComboState getComboState(String comboPreference) {
 		ComboState state = new ComboState();

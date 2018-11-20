@@ -175,7 +175,7 @@ public class ResumeAtLineActionDelegate implements IEditorActionDelegate, IActio
 
 	/**
 	 * Binds this action to operate on the given part's IResumeAtLineTarget adapter.
-	 *  
+	 *
 	 * @param part
 	 */
 	private void bindTo(IWorkbenchPart part) {

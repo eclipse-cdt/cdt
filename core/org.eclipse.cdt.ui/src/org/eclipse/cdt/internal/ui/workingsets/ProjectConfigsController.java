@@ -35,11 +35,11 @@ import org.eclipse.swt.graphics.Image;
 /**
  * View controller for the project configurations pane of the working set configurations dialog. It takes care
  * of coordinating the user gestures in that pane with the working-set configuration model and vice-versa.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
- * 
+ *
  */
 class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 	private CheckboxTreeViewer tree;
@@ -61,7 +61,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 
 	/**
 	 * Assigns the tree viewer that I control.
-	 * 
+	 *
 	 * @param tree
 	 *            my tree viewer
 	 */
@@ -87,7 +87,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 	/**
 	 * Injects the current selection of a working set from the Working Set Configurations pane. This changes
 	 * the project configurations that I show in my own tree.
-	 * 
+	 *
 	 * @param config
 	 *            the new working set configuration selection. May be <code>null</code> if there is no
 	 *            selection
@@ -115,7 +115,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 
 	/**
 	 * Queries the current working set configuration that I show in my tree.
-	 * 
+	 *
 	 * @return the working set configuration, or <code>null</code> if none
 	 */
 	IWorkingSetConfiguration.ISnapshot getWorkingSetConfiguration() {
@@ -144,7 +144,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 	/**
 	 * Computes the initial check-box settings for my tree according to the current state of the specified
 	 * working set configuration.
-	 * 
+	 *
 	 * @param config
 	 *            a working set configuration that I am now showing
 	 */
@@ -166,7 +166,7 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 
 	/**
 	 * Connects me to the controller of the working set configurations pane.
-	 * 
+	 *
 	 * @param controller
 	 *            the working-set configs controller
 	 */
@@ -193,9 +193,9 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 		private Map<IWorkingSetProjectConfigurationController, ILabelProvider> labelProviders;
 
 		ControllerContext(Viewer viewer) {
-			elementToControllerMap = new java.util.IdentityHashMap<Object, IWorkingSetProjectConfigurationController>();
-			contentProviders = new java.util.HashMap<IWorkingSetProjectConfigurationController, ITreeContentProvider>();
-			labelProviders = new java.util.HashMap<IWorkingSetProjectConfigurationController, ILabelProvider>();
+			elementToControllerMap = new java.util.IdentityHashMap<>();
+			contentProviders = new java.util.HashMap<>();
+			labelProviders = new java.util.HashMap<>();
 
 			for (IWorkingSetProjectConfiguration next : getWorkingSetConfiguration().getProjectConfigurations()) {
 
@@ -379,9 +379,9 @@ class ProjectConfigsController implements ICheckStateListener, DisposeListener {
 
 	/**
 	 * A useful empty implementation of the extended label-provider protocol.
-	 * 
+	 *
 	 * @author Christian W. Damus (cdamus)
-	 * 
+	 *
 	 * @since 6.0
 	 */
 	private static class NullLabelProvider extends LabelProvider implements IFontProvider, IColorProvider {

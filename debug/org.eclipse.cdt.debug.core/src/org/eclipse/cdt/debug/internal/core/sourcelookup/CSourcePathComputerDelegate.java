@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     QNX Software Systems - Initial API and implementation
- *     Nokia - Added support for AbsoluteSourceContainer(159833) 
+ *     Nokia - Added support for AbsoluteSourceContainer(159833)
  *     Sergey Prigogin (Google)
  *******************************************************************************/
 package org.eclipse.cdt.debug.internal.core.sourcelookup;
@@ -28,8 +28,8 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate;
  */
 public class CSourcePathComputerDelegate implements ISourcePathComputerDelegate {
 
-	/** 
-	 * Constructor for CSourcePathComputerDelegate. 
+	/**
+	 * Constructor for CSourcePathComputerDelegate.
 	 */
 	public CSourcePathComputerDelegate() {
 		super();

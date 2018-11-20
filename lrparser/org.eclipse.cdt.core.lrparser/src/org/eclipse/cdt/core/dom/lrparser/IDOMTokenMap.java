@@ -18,7 +18,7 @@ import org.eclipse.cdt.core.parser.IToken;
 /**
  * Maps tokens returned by CPreprocessor to the corresponding
  * token kind used by an LPG based parser.
- * 
+ *
  * @author Mike Kucera
  */
 public interface IDOMTokenMap {

@@ -1,15 +1,15 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2012 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- *  
- * Contributors: 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
  *     Institute for Software - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite;
@@ -25,14 +25,14 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.cdt.core.testplugin.CTestPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.TextSelection;
 import org.osgi.framework.Bundle;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @author Emanuel Graf
@@ -64,10 +64,10 @@ public class RewriteTester extends TestSuite {
 
 	private static ArrayList<RewriteBaseTest> createTests(BufferedReader inputReader) throws Exception {
 		String line;
-		List<TestSourceFile> files = new ArrayList<TestSourceFile>();
+		List<TestSourceFile> files = new ArrayList<>();
 		TestSourceFile actFile = null;
 		MatcherState matcherState = MatcherState.skip;
-		ArrayList<RewriteBaseTest> testCases = new ArrayList<RewriteBaseTest>();
+		ArrayList<RewriteBaseTest> testCases = new ArrayList<>();
 		String testName = null;
 		String className = null;
 		boolean bevorFirstTest = true;
@@ -77,7 +77,7 @@ public class RewriteTester extends TestSuite {
 				if (!bevorFirstTest) {
 					RewriteBaseTest test = createTestClass(className, testName, files);
 					testCases.add(test);
-					files = new ArrayList<TestSourceFile>();
+					files = new ArrayList<>();
 					className = null;
 					testName = null;
 				}

@@ -81,7 +81,7 @@ public class ContentTypeProcessor extends CModelOperation {
 			CModelOperation op = new ContentTypeProcessor(events);
 			op.runOperation(null);
 		} catch (CModelException e) {
-			// 
+			//
 		}
 	}
 
@@ -101,7 +101,7 @@ public class ContentTypeProcessor extends CModelOperation {
 		 * the new assiociation may have turn them to new ICElement.
 		 * algo:
 		 *   if ICContainer check if we have a CElementinfo(children)
-		 *   	if yes, 
+		 *   	if yes,
 		 *      	look at the members(IResource) and get there contentType
 		 *      	if the type is the same as the event
 		 *      		check if element was already a celement
@@ -257,7 +257,7 @@ public class ContentTypeProcessor extends CModelOperation {
 	}
 
 	/**
-	 * Adds the given child handle to its parent's cache of children. 
+	 * Adds the given child handle to its parent's cache of children.
 	 */
 	private void addToParentInfo(Openable child) throws CModelException {
 		Openable parent = (Openable) child.getParent();
@@ -296,7 +296,7 @@ public class ContentTypeProcessor extends CModelOperation {
 	/**
 	 * Removes the given element from its parents cache of children. If the
 	 * element does not have a parent, or the parent is not currently open,
-	 * this has no effect. 
+	 * this has no effect.
 	 */
 	private void removeFromParentInfo(ICElement child) throws CModelException {
 		// Remove the child from the parent list.
@@ -324,7 +324,7 @@ public class ContentTypeProcessor extends CModelOperation {
 				}
 			}
 			// Assume a workspace resolver
-			List<ICProject> list = new ArrayList<ICProject>(cprojects.length);
+			List<ICProject> list = new ArrayList<>(cprojects.length);
 			for (int i = 0; i < cprojects.length; ++i) {
 				list.add(cprojects[i]);
 			}

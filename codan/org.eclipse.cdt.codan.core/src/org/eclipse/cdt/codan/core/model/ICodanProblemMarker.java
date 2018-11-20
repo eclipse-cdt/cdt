@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Instance of a problem. Intermediate representation before problem become a
  * marker.
- * 
+ *
  * @since 2.0
  */
 public interface ICodanProblemMarker {
@@ -34,14 +34,14 @@ public interface ICodanProblemMarker {
 
 	/**
 	 * Returns problem of which type this instance is created
-	 * 
+	 *
 	 * @return problem
 	 */
 	public IProblem getProblem();
 
 	/**
 	 * Resource on which this problem instance is created
-	 * 
+	 *
 	 * @return resource
 	 */
 	public IResource getResource();
@@ -49,7 +49,7 @@ public interface ICodanProblemMarker {
 	/**
 	 * Creates a maker on a resource represented by location, which attributes
 	 * that this instance carries
-	 * 
+	 *
 	 * @return marker
 	 * @throws CoreException
 	 */
@@ -58,7 +58,7 @@ public interface ICodanProblemMarker {
 	/**
 	 * Create a message by applying messagePattern from a problem to a problem
 	 * arguments
-	 * 
+	 *
 	 * @return message
 	 */
 	public String createMessage();

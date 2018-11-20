@@ -17,6 +17,10 @@ package org.eclipse.cdt.internal.ui.refactoring;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 
+import org.eclipse.cdt.internal.ui.util.EditorUtility;
+import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
@@ -41,18 +45,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.dialogs.ListDialog;
 
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.ui.util.EditorUtility;
-import org.eclipse.cdt.internal.ui.util.ExceptionHandler;
-
 /**
  * Helper to save dirty editors prior to starting a refactoring.
- * 
+ *
  * @see PreferenceConstants#REFACTOR_SAVE_ALL_EDITORS
  * @since 5.3
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RefactoringSaveHelper {
@@ -82,7 +80,7 @@ public class RefactoringSaveHelper {
 
 	/**
 	 * Creates a refactoring save helper with the given save mode.
-	 * 
+	 *
 	 * @param saveMode one of the SAVE_* constants
 	 */
 	public RefactoringSaveHelper(int saveMode) {
@@ -94,7 +92,7 @@ public class RefactoringSaveHelper {
 	/**
 	 * Saves all editors. Depending on the {@link PreferenceConstants#REFACTOR_SAVE_ALL_EDITORS}
 	 * preference, the user is asked to save affected dirty editors.
-	 * 
+	 *
 	 * @param shell the parent shell for the confirmation dialog
 	 * @return <code>true</code> if save was successful and refactoring can proceed;
 	 * 		false if the refactoring must be canceled
@@ -171,7 +169,7 @@ public class RefactoringSaveHelper {
 
 	/**
 	 * Returns whether this save helper did actually save any files.
-	 * 
+	 *
 	 * @return <code>true</code> iff files have been saved
 	 */
 	public boolean didSaveFiles() {

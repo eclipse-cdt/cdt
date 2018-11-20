@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 /**
  * Represents an occurrence of 'auto' or 'decltype(auto)' that has
  * not been resolved (replaced with a real type) because the information
- * necessary to resolve it (the function's body) is not available yet. 
+ * necessary to resolve it (the function's body) is not available yet.
  */
 public class CPPPlaceholderType implements ISerializableType, IType {
 	public enum PlaceholderKind {

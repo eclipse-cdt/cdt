@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * [Current thread is 1 (Thread 0xb7cc56b0 (LWP 5488))]
- * 
+ *
  * @since 3.0
  */
 public class CLIThreadInfo extends MIInfo {
@@ -54,7 +54,7 @@ public class CLIThreadInfo extends MIInfo {
 	}
 
 	protected void parseThreadInfo(String str) {
-		// Fetch the OS ThreadId & Find the current thread 
+		// Fetch the OS ThreadId & Find the current thread
 		if (!str.isEmpty()) {
 			Pattern pattern = Pattern.compile("Current thread is (\\d+)", Pattern.MULTILINE); //$NON-NLS-1$
 			Matcher matcher = pattern.matcher(str);

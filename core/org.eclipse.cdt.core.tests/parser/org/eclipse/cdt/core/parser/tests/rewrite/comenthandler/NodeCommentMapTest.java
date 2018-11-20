@@ -1,20 +1,18 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik  
+ * Copyright (c) 2008, 2013 Institute for Software, HSR Hochschule fuer Technik
  * Rapperswil, University of applied sciences and others
  *
- * This program and the accompanying materials 
- * are made available under the terms of the Eclipse Public License 2.0 
- * which accompanies this distribution, and is available at 
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
- * SPDX-License-Identifier: EPL-2.0  
- * 
- * Contributors: 
- *     Institute for Software - initial API and implementation 
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Institute for Software - initial API and implementation
  ******************************************************************************/
 package org.eclipse.cdt.core.parser.tests.rewrite.comenthandler;
-
-import junit.framework.TestCase;
 
 import java.util.List;
 
@@ -23,6 +21,8 @@ import org.eclipse.cdt.core.dom.ast.IASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.ASTNode;
 import org.eclipse.cdt.internal.core.dom.parser.cpp.CPPASTName;
 import org.eclipse.cdt.internal.core.dom.rewrite.commenthandler.NodeCommentMap;
+
+import junit.framework.TestCase;
 
 /**
  * @author Guido Zgraggen IFS
@@ -198,7 +198,7 @@ public class NodeCommentMapTest extends TestCase {
 		assertEquals(0, allComments.size());
 	}
 
-	//=== Internal Comment class for testing 
+	//=== Internal Comment class for testing
 	private static class Comment extends ASTNode implements IASTComment {
 		private char[] comment;
 

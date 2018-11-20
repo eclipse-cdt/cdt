@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -21,9 +21,9 @@ import org.eclipse.cdt.dsf.service.DsfServiceEventHandler;
 import org.eclipse.cdt.dsf.service.DsfSession;
 import org.eclipse.cdt.dsf.ui.viewmodel.AbstractVMAdapter;
 
-/** 
+/**
  * Base implementation for DSF-based view model adapters.
- * 
+ *
  * @since 1.0
  */
 @ThreadSafe
@@ -31,14 +31,14 @@ abstract public class AbstractDMVMAdapter extends AbstractVMAdapter {
 	private final DsfSession fSession;
 
 	/**
-	 * It is theoretically possible for a VM adapter to be disposed before it 
+	 * It is theoretically possible for a VM adapter to be disposed before it
 	 * has a chance to register itself as event listener.  This flag is used
 	 * to avoid removing itself as listener in such situation.
 	 */
 	private boolean fRegisteredAsEventListener = false;
 
 	/**
-	 * Constructor for the View Model session.  It is tempting to have the 
+	 * Constructor for the View Model session.  It is tempting to have the
 	 * adapter register itself here with the session as the model adapter, but
 	 * that would mean that the adapter might get accessed on another thread
 	 * even before the deriving class is fully constructed.  So it it better
@@ -90,18 +90,18 @@ abstract public class AbstractDMVMAdapter extends AbstractVMAdapter {
 	}
 
 	/**
-	 * Handle "data model changed" event by generating a delta object for each 
+	 * Handle "data model changed" event by generating a delta object for each
 	 * view and passing it to the corresponding view model provider.  The view
 	 * model provider is then responsible for filling-in and sending the delta
 	 * to the viewer.
-	 * 
+	 *
 	 * @param event
-	 * 
+	 *
 	 * @since 1.1
 	 */
 	@DsfServiceEventHandler
 	public final void eventDispatched(final IDMEvent<?> event) {
-		// We're in session's executor thread (session in which the event originated). 
+		// We're in session's executor thread (session in which the event originated).
 		if (isDisposed())
 			return;
 

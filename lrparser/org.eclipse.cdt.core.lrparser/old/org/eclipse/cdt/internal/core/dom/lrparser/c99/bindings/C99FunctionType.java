@@ -22,7 +22,7 @@ import org.eclipse.cdt.core.dom.ast.IType;
 public class C99FunctionType implements IFunctionType {
 
 	private IType returnType;
-	private List<IType> parameterTypes = new ArrayList<IType>();
+	private List<IType> parameterTypes = new ArrayList<>();
 
 	@Override
 	public IType[] getParameterTypes() {
@@ -53,7 +53,7 @@ public class C99FunctionType implements IFunctionType {
 		try {
 			C99FunctionType clone = (C99FunctionType) super.clone();
 			clone.setReturnType((IType) returnType.clone());
-			clone.parameterTypes = new ArrayList<IType>();
+			clone.parameterTypes = new ArrayList<>();
 			for (IType parameterType : parameterTypes) {
 				clone.addParameterType((IType) parameterType.clone());
 			}

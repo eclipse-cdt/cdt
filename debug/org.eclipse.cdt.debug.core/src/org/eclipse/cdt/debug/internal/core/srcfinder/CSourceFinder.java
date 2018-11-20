@@ -74,7 +74,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	 * the locators we create and discard when the launch config changes or is
 	 * disposed. Collection is subject to be changed by listener invocations.
 	 * Map key is the launch configuration name.
-	 * 
+	 *
 	 * @see CSourceFinder#getLocator(ILaunchConfiguration)
 	 */
 	private Map<String, ISourceLocator> fConfigLocators = Collections
@@ -90,7 +90,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param binary
 	 *            the executable whose source files we will be asked to find
 	 *            locally
@@ -220,7 +220,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	/**
 	 * Utility method to convert the element found by the source locators to a
 	 * canonical file path
-	 * 
+	 *
 	 * @param foundElement
 	 *            the element found by the source locator, or null if not found
 	 * @return the canonical file path of the element
@@ -301,7 +301,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	 * configuration. A launch configuration doesn't have a source locator
 	 * instance tied to it. Transient instances are created as needed. from
 	 * attributes in the launch config. This is a heavy operation.
-	 * 
+	 *
 	 * @param config
 	 *            the launch configuration to create the locator for
 	 * @return the source locator
@@ -333,7 +333,7 @@ public class CSourceFinder implements ISourceFinder, ILaunchConfigurationListene
 	 */
 	@Override
 	public void launchConfigurationAdded(ILaunchConfiguration config) {
-		// Don't care.  
+		// Don't care.
 	}
 
 	/* (non-Javadoc)

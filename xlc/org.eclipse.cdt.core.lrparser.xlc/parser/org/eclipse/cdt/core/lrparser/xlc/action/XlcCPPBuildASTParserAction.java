@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.cdt.core.lrparser.xlc.action;
 
-import lpg.lpgjavaruntime.IToken;
-
 import org.eclipse.cdt.core.dom.ast.IASTExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTLiteralExpression;
 import org.eclipse.cdt.core.dom.ast.cpp.ICPPASTStaticAssertDeclaration;
@@ -28,6 +26,8 @@ import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPASTModifiedArrayModifier;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPASTVectorTypeSpecifier;
 import org.eclipse.cdt.core.lrparser.xlc.ast.IXlcCPPNodeFactory;
 import org.eclipse.cdt.internal.core.lrparser.xlc.cpp.XlcCPPParsersym;
+
+import lpg.lpgjavaruntime.IToken;
 
 public class XlcCPPBuildASTParserAction extends GPPBuildASTParserAction {
 

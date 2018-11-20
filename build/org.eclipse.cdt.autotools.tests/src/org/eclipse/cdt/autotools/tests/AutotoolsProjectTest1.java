@@ -43,8 +43,8 @@ public class AutotoolsProjectTest1 {
 	}
 
 	/**
-	 * Test sample project which has a hello world program. The top-level 
-	 * configure is found in the subdirectory src which also contains the 
+	 * Test sample project which has a hello world program. The top-level
+	 * configure is found in the subdirectory src which also contains the
 	 * subdirectory sample.  The hello world source is found in
 	 * src/sample/hello.c so configuration must create multiple
 	 * Makefiles.

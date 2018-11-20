@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2012 Anton Gorenkov 
+ * Copyright (c) 2011, 2012 Anton Gorenkov
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,7 +20,7 @@ import org.eclipse.cdt.testsrunner.model.TestingException;
 
 /**
  * The interface for a Tests Runner provider plug-in.
- * 
+ *
  * <p>
  * Clients may implement this interface.
  * </p>
@@ -34,7 +34,7 @@ public interface ITestsRunnerProvider {
 	 * <code>null</code>, it contains the paths to the test suites and test
 	 * cases that should be run during the testing process, so the proper
 	 * filters should be generated too.
-	 * 
+	 *
 	 * @param testPaths the array of test paths
 	 * @return parameters list
 	 * @throws TestingException if test parameters cannot be generated
@@ -45,7 +45,7 @@ public interface ITestsRunnerProvider {
 	 * Starts the processing of testing results by Tests Runner Plug-in. The
 	 * input data are provided via the stream. They should be converted to the
 	 * commands for the Model Updater.
-	 * 
+	 *
 	 * @param modelUpdater model updater instance
 	 * @param inputStream test model output or error data stream
 	 * @throws TestingException if there are errors during the testing process

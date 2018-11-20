@@ -23,7 +23,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationConte
  * Clients may implement and extend this interface to provide
  * special contexts. Implementations must subclass {@link PresentationContext}.
  * </p>
- * 
+ *
  * This interface is experimental.
  */
 public interface IDocumentPresentation extends IPresentationContext {

@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
 
 /**
  * A collection of utility methods related to resources.
- * 
+ *
  * @since 5.3
  */
 public class ResourcesUtil {
@@ -32,7 +32,7 @@ public class ResourcesUtil {
 	 * be multiple workspace {@link IFile} associated with one URI.
 	 * Hint: use {@link org.eclipse.core.filesystem.URIUtil#toURI(String)}
 	 * to convert filesystem path to URI.
-	 * 
+	 *
 	 * @param uri - URI of the file.
 	 */
 	public static void refreshWorkspaceFiles(URI uri) {

@@ -25,7 +25,7 @@ public interface ICodanCommentMap {
 	/**
 	 * Returns a List of comments for the given node (following the node).
 	 * If no comments are available an empty list is returned.
-	 * 
+	 *
 	 * @param node The key to fetch the associated comments.
 	 * @return list of comments
 	 */
@@ -34,7 +34,7 @@ public interface ICodanCommentMap {
 	/**
 	 * Returns a List of all comments for the given node (preceding the node).
 	 * If no comments are available an empty list is returned.
-	 * 
+	 *
 	 * @param node The key to fetch the associated comments.
 	 * @return list of comments
 	 */
@@ -43,8 +43,8 @@ public interface ICodanCommentMap {
 	/**
 	 * Returns a List of comments associated with the given node.
 	 * If no comments are available an empty list is returned.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param node The key to fetch the associated comments.
 	 * @return list of comments
 	 */
@@ -53,7 +53,7 @@ public interface ICodanCommentMap {
 	/**
 	 * Gets last comment from {@link #getLeadingCommentsForNode(IASTNode)}, or
 	 * null if list is empty
-	 * 
+	 *
 	 * @param node - The key to fetch the associated comments.
 	 * @return - A comment node or null if not found.
 	 */
@@ -62,7 +62,7 @@ public interface ICodanCommentMap {
 	/**
 	 * Gets first comment from {@link #getTrailingCommentsForNode(IASTNode)} or
 	 * null if list is empty.
-	 * 
+	 *
 	 * @param node - The key to fetch the associated comments.
 	 * @return - A comment node or null if not found.
 	 */
@@ -71,7 +71,7 @@ public interface ICodanCommentMap {
 	/**
 	 * Gets last comment from {@link #getFreestandingForNode(IASTNode)} or
 	 * null if list is empty.
-	 * 
+	 *
 	 * @param node - The key to fetch the associated comments.
 	 * @return - A comment node or null if not found.
 	 */

@@ -16,13 +16,13 @@ package org.eclipse.cdt.dsf.mi.service.command.commands;
 import org.eclipse.cdt.dsf.debug.service.command.ICommandControlService.ICommandControlDMContext;
 
 /**
- * 
+ *
  * -gdb-set stop-on-solib-events
- *     
- * Controls whether GDB should give you control when the dynamic linker 
- * notifies it about some shared library event. The most common event of interest is loading 
+ *
+ * Controls whether GDB should give you control when the dynamic linker
+ * notifies it about some shared library event. The most common event of interest is loading
  * or unloading of a new shared library.
- * 
+ *
  * @since 1.1
  */
 public class MIGDBSetStopOnSolibEvents extends MIGDBSet {

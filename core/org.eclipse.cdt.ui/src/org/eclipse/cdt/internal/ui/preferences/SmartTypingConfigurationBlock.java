@@ -15,6 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.internal.ui.preferences;
 
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
+import org.eclipse.cdt.internal.ui.util.Messages;
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.PreferenceConstants;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -32,15 +38,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.dialogs.PreferencesUtil;
-
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.PreferenceConstants;
-
-import org.eclipse.cdt.internal.corext.util.CodeFormatterUtil;
-
-import org.eclipse.cdt.internal.ui.util.Messages;
 
 /**
  * Configures C Editor typing preferences.
@@ -81,7 +78,7 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 
 	/**
 	 * Creates page for mark occurrences preferences.
-	 * 
+	 *
 	 * @param parent the parent composite
 	 * @return the control for the preference page
 	 */
@@ -100,7 +97,7 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 		composite = createSubsection(control, null, PreferencesMessages.SmartTypingConfigurationBlock_autoclose_title);
 		addAutoclosingSection(composite);
 
-		//		composite= createSubsection(control, null, PreferencesMessages.SmartTypingConfigurationBlock_automove_title); 
+		//		composite= createSubsection(control, null, PreferencesMessages.SmartTypingConfigurationBlock_automove_title);
 		//		addAutopositionSection(composite);
 
 		composite = createSubsection(control, null, PreferencesMessages.SmartTypingConfigurationBlock_tabs_title);
@@ -169,11 +166,11 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 	//		composite.setLayout(layout);
 	//
 	//		String label;
-	//		
-	//		label= PreferencesMessages.CEditorPreferencePage_typing_smartSemicolon; 
+	//
+	//		label= PreferencesMessages.CEditorPreferencePage_typing_smartSemicolon;
 	//		addCheckBox(composite, label, PreferenceConstants.EDITOR_SMART_SEMICOLON, 0);
-	//		
-	//		label= PreferencesMessages.CEditorPreferencePage_typing_smartOpeningBrace; 
+	//
+	//		label= PreferencesMessages.CEditorPreferencePage_typing_smartOpeningBrace;
 	//		addCheckBox(composite, label, PreferenceConstants.EDITOR_SMART_OPENING_BRACE, 0);
 	//	}
 
@@ -198,7 +195,7 @@ class SmartTypingConfigurationBlock extends AbstractConfigurationBlock {
 	}
 
 	private void createMessage(final Composite composite) {
-		// TODO create a link with an argument, so the formatter preference page can open the 
+		// TODO create a link with an argument, so the formatter preference page can open the
 		// current profile automatically.
 		String linkTooltip = PreferencesMessages.SmartTypingConfigurationBlock_tabs_message_tooltip;
 		String text;

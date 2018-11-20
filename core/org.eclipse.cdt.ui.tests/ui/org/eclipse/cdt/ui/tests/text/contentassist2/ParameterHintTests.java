@@ -15,13 +15,12 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.tests.text.contentassist2;
 
-import junit.framework.Test;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.testplugin.util.BaseTestCase;
+import junit.framework.Test;
 
 public class ParameterHintTests extends AbstractContentAssistTest {
 	private static final String HEADER_FILE_NAME = "PHTest.h";
@@ -112,7 +111,7 @@ public class ParameterHintTests extends AbstractContentAssistTest {
 		assertParameterHints(new String[] { "aMethod(char c) : void", "aMethod(char c, int x) : void" });
 	}
 
-	//void foo(){aClass a=new aClass( 
+	//void foo(){aClass a=new aClass(
 	public void testConstructor() throws Exception {
 		assertParameterHints(new String[] { "aClass(const aClass &)" });
 	}

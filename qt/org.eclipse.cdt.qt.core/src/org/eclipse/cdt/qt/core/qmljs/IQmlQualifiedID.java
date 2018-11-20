@@ -19,7 +19,7 @@ public interface IQmlQualifiedID extends IQmlASTNode {
 	@Override
 	default public String getType() {
 		return "QMLQualifiedID"; //$NON-NLS-1$
-	};
+	}
 
 	public List<IJSIdentifier> getParts();
 

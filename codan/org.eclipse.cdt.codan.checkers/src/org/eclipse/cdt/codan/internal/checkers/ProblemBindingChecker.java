@@ -157,7 +157,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 										contextFlagsString);
 								return PROCESS_CONTINUE;
 							}
-							// From this point, we'll deal only with NAME_NOT_FOUND problems. 
+							// From this point, we'll deal only with NAME_NOT_FOUND problems.
 							// If it's something else continue because we don't want to give bad messages.
 							if (id != IProblemBinding.SEMANTIC_NAME_NOT_FOUND) {
 								return PROCESS_CONTINUE;
@@ -233,7 +233,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 		IASTNode parentParentNode = parentNode.getParent();
 
 		// An IASTFieldReference corresponds to a method if it's the first child in the parent function call expression
-		// For example, 
+		// For example,
 		//   func(x.y()); the field reference is first in the x.y() function call expression -> y is a method
 		//   func(x.y); the field reference is second in the func(x.y) function call expression, func is first as a Id Expression -> y is a field
 		boolean isMethod = parentParentNode instanceof IASTFunctionCallExpression
@@ -284,7 +284,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 
 	/**
 	 * Returns a string of the candidates for the binding
-	 * 
+	 *
 	 * @param problemBinding
 	 * @return A string of the candidates, one per line
 	 * @throws DOMException
@@ -321,7 +321,7 @@ public class ProblemBindingChecker extends AbstractIndexAstChecker {
 
 	/**
 	 * Returns a string of the function signature : returntype + function + parameters
-	 * 
+	 *
 	 * @param functionBinding The function to get the signature
 	 * @return A string of the function signature
 	 * @throws DOMException

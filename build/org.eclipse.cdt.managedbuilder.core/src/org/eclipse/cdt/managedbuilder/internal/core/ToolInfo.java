@@ -61,7 +61,7 @@ class ToolInfo {
 			} else {
 				//				ITool[] tcTools = baseTc.getTools();
 				//				baseTool = getBestMatchTool(realTool, tcTools);
-				//				
+				//
 				//				if(baseTool == null){
 				//					IToolChain extTc = ManagedBuildManager.getExtensionToolChain(baseTc);
 				//					if(extTc != null){

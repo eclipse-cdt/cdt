@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -19,9 +19,9 @@ import java.util.concurrent.Executor;
  * An executor that behaves like ImmediateExecutor when the runnable is
  * submitted from a particular executor, otherwise it forwards the runnable to
  * that executor.
- * 
+ *
  * @since 2.2
- * 
+ *
  */
 public class ImmediateInDsfExecutor implements Executor {
 

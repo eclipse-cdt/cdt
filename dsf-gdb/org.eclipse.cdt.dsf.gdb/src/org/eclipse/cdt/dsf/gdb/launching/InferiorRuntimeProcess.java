@@ -28,9 +28,9 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * A process for the inferior to know it belongs to a DSF-GDB session.
  * This class also adds the exit code of the inferior to the console.
- * 
+ *
  * Note that this class is also used in Run mode.
- * 
+ *
  * @since 4.0
  */
 public class InferiorRuntimeProcess extends RuntimeProcess {
@@ -56,8 +56,8 @@ public class InferiorRuntimeProcess extends RuntimeProcess {
 			int exitValue = 0;
 			try {
 				// We have to explicitly get the exit code from the lower level process
-				// instead of calling getExitValue() because we have not yet indicated 
-				// that this wrapper process has terminated by calling super.terminated() 
+				// instead of calling getExitValue() because we have not yet indicated
+				// that this wrapper process has terminated by calling super.terminated()
 				// Bug 463977
 				exitValue = getSystemProcess().exitValue();
 			} catch (IllegalThreadStateException e) {

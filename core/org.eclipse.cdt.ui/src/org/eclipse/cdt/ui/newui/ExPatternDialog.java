@@ -16,6 +16,17 @@ package org.eclipse.cdt.ui.newui;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
+import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
+import org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathEntryMessages;
+import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
+import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
+import org.eclipse.cdt.ui.CDTSharedImages;
+import org.eclipse.cdt.ui.CUIPlugin;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -43,19 +54,6 @@ import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
-
-import org.eclipse.cdt.ui.CDTSharedImages;
-import org.eclipse.cdt.ui.CUIPlugin;
-
-import org.eclipse.cdt.internal.ui.dialogs.TypedElementSelectionValidator;
-import org.eclipse.cdt.internal.ui.dialogs.TypedViewerFilter;
-import org.eclipse.cdt.internal.ui.dialogs.cpaths.CPathEntryMessages;
-import org.eclipse.cdt.internal.ui.util.ImageDescriptorRegistry;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.DialogField;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IDialogFieldListener;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.IListAdapter;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.LayoutUtil;
-import org.eclipse.cdt.internal.ui.wizards.dialogfields.ListDialogField;
 
 /**
  * @noextend This class is not intended to be subclassed by clients.
@@ -90,7 +88,7 @@ public class ExPatternDialog extends StatusDialog {
 
 		ExclusionPatternAdapter adapter = new ExclusionPatternAdapter();
 
-		fExclusionPatternList = new ListDialogField<String>(adapter, buttonLabels, new ExPatternLabelProvider());
+		fExclusionPatternList = new ListDialogField<>(adapter, buttonLabels, new ExPatternLabelProvider());
 		fExclusionPatternList.setDialogFieldListener(adapter);
 		fExclusionPatternList.setLabelText(label);
 		fExclusionPatternList.setRemoveButtonIndex(IDX_REMOVE);
@@ -102,7 +100,7 @@ public class ExPatternDialog extends StatusDialog {
 			fCurrSourceFolder = (IContainer) res;
 		}
 
-		ArrayList<String> elements = new ArrayList<String>(pattern.length);
+		ArrayList<String> elements = new ArrayList<>(pattern.length);
 		for (IPath p : pattern)
 			elements.add(p.toString());
 		fExclusionPatternList.setElements(elements);

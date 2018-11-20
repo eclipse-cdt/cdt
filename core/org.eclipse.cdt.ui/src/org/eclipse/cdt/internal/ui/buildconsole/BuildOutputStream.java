@@ -20,7 +20,6 @@ import java.io.IOException;
 
 import org.eclipse.cdt.core.ConsoleOutputStream;
 import org.eclipse.cdt.core.ProblemMarkerInfo;
-
 import org.eclipse.cdt.internal.core.IErrorMarkeredOutputStream;
 
 /**

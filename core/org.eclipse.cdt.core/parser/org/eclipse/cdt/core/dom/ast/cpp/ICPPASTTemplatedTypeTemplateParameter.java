@@ -20,9 +20,9 @@ import org.eclipse.cdt.core.dom.ast.IASTName;
 import org.eclipse.cdt.core.dom.ast.IASTNameOwner;
 
 /**
- * This is a template template parameter as <code> V </code> in 
+ * This is a template template parameter as <code> V </code> in
  * <code>template&lttemplate&lttypename T&gt class V&gt class CT;</code>
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
  */

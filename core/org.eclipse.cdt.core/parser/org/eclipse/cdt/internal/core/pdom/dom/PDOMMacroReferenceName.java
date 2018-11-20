@@ -46,7 +46,7 @@ public final class PDOMMacroReferenceName implements IIndexFragmentName {
 	private static final int NODE_LENGTH_OFFSET = 24;
 	private static final int CALLER_REC_OFFSET = 26;
 
-	private static final int RECORD_SIZE = 30; // 30 yields a 32-byte block. (31 would trigger a 40-byte block)	
+	private static final int RECORD_SIZE = 30; // 30 yields a 32-byte block. (31 would trigger a 40-byte block)
 
 	public PDOMMacroReferenceName(PDOMLinkage linkage, IASTName name, PDOMFile file, PDOMMacroContainer container,
 			PDOMName caller) throws CoreException {

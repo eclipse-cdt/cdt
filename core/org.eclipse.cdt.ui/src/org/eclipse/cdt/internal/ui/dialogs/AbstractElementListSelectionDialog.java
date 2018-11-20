@@ -184,7 +184,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * Constructs a list selection dialog.
 	 * @param renderer The label renderer used
 	 * @param ignoreCase Decides if the match string ignores lower/upppr case
-	 * @param multipleSelection Allow multiple selection	 
+	 * @param multipleSelection Allow multiple selection
 	 */
 	protected AbstractElementListSelectionDialog(Shell parent, String title, Image image, ILabelProvider renderer,
 			boolean ignoreCase, boolean multipleSelection) {
@@ -208,7 +208,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	 * Constructs a list selection dialog.
 	 * @param renderer The label renderer used
 	 * @param ignoreCase Decides if the match string ignores lower/upppr case
-	 * @param multipleSelection Allow multiple selection	 
+	 * @param multipleSelection Allow multiple selection
 	 */
 	protected AbstractElementListSelectionDialog(Shell parent, ILabelProvider renderer, boolean ignoreCase,
 			boolean multipleSelection) {

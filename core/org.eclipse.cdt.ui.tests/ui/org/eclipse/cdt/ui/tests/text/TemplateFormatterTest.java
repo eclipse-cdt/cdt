@@ -15,8 +15,10 @@ package org.eclipse.cdt.ui.tests.text;
 
 import java.util.HashMap;
 
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
+import org.eclipse.cdt.internal.corext.template.c.CFormatter;
+import org.eclipse.cdt.ui.tests.BaseUITestCase;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.GlobalTemplateVariables;
@@ -25,11 +27,7 @@ import org.eclipse.jface.text.templates.TemplateBuffer;
 import org.eclipse.jface.text.templates.TemplateContext;
 import org.eclipse.jface.text.templates.TemplateContextType;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.formatter.DefaultCodeFormatterConstants;
-import org.eclipse.cdt.ui.tests.BaseUITestCase;
-
-import org.eclipse.cdt.internal.corext.template.c.CFormatter;
+import junit.framework.TestSuite;
 
 /**
  * Tests for the template formatter (CFormatter).
@@ -75,7 +73,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	}
 
 	private void setOption(String key, String value) {
-		HashMap<String, String> options = new HashMap<String, String>(1);
+		HashMap<String, String> options = new HashMap<>(1);
 		options.put(key, value);
 		CCorePlugin.setOptions(options);
 	}
@@ -103,7 +101,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	//}
 
 	//for(int var=0; var<max; var++) {
-	//	
+	//
 	//}
 	public void testForLoopTemplateDefault() throws Exception {
 		assertFormatterResult();
@@ -114,7 +112,7 @@ public class TemplateFormatterTest extends BaseUITestCase {
 	//}
 
 	//for(int var=0; var<max; var++) {
-	//    
+	//
 	//}
 	public void testForLoopTemplateMixedIndent() throws Exception {
 		setOption(DefaultCodeFormatterConstants.FORMATTER_TAB_CHAR, DefaultCodeFormatterConstants.MIXED);

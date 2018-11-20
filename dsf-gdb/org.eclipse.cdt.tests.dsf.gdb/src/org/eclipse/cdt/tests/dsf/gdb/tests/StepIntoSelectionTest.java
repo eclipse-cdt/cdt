@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Alvaro Sanchez-Leon (Ericsson AB) - Support for Step into selection (bug 244865)
  *     Simon Marchi (Ericsson) - Fix atDoubleMethod* tests for older gdb (<= 7.3)
@@ -45,7 +45,7 @@ import org.junit.runners.Parameterized;
 
 /**
  * Tests Non Stop GDB RunControl "Step into Selection feature"
- * 
+ *
  */
 @SuppressWarnings("restriction")
 @RunWith(Parameterized.class)
@@ -186,7 +186,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	private ISuspendedDMEvent triggerStepIntoSelection(final IExecutionDMContext exeContext, final String sourceName,
 			final int targetLine, final IFunctionDeclaration function, final boolean skipBreakPoints) throws Throwable {
-		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(fSession,
+		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				ISuspendedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {
@@ -207,7 +207,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 	 */
 	private ISuspendedDMEvent triggerRunToLine(final IExecutionDMContext exeContext, final String sourceName,
 			final int targetLine, final boolean skipBreakPoints) throws Throwable {
-		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<ISuspendedDMEvent>(fSession,
+		ServiceEventWaitor<ISuspendedDMEvent> eventWaitor = new ServiceEventWaitor<>(fSession,
 				ISuspendedDMEvent.class);
 
 		Query<Object> query = new Query<Object>() {
@@ -232,7 +232,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 
 		FunctionDeclaration targetFunction = funcFoo;
 
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
 				stoppedEvent.getFrame().getLine(), targetFunction, false);
 
@@ -249,7 +249,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 
 		FunctionDeclaration targetFunction = funcFoo;
 		int line = stoppedEvent.getFrame().getLine() + 3; // The method to stepInto is three lines below the start of the method
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
 				targetFunction, false);
 
@@ -266,7 +266,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 
 		FunctionDeclaration targetFunction = funcValue;
 		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
 				targetFunction, false);
 
@@ -284,7 +284,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 
 		FunctionDeclaration targetFunction = funcFoo;
 		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
 				targetFunction, false);
 
@@ -302,7 +302,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 
 		FunctionDeclaration targetFunction = funcBar;
 		int line = stoppedEvent.getFrame().getLine() + 1; // The method to stepInto is one line below the start of the method
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
 				targetFunction, false);
 
@@ -321,7 +321,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		FunctionDeclaration targetFunction = funcRecursive;
 
 		int line = stoppedEvent.getFrame().getLine() + 2; // The method to stepInto is two lines below the start of the method
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
 				targetFunction, false);
 
@@ -348,7 +348,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		FunctionDeclaration targetFunction = funcFoo;
 		int line = originalLine + 3; // The method to stepInto is three lines below the start of the method
 
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
 				targetFunction, false);
 
@@ -372,7 +372,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		int bpline = line + 2;
 		SyncUtil.addBreakpoint(Integer.toString(bpline));
 
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
 				targetFunction, false); // Don't skip breakpoints
 
@@ -400,7 +400,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		SyncUtil.addBreakpoint(Integer.toString(originalLine + 1));
 
 		int line = originalLine + 3; // The method to stepInto is three lines below the start of the method
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
 				funcFoo, false);
 
@@ -430,7 +430,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 
 		FunctionDeclaration targetFunction = funcFoo;
 
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME, line,
 				targetFunction, true);
 
@@ -528,7 +528,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
 		FunctionDeclaration targetFunction = funcAddWithArg;
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
 				stoppedEvent.getFrame().getLine(), targetFunction, false);
 
@@ -542,7 +542,7 @@ public class StepIntoSelectionTest extends BaseParametrizedTestCase {
 		int originalDepth = SyncUtil.getStackDepth(stoppedEvent.getDMContext());
 
 		FunctionDeclaration targetFunction = funcAddNoArg;
-		// StepInto the method     
+		// StepInto the method
 		ISuspendedDMEvent suspendedEvent = triggerStepIntoSelection(stoppedEvent.getDMContext(), SOURCE_NAME,
 				stoppedEvent.getFrame().getLine(), targetFunction, false);
 

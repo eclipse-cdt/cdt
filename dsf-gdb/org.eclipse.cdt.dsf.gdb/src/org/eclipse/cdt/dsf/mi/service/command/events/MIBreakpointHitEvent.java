@@ -38,7 +38,7 @@ import org.eclipse.debug.core.model.IBreakpoint;
  * Conveys that gdb reported the target stopped because of a breakpoint. This
  * includes catchpoints, as gdb reports them as a breakpoint-hit. The
  * async-exec-output record looks like this:
- * 
+ *
  * <code>
  *    ^stopped,reason="breakpoint-hit",bkptno="1",thread-id="0",frame={addr="0x08048468",func="main",args=[{name="argc",value="1"},{name="argv",value="0xbffff18c"}],file="hello.c",line="4"}
  * </code>

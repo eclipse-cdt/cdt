@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.cdt.debug.core.CDebugCorePlugin;
 import org.eclipse.cdt.debug.core.sourcelookup.IMappingSourceContainer;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -35,11 +36,11 @@ import org.eclipse.debug.core.sourcelookup.containers.LocalFileStorage;
  * The assumption is that all files under a compilation directory are compiled relative to
  * that directory, unless they belong to another compilation directory container that is higher on
  * the source container list.
- * 
+ *
  * Source elements returned from <code>findSourceElements(...)</code> are instances of
  * <code>IFile</code> or <code>LocalFileStorage</code>.
  * <p>
- * Clients may instantiate this class. 
+ * Clients may instantiate this class.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -59,7 +60,7 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	/**
 	 * Constructs an external folder container for the
 	 * directory identified by the given path.
-	 * 
+	 *
 	 * @param dirPath path to a directory in the local file system
 	 * @param subfolders whether folders within the root directory
 	 *  should be searched for source elements
@@ -71,7 +72,7 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	/**
 	 * Constructs an external folder container for the
 	 * directory identified by the given file.
-	 * 
+	 *
 	 * @param dir a directory in the local file system
 	 * @param subfolders whether folders within the root directory
 	 * 		should be searched for source elements
@@ -89,7 +90,7 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 	/**
 	 * Returns the root directory in the local file system associated
 	 * with this source container.
-	 * 
+	 *
 	 * @return the root directory in the local file system associated
 	 * with this source container
 	 */
@@ -117,7 +118,7 @@ public class CompilationDirectorySourceContainer extends CompositeSourceContaine
 			Collections.addAll(sources, SourceUtils.findSourceElements(file, getDirector()));
 		}
 
-		// Check sub-folders		
+		// Check sub-folders
 		if (fSubfolders && (isFindDuplicates() || sources.isEmpty())) {
 			for (ISourceContainer container : getSourceContainers()) {
 				Object[] elements = container.findSourceElements(name);

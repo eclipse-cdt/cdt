@@ -113,7 +113,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 			setErrorMessage(null);
 			setMessage(null);
 		} else {
-			setErrorMessage(Messages.GDBDebuggerPage0); //$NON-NLS-1$
+			setErrorMessage(Messages.GDBDebuggerPage0);
 			setMessage(null);
 		}
 		return valid;
@@ -251,7 +251,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
 	 */
 	@Override
@@ -441,7 +441,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#dispose()
 	 */
 	@Override
@@ -456,7 +456,7 @@ public class GdbDebuggerPage extends AbstractCDebuggerPage implements Observer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug
 	 * .core.ILaunchConfigurationWorkingCopy)

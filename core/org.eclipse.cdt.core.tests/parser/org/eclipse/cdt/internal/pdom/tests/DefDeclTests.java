@@ -46,7 +46,7 @@ import junit.framework.Test;
 
 /**
  * Test that PDOM correctly track declarations, definitions and references of objects.
- * 
+ *
  * @author ELaskavaia@qnx.com
  */
 public class DefDeclTests extends PDOMTestBase {
@@ -130,7 +130,7 @@ public class DefDeclTests extends PDOMTestBase {
 
 	/**
 	 * Get references defined by flags. If k>0 check that there are k of them.
-	 * 
+	 *
 	 * @param binding
 	 * @param k -
 	 *            number of references, if k==-1 no check

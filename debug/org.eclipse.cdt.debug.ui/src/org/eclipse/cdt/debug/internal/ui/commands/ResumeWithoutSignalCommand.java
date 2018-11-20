@@ -24,8 +24,8 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
  * The handler for the "Resume Without Signal" command.
- * 
- * @since 7.0 
+ *
+ * @since 7.0
  */
 public class ResumeWithoutSignalCommand extends AbstractDebugCommand implements IResumeWithoutSignalHandler {
 

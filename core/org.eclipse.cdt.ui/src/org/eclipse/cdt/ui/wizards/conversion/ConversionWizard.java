@@ -13,20 +13,19 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.wizards.conversion;
 
+import org.eclipse.cdt.ui.CUIPlugin;
+import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
-
-import org.eclipse.cdt.ui.CUIPlugin;
-import org.eclipse.cdt.ui.wizards.NewCProjectWizard;
 
 /**
  * ConversionWizard  This wizard provides a method by which the user can
  * change the nature of their projects. This class cannot be implemented.  It
  * is meant to be subclassed, with the subclasses providing the new labels,
  * and pages.
- * 
+ *
  * @author Judy N. Green
  * @since Aug 8, 2002
  */
@@ -52,7 +51,7 @@ public abstract class ConversionWizard extends NewCProjectWizard {
 
 	/**
 	 * Conversion Wizard constructor
-	 * 
+	 *
 	 * @param title
 	 * @param desc
 	 */
@@ -72,7 +71,7 @@ public abstract class ConversionWizard extends NewCProjectWizard {
 	/**
 	 * Method getWindowTitleResource, allows Wizard Title label value to be
 	 * changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWindowTitleResource() {
@@ -83,7 +82,7 @@ public abstract class ConversionWizard extends NewCProjectWizard {
 	/**
 	 * Method getWzDescriptionResource,  allows Wizard description label value
 	 * to be changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWzDescriptionResource() {
@@ -94,7 +93,7 @@ public abstract class ConversionWizard extends NewCProjectWizard {
 	/**
 	 * Method getWzTitleResource,  allows Wizard description label value
 	 * to be changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getWzTitleResource() {
@@ -104,7 +103,7 @@ public abstract class ConversionWizard extends NewCProjectWizard {
 
 	/**
 	 * Method getPrefix,  allows prefix value to be changed by subclasses
-	 * 
+	 *
 	 * @return String
 	 */
 	protected static String getPrefix() {
@@ -139,13 +138,13 @@ public abstract class ConversionWizard extends NewCProjectWizard {
 	/**
 	 * Method addPages allows subclasses to add as many pages as they need. Overwrite
 	 * to create at least one conversion specific page. <p>
-	 * 
+	 *
 	 * i.e. <br>
-	 *<pre> 
+	 *<pre>
 	 *   mainPage = new ConvertToStdMakeProjectWizardPage(getPrefix());
 	 *   addPage(mainPage);
 	 *</pre>
-	 * 
+	 *
 	 * @see NewCProjectWizard#addPages
 	 */
 	@Override
@@ -153,8 +152,8 @@ public abstract class ConversionWizard extends NewCProjectWizard {
 
 	/**
 	 * Required by superclass but with no implementation here
-	 * 
-	 * @param monitor 
+	 *
+	 * @param monitor
 	 */
 	@Override
 	protected void doRunPrologue(IProgressMonitor monitor) {
@@ -162,8 +161,8 @@ public abstract class ConversionWizard extends NewCProjectWizard {
 
 	/**
 	 * Required by superclass but with no implementation here
-	 * 
-	 * @param monitor 
+	 *
+	 * @param monitor
 	 */
 	@Override
 	protected void doRunEpilogue(IProgressMonitor monitor) {

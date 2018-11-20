@@ -43,7 +43,7 @@ public class ExpressionDialog extends Dialog {
 
 	/**
 	 * Constructor for ExpressionDialog.
-	 * 
+	 *
 	 * @param parentShell
 	 */
 	public ExpressionDialog(Shell parentShell, String expression) {
@@ -132,7 +132,7 @@ public class ExpressionDialog extends Dialog {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	@Override

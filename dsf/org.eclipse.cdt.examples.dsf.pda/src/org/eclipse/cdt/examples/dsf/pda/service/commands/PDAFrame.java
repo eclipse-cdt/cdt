@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -23,8 +23,8 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * Object representing a frame in the stack command results.
- * 
- * @see PDAStackCommand 
+ *
+ * @see PDAStackCommand
  */
 @Immutable
 public class PDAFrame {
@@ -41,7 +41,7 @@ public class PDAFrame {
 		fLine = Integer.parseInt(st.nextToken());
 		fFunction = st.nextToken();
 
-		List<String> variablesList = new ArrayList<String>();
+		List<String> variablesList = new ArrayList<>();
 		while (st.hasMoreTokens()) {
 			variablesList.add(st.nextToken());
 		}

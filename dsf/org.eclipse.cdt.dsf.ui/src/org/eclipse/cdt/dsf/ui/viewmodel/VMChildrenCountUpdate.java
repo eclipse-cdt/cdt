@@ -7,14 +7,14 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
 package org.eclipse.cdt.dsf.ui.viewmodel;
 
 import org.eclipse.cdt.dsf.concurrent.DataRequestMonitor;
-
+import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
 import org.eclipse.cdt.dsf.internal.DsfPlugin;
 import org.eclipse.cdt.dsf.internal.LoggingUtils;
 import org.eclipse.cdt.dsf.internal.ui.DsfUIPlugin;
@@ -23,13 +23,12 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.jface.viewers.TreePath;
-import org.eclipse.cdt.dsf.debug.internal.ui.viewmodel.VMViewerUpdateTracing;
 
-/** 
+/**
  * Helper class implementation of the {@link IChildrenCountUpdate} update object.
- * 
+ *
  * @see VMViewerUpdate
- * 
+ *
  * @since 1.0
  */
 public class VMChildrenCountUpdate extends VMViewerUpdate implements IChildrenCountUpdate {
@@ -72,7 +71,7 @@ public class VMChildrenCountUpdate extends VMViewerUpdate implements IChildrenCo
 			final Integer data = fCountRequestMonitor.getData();
 			DsfUIPlugin.debug(DsfPlugin.getDebugTime() + " " //$NON-NLS-1$
 					+ LoggingUtils.toString(this) + " marked done; element = " //$NON-NLS-1$
-					+ LoggingUtils.toString(getElement()) + "\n   child count = " + (data != null ? data : "<unset>")); //$NON-NLS-1$ //$NON-NLS-2$ 
+					+ LoggingUtils.toString(getElement()) + "\n   child count = " + (data != null ? data : "<unset>")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 
 		super.done();

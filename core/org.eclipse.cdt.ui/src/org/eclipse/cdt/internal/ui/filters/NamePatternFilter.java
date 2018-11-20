@@ -17,7 +17,6 @@ import org.eclipse.cdt.core.model.ICElement;
 import org.eclipse.cdt.internal.ui.util.StringMatcher;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
-
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
@@ -29,7 +28,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  *   ? => any character
  *   * => any string
  * </p>
- * 
+ *
  * @since 2.0
  */
 public class NamePatternFilter extends ViewerFilter {

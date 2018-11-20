@@ -44,8 +44,8 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	protected IScannerInfoCollector fCollector = null;
 
 	private boolean expectingIncludes = false;
-	protected List<String> symbols = new ArrayList<String>();
-	protected List<String> includes = new ArrayList<String>();
+	protected List<String> symbols = new ArrayList<>();
+	protected List<String> includes = new ArrayList<>();
 
 	@Override
 	public void startup(IProject project, IPath workingDirectory, IScannerInfoCollector collector,
@@ -120,7 +120,7 @@ public class GCCSpecsConsoleParser implements IScannerInfoConsoleParser {
 	 */
 	@Override
 	public void shutdown() {
-		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<ScannerInfoTypes, List<String>>();
+		Map<ScannerInfoTypes, List<String>> scannerInfo = new HashMap<>();
 		scannerInfo.put(ScannerInfoTypes.INCLUDE_PATHS, includes);
 		scannerInfo.put(ScannerInfoTypes.SYMBOL_DEFINITIONS, symbols);
 		if (fCollector != null) {

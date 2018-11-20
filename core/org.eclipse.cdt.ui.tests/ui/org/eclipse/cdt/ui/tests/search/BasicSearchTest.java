@@ -21,8 +21,17 @@ import java.io.File;
 import java.io.FileWriter;
 import java.lang.reflect.InvocationTargetException;
 
-import junit.framework.TestSuite;
-
+import org.eclipse.cdt.core.CCorePlugin;
+import org.eclipse.cdt.core.dom.IPDOMManager;
+import org.eclipse.cdt.core.index.IIndexManager;
+import org.eclipse.cdt.core.model.ICElement;
+import org.eclipse.cdt.core.testplugin.CProjectHelper;
+import org.eclipse.cdt.core.testplugin.TestScannerProvider;
+import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
+import org.eclipse.cdt.internal.ui.search.CSearchPatternQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchQuery;
+import org.eclipse.cdt.internal.ui.search.CSearchResult;
+import org.eclipse.cdt.internal.ui.search.CSearchViewPage;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IStatus;
@@ -39,18 +48,7 @@ import org.eclipse.search.ui.ISearchResultPage;
 import org.eclipse.search.ui.ISearchResultViewPart;
 import org.eclipse.search.ui.NewSearchUI;
 
-import org.eclipse.cdt.core.CCorePlugin;
-import org.eclipse.cdt.core.dom.IPDOMManager;
-import org.eclipse.cdt.core.index.IIndexManager;
-import org.eclipse.cdt.core.model.ICElement;
-import org.eclipse.cdt.core.testplugin.CProjectHelper;
-import org.eclipse.cdt.core.testplugin.TestScannerProvider;
-import org.eclipse.cdt.core.testplugin.util.TestSourceReader;
-
-import org.eclipse.cdt.internal.ui.search.CSearchPatternQuery;
-import org.eclipse.cdt.internal.ui.search.CSearchQuery;
-import org.eclipse.cdt.internal.ui.search.CSearchResult;
-import org.eclipse.cdt.internal.ui.search.CSearchViewPage;
+import junit.framework.TestSuite;
 
 public class BasicSearchTest extends SearchTestBase {
 
@@ -319,7 +317,7 @@ public class BasicSearchTest extends SearchTestBase {
 		assertOccurrences(query, 4);
 		assertOccurrences(query, 4);
 
-		// whitespace s.t. new match offset is same as older 
+		// whitespace s.t. new match offset is same as older
 		String newContent = "#include \"header.h\"\nvoid bar() {      foo();      }";
 		IFile file = fCProject.getProject().getFile(new Path("references.cpp"));
 		file.setContents(new ByteArrayInputStream(newContent.getBytes()), IResource.FORCE, npm());

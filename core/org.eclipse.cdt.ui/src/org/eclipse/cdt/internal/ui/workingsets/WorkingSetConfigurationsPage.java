@@ -26,9 +26,9 @@ import org.eclipse.ui.dialogs.PropertyPage;
 
 /**
  * Property page for the configurations of a working set.
- * 
+ *
  * @author Christian W. Damus (cdamus)
- * 
+ *
  * @since 6.0
  */
 public class WorkingSetConfigurationsPage extends PropertyPage {

@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM - Initial API and implementation
  *     Markus Schorn (Wind River Systems)
@@ -31,7 +31,7 @@ import org.eclipse.core.runtime.Path;
 
 /**
  * A 'provider' that will generate a special makefile to generate scanner config
- * 
+ *
  * @author vhirsl
  */
 public class SCDMakefileGenerator extends DefaultRunSIProvider {
@@ -138,9 +138,9 @@ public class SCDMakefileGenerator extends DefaultRunSIProvider {
 		String string = in;
 		// 		TODO: replace it with Eclipse Dynamic Variable Resolver
 		//      string = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(string, false);
-		string = string.replaceAll("\\$\\{project_name\\}", //$NON-NLS-1$ 
+		string = string.replaceAll("\\$\\{project_name\\}", //$NON-NLS-1$
 				resource.getProject().getName());
-		string = string.replaceAll("\\$\\{plugin_state_location\\}", //$NON-NLS-1$ 
+		string = string.replaceAll("\\$\\{plugin_state_location\\}", //$NON-NLS-1$
 				MakeCorePlugin.getWorkingDirectory().toString());
 		string = string.replaceAll("\\$\\{specs_file\\}", //$NON-NLS-1$
 				GCCScannerConfigUtil.C_SPECS_FILE);

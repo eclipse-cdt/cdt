@@ -51,7 +51,7 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * The preference page used to present the properties of a GDB tracepoint as preferences. 
+ * The preference page used to present the properties of a GDB tracepoint as preferences.
  */
 public class GDBTracepointPropertyPage extends FieldEditorPreferencePage implements IWorkbenchPropertyPage {
 
@@ -77,7 +77,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 
 		/**
 		 * Only store if the text control is enabled
-		 * 
+		 *
 		 * @see FieldEditor#doStore()
 		 */
 		@Override
@@ -188,7 +188,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	private TracepointIntegerFieldEditor fLineEditor;
 	private TracepointIntegerFieldEditor fIgnoreCount;
 
-	/** 
+	/**
 	 * Indicates if the page currently aims to create
 	 * a breakpoint that already exits.
 	 */
@@ -200,9 +200,9 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 	private IAdaptable fElement;
 
 	/**
-	 * The preference store used to interface between the tracepoint and the 
+	 * The preference store used to interface between the tracepoint and the
 	 * tracepoint preference page.  This preference store is initialized only
-	 * when the preference store cannot be retrieved from the preference 
+	 * when the preference store cannot be retrieved from the preference
 	 * dialog's element.
 	 * @see #getPreferenceStore()
 	 */
@@ -210,7 +210,7 @@ public class GDBTracepointPropertyPage extends FieldEditorPreferencePage impleme
 
 	/**
 	 * Constructor for GDBTracepointPropertyPage.
-	 * 
+	 *
 	 */
 	public GDBTracepointPropertyPage() {
 		super(GRID);

@@ -201,9 +201,9 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 
 	}
 
-	private Map<String, ResolvedMacro> fResolvedMacros = new HashMap<String, ResolvedMacro>();
-	private HashSet<String> fMacrosUnderResolution = new HashSet<String>();
-	private Stack<MacroDescriptor> fMacroDescriptors = new Stack<MacroDescriptor>();
+	private Map<String, ResolvedMacro> fResolvedMacros = new HashMap<>();
+	private HashSet<String> fMacrosUnderResolution = new HashSet<>();
+	private Stack<MacroDescriptor> fMacroDescriptors = new Stack<>();
 
 	public SupplierBasedCdtVariableSubstitutor(IVariableContextInfo contextInfo, String inexistentMacroValue,
 			String listDelimiter) {
@@ -344,7 +344,7 @@ public class SupplierBasedCdtVariableSubstitutor implements IVariableSubstitutor
 				if (resolvedValues.length == 1)
 					result = resolvedValues[0];
 				else {
-					List<String> list = new ArrayList<String>();
+					List<String> list = new ArrayList<>();
 					for (String[] resolvedValue : resolvedValues)
 						list.addAll(Arrays.asList(resolvedValue));
 

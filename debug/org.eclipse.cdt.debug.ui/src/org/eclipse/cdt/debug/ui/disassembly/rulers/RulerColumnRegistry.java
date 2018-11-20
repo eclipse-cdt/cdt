@@ -146,11 +146,11 @@ public final class RulerColumnRegistry {
 	 */
 	public void reload() {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
-		List<IConfigurationElement> elements = new ArrayList<IConfigurationElement>(
+		List<IConfigurationElement> elements = new ArrayList<>(
 				Arrays.asList(registry.getConfigurationElementsFor(CDebugUIPlugin.PLUGIN_ID, EXTENSION_POINT)));
 
-		List<RulerColumnDescriptor> descriptors = new ArrayList<RulerColumnDescriptor>();
-		Map<String, RulerColumnDescriptor> descriptorMap = new HashMap<String, RulerColumnDescriptor>();
+		List<RulerColumnDescriptor> descriptors = new ArrayList<>();
+		Map<String, RulerColumnDescriptor> descriptorMap = new HashMap<>();
 
 		for (Iterator<IConfigurationElement> iter = elements.iterator(); iter.hasNext();) {
 			IConfigurationElement element = iter.next();
@@ -207,7 +207,7 @@ public final class RulerColumnRegistry {
 		descriptors.toArray(array);
 		sorter.sort(array);
 
-		Map<String, RulerColumnDescriptor> descriptorsById = new HashMap<String, RulerColumnDescriptor>();
+		Map<String, RulerColumnDescriptor> descriptorsById = new HashMap<>();
 		for (RulerColumnDescriptor desc : array) {
 			descriptorsById.put(desc.getId(), desc);
 		}

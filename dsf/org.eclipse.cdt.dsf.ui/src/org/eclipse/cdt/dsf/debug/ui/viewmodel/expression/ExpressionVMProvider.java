@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -62,14 +62,14 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.TreePath;
 
 /**
- * The expression provider is used to populate the contents of the expressions 
- * view.  The node hierarchy in this view is a little different than in a typical 
+ * The expression provider is used to populate the contents of the expressions
+ * view.  The node hierarchy in this view is a little different than in a typical
  * provider: the expression manager node should be registered as the single child
  * of the root node and no nodes should be registered as children of expression node.
- * Instead the top level expression nodes should be registered with a call to 
+ * Instead the top level expression nodes should be registered with a call to
  * {@link #setExpressionNodes(IExpressionVMNode[])}.  And each expression node can
  * have its own sub-hierarchy of elements as needed.  However all nodes configured
- * with this provider (with the exception of the root and the expression manager) 
+ * with this provider (with the exception of the root and the expression manager)
  * should implement {@link IExpressionVMNode}.
  */
 @SuppressWarnings("restriction")
@@ -104,7 +104,7 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 		setDelayEventHandleForViewUpdate(
 				store.getBoolean(IDsfDebugUIConstants.PREF_WAIT_FOR_VIEW_UPDATE_AFTER_STEP_ENABLE));
 
-		// The VM provider has to handle all events that result in model deltas.  
+		// The VM provider has to handle all events that result in model deltas.
 		// Add the provider as listener to expression changes events.
 		DebugPlugin.getDefault().getExpressionManager().addExpressionListener(this);
 
@@ -122,14 +122,14 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 	}
 
 	/**
-	 * Updates the given expression element.  This method is used by the 
+	 * Updates the given expression element.  This method is used by the
 	 * expression manager node to obtain a view model element based on the
-	 * {@link IExpression} retrieved from the expression manager.  The 
-	 * implementation of this method (which is in the content strategy), 
-	 * checks the configured expression nodes to see which one can 
+	 * {@link IExpression} retrieved from the expression manager.  The
+	 * implementation of this method (which is in the content strategy),
+	 * checks the configured expression nodes to see which one can
 	 * process the given expression, when it finds it it delegates
 	 * to that expression node's {@link IExpressionVMNode#update(IExpressionUpdate)}
-	 * method. 
+	 * method.
 	 * @param update Expression update to process.
 	 */
 	public void update(IExpressionUpdate update) {
@@ -138,14 +138,14 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 
 	/**
 	 * Retrieves the delta flags that can be generated for the given expression
-	 * and the given event.  This method is used by the 
+	 * and the given event.  This method is used by the
 	 * expression manager node to obtain the delta flags based on the
-	 * {@link IExpression} retrieved from the expression manager.  The 
-	 * implementation of this method (which is in the model proxy strategy), 
-	 * checks the configured expression nodes to see which one can 
+	 * {@link IExpression} retrieved from the expression manager.  The
+	 * implementation of this method (which is in the model proxy strategy),
+	 * checks the configured expression nodes to see which one can
 	 * process the given expression, when it finds it it delegates
 	 * to that expression node's {@link IExpressionVMNode#getDeltaFlagsForExpression(IExpression, Object)}
-	 * method.  
+	 * method.
 	 */
 	public int getDeltaFlagsForExpression(IExpression expression, Object event) {
 		// Workaround: find the first active proxy and use it.
@@ -160,15 +160,15 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 
 	/**
 	 * Builds the model delta based on the given expression
-	 * and the given event.  This method is used by the 
+	 * and the given event.  This method is used by the
 	 * expression manager to build the delta based on the
-	 * {@link IExpression} retrieved from the expression manager.  The 
-	 * implementation of this method (which is in the model proxy strategy), 
-	 * checks the configured expression nodes to see which one can 
+	 * {@link IExpression} retrieved from the expression manager.  The
+	 * implementation of this method (which is in the model proxy strategy),
+	 * checks the configured expression nodes to see which one can
 	 * process the given expression, when it finds it it delegates
 	 * to that expression node's {@link IExpressionVMNode#buildDeltaForExpression(IExpression, int, Object, ModelDelta, TreePath, RequestMonitor)}
 	 * and {@link IExpressionVMNode#buildDeltaForExpressionElement(Object, int, Object, ModelDelta, RequestMonitor)
-	 * methods.  
+	 * methods.
 	 */
 	public void buildDeltaForExpression(final IExpression expression, final int expressionElementIdx,
 			final Object event, final VMDelta parentDelta, final TreePath path, final RequestMonitor rm) {
@@ -187,7 +187,7 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 	protected void setExpressionNodes(IExpressionVMNode[] nodes) {
 		fExpressionNodes = nodes;
 
-		// Call the base class to make sure that the nodes are also 
+		// Call the base class to make sure that the nodes are also
 		// returned by the getAllNodes method.
 		for (IExpressionVMNode node : nodes) {
 			addNode(node);
@@ -302,9 +302,9 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 	}
 
 	/**
-	 * Finds the expression node which can parse the given expression.  This 
+	 * Finds the expression node which can parse the given expression.  This
 	 * method is used by the expression content and model proxy strategies.
-	 * 
+	 *
 	 * @param parentNode The parent of the nodes to search.  If <code>null</code>,
 	 * then the top level expressions will be searched.
 	 * @param expression The expression object.
@@ -323,7 +323,7 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 				if (childExpressionNode.canParseExpression(expression)) {
 					return childExpressionNode;
 				} else if (!childExpressionNode.equals(parentNode)) {
-					// The above check is to make sure that child isn't the same as 
+					// The above check is to make sure that child isn't the same as
 					// parent to avoid recursive loops.
 					IExpressionVMNode matchingNode = findNodeToParseExpression(childExpressionNode, expression);
 					if (matchingNode != null) {
@@ -386,7 +386,7 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 	}
 
 	private void expressionsListChanged(ExpressionsChangedEvent.Type type, IExpression[] expressions, int index) {
-		Set<Object> rootElements = new HashSet<Object>();
+		Set<Object> rootElements = new HashSet<>();
 		for (IVMModelProxy proxy : getActiveModelProxies()) {
 			rootElements.add(proxy.getRootElement());
 		}
@@ -395,7 +395,7 @@ public class ExpressionVMProvider extends AbstractElementVMProvider implements I
 
 	@Override
 	protected boolean canSkipHandlingEvent(Object newEvent, Object eventToSkip) {
-		// To optimize the performance of the view when stepping rapidly, skip all 
+		// To optimize the performance of the view when stepping rapidly, skip all
 		// other events when a suspended event is received, including older suspended
 		// events.
 		return newEvent instanceof ISuspendedDMEvent;

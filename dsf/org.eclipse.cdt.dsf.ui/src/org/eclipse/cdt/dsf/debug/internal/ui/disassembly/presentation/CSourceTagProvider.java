@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Wind River Systems - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class CSourceTagProvider implements ISourceTagProvider {
 
 	/**
 	 * Create a new source tag provider for the given translation unit.
-	 * 
+	 *
 	 * @param unit
 	 */
 	public CSourceTagProvider(ITranslationUnit unit) {

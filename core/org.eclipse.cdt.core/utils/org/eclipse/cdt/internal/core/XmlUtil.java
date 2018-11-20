@@ -276,7 +276,7 @@ public class XmlUtil {
 	 * @param doc - DOM Document to serialize.
 	 * @param uriLocation - URI of the file.
 	 * @param lineSeparator - line separator.
-	 * 
+	 *
 	 * @throws IOException in case of problems with file I/O
 	 * @throws TransformerException in case of problems with XML output
 	 */
@@ -366,7 +366,7 @@ public class XmlUtil {
 	 *
 	 * @param string - the string to be replaced
 	 * @param lineSeparator - line separator to be used in the string
-	 * 
+	 *
 	 * @noreference This method is not intended to be referenced by clients.
 	 *    This is an internal method which ideally should be made private.
 	 */

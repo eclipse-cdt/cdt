@@ -19,12 +19,12 @@ import org.eclipse.cdt.dsf.debug.service.IBreakpoints.IBreakpointsTargetDMContex
 import org.eclipse.cdt.dsf.mi.service.command.output.MIInfo;
 
 /**
- * 
+ *
  *   -break-delete ( BREAKPOINT )+
  *
  * Delete the breakpoint(s) whose number(s) are specified in the
  * argument list.  This is obviously reflected in the breakpoint list.
- * 
+ *
  * Result:
  *  ^done
  *

@@ -15,17 +15,15 @@ package org.eclipse.cdt.internal.ui.navigator;
 
 import java.util.List;
 
+import org.eclipse.cdt.core.CCProjectNature;
+import org.eclipse.cdt.core.CProjectNature;
+import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.actions.RenameResourceAction;
-
-import org.eclipse.cdt.core.CCProjectNature;
-import org.eclipse.cdt.core.CProjectNature;
-
-import org.eclipse.cdt.internal.ui.refactoring.rename.CRefactory;
 
 public class CNavigatorRenameResourceAction extends RenameResourceAction {
 

@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.cdt.ui.templateengine.uitree.uiwidgets;
 
+import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
+import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
+import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,10 +27,6 @@ import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-
-import org.eclipse.cdt.ui.templateengine.uitree.InputUIElement;
-import org.eclipse.cdt.ui.templateengine.uitree.UIAttributes;
-import org.eclipse.cdt.ui.templateengine.uitree.UIElement;
 
 /**
  * This gives a Label and Browse widget.
@@ -47,7 +46,7 @@ public class UIBrowseWidget extends UITextWidget {
 
 	/**
 	 * Constructor.
-	 * 
+	 *
 	 * @param uiAttribute
 	 *            attribute associated with this widget.
 	 */
@@ -61,7 +60,7 @@ public class UIBrowseWidget extends UITextWidget {
 	 * create a Label and Browse widget, add it to UIComposite. set Layout for
 	 * the widgets to be added to UIComposite. set required parameters to the
 	 * Widgets.
-	 * 
+	 *
 	 * @param composite
 	 */
 	@Override

@@ -1,4 +1,3 @@
-#Fri Jun 18 11:14:32 CDT 2010
 compilers.f.unresolved-features=1
 compilers.f.unresolved-plugins=1
 compilers.incompatible-environment=1
@@ -19,7 +18,9 @@ compilers.p.missing-version-export-package=2
 compilers.p.missing-version-import-package=2
 compilers.p.missing-version-require-bundle=2
 compilers.p.no-required-att=0
-compilers.p.not-externalized-att=2
+compilers.p.no.automatic.module=1
+compilers.p.not-externalized-att=1
+compilers.p.service.component.without.lazyactivation=1
 compilers.p.unknown-attribute=1
 compilers.p.unknown-class=1
 compilers.p.unknown-element=1
@@ -30,4 +31,5 @@ compilers.p.unresolved-import=0
 compilers.s.create-docs=false
 compilers.s.doc-folder=doc
 compilers.s.open-tags=1
+compilers.use-project=true
 eclipse.preferences.version=1
